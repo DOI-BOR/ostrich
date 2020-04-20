@@ -1,0 +1,36 @@
+
+all:
+	-@ echo ""
+	-@ echo "Must specify a target"
+	-@ echo "   SER : Ostrich (serial, single processor)"
+	-@ echo "   MPI : OstrichMPI (parallel, using MPI)"
+	-@ echo "   ISO : build IsoFit"
+	-@ echo ""
+
+ISO:	*.o_ISO
+	icpc -static -o IsoFit *.o
+	rm -f *.o
+
+MPI:	*.o_MPI
+	mpiicpc -o OstrichMPI *.o
+	rm -f *.o
+
+SER:	*.o_SER
+	icpc -static -o Ostrich *.o
+	rm -f *.o
+
+*.o_MPI:	*.cpp *.c *.h
+	mpiicpc -c -O2 -DUSE_MPI *.cpp
+	mpiicpc -c -O2 -DUSE_MPI *.c
+
+*.o_SER:	*.cpp *.c *.h
+	icpc -c -O2  -DUSE_MPI_STUB *.cpp
+	icpc -c -O2  -DUSE_MPI_STUB *.c
+
+*.o_ISO:	*.cpp *.c *.h
+	icpc -c -O2  -DISOFIT_BUILD -DUSE_MPI_STUB *.cpp
+	icpc -c -O2  -DISOFIT_BUILD -DUSE_MPI_STUB *.c
+
+clean:
+	rm -f *.o
+
