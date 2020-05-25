@@ -11,7 +11,7 @@ of the PDDS algorithm.
 Version History
 12-30-14    lsm   added copyright information and initial comments.
 ******************************************************************************/
-#include "mpi_stub.h"
+#include <mpi.h>
 #include <math.h>
 #include <time.h>
 #include <stdlib.h>

@@ -8,7 +8,7 @@ An implementation of a basic bisection algorithm.
 Version History
 08-01-07    lsm   created 
 ******************************************************************************/
-#include "mpi_stub.h"
+#include <mpi.h>
 #include <math.h>
 #include <time.h>
 #include <stdlib.h>

@@ -22,6 +22,12 @@ Version History
 #ifndef UTILITY_H
 #define UTILITY_H
 
+#define MPI_RESULTS_TAG (1) /* message contains results */
+#define MPI_DATA_TAG    (2) /* message contains input/parameter data */
+#define MPI_REQUEST_TAG (3) /* message is a request for work */
+#define MPI_INDEX_TAG   (4) /* message is an index */
+#define MPI_QUIT_TAG    (5) /* quit message */
+
 extern "C" {
 
 #define MY_RAND_MAX (0x7FFFFFFF)

@@ -9,7 +9,7 @@ MPI code in environments that don't have MPI libraries.
 Version History
 10-24-13    lsm   added copyright information and initial comments.
 ******************************************************************************/
-#include "file_mpi.h"
+#include "mpi.h"
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
@@ -18,9 +18,9 @@ Version History
 #ifdef WIN32
   #include <windows.h>
   #include <direct.h>
+#else
+  #include <unistd.h>
 #endif
-
-#ifdef USE_FILE_MPI /* change preprocessor def if no file-based mpi desired */
 
 /* global variables */
 int FMPI_gMpiSize = 1;
@@ -539,6 +539,7 @@ int MPI_Comm_size(MPI_Comm comm, int * size)
    *size = FMPI_gMpiSize;
    return MPI_SUCCESS;
 }/* end MPI_Comm_size() */
+
 
 /********************************************************************
 MPI_Comm_rank()
@@ -1845,7 +1846,5 @@ int FMPI_FileExists(char * fname)
    return 1;
 }/* end FMPI_FileExists() */
 
-
-#endif /* USE_FILE_MPI */
 
 

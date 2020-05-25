@@ -10,16 +10,8 @@ Version History
 11-18-02    lsm   added copyright information and initial comments.
 08-20-03    lsm   created version history field and updated comments.
 ******************************************************************************/
-#ifndef MPI_STUB_H
-#define MPI_STUB_H
-
-#define MPI_RESULTS_TAG (1) /* message contains results */
-#define MPI_DATA_TAG    (2) /* message contains input/parameter data */
-#define MPI_REQUEST_TAG (3) /* message is a request for work */
-#define MPI_INDEX_TAG   (4) /* message is an index */
-#define MPI_QUIT_TAG    (5) /* quit message */
-
-#ifdef USE_MPI_STUB /* change preprocessor def if no stubbing desired */
+#ifndef MPI_INCLUDED
+#define MPI_INCLUDED
 
 /* Keep C++ compilers from getting confused */
 #ifdef __cplusplus
@@ -86,13 +78,4 @@ int MPI_Gather(void *sendbuf, int sendcnt, MPI_Datatype sendtype,
 }
 #endif
 
-#else /* USE_MPI_STUB */
-#ifdef USE_FILE_MPI
-	#include "file_mpi.h"
-#else
-	#include <mpi.h>
-#endif /* USE_FILE_MPI */
-#endif /* USE_MPI_STUB */
-#endif /* MPI_STUB_H */
-
-
+#endif /* MPI_INCLUDED */

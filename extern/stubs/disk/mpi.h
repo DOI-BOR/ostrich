@@ -9,16 +9,8 @@ MPI code in environments that don't have MPI libraries.
 Version History
 10-24-13    lsm   added copyright information and initial comments.
 ******************************************************************************/
-#ifndef FILE_MPI_H
-#define FILE_MPI_H
-
-#define MPI_RESULTS_TAG (1) /* message contains results */
-#define MPI_DATA_TAG    (2) /* message contains input/parameter data */
-#define MPI_REQUEST_TAG (3) /* message is a request for work */
-#define MPI_INDEX_TAG   (4) /* message is an index */
-#define MPI_QUIT_TAG    (5) /* quit message */
-
-#ifdef USE_FILE_MPI /* change preprocessor def if no file-based MPI is desired */
+#ifndef MPI_INCLUDED
+#define MPI_INCLUDED
 
 /* Keep C++ compilers from getting confused */
 #ifdef __cplusplus
@@ -49,7 +41,7 @@ extern "C"
  #define MPI_ANY_SOURCE (-2)
  #define MPI_ANY_TAG (-1)
  #define MPI_COMM_WORLD (91)
- #define MPI_MAX_PROCESSOR_NAME (256) /* max chars in processor name */
+ #define MPI_MAX_PROCESSOR_NAME (256) /* max chars  */
 
  int MPI_Init(int * argc, char *** argv);
  int MPI_Abort(MPI_Comm comm, int errorcode);
@@ -108,11 +100,5 @@ int MPI_Finalize(void);
 }
 #endif
 
-#else /* USE_FILE_MPI */
-#ifdef USE_MPI_STUB
-        #include "mpi_stub.h"
-#else
-        #include <mpi.h>
-#endif /* USE_MPI_STUB */
-#endif /* USE_FILE_MPI */
-#endif /* FILE_MPI_H */
+#endif /* MPI_INCLUDED */
+

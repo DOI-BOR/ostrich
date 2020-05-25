@@ -8,7 +8,7 @@ Manages a database of model runs.
 Version History
 04-18-06    lsm   added copyright information and initial comments.
 ******************************************************************************/
-#include "mpi_stub.h"
+#include <mpi.h>
 #include <stdio.h>
 #include <math.h>
 

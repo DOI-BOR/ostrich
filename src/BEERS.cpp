@@ -15,7 +15,6 @@ Version History
 05-16-15    lsm   added copyright information and initial comments.
 ******************************************************************************/
 
-#include "mpi_stub.h"
 #include <math.h>
 #include <stdlib.h>
 #include <string.h>

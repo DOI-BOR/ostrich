@@ -22,7 +22,7 @@ Version History
                      ERR_CONTINUE --> the error message is a continutation of a previous msg
 07-13-07    lsm   Added SuperMUSE error code (ERR_SMUSE) and SuperMUSE cleanup.
 ******************************************************************************/
-#include "mpi_stub.h"
+#include <mpi.h>
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>

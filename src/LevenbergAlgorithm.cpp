@@ -29,7 +29,7 @@ Version History
                   observations; when detected such insensitive terms are "held",
                   i.e. removed from consideration during the given iteration.
 ******************************************************************************/
-#include "mpi_stub.h"
+#include <mpi.h>
 #include <math.h>
 #include <string.h>
 #include <stdlib.h>

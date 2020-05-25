@@ -21,7 +21,6 @@ Version History
 08-17-04    lsm   RAM fragmentation fixes
 12-10-04    lsm   Added check for existence of model output file.
 ******************************************************************************/
-#include "mpi_stub.h"
 #include <string.h>
 
 #include "FilePipe.h"

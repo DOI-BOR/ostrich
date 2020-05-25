@@ -24,7 +24,7 @@ Version History
                   model init. and bookkepping calls. Some statistics can now 
                   be calculated in parallel. 
 ******************************************************************************/
-#include "mpi_stub.h"
+#include <mpi.h>
 #include <math.h>
 #include <time.h>
 #include <stdlib.h>

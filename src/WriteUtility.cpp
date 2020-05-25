@@ -16,7 +16,7 @@ Version History
 01-01-07    lsm   upped version, added support for ModelABC
 06-22-07    lsm   added dual-Langmuir isotherm, upped version to 1.3
 ******************************************************************************/
-#include "mpi_stub.h"
+#include <mpi.h>
 #include <string.h>
 
 #include "ModelABC.h"

@@ -13,7 +13,7 @@ Version History
                   be calculated in parallel.
 07-18-07    lsm   Added support for SuperMUSE
 ******************************************************************************/
-#include "mpi_stub.h"
+#include <mpi.h>
 #include <stdlib.h>
 #include <string.h>
 

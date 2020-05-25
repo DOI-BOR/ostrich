@@ -26,7 +26,7 @@ Version History
 07-16-07    lsm   Aglorithm now supports SuperMUSE
 01-13-15    lsm   Added support for asynchrounous parallel
 ******************************************************************************/
-#include "mpi_stub.h"
+#include <mpi.h>
 #include <math.h>
 #include <stdlib.h>
 #include <time.h>

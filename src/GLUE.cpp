@@ -8,7 +8,7 @@ Generalized Likelihood Uncertainty Engine - GLUE
 Version History
 06-23-10    lsm   added copyright information and initial comments.
 ******************************************************************************/
-#include "mpi_stub.h"
+#include <mpi.h>
 #include <math.h>
 #include <time.h>
 #include <stdlib.h>

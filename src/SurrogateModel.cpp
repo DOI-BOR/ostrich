@@ -10,7 +10,7 @@ are simpler versions of the standard (complex) model.
 Version History
 04-04-06    lsm   added copyright information and initial comments.
 ******************************************************************************/
-#include "mpi_stub.h"
+#include <mpi.h>
 #include <string.h>
 #include <stdlib.h>
 

@@ -18,7 +18,7 @@ Version History
 01-01-07    lsm   Added support for additional FD increment types. OptMathClass
                   now uses abstract model base class (ModelABC).
 ******************************************************************************/
-#include "mpi_stub.h"
+#include <mpi.h>
 #include <math.h>
 #include <string.h>
 #include <stdlib.h>

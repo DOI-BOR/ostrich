@@ -51,7 +51,7 @@ Version History
 03-20-2010   lsm   Added support for warm starting Ostrich using previously
                    generated OstModel0.txt file.
 ******************************************************************************/
-#include "mpi_stub.h"
+#include <mpi.h>
 #include <math.h>
 #include <string.h>
 #include <stdlib.h>

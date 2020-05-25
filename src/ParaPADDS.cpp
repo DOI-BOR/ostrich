@@ -52,7 +52,7 @@ for a description of the algorithm:
 
 #define PARA_PADDS_DEBUG (0)
 
-#include "mpi_stub.h"
+#include <mpi.h>
 #include <string.h>
 
 #include "ParaPADDS.h"

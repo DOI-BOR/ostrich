@@ -14,7 +14,7 @@ Version History
 11-07-05    lsm   added support for BGA, GRID, VSA and CSA programs
 03-03-07    jrc   added DDS program
 ******************************************************************************/
-#include "mpi_stub.h"
+#include <mpi.h>
 #include <stdio.h>
 #include <string.h>
 

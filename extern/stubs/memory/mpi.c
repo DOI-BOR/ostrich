@@ -10,10 +10,8 @@ Version History
 11-18-02    lsm   added copyright information and initial comments.
 08-20-03    lsm   created version history field and updated comments.
 ******************************************************************************/
-#include "mpi_stub.h"
+#include "mpi.h"
 #include <stdlib.h>
-
-#ifdef USE_MPI_STUB /* change preprocessor def if no stubbing desired */
 
 int MPI_Init(int * argc, char *** argv)
 {
@@ -98,6 +96,5 @@ int MPI_Finalize(void)
 	return 0;
 }
 
-#endif /* USE_MPI_STUB */
 
 

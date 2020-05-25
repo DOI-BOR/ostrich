@@ -1,7 +1,7 @@
 //DDSAU.cpp
-#include "mpi_stub.h"
 #include <string.h>
 
+#include <mpi.h>
 #include "DDSAU.h"
 #include "DDSAlgorithm.h"
 #include "PDDSAlgorithm.h"

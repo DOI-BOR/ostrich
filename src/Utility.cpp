@@ -24,7 +24,7 @@ Version History
 01-01-07    lsm   Added support for temporary input files which store
                   copies of the surrogate sections of the input file.
 ******************************************************************************/
-#include "mpi_stub.h"
+#include <mpi.h>
 #include <math.h>
 #include <time.h>
 #include <ctype.h>

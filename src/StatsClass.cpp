@@ -57,7 +57,7 @@ Version History
                      MMRI
 07-18-07    lsm   Added support for SuperMUSE
 ******************************************************************************/
-#include "mpi_stub.h"
+#include <mpi.h>
 #include <math.h>
 #include <string.h>
 #include <stdlib.h>

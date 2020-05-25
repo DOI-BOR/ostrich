@@ -8,7 +8,6 @@ Intereface for external parameter correction algorithm.
 Version History
 09-18-12    lsm   added copyright information and initial comments.
 ******************************************************************************/
-#include "mpi_stub.h"
 #include <string.h>
 #include <stdlib.h>
 #include <math.h>
