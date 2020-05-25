@@ -253,18 +253,39 @@ void WriteStatus(StatusStruct * pStatus)
 
    if(id == 0)
    {
-      sprintf(fileName, "OstStatus%d.txt", id);
-      remove(fileName);
-      pFile = fopen(fileName, "w");
-      if(pFile != NULL)
-      {
-         fprintf(pFile, "CurrentIteration : %d\n", pStatus->curIter);
-         fprintf(pFile, "MaximumIterations : %d\n",pStatus->maxIter);
-         fprintf(pFile, "PercentComplete : %lf\n", pStatus->pct); 
-         fprintf(pFile, "ElapsedTime : %d\n", GetElapsedTime()); 
-         fprintf(pFile, "ModelRuns : %d\n", pStatus->numRuns);    
-         fclose(pFile);
-      }
+     //
+     // status output in regular text format
+     //
+     sprintf(fileName, "OstStatus%d.txt", id);
+     remove(fileName);
+     pFile = fopen(fileName, "w");
+     if(pFile != NULL) {
+       fprintf(pFile, "CurrentIteration : %d\n", pStatus->curIter);
+       fprintf(pFile, "MaximumIterations : %d\n",pStatus->maxIter);
+       fprintf(pFile, "PercentComplete : %lf\n", pStatus->pct); 
+       fprintf(pFile, "ElapsedTime : %d\n", GetElapsedTime()); 
+       fprintf(pFile, "ModelRuns : %d\n", pStatus->numRuns);    
+       fclose(pFile);
+     }
+     
+     //
+     // status output in JSON format, e.g.:
+     //    {
+     //      	"% progress":        65,
+     //      	"seconds remaining": 123
+     //    }
+     //    
+     sprintf(fileName, "OstProgress%d.txt", id);
+     remove(fileName);
+     pFile = fopen(fileName, "w");
+     if (pFile != NULL) {
+       double time_left = (1.00 - (pStatus->pct/100.0)) * ((double)GetElapsedTime() / (pStatus->pct/100));
+       fprintf(pFile, "{\n");
+       fprintf(pFile, "       \"%% progress\": %lf \n",       pStatus->pct);
+       fprintf(pFile, "       \"seconds remaining\": %lf \n",time_left);
+       fprintf(pFile, "}\n");
+       fclose(pFile);
+     }
    }
 }/* end WriteStatus() */
 
