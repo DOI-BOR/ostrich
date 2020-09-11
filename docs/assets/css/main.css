@@ -17,7 +17,7 @@ form, label, legend, table, caption, tbody,
 tfoot, thead, tr, th, td, article, aside,
 canvas, details, embed, figure, figcaption,
 footer, header, hgroup, menu, nav, output, ruby,
-section, summary, time, mark, audio, video {
+section, summary, time, mark, audio, video, layouttable {
 	margin: 0;
 	padding: 0;
 	border: 0;
@@ -199,7 +199,7 @@ input, select, textarea {
 	}
 
 	p {
-		margin: 0 0 2em 0;
+		margin: 0 0 0.5em 0;
 	}
 
 	h1, h2, h3, h4, h5, h6 {
@@ -208,7 +208,7 @@ input, select, textarea {
 		font-weight: 800;
 		letter-spacing: 0.25em;
 		line-height: 1.65;
-		margin: 0 0 1em 0;
+		margin: 2em 0 0.5em 0;
 		text-transform: uppercase;
 	}
 
@@ -269,7 +269,8 @@ input, select, textarea {
 		-webkit-overflow-scrolling: touch;
 		font-family: "Courier New", monospace;
 		font-size: 0.9em;
-		margin: 0 0 2em 0;
+		margin: 0 0 0 0;
+		padding: 1em 1.5em;
 	}
 
 		pre code {
@@ -2365,8 +2366,9 @@ input, select, textarea {
 
 	ul {
 		list-style: disc;
-		margin: 0 0 2em 0;
+		margin: 0 0 0.5em 0;
 		padding-left: 1em;
+		text-align: justify;
 	}
 
 		ul li {
@@ -2770,8 +2772,9 @@ input, select, textarea {
 					margin-bottom: 0;
 				}
 
+
 			.post > header .meta {
-				padding: 3.75em 3em 1.75em 3em ;
+				padding: 2.5em 2.5em 1.75em 2.5em ;
 				border-left: solid 1px rgba(160, 160, 160, 0.3);
 				min-width: 17em;
 				text-align: right;
@@ -2797,7 +2800,17 @@ input, select, textarea {
 					text-transform: uppercase;
 					white-space: nowrap;
 				}
-
+				
+			.post > header .meta .time {
+				color: #3c3b3b;
+				display: block;
+				font-family: "Raleway", Helvetica, sans-serif;
+				font-size: 0.7em;
+				font-weight: 800;
+				letter-spacing: 0.25em;
+				text-transform: uppercase;
+				text-align: left;
+			}
 		.post > a.image.featured {
 			overflow: hidden;
 		}
@@ -3046,7 +3059,7 @@ input, select, textarea {
 	}
 
 	table {
-		margin: 0 0 2em 0;
+		margin: 0 0 1em 0;
 		width: 100%;
 	}
 
@@ -3067,7 +3080,7 @@ input, select, textarea {
 		table th {
 			color: #3c3b3b;
 			font-size: 0.9em;
-			font-weight: 700;
+			font-weight: 400;
 			padding: 0 0.75em 0.75em 0.75em;
 			text-align: left;
 		}
@@ -3103,6 +3116,65 @@ input, select, textarea {
 			}
 
 			table.alt tfoot {
+				border-top: 0;
+			}
+	
+/* Layout table without background color*/
+	.layouttable {
+		margin: 0 0 0em 0;
+		width: 100%;
+	}
+
+		.layouttable tbody tr {
+			color: white;
+			border: solid 0px;
+			border-left: 0;
+			border-right: 0;
+		}
+
+		.layouttable td {
+			padding: 0.75em 0.75em;
+		}
+
+		.layouttable th {
+			font-size: 0.9em;
+			font-weight: 400;
+			padding: 0 0.75em 0.75em 0.75em;
+			text-align: left;
+			background-color: white;
+		}
+
+		.layouttable thead {
+			border-bottom: solid 2px rgba(160, 160, 160, 0.3);
+		}
+
+		.layouttable tfoot {
+			border-top: solid 2px rgba(160, 160, 160, 0.3);
+		}
+
+		.layouttable.alt {
+			border-collapse: separate;
+		}
+
+			.layouttable.alt tbody tr td {
+				border: solid 1px rgba(160, 160, 160, 0.3);
+				border-left-width: 0;
+				border-top-width: 0;
+			}
+
+				.layouttable.alt tbody tr td:first-child {
+					border-left-width: 1px;
+				}
+
+			.layouttable.alt tbody tr:first-child td {
+				border-top-width: 1px;
+			}
+
+			.layouttable.alt thead {
+				border-bottom: 0;
+			}
+
+			.layouttable.alt tfoot {
 				border-top: 0;
 			}
 
