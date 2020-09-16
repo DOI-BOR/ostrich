@@ -1,0 +1,54 @@
+#Basic Configuration Data for Ostrich Program
+ProgramType DDS
+ModelExecutable BIGFOOT.bat
+ModelSubdir .
+ObjectiveFunction GCOP
+
+PreserveModelOutput PostProcess.bat
+
+OstrichWarmStart no
+
+#Template File Configuration
+BeginFilePairs
+DCS2.tpl ; DCS2.in
+EndFilePairs
+
+BeginExtraFiles
+BIGFOOT.exe
+EndExtraFiles
+
+#Real-valued Parameters
+BeginParams
+<val1> 0.00  -20.0 +20.0 none none none
+<val2> 0.00  -20.0 +20.0 none none none
+EndParams
+
+BeginResponseVars
+#name   filename   keyword         line    col     token
+F(x)    DCS2.out ; OST_NULL        0       3       ' '
+EndResponseVars
+
+BeginGCOP
+CostFunction F(x)
+PenaltyFunction APM
+EndGCOP
+
+BeginConstraints
+EndConstraints
+
+BeginParticleSwarm
+SwarmSize 24
+NumGenerations 20
+ConstrictionFactor 1.0
+CognitiveParam 2.0
+SocialParam 2.0
+InertiaWeight 1.2
+InertiaReductionRate linear
+InitPopulationMethod LHS
+ConvergenceVal -1.00
+EndParticleSwarm
+
+BeginDDS
+Budget 100
+UseInitialParamValues
+EndDDS

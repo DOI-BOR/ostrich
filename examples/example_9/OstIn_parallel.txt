@@ -1,0 +1,66 @@
+#Configuration File for Ostrich Program
+ProgramType DDSAU
+
+ObjectiveFunction WSSE
+
+ModelSubdir mod
+
+BeginFilePairs    
+split.tpl	split.dat
+EndFilePairs
+
+BeginExtraFiles
+head.dat
+EndExtraFiles
+
+ModelExecutable    Split.exe
+
+#Parameter Specification
+BeginParams
+#parameter	init.	low	high	tx_in  tx_ost	tx_out
+K1		50	0	1000	none	log10	none
+K2		50	0	1000	none	log10	none
+Kback		50	0	1000	none	log10	none
+EndParams
+
+#Observation Configuration
+BeginObservations
+#observation	value	weight	file		keyword		line	column
+obs1		68.23	1	headerr.dat	computed	2	3 
+obs2		68.10	1	headerr.dat	computed	3	3 
+obs3		68.23	1	headerr.dat	computed	4	3 
+obs4		68.06	1	headerr.dat	computed	5	3 
+obs5		68.15	1	headerr.dat	computed	6	3 
+obs6		66.00	1	headerr.dat	computed	7	3 
+obs7		65.53	1	headerr.dat	computed	8	3 
+obs8		65.97	1	headerr.dat	computed	9	3 
+obs9		65.51	1	headerr.dat	computed	10	3 
+obs10		65.76	1	headerr.dat	computed	11	3 
+obs11		69.02	1	headerr.dat	computed	12	3 
+obs12		67.61	1	headerr.dat	computed	13	3 
+obs13		66.16	1	headerr.dat	computed	14	3 
+obs14		64.75	1	headerr.dat	computed	15	3 
+obs15		68.98	1	headerr.dat	computed	16	3 
+obs16		66.91	1	headerr.dat	computed	17	3 
+obs17		65.48	1	headerr.dat	computed	18	3 
+obs18		64.32	1	headerr.dat	computed	19	3 
+obs19		66.57	1	headerr.dat	computed	20	3 
+obs20		67.21	1	headerr.dat	computed	21	3 
+obs21		67.34	1	headerr.dat	computed	22	3 
+obs22		64.64	1	headerr.dat	computed	23	3 
+obs23		64.54	1	headerr.dat	computed	24	3 
+obs24		68.72	1	headerr.dat	computed	25	3 
+obs25		68.92	1	headerr.dat	computed	26	3 
+EndObservations
+
+Begin_DDSAU_Alg
+PerturbationValue 0.2
+NumSearches 25
+MinItersPerSearch 50
+MaxItersPerSearch 100
+ParallelSearches yes
+Threshold 10000
+Randomize yes
+ReviseAU yes
+End_DDSAU_Alg
+

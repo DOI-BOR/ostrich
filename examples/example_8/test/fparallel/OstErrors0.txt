@@ -1,0 +1,11 @@
+Ostrich Error Report for Processor 0 
+A total of 9 errors and/or warnings were reported
+PARAMETER BOUNDS           : 16 > upper bound (13) 
+PARAMETER BOUNDS           : 16 > upper bound (13) 
+PARAMETER BOUNDS           : 16 > upper bound (13) 
+PARAMETER BOUNDS           : 16 > upper bound (13) 
+PARAMETER BOUNDS           : 16 > upper bound (14) 
+PARAMETER BOUNDS           : 16 > upper bound (14) 
+FILE CLEANUP               : Ostrich deleted mod0/Nighthawk.bat 
+FILE CLEANUP               : Ostrich deleted mod0/Nighthawk.exe 
+FILE CLEANUP               : Ostrich deleted mod0/nZones.exe 

@@ -1,0 +1,55 @@
+ProgramType APPSO
+
+ModelExecutable Simple.exe
+
+ModelSubdir mod
+
+ObjectiveFunction GCOP
+
+#Template File Configuration
+BeginFilePairs
+  SimpleIn.tpl ; Simple.in
+EndFilePairs
+
+#Real-valued Parameters
+BeginParams
+<x> 0 -20.0 +20.0 none none none
+<y> 0 -20.0 +20.0 none none none
+EndParams
+
+# pre-emption parameters
+BeginSpecialParams
+  #template  initial     special       upper or  cons-
+  #mnemonic   value     parameter      lower?    traint
+  OST_COST    1E99       BestCost       n/a       n/a
+  OST_XPEN    -30      BestConstraint  lower     xcon
+  OST_YPEN    +30      BestConstraint  upper     ycon
+EndSpecialParams
+
+BeginResponseVars
+#name   filename   keyword         line    col     token
+Fxy     Simple.out ; OST_NULL        0       3       ' '
+PenX    Simple.out ; OST_NULL        1       3       ' '
+PenY    Simple.out ; OST_NULL        2       3       ' '
+EndResponseVars
+
+BeginGCOP
+  CostFunction Fxy
+  PenaltyFunction APM
+EndGCOP
+
+BeginConstraints
+  #name type     conv.fact  lower   upper  resp.var 
+  xcon  general  1000000    0.00    9e99   PenX
+  ycon  general  1000000    -9E99   10.00  PenY
+EndConstraints
+
+BeginAPPSO
+SwarmSize 5
+NumGenerations 10
+ConstrictionFactor 1.0
+CognitiveParam 2.0
+SocialParam 2.0
+InertiaWeight 1.2
+InertiaReductionRate linear
+EndAPPSO

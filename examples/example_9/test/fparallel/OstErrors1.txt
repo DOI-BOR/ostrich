@@ -1,0 +1,4 @@
+Ostrich Error Report for Processor 1 
+A total of 2 errors and/or warnings were reported
+FILE I/O ERROR             : Using default PDDS algorithm setup. 
+FILE CLEANUP               : Ostrich deleted mod1/head.dat 

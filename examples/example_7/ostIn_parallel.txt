@@ -1,0 +1,93 @@
+ProgramType ParaPADDS
+
+ObjectiveFunction  WSSE
+
+ModelExecutable  modflow.bat
+
+ModelSubdir mod
+
+OnObsError 0.00
+
+BeginFilePairs
+kvalues.tpl ; Ledom.lpf
+recharge.tpl ; Ledom.rch
+EndFilePairs
+
+BeginExtraFiles
+mf2k.exe
+Ledom.bas
+Ledom.dis
+Ledom.glo
+Ledom.lak
+Ledom.lst
+Ledom.nam
+Ledom.oc
+Ledom.pcg
+Ledom.riv
+Ledom.wel
+EndExtraFiles
+
+BeginParams							
+#name		init	  min		max		tx_in	tx_ost	tx_out	format
+_HYD_K_SG_	random	2.59E-01	2.60E+04	none	none	none	E10.4
+_HYD_K_SS_	random	1.73E-03	1.73E+02	none	none	none	E10.4
+_HYD_K_GR_	random	2.59E+00	2.59E+04	none	none	none	E10.4
+_HYD_K_TL_	random	8.64E-05	8.64E+01	none	none	none	E10.4
+_HYD_K_SH_	random	8.64E-08	8.65E-02	none	none	none	E10.4
+_HYD_K_SA_	random	5.18E-05	5.19E+01	none	none	none	E10.4
+_RECHRG_U_	random	1.00E-20	2.50E-03	none	none	none	E10.4
+_RECHRG_C_	random	1.00E-20	2.50E-03	none	none	none	E10.4
+_RECHRG_F_	random	1.00E-20	2.50E-03	none	none	none	E10.4
+_RECHRG_W_	random	1.00E-20	2.50E-03	none	none	none	E10.4
+_RECHRG_P_	random	1.00E-20	2.50E-03	none	none	none	E10.4
+EndParams
+
+BeginObservations							
+#Name	value		weight	file		keyword		line	col	token aug?  group
+MW1	992.971		2.144	Ledom.hds ;	OST_NULL	2	23	' '   no     mw
+MW3	991.740		2.144	Ledom.hds ;	OST_NULL	9	26	' '   no     mw
+MW2	1040.273	2.144	Ledom.hds ;	OST_NULL	19	7	' '   no     mw
+MW4	989.215		2.144	Ledom.hds ;	OST_NULL	16	29	' '   no     mw
+MW5	990.035		2.144	Ledom.hds ;	OST_NULL	17	43	' '   no     mw
+MW6	988.691		2.144	Ledom.hds ;	OST_NULL	15	48	' '   no     mw
+MW7	987.508		2.144	Ledom.hds ;	OST_NULL	15	59	' '   no     mw
+MW8	986.315		2.144	Ledom.hds ;	OST_NULL	20	61	' '   no     mw
+MW9	1004.209	2.144	Ledom.hds ;	OST_NULL	27	11	' '   no     mw
+MW10	988.703		2.144	Ledom.hds ;	OST_NULL	31	17	' '   no     mw
+MW11	988.229		2.144	Ledom.hds ;	OST_NULL	26	38	' '   no     mw
+MW12	987.399		2.144	Ledom.hds ;	OST_NULL	27	36	' '   no     mw
+MW13	987.793		2.144	Ledom.hds ;	OST_NULL	28	36	' '   no     mw
+MW14	987.215		2.144	Ledom.hds ;	OST_NULL	36	31	' '   no     mw
+MW15	992.764		2.144	Ledom.hds ;	OST_NULL	33	52	' '   no     mw
+MW16	998.922		2.144	Ledom.hds ;	OST_NULL	36	60	' '   no     mw
+MW17	984.617		2.144	Ledom.hds ;	OST_NULL	42	44	' '   no     mw
+MW18	985.700		2.144	Ledom.hds ;	OST_NULL	41	38	' '   no     mw
+MW19	988.990		2.144	Ledom.hds ;	OST_NULL	42	17	' '   no     mw
+MW20	984.837		2.144	Ledom.hds ;	OST_NULL	45	41	' '   no     mw
+MW21	985.478		2.144	Ledom.hds ;	OST_NULL	50	36	' '   no     mw
+MW22	982.200		2.144	Ledom.hds ;	OST_NULL	48	47	' '   no     mw
+W1_2	988.525		2.144	Ledom.hds ;	OST_NULL	71	48	' '   no     bh
+W2_2	989.411		2.144	Ledom.hds ;	OST_NULL	75	31	' '   no     bh
+W3_2	987.303		2.144	Ledom.hds ;	OST_NULL	91	38	' '   no     bh
+W4_2	992.658		2.144	Ledom.hds ;	OST_NULL	63	29	' '   no     bh
+W5_2	989.044		2.144	Ledom.hds ;	OST_NULL	93	23	' '   no     bh
+W1_3	988.819		2.144	Ledom.hds ;	OST_NULL	138	44	' '   no     bh
+W2_3	988.577		2.144	Ledom.hds ;	OST_NULL	138	54	' '   no     bh
+W3_3	987.773		2.144	Ledom.hds ;	OST_NULL	144	29	' '   no     bh
+W1_4	986.816		2.144	Ledom.hds ;	OST_NULL	190	51	' '   no     bh
+W2_4	988.028		2.144	Ledom.hds ;	OST_NULL	197	46	' '   no     bh
+W3_4	987.669		2.144	Ledom.hds ;	OST_NULL	203	24	' '   no     bh
+W4_4	988.804		2.144	Ledom.hds ;	OST_NULL	193	26	' '   no     bh
+W1_5	988.549		2.144	Ledom.hds ;	OST_NULL	253	27	' '   no     bh
+W2_5	988.656		2.144	Ledom.hds ;	OST_NULL	244	42	' '   no     bh
+W3_5	987.002		2.144	Ledom.hds ;	OST_NULL	256	46	' '   no     bh
+EndObservations							
+
+BeginParaPADDS
+  MaxIterations 100
+  PerturbationValue 0.2
+#  SelectionMetric Random
+#  SelectionMetric CrowdingDistance
+#  SelectionMetric EstimatedHyperVolumeContribution
+  SelectionMetric ExactHyperVolumeContribution
+EndParaPADDS

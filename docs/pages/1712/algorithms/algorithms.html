@@ -6,10 +6,10 @@
 -->
 <html>
 	<head>
-		<title>Single - Future Imperfect by HTML5 UP</title>
+		<title>OSTRICH - Algorithms</title>
 		<meta charset="utf-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
-		<link rel="stylesheet" href="assets/css/main.css" />
+		<link rel="stylesheet" href="../../../assets/css/main.css" />
 	</head>
 	<body class="single is-preload">
 
@@ -18,25 +18,31 @@
 
 				<!-- Header -->
 					<header id="header">
-						<h1><a href="index.html">OSTRICH</a></h1>
+						<h1 class="bannerheading"><a href="../../../index.html">OSTRICH</a></h1>
 						<nav class="links">
 							<ul>
-								<li><a href="overview.html">Overview</a></li>
+								<li><a href="../overview.html">Overview</a></li>
 								<li><a href="algorithms.html">Algorithms</a></li>
-								<li><a href="setup.html">Setup</a></li>
-								<li><a href="solution.html">Solution</a></li>
-								<li><a href="output.html">Output</a></li>
-								<li><a href="examples.html">Examples</a></li>
+								<li><a href="../setup/setup.html">Setup</a></li>
+								<li>
+									<div class="dropdown">
+										<a href="../solution/solution.html"<button class="dropbtn">
+											Solution
+											<i class="fa fa-caret-down"></i></a>
+										</button>
+										<div class="dropdown-content">
+											<a href="../solution/running.html">Running OSTRICH</a>
+											<a href="../solution/building.html">Building OSTRICH</a>
+										</div>
+									</div>
+								</li>
+								<li><a href="../output/output.html">Output</a></li>
+								<li><a href="../examples/examples.html">Examples</a></li>
+								<li><a href="../../releases.html">Releases</a></li>
 							</ul>
 						</nav>
 						<nav class="main">
 							<ul>
-								<li class="search">
-									<a class="fa-search" href="#search">Search</a>
-									<form id="search" method="get" action="#">
-										<input type="text" name="query" placeholder="Search" />
-									</form>
-								</li>
 								<li class="menu">
 									<a class="fa-bars" href="#menu">Menu</a>
 								</li>
@@ -45,53 +51,57 @@
 					</header>
 
 				<!-- Menu -->
-					<section id="menu">
+				<section id="menu">
 
-						<!-- Search -->
-							<section>
-								<form class="search" method="get" action="#">
-									<input type="text" name="query" placeholder="Search" />
-								</form>
-							</section>
-
-						<!-- Links -->
-							<section>
-								<ul class="links">
-									<li>
-										<a href="#">
-											<h3>Lorem ipsum</h3>
-											<p>Feugiat tempus veroeros dolor</p>
-										</a>
-									</li>
-									<li>
-										<a href="#">
-											<h3>Dolor sit amet</h3>
-											<p>Sed vitae justo condimentum</p>
-										</a>
-									</li>
-									<li>
-										<a href="#">
-											<h3>Feugiat veroeros</h3>
-											<p>Phasellus sed ultricies mi congue</p>
-										</a>
-									</li>
-									<li>
-										<a href="#">
-											<h3>Etiam sed consequat</h3>
-											<p>Porta lectus amet ultricies</p>
-										</a>
-									</li>
-								</ul>
-							</section>
-
-						<!-- Actions -->
-							<section>
-								<ul class="actions stacked">
-									<li><a href="#" class="button large fit">Log In</a></li>
-								</ul>
-							</section>
-
+					<!-- Links -->
+					<section>
+						<ul class="links">
+							<li>
+								<a href="../overview.html">
+									<h3>Overview</h3>
+									<p>The basics of OSTRICH</p>
+								</a>
+							</li>
+							<li>
+								<a href="algorithms.html">
+									<h3>Algorithms</h3>
+									<p>Algorithms available within OSTRICH</p>
+								</a>
+							</li>
+							<li>
+								<a href="../setup/setup.html">
+									<h3>Setup</h3>
+									<p>Organzing an OSTRICH analysis</p>
+								</a>
+							</li>
+							<li>
+								<a href="../solution/solution.html">
+									<h3>Solution</h3>
+									<p>Running an OSTRICH analysis</p>
+								</a>
+							</li>
+							<li>
+								<a href="../output/output.html">
+									<h3>Output</h3>
+									<p>Output of an OSTRICH analysis</p>
+								</a>
+							</li>
+							<li>
+								<a href="../examples/examples.html">
+									<h3>Examples</h3>
+									<p>Examples using OSTRICH</p>
+								</a>
+							</li>
+							<li>
+								<a href="../../contributing.html">
+									<h3>Contributing</h3>
+									<p>Contribute to OSTRICH</p>
+								</a>
+							</li>
+						</ul>
 					</section>
+
+				</section>
 
 				<!-- Main -->
 					<div id="main">
@@ -101,47 +111,137 @@
 								<header>
 									<div class="title">
 										<h2><a href="#">Algorithms</a></h2>
-										<p>Lorem ipsum dolor amet nullam consequat etiam feugiat</p>
+										<p>Algorithms available within OSTRICH v17.12</p>
 									</div>
 									<div class="meta">
-										<time class="published" datetime="2015-11-01">November 1, 2015</time>
-										<a href="#" class="author"><span class="name">Jane Doe</span><img src="images/avatar.jpg" alt="" /></a>
+										<p align="left">Initial Publication:</p>
+										<time class="time" datetime="2015-11-01">September 16, 2020</time>
+										<p align="left">Modified:</p>
+										<time class="time" datetime="2015-11-01">September 16, 2020</time>
 									</div>
 								</header>
-								<span class="image featured"><img src="images/pic01.jpg" alt="" /></span>
-								<p>Mauris neque quam, fermentum ut nisl vitae, convallis maximus nisl. Sed mattis nunc id lorem euismod placerat. Vivamus porttitor magna enim, ac accumsan tortor cursus at. Phasellus sed ultricies mi non congue ullam corper. Praesent tincidunt sed tellus ut rutrum. Sed vitae justo condimentum, porta lectus vitae, ultricies congue gravida diam non fringilla.</p>
-								<p>Nunc quis dui scelerisque, scelerisque urna ut, dapibus orci. Sed vitae condimentum lectus, ut imperdiet quam. Maecenas in justo ut nulla aliquam sodales vel at ligula. Sed blandit diam odio, sed fringilla lectus molestie sit amet. Praesent eu tortor viverra lorem mattis pulvinar feugiat in turpis. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Fusce ullamcorper tellus sit amet mattis dignissim. Phasellus ut metus ligula. Curabitur nec leo turpis. Ut gravida purus quis erat pretium, sed pellentesque massa elementum. Fusce vestibulum porta augue, at mattis justo. Integer sed sapien fringilla, dapibus risus id, faucibus ante. Pellentesque mattis nunc sit amet tortor pellentesque, non placerat neque viverra. </p>
-								<footer>
-									<ul class="stats">
-										<li><a href="#">General</a></li>
-										<li><a href="#" class="icon solid fa-heart">28</a></li>
-										<li><a href="#" class="icon solid fa-comment">128</a></li>
-									</ul>
-								</footer>
+								
+								<h1>Contents</h1>
+								<table class="layouttable">
+									<tr>
+										<th><a href="#sec_search"><p class="tocheading">1 Search Algorithms</p></a></th>
+										<th><a href="#sec_search"><p class="tocheading">3 Multi-objective Calibrations</p></a></th>
+									<tr>
+									<tr>
+										<th><a href="#sec_uncertainty"><p class="tocheading">2 Uncertainty Estimation</p></a></th>
+										<th><a href="#sec_uncertainty"><p class="tocheading">4 Additional Algorithms</p></a></th>
+									<tr>
+								</table>
+								
+								
+								<h1 id="sec_search">1 Search Algorithms</h1>
+								<p align="justify">
+									Each algorithm has its own configuration group, wherein the user can specify the values for various algorithm control variables. Additional optional configuration variables and groups 
+									(i.e. Warm Start, Pre-Emption, Parameter Correction, a List of Initial Parameters, Math and Stats, and Line Search) may also be available for a given algorithm, as indicated in Table 1.
+								</p>
+								<table class="layouttable">
+									<tr>
+										<th><a href="search_bisection.html"><p class="tocheading">Bisection</p></a></th>
+										<th><a href="search_fletcher_reeves.html"><p class="tocheading">Fletcher-Reeves</p></a></th>
+									</tr>
+									<tr>
+										<th><a href="search_gml.html"><p class="tocheading">Gauss-Marquardt-Levenberg</p></a></th>
+										<th><a href="search_multi_gml_repulsion.html"><p class="tocheading">Multi-Start GML with Trajectory Repulsion</p></a></th>
+									</tr>
+									<tr>
+										<th><a href="search_grid.html"><p class="tocheading">Gridded Exhaustive Search</p></a></th>
+										<th><a href="search_powell.html"><p class="tocheading">Powell's Algorithm</p></a></th>
+									</tr>
+									<tr>
+										<th><a href="search_steepest.html"><p class="tocheading">Steepest Descent</p></a></th>
+										<th><a href="search_pso.html"><p class="tocheading">Particle Swarm Optimization (PSO)</p></a></th>
+									</tr>
+									<tr>
+										<th><a href="search_pso_async.html"><p class="tocheading">Asynchronous Parallel Particle Swarm Optimization</p></a></th>
+										<th><a href="search_pso_gml.html"><p class="tocheading">Particle Swarm Optimization with GML Polishing</p></a></th>
+									</tr>
+									<tr>
+										<th><a href="search_balanced.html"><p class="tocheading">Balanced Exploration-Exploitation Random Search</p></a></th>
+										<th><a href="search_binary_real.html"><p class="tocheading">Binary and Real coded Genetic Algorithms</p></a></th>
+									</tr>
+									<tr>
+										<th><a href="search_simulated_annealing.html"><p class="tocheading">Simulated Annealing</p></a></th>
+										<th><a href="search_simulated_annealing_combinatorial.html"><p class="tocheading">Combinatorial (Discrete) Simulated Annealing</p></a></th>
+									</tr>
+									<tr>
+										<th><a href="search_simulated_annealing_vl.html"><p class="tocheading">Vanderbilt-Louie Simulated Annealing</p></a></th>
+										<th><a href="search_dds.html"><p class="tocheading">Dynamically Dimensioned Search (DDS)</p></a></th>
+									</tr>
+									<tr>
+										<th><a href="search_dds_async.html"><p class="tocheading">Asynchronous Parallel Dynamically Dimensioned Search</p></a></th>
+										<th><a href="search_dds_discrete.html"><p class="tocheading">Discrete Dynamically Dimensioned Search</p></a></th>
+									</tr>
+									<tr>
+										<th><a href="search_shuffled_complex.html"><p class="tocheading">Shuffled Complex</p></a></th>
+										<th><a href="search_sampling.html"><p class="tocheading">Sampling Algorithm (Big Bang - Big Crunch)</p></a></th>
+									</tr>
+								</table>
+								
+								<h1 id="sec_uncertainty">2 Uncertainty Estimation</h1>
+								<p align="justify">
+									Several of the search algorithms implemented in OSTRICH are designed to enumerate parameter probability distributions or behavioral parameter sets. Such algorithms are referred to as 
+									being “uncertainty-based” since they are not just concerned with identifying a single globally optimal parameter set. The configuration groups for these algorithms are described below.
+								</p>
+								<table class="layouttable">
+									<tr>
+										<th><a href="uncertainty_dds.html"><p class="tocheading">DDS for Uncertainty Approximation</p></a></th>
+										<th><a href="uncertainty_glue.html"><p class="tocheading">Generalized Likelihood Uncertainty Estimation (GLUE)</p></a></th>
+									</tr>
+									<tr>
+										<th><a href="uncertainty_mcmc.html"><p class="tocheading">Metropolis-Hastings Markov Chain Monte Carlo (MCMC)</p></a></th>
+										<th><a href="uncertainty_rejection.html"><p class="tocheading">Rejection Sampling</p></a></th>
+									</tr>
+								</table>
+								
+								<h1 id="sec_multi">3 Multi-objective Calibration</h1>
+								<p>
+									The algorithms described below seek to identify non-dominated solutions representing the tradeoff curve (i.e. pareto front) among conflicting objectives. These objectives can reflect 
+									a multi-criteria calibration exercise or a multi-objective optimization problem.
+								</p>
+								<table class="layouttable">
+									<tr>
+										<th><a href="multisearch_padds.html"><p class="tocheading">Pareto Archived DDS (PADDS)</p></a></th>
+										<th><a href="multisearch_padds_async.html"><p class="tocheading">Asynchronous Parallel PADDS</p></a></th>
+									</tr>
+									<tr>
+										<th><a href="multisearch_smooth.html"><p class="tocheading">Simple Multi-Objective Optimization Test Heuristic (SMOOTH)</p></a></th>
+										<th></th>
+									</tr>
+								</table>
+								
+								<h1 id="sec_additional">4 Additional Algorithms</h1>
+								<p>
+								</p>
+								<table class="layouttable">
+									<tr>
+										<th><a href="math_stats.html"><p class="tocheading">Mathematics and Statistics</p></a></th>
+										<th><a href="line_search.html"><p class="tocheading">Line Search</p></a></th>
+									</tr>
+									<tr>
+										<th><a href="gcop.html"><p class="tocheading">General-purpose Constrained Optimization Platform (GCOP)</p></a></th>
+										<th></th>
+									</tr>
+								</table>
+								
 							</article>
 
 					</div>
 
-				<!-- Footer -->
-					<section id="footer">
-						<ul class="icons">
-							<li><a href="#" class="icon brands fa-twitter"><span class="label">Twitter</span></a></li>
-							<li><a href="#" class="icon brands fa-facebook-f"><span class="label">Facebook</span></a></li>
-							<li><a href="#" class="icon brands fa-instagram"><span class="label">Instagram</span></a></li>
-							<li><a href="#" class="icon solid fa-rss"><span class="label">RSS</span></a></li>
-							<li><a href="#" class="icon solid fa-envelope"><span class="label">Email</span></a></li>
-						</ul>
-						<p class="copyright">&copy; Untitled. Design: <a href="http://html5up.net">HTML5 UP</a>. Images: <a href="http://unsplash.com">Unsplash</a>.</p>
-					</section>
+				
 
 			</div>
 
 		<!-- Scripts -->
-			<script src="assets/js/jquery.min.js"></script>
-			<script src="assets/js/browser.min.js"></script>
-			<script src="assets/js/breakpoints.min.js"></script>
-			<script src="assets/js/util.js"></script>
-			<script src="assets/js/main.js"></script>
+			<script src="../../../assets/js/jquery.min.js"></script>
+			<script src="../../../assets/js/browser.min.js"></script>
+			<script src="../../../assets/js/breakpoints.min.js"></script>
+			<script src="../../../assets/js/util.js"></script>
+			<script src="../../../assets/js/main.js"></script>
 
 	</body>
 </html>

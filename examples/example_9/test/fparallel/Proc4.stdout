@@ -1,0 +1,3603 @@
+        1 file(s) copied.
+        1 file(s) copied.
+Starting up MPI required 1.088549 seconds
+--------------------------------------------------------------------------
+ OSTRICH version 17.11.03 (Built Nov  3 2017 @ 09:02:31)
+
+ A computer program for model-independent calibration and optimization.
+
+ Author             L. Shawn Matott
+ Copyright (C) 2007 L. Shawn Matott
+
+ This program is free software; you can redistribute 
+ it and/or modify it under the terms of the GNU  
+ General Public License as published by the Free 
+ Software Foundation; either version 2 of the 
+ License, or(at your option) any later version. 
+
+ This program is distributed in the hope that it will 
+ be useful, but WITHOUT ANY WARRANTY; without even 
+ the implied warranty of MERCHANTABILITY or FITNESS 
+ FOR A PARTICULAR PURPOSE. See the GNU General Public 
+ License for more details. 
+
+ You should have received a copy of the GNU General 
+ Public License along with this program; if not, 
+ write to the Free Software Foundation, Inc., 59 
+ Temple Place, Suite 330, Boston, MA 02111-1307 USA 
+--------------------------------------------------------------------------
+
+Ostrich Setup
+Model                  : Split.exe > OstExeOut.txt
+Algorithm              : Parallel Dynamically Dimensioned Search Algorithm (PDDS)
+Objective Function     : WSSE
+Number of Parameters   : 3
+Number of Tied Params  : 0
+Number of Observations : 25
+Seed for Random Nums.  : 1509727907
+
+Ostrich Run Record
+trial    best fitness   K1            K2            Kback          trials remaining
+1     2.936979E+07  1.440975E-08  7.283102E-01  2.018789E-02  8.900000E+01
+
+DDS is searching for a better solution.
+   1...   2...
+Operation is complete
+
+3     1.030229E+05  6.697847E-04  6.921242E-04  6.404252E+02  8.700000E+01
+
+DDS is searching for a better solution.
+   1...
+Operation is complete
+
+4     9.473802E+04  1.430505E-03  1.045042E-02  1.610478E+02  8.600000E+01
+
+DDS is searching for a better solution.
+   1...
+Operation is complete
+
+5     8.153956E+04  1.396032E-08  1.061191E-06  4.748453E+01  8.500000E+01
+
+DDS is searching for a better solution.
+   1...   2...   3...   4...   5...   6...
+Operation is complete
+
+11    8.153956E+04  1.396032E-08  1.464392E-06  4.748453E+01  7.900000E+01
+
+DDS is searching for a better solution.
+   1...
+Operation is complete
+
+12    8.153956E+04  1.480041E-08  2.111544E-08  4.748453E+01  7.800000E+01
+
+DDS is searching for a better solution.
+   1...
+Operation is complete
+
+13    7.820000E+04  1.396032E-08  1.061191E-06  3.776020E+01  7.700000E+01
+
+DDS is searching for a better solution.
+   1...   2...   3...   4...   5...
+Operation is complete
+
+18    7.819993E+04  3.807197E-10  2.688389E-04  3.776020E+01  7.200000E+01
+
+DDS is searching for a better solution.
+   1...   2...
+Operation is complete
+
+20    9.195911E+01  1.396032E-08  1.061191E-06  1.055355E+00  7.000000E+01
+
+DDS is searching for a better solution.
+   1...   2...   3...   4...   5...
+Operation is complete
+
+25    9.195910E+01  1.396032E-08  9.910774E-07  1.055355E+00  6.500000E+01
+
+DDS is searching for a better solution.
+   1...
+Operation is complete
+
+26    9.195907E+01  1.396032E-08  4.061103E-07  1.055355E+00  6.400000E+01
+
+DDS is searching for a better solution.
+   1...   2...
+Operation is complete
+
+28    9.195890E+01  1.122895E-09  1.061191E-06  1.055355E+00  6.200000E+01
+
+DDS is searching for a better solution.
+   1...   2...   3...
+Operation is complete
+
+31    9.195842E+01  2.896817E-10  4.061103E-07  1.055355E+00  5.900000E+01
+
+DDS is searching for a better solution.
+   1...   2...
+Operation is complete
+
+33    9.195773E+01  1.122895E-09  1.470293E-04  1.055355E+00  5.700000E+01
+
+DDS is searching for a better solution.
+   1...   2...   3...   4...
+Operation is complete
+
+37    9.195772E+01  2.998426E-09  1.470293E-04  1.055355E+00  5.300000E+01
+
+DDS is searching for a better solution.
+   1...
+Operation is complete
+
+38    9.195175E+01  1.122895E-09  7.962098E-04  1.055355E+00  5.200000E+01
+
+DDS is searching for a better solution.
+   1...   2...   3...
+Operation is complete
+
+41    9.194189E+01  2.998426E-09  1.901332E-03  1.055355E+00  4.900000E+01
+
+DDS is searching for a better solution.
+   1...   2...   3...   4...   5...   6...   7...   8...   9...  10...
+Operation is complete
+
+51    9.194167E+01  4.056975E-10  1.901332E-03  1.055355E+00  3.900000E+01
+
+DDS is searching for a better solution.
+   1...   2...   3...   4...   5...   6...   7...   8...   9...  10...
+  11...  12...  13...  14...  15...  16...  17...  18...
+Operation is complete
+
+69    9.176673E+01  4.056975E-10  2.350244E-02  1.055355E+00  2.100000E+01
+
+DDS is searching for a better solution.
+   1...   2...   3...   4...   5...   6...   7...
+Operation is complete
+
+76    9.176633E+01  1.003782E-07  2.350244E-02  1.055355E+00  1.400000E+01
+
+DDS is searching for a better solution.
+   1...
+Operation is complete
+
+77    9.176632E+01  5.231466E-07  2.350244E-02  1.055355E+00  1.300000E+01
+
+DDS is searching for a better solution.
+   1...
+Operation is complete
+
+78    9.176623E+01  1.526909E-09  2.350244E-02  1.055355E+00  1.200000E+01
+
+DDS is searching for a better solution.
+   1...   2...   3...   4...   5...
+Operation is complete
+
+83    9.176593E+01  1.166403E-05  2.350244E-02  1.055355E+00  7.000000E+00
+
+DDS is searching for a better solution.
+   1...   2...   3...   4...
+Operation is complete
+
+87    6.793685E+01  1.137412E+02  2.350244E-02  1.055355E+00  3.000000E+00
+
+DDS is searching for a better solution.
+   1...   2...   3...
+Operation is complete
+
+90    6.793685E+01  1.137412E+02  2.350244E-02  1.055355E+00  0.000000E+00
+
+Optimal Parameter Set
+Objective Function : 6.793685E+01
+K1                 : 1.137412E+02
+K2                 : 2.350244E-02
+Kback              : 1.055355E+00
+
+Algorithm Metrics
+Algorithm               : Parallel Dynamically-Dimensioned Search Algorithm (PDDS)
+Desired Convergence Val : N/A
+Actual Convergence Val  : N/A
+Max Generations         : 90
+Actual Generations      : 90
+Peterbation Value       : 0.200000
+Debug Statements        : disabled
+Initial Solution        : Randomly Generated
+Special User Option     : standard
+Alpha Value             : not used
+Beta Value              : not used
+Number of Processors    : 5
+Total Evals             : 1
+Telescoping Strategy    : none
+Algorithm successfully converged on a solution, however more runs may be needed
+--------------------------------------------------------------------------
+ OSTRICH version 17.11.03 (Built Nov  3 2017 @ 09:02:31)
+
+ A computer program for model-independent calibration and optimization.
+
+ Author             L. Shawn Matott
+ Copyright (C) 2007 L. Shawn Matott
+
+ This program is free software; you can redistribute 
+ it and/or modify it under the terms of the GNU  
+ General Public License as published by the Free 
+ Software Foundation; either version 2 of the 
+ License, or(at your option) any later version. 
+
+ This program is distributed in the hope that it will 
+ be useful, but WITHOUT ANY WARRANTY; without even 
+ the implied warranty of MERCHANTABILITY or FITNESS 
+ FOR A PARTICULAR PURPOSE. See the GNU General Public 
+ License for more details. 
+
+ You should have received a copy of the GNU General 
+ Public License along with this program; if not, 
+ write to the Free Software Foundation, Inc., 59 
+ Temple Place, Suite 330, Boston, MA 02111-1307 USA 
+--------------------------------------------------------------------------
+
+Ostrich Setup
+Model                  : Split.exe > OstExeOut.txt
+Algorithm              : Parallel Dynamically Dimensioned Search Algorithm (PDDS)
+Objective Function     : WSSE
+Number of Parameters   : 3
+Number of Tied Params  : 0
+Number of Observations : 25
+Seed for Random Nums.  : 1509727912
+
+Ostrich Run Record
+trial    best fitness   K1            K2            Kback          trials remaining
+1     9.009400E+04  1.146688E-07  3.805808E-06  9.692527E+01  9.300000E+01
+
+DDS is searching for a better solution.
+   1...   2...   3...   4...   5...   6...
+Operation is complete
+
+7     8.955746E+03  2.988969E-10  3.820276E-08  1.958420E+00  8.700000E+01
+
+DDS is searching for a better solution.
+   1...
+Operation is complete
+
+8     4.522791E+03  3.403019E-06  1.439483E-05  1.576587E+00  8.600000E+01
+
+DDS is searching for a better solution.
+   1...   2...   3...
+Operation is complete
+
+11    2.848038E+03  8.850449E-08  3.391095E-10  7.505668E-01  8.300000E+01
+
+DDS is searching for a better solution.
+   1...   2...   3...   4...
+Operation is complete
+
+15    2.847980E+03  9.649384E-08  1.200968E-04  7.505668E-01  7.900000E+01
+
+DDS is searching for a better solution.
+   1...   2...   3...   4...   5...   6...   7...   8...   9...  10...
+  11...  12...  13...
+Operation is complete
+
+28    2.847980E+03  3.048347E-08  1.200968E-04  7.505668E-01  6.600000E+01
+
+DDS is searching for a better solution.
+   1...   2...   3...   4...   5...   6...   7...   8...
+Operation is complete
+
+36    2.706834E+03  3.048347E-08  5.024438E-01  7.505668E-01  5.800000E+01
+
+DDS is searching for a better solution.
+   1...   2...   3...   4...   5...   6...   7...
+Operation is complete
+
+43    2.539315E+03  3.048347E-08  1.824497E+01  7.505668E-01  5.100000E+01
+
+DDS is searching for a better solution.
+   1...   2...   3...
+Operation is complete
+
+46    2.529911E+03  3.048347E-08  1.635959E+02  7.505668E-01  4.800000E+01
+
+DDS is searching for a better solution.
+   1...   2...   3...
+Operation is complete
+
+49    2.528989E+03  3.048347E-08  6.731791E+02  7.505668E-01  4.500000E+01
+
+DDS is searching for a better solution.
+   1...   2...   3...   4...
+Operation is complete
+
+53    2.528989E+03  2.205317E-08  6.731791E+02  7.505668E-01  4.100000E+01
+
+DDS is searching for a better solution.
+   1...   2...   3...   4...
+Operation is complete
+
+57    2.528989E+03  1.836833E-08  6.731791E+02  7.505668E-01  3.700000E+01
+
+DDS is searching for a better solution.
+   1...   2...   3...   4...   5...   6...   7...   8...   9...  10...
+  11...  12...  13...  14...  15...  16...  17...  18...  19...  20...
+  21...  22...  23...  24...  25...  26...  27...  28...  29...  30...
+  31...  32...  33...  34...  35...  36...  37...
+Operation is complete
+
+94    2.528989E+03  1.836833E-08  6.731791E+02  7.505668E-01  0.000000E+00
+
+Optimal Parameter Set
+Objective Function : 2.528989E+03
+K1                 : 1.836833E-08
+K2                 : 6.731791E+02
+Kback              : 7.505668E-01
+
+Algorithm Metrics
+Algorithm               : Parallel Dynamically-Dimensioned Search Algorithm (PDDS)
+Desired Convergence Val : N/A
+Actual Convergence Val  : N/A
+Max Generations         : 94
+Actual Generations      : 94
+Peterbation Value       : 0.200000
+Debug Statements        : disabled
+Initial Solution        : Randomly Generated
+Special User Option     : standard
+Alpha Value             : not used
+Beta Value              : not used
+Number of Processors    : 5
+Total Evals             : 1
+Telescoping Strategy    : none
+Algorithm successfully converged on a solution, however more runs may be needed
+--------------------------------------------------------------------------
+ OSTRICH version 17.11.03 (Built Nov  3 2017 @ 09:02:31)
+
+ A computer program for model-independent calibration and optimization.
+
+ Author             L. Shawn Matott
+ Copyright (C) 2007 L. Shawn Matott
+
+ This program is free software; you can redistribute 
+ it and/or modify it under the terms of the GNU  
+ General Public License as published by the Free 
+ Software Foundation; either version 2 of the 
+ License, or(at your option) any later version. 
+
+ This program is distributed in the hope that it will 
+ be useful, but WITHOUT ANY WARRANTY; without even 
+ the implied warranty of MERCHANTABILITY or FITNESS 
+ FOR A PARTICULAR PURPOSE. See the GNU General Public 
+ License for more details. 
+
+ You should have received a copy of the GNU General 
+ Public License along with this program; if not, 
+ write to the Free Software Foundation, Inc., 59 
+ Temple Place, Suite 330, Boston, MA 02111-1307 USA 
+--------------------------------------------------------------------------
+
+Ostrich Setup
+Model                  : Split.exe > OstExeOut.txt
+Algorithm              : Parallel Dynamically Dimensioned Search Algorithm (PDDS)
+Objective Function     : WSSE
+Number of Parameters   : 3
+Number of Tied Params  : 0
+Number of Observations : 25
+Seed for Random Nums.  : 1509727917
+
+Ostrich Run Record
+trial    best fitness   K1            K2            Kback          trials remaining
+1     7.460701E+04  2.097295E-06  1.923289E-10  3.015116E+01  9.400000E+01
+
+DDS is searching for a better solution.
+   1...   2...   3...   4...   5...
+Operation is complete
+
+6     3.348406E+04  1.423651E-07  2.527269E-09  4.917471E+00  8.900000E+01
+
+DDS is searching for a better solution.
+   1...   2...   3...   4...   5...   6...   7...   8...
+Operation is complete
+
+14    1.998409E+04  1.115278E-08  2.527269E-09  3.023521E+00  8.100000E+01
+
+DDS is searching for a better solution.
+   1...   2...   3...   4...   5...   6...   7...   8...   9...  10...
+  11...  12...  13...  14...  15...  16...  17...  18...  19...
+Operation is complete
+
+33    1.610380E+04  1.115278E-08  2.527269E-09  2.616142E+00  6.200000E+01
+
+DDS is searching for a better solution.
+   1...   2...   3...   4...
+Operation is complete
+
+37    1.610379E+04  1.115278E-08  3.050761E-06  2.616142E+00  5.800000E+01
+
+DDS is searching for a better solution.
+   1...
+Operation is complete
+
+38    1.610379E+04  1.115278E-08  3.897338E-08  2.616142E+00  5.700000E+01
+
+DDS is searching for a better solution.
+   1...
+Operation is complete
+
+39    1.610379E+04  1.115278E-08  3.256596E-06  2.616142E+00  5.600000E+01
+
+DDS is searching for a better solution.
+   1...   2...   3...   4...   5...
+Operation is complete
+
+44    1.610379E+04  5.597395E-05  3.256596E-06  2.616142E+00  5.100000E+01
+
+DDS is searching for a better solution.
+   1...   2...   3...   4...   5...   6...   7...
+Operation is complete
+
+51    8.106055E+02  5.597395E-05  3.256596E-06  8.585963E-01  4.400000E+01
+
+DDS is searching for a better solution.
+   1...   2...   3...   4...   5...   6...   7...   8...
+Operation is complete
+
+59    8.106044E+02  5.597395E-05  8.098499E-06  8.585963E-01  3.600000E+01
+
+DDS is searching for a better solution.
+   1...
+Operation is complete
+
+60    8.106031E+02  4.089631E-06  3.256596E-06  8.585963E-01  3.500000E+01
+
+DDS is searching for a better solution.
+   1...   2...   3...   4...   5...
+Operation is complete
+
+65    8.106029E+02  3.481055E-07  3.256596E-06  8.585963E-01  3.000000E+01
+
+DDS is searching for a better solution.
+   1...   2...
+Operation is complete
+
+67    8.106007E+02  4.089631E-06  1.774857E-10  8.585963E-01  2.800000E+01
+
+DDS is searching for a better solution.
+   1...   2...   3...   4...   5...
+Operation is complete
+
+72    8.105977E+02  3.237734E-06  1.774857E-10  8.585963E-01  2.300000E+01
+
+DDS is searching for a better solution.
+   1...   2...   3...   4...   5...   6...   7...   8...   9...  10...
+  11...  12...  13...  14...  15...  16...  17...  18...
+Operation is complete
+
+90    8.105827E+02  3.237734E-06  8.653836E-05  8.585963E-01  5.000000E+00
+
+DDS is searching for a better solution.
+   1...   2...   3...   4...
+Operation is complete
+
+94    8.104736E+02  3.237734E-06  5.329516E-04  8.585963E-01  1.000000E+00
+
+DDS is searching for a better solution.
+   1...
+Operation is complete
+
+95    8.104736E+02  3.237734E-06  5.329516E-04  8.585963E-01  0.000000E+00
+
+Optimal Parameter Set
+Objective Function : 8.104736E+02
+K1                 : 3.237734E-06
+K2                 : 5.329516E-04
+Kback              : 8.585963E-01
+
+Algorithm Metrics
+Algorithm               : Parallel Dynamically-Dimensioned Search Algorithm (PDDS)
+Desired Convergence Val : N/A
+Actual Convergence Val  : N/A
+Max Generations         : 95
+Actual Generations      : 95
+Peterbation Value       : 0.200000
+Debug Statements        : disabled
+Initial Solution        : Randomly Generated
+Special User Option     : standard
+Alpha Value             : not used
+Beta Value              : not used
+Number of Processors    : 5
+Total Evals             : 1
+Telescoping Strategy    : none
+Algorithm successfully converged on a solution, however more runs may be needed
+--------------------------------------------------------------------------
+ OSTRICH version 17.11.03 (Built Nov  3 2017 @ 09:02:31)
+
+ A computer program for model-independent calibration and optimization.
+
+ Author             L. Shawn Matott
+ Copyright (C) 2007 L. Shawn Matott
+
+ This program is free software; you can redistribute 
+ it and/or modify it under the terms of the GNU  
+ General Public License as published by the Free 
+ Software Foundation; either version 2 of the 
+ License, or(at your option) any later version. 
+
+ This program is distributed in the hope that it will 
+ be useful, but WITHOUT ANY WARRANTY; without even 
+ the implied warranty of MERCHANTABILITY or FITNESS 
+ FOR A PARTICULAR PURPOSE. See the GNU General Public 
+ License for more details. 
+
+ You should have received a copy of the GNU General 
+ Public License along with this program; if not, 
+ write to the Free Software Foundation, Inc., 59 
+ Temple Place, Suite 330, Boston, MA 02111-1307 USA 
+--------------------------------------------------------------------------
+
+Ostrich Setup
+Model                  : Split.exe > OstExeOut.txt
+Algorithm              : Parallel Dynamically Dimensioned Search Algorithm (PDDS)
+Objective Function     : WSSE
+Number of Parameters   : 3
+Number of Tied Params  : 0
+Number of Observations : 25
+Seed for Random Nums.  : 1509727922
+
+Ostrich Run Record
+trial    best fitness   K1            K2            Kback          trials remaining
+1     1.152770E+23  9.930458E+00  3.062201E+00  3.284836E-10  8.200000E+01
+
+DDS is searching for a better solution.
+   1...
+Operation is complete
+
+2     4.469909E+15  8.098861E-07  2.443119E-04  1.663460E-06  8.100000E+01
+
+DDS is searching for a better solution.
+   1...
+Operation is complete
+
+3     8.297395E+04  2.986374E-04  1.572515E-06  5.276723E+01  8.000000E+01
+
+DDS is searching for a better solution.
+   1...   2...
+Operation is complete
+
+5     9.788961E+02  2.193671E+01  3.497346E-10  8.491283E-01  7.800000E+01
+
+DDS is searching for a better solution.
+   1...   2...   3...   4...   5...   6...   7...   8...   9...  10...
+  11...  12...  13...  14...
+Operation is complete
+
+19    9.288024E+02  3.825781E-02  1.305234E-10  8.491283E-01  6.400000E+01
+
+DDS is searching for a better solution.
+   1...   2...   3...   4...
+Operation is complete
+
+23    9.287986E+02  3.825781E-02  6.427746E-05  8.491283E-01  6.000000E+01
+
+DDS is searching for a better solution.
+   1...   2...   3...   4...
+Operation is complete
+
+27    9.268323E+02  1.909916E-06  6.427746E-05  8.491283E-01  5.600000E+01
+
+DDS is searching for a better solution.
+   1...   2...   3...   4...   5...   6...   7...   8...
+Operation is complete
+
+35    9.170016E+02  1.909916E-06  3.974305E-02  8.491283E-01  4.800000E+01
+
+DDS is searching for a better solution.
+   1...   2...   3...   4...   5...
+Operation is complete
+
+40    9.170015E+02  2.912092E-07  3.974305E-02  8.491283E-01  4.300000E+01
+
+DDS is searching for a better solution.
+   1...   2...   3...   4...
+Operation is complete
+
+44    7.515082E+02  2.912092E-07  6.571240E+02  8.491283E-01  3.900000E+01
+
+DDS is searching for a better solution.
+   1...   2...   3...   4...   5...   6...
+Operation is complete
+
+50    7.515064E+02  5.399567E-10  6.571240E+02  8.491283E-01  3.300000E+01
+
+DDS is searching for a better solution.
+   1...   2...   3...   4...   5...   6...   7...   8...   9...  10...
+  11...  12...  13...  14...  15...  16...
+Operation is complete
+
+66    7.514975E+02  1.210121E-10  6.571240E+02  8.491283E-01  1.700000E+01
+
+DDS is searching for a better solution.
+   1...   2...   3...   4...   5...   6...   7...   8...   9...  10...
+  11...  12...  13...  14...  15...  16...  17...
+Operation is complete
+
+83    7.514975E+02  1.210121E-10  6.571240E+02  8.491283E-01  0.000000E+00
+
+Optimal Parameter Set
+Objective Function : 7.514975E+02
+K1                 : 1.210121E-10
+K2                 : 6.571240E+02
+Kback              : 8.491283E-01
+
+Algorithm Metrics
+Algorithm               : Parallel Dynamically-Dimensioned Search Algorithm (PDDS)
+Desired Convergence Val : N/A
+Actual Convergence Val  : N/A
+Max Generations         : 83
+Actual Generations      : 83
+Peterbation Value       : 0.200000
+Debug Statements        : disabled
+Initial Solution        : Randomly Generated
+Special User Option     : standard
+Alpha Value             : not used
+Beta Value              : not used
+Number of Processors    : 5
+Total Evals             : 1
+Telescoping Strategy    : none
+Algorithm successfully converged on a solution, however more runs may be needed
+--------------------------------------------------------------------------
+ OSTRICH version 17.11.03 (Built Nov  3 2017 @ 09:02:31)
+
+ A computer program for model-independent calibration and optimization.
+
+ Author             L. Shawn Matott
+ Copyright (C) 2007 L. Shawn Matott
+
+ This program is free software; you can redistribute 
+ it and/or modify it under the terms of the GNU  
+ General Public License as published by the Free 
+ Software Foundation; either version 2 of the 
+ License, or(at your option) any later version. 
+
+ This program is distributed in the hope that it will 
+ be useful, but WITHOUT ANY WARRANTY; without even 
+ the implied warranty of MERCHANTABILITY or FITNESS 
+ FOR A PARTICULAR PURPOSE. See the GNU General Public 
+ License for more details. 
+
+ You should have received a copy of the GNU General 
+ Public License along with this program; if not, 
+ write to the Free Software Foundation, Inc., 59 
+ Temple Place, Suite 330, Boston, MA 02111-1307 USA 
+--------------------------------------------------------------------------
+
+Ostrich Setup
+Model                  : Split.exe > OstExeOut.txt
+Algorithm              : Parallel Dynamically Dimensioned Search Algorithm (PDDS)
+Objective Function     : WSSE
+Number of Parameters   : 3
+Number of Tied Params  : 0
+Number of Observations : 25
+Seed for Random Nums.  : 1509727927
+
+Ostrich Run Record
+trial    best fitness   K1            K2            Kback          trials remaining
+1     5.611314E+04  2.937640E-04  3.506036E-03  1.187156E+01  6.300000E+01
+
+DDS is searching for a better solution.
+   1...   2...
+Operation is complete
+
+3     3.175262E+04  9.183090E-07  1.107289E-04  4.619881E+00  6.100000E+01
+
+DDS is searching for a better solution.
+   1...   2...   3...   4...   5...
+Operation is complete
+
+8     1.317267E+02  6.434915E-07  8.859716E-02  9.482827E-01  5.600000E+01
+
+DDS is searching for a better solution.
+   1...   2...   3...   4...   5...   6...
+Operation is complete
+
+14    7.454842E+01  2.610732E-04  5.572233E+01  9.482827E-01  5.000000E+01
+
+DDS is searching for a better solution.
+   1...   2...   3...   4...   5...   6...
+Operation is complete
+
+20    7.452208E+01  1.803712E-03  5.572233E+01  9.482827E-01  4.400000E+01
+
+DDS is searching for a better solution.
+   1...   2...   3...   4...   5...   6...   7...   8...   9...  10...
+  11...
+Operation is complete
+
+31    7.123961E+01  2.075620E+00  5.572233E+01  9.482827E-01  3.300000E+01
+
+DDS is searching for a better solution.
+   1...   2...   3...   4...   5...   6...   7...   8...   9...  10...
+  11...  12...  13...  14...
+Operation is complete
+
+45    7.052983E+01  1.056468E+00  5.572233E+01  9.482827E-01  1.900000E+01
+
+DDS is searching for a better solution.
+   1...   2...   3...   4...   5...   6...   7...   8...
+Operation is complete
+
+53    7.000046E+01  1.056468E+00  4.874943E+02  9.482827E-01  1.100000E+01
+
+DDS is searching for a better solution.
+   1...   2...   3...   4...
+Operation is complete
+
+57    6.997051E+01  1.056468E+00  8.689793E+02  9.482827E-01  7.000000E+00
+
+DDS is searching for a better solution.
+   1...   2...   3...   4...   5...   6...   7...
+Operation is complete
+
+64    6.997051E+01  1.056468E+00  8.689793E+02  9.482827E-01  0.000000E+00
+
+Optimal Parameter Set
+Objective Function : 6.997051E+01
+K1                 : 1.056468E+00
+K2                 : 8.689793E+02
+Kback              : 9.482827E-01
+
+Algorithm Metrics
+Algorithm               : Parallel Dynamically-Dimensioned Search Algorithm (PDDS)
+Desired Convergence Val : N/A
+Actual Convergence Val  : N/A
+Max Generations         : 64
+Actual Generations      : 64
+Peterbation Value       : 0.200000
+Debug Statements        : disabled
+Initial Solution        : Randomly Generated
+Special User Option     : standard
+Alpha Value             : not used
+Beta Value              : not used
+Number of Processors    : 5
+Total Evals             : 1
+Telescoping Strategy    : none
+Algorithm successfully converged on a solution, however more runs may be needed
+--------------------------------------------------------------------------
+ OSTRICH version 17.11.03 (Built Nov  3 2017 @ 09:02:31)
+
+ A computer program for model-independent calibration and optimization.
+
+ Author             L. Shawn Matott
+ Copyright (C) 2007 L. Shawn Matott
+
+ This program is free software; you can redistribute 
+ it and/or modify it under the terms of the GNU  
+ General Public License as published by the Free 
+ Software Foundation; either version 2 of the 
+ License, or(at your option) any later version. 
+
+ This program is distributed in the hope that it will 
+ be useful, but WITHOUT ANY WARRANTY; without even 
+ the implied warranty of MERCHANTABILITY or FITNESS 
+ FOR A PARTICULAR PURPOSE. See the GNU General Public 
+ License for more details. 
+
+ You should have received a copy of the GNU General 
+ Public License along with this program; if not, 
+ write to the Free Software Foundation, Inc., 59 
+ Temple Place, Suite 330, Boston, MA 02111-1307 USA 
+--------------------------------------------------------------------------
+
+Ostrich Setup
+Model                  : Split.exe > OstExeOut.txt
+Algorithm              : Parallel Dynamically Dimensioned Search Algorithm (PDDS)
+Objective Function     : WSSE
+Number of Parameters   : 3
+Number of Tied Params  : 0
+Number of Observations : 25
+Seed for Random Nums.  : 1509727932
+
+Ostrich Run Record
+trial    best fitness   K1            K2            Kback          trials remaining
+1     1.037548E+05  1.345164E-10  3.425991E-04  7.663043E+02  6.000000E+01
+
+DDS is searching for a better solution.
+   1...   2...   3...   4...   5...
+Operation is complete
+
+6     9.622102E+04  2.813620E-09  3.287310E+00  1.947701E+02  5.500000E+01
+
+DDS is searching for a better solution.
+   1...   2...
+Operation is complete
+
+8     6.056831E+04  3.688715E-09  1.013786E-01  1.448581E+01  5.300000E+01
+
+DDS is searching for a better solution.
+   1...   2...
+Operation is complete
+
+10    5.975737E+03  2.361998E-07  4.099874E+01  1.679760E+00  5.100000E+01
+
+DDS is searching for a better solution.
+   1...   2...   3...   4...   5...
+Operation is complete
+
+15    5.975737E+03  3.035935E-08  4.099874E+01  1.679760E+00  4.600000E+01
+
+DDS is searching for a better solution.
+   1...   2...   3...   4...   5...
+Operation is complete
+
+20    5.709163E+03  1.792750E-09  9.521764E-06  1.679760E+00  4.100000E+01
+
+DDS is searching for a better solution.
+   1...   2...   3...   4...
+Operation is complete
+
+24    5.709162E+03  2.392260E-08  8.829488E-08  1.679760E+00  3.700000E+01
+
+DDS is searching for a better solution.
+   1...
+Operation is complete
+
+25    5.709147E+03  2.078451E-04  9.521764E-06  1.679760E+00  3.600000E+01
+
+DDS is searching for a better solution.
+   1...   2...   3...   4...
+Operation is complete
+
+29    5.709045E+03  1.438744E-03  9.521764E-06  1.679760E+00  3.200000E+01
+
+DDS is searching for a better solution.
+   1...   2...   3...   4...
+Operation is complete
+
+33    5.709044E+03  1.438744E-03  3.448494E-09  1.679760E+00  2.800000E+01
+
+DDS is searching for a better solution.
+   1...
+Operation is complete
+
+34    5.707615E+03  1.892613E-02  9.521764E-06  1.679760E+00  2.700000E+01
+
+DDS is searching for a better solution.
+   1...   2...   3...   4...   5...   6...   7...   8...
+Operation is complete
+
+42    5.707614E+03  1.892613E-02  3.894409E-06  1.679760E+00  1.900000E+01
+
+DDS is searching for a better solution.
+   1...   2...   3...
+Operation is complete
+
+45    5.620299E+03  3.894265E+00  9.521764E-06  1.679760E+00  1.600000E+01
+
+DDS is searching for a better solution.
+   1...
+Operation is complete
+
+46    5.590715E+03  4.335449E+01  3.894409E-06  1.679760E+00  1.500000E+01
+
+DDS is searching for a better solution.
+   1...   2...   3...   4...   5...   6...   7...
+Operation is complete
+
+53    5.590715E+03  4.335449E+01  1.706393E-09  1.679760E+00  8.000000E+00
+
+DDS is searching for a better solution.
+   1...
+Operation is complete
+
+54    5.589232E+03  6.957952E+01  3.894409E-06  1.679760E+00  7.000000E+00
+
+DDS is searching for a better solution.
+   1...   2...   3...   4...   5...   6...
+Operation is complete
+
+60    5.587416E+03  2.491354E+02  3.894409E-06  1.679760E+00  1.000000E+00
+
+DDS is searching for a better solution.
+   1...
+Operation is complete
+
+61    5.587416E+03  2.491354E+02  3.894409E-06  1.679760E+00  0.000000E+00
+
+Optimal Parameter Set
+Objective Function : 5.587416E+03
+K1                 : 2.491354E+02
+K2                 : 3.894409E-06
+Kback              : 1.679760E+00
+
+Algorithm Metrics
+Algorithm               : Parallel Dynamically-Dimensioned Search Algorithm (PDDS)
+Desired Convergence Val : N/A
+Actual Convergence Val  : N/A
+Max Generations         : 61
+Actual Generations      : 61
+Peterbation Value       : 0.200000
+Debug Statements        : disabled
+Initial Solution        : Randomly Generated
+Special User Option     : standard
+Alpha Value             : not used
+Beta Value              : not used
+Number of Processors    : 5
+Total Evals             : 1
+Telescoping Strategy    : none
+Algorithm successfully converged on a solution, however more runs may be needed
+--------------------------------------------------------------------------
+ OSTRICH version 17.11.03 (Built Nov  3 2017 @ 09:02:31)
+
+ A computer program for model-independent calibration and optimization.
+
+ Author             L. Shawn Matott
+ Copyright (C) 2007 L. Shawn Matott
+
+ This program is free software; you can redistribute 
+ it and/or modify it under the terms of the GNU  
+ General Public License as published by the Free 
+ Software Foundation; either version 2 of the 
+ License, or(at your option) any later version. 
+
+ This program is distributed in the hope that it will 
+ be useful, but WITHOUT ANY WARRANTY; without even 
+ the implied warranty of MERCHANTABILITY or FITNESS 
+ FOR A PARTICULAR PURPOSE. See the GNU General Public 
+ License for more details. 
+
+ You should have received a copy of the GNU General 
+ Public License along with this program; if not, 
+ write to the Free Software Foundation, Inc., 59 
+ Temple Place, Suite 330, Boston, MA 02111-1307 USA 
+--------------------------------------------------------------------------
+
+Ostrich Setup
+Model                  : Split.exe > OstExeOut.txt
+Algorithm              : Parallel Dynamically Dimensioned Search Algorithm (PDDS)
+Objective Function     : WSSE
+Number of Parameters   : 3
+Number of Tied Params  : 0
+Number of Observations : 25
+Seed for Random Nums.  : 1509727937
+
+Ostrich Run Record
+trial    best fitness   K1            K2            Kback          trials remaining
+1     3.659007E+05  2.312877E-03  1.758805E+00  1.613408E-01  5.200000E+01
+
+DDS is searching for a better solution.
+   1...   2...   3...   4...   5...   6...
+Operation is complete
+
+7     9.682999E+04  1.706500E-06  2.612458E+01  2.113882E+02  4.600000E+01
+
+DDS is searching for a better solution.
+   1...   2...   3...
+Operation is complete
+
+10    1.762456E+04  1.498015E-02  1.102914E-03  2.770641E+00  4.300000E+01
+
+DDS is searching for a better solution.
+   1...   2...   3...   4...   5...
+Operation is complete
+
+15    1.762450E+04  1.498015E-02  7.090069E-04  2.770641E+00  3.800000E+01
+
+DDS is searching for a better solution.
+   1...   2...
+Operation is complete
+
+17    1.762441E+04  1.498015E-02  1.472333E-05  2.770641E+00  3.600000E+01
+
+DDS is searching for a better solution.
+   1...
+Operation is complete
+
+18    6.359769E+03  7.282769E+00  1.727802E-04  6.608679E-01  3.500000E+01
+
+DDS is searching for a better solution.
+   1...   2...   3...   4...   5...
+Operation is complete
+
+23    6.247380E+03  2.773846E-01  1.727802E-04  6.608679E-01  3.000000E+01
+
+DDS is searching for a better solution.
+   1...   2...   3...   4...   5...   6...   7...
+Operation is complete
+
+30    6.237853E+03  2.115313E-01  1.727802E-04  6.608679E-01  2.300000E+01
+
+DDS is searching for a better solution.
+   1...
+Operation is complete
+
+31    3.726794E+03  2.773846E-01  1.727802E-04  1.507235E+00  2.200000E+01
+
+DDS is searching for a better solution.
+   1...   2...   3...   4...   5...
+Operation is complete
+
+36    3.726784E+03  2.773846E-01  1.072015E-04  1.507235E+00  1.700000E+01
+
+DDS is searching for a better solution.
+   1...   2...   3...
+Operation is complete
+
+39    3.726771E+03  2.773846E-01  1.268064E-05  1.507235E+00  1.400000E+01
+
+DDS is searching for a better solution.
+   1...   2...   3...   4...
+Operation is complete
+
+43    1.869296E+03  2.773846E-01  1.268064E-05  1.327697E+00  1.000000E+01
+
+DDS is searching for a better solution.
+   1...   2...   3...   4...
+Operation is complete
+
+47    1.869295E+03  2.773846E-01  7.300236E-07  1.327697E+00  6.000000E+00
+
+DDS is searching for a better solution.
+   1...
+Operation is complete
+
+48    1.803818E+03  3.085954E+02  1.268064E-05  1.327697E+00  5.000000E+00
+
+DDS is searching for a better solution.
+   1...   2...   3...   4...   5...
+Operation is complete
+
+53    1.803817E+03  3.085954E+02  1.893772E-08  1.327697E+00  0.000000E+00
+
+Optimal Parameter Set
+Objective Function : 1.803817E+03
+K1                 : 3.085954E+02
+K2                 : 1.893772E-08
+Kback              : 1.327697E+00
+
+Algorithm Metrics
+Algorithm               : Parallel Dynamically-Dimensioned Search Algorithm (PDDS)
+Desired Convergence Val : N/A
+Actual Convergence Val  : N/A
+Max Generations         : 53
+Actual Generations      : 53
+Peterbation Value       : 0.200000
+Debug Statements        : disabled
+Initial Solution        : Randomly Generated
+Special User Option     : standard
+Alpha Value             : not used
+Beta Value              : not used
+Number of Processors    : 5
+Total Evals             : 1
+Telescoping Strategy    : none
+Algorithm successfully converged on a solution, however more runs may be needed
+--------------------------------------------------------------------------
+ OSTRICH version 17.11.03 (Built Nov  3 2017 @ 09:02:31)
+
+ A computer program for model-independent calibration and optimization.
+
+ Author             L. Shawn Matott
+ Copyright (C) 2007 L. Shawn Matott
+
+ This program is free software; you can redistribute 
+ it and/or modify it under the terms of the GNU  
+ General Public License as published by the Free 
+ Software Foundation; either version 2 of the 
+ License, or(at your option) any later version. 
+
+ This program is distributed in the hope that it will 
+ be useful, but WITHOUT ANY WARRANTY; without even 
+ the implied warranty of MERCHANTABILITY or FITNESS 
+ FOR A PARTICULAR PURPOSE. See the GNU General Public 
+ License for more details. 
+
+ You should have received a copy of the GNU General 
+ Public License along with this program; if not, 
+ write to the Free Software Foundation, Inc., 59 
+ Temple Place, Suite 330, Boston, MA 02111-1307 USA 
+--------------------------------------------------------------------------
+
+Ostrich Setup
+Model                  : Split.exe > OstExeOut.txt
+Algorithm              : Parallel Dynamically Dimensioned Search Algorithm (PDDS)
+Objective Function     : WSSE
+Number of Parameters   : 3
+Number of Tied Params  : 0
+Number of Observations : 25
+Seed for Random Nums.  : 1509727942
+
+Ostrich Run Record
+trial    best fitness   K1            K2            Kback          trials remaining
+1     2.395979E+06  7.985388E+00  1.781341E-05  6.951141E-02  8.700000E+01
+
+DDS is searching for a better solution.
+   1...   2...   3...   4...   5...
+Operation is complete
+
+6     5.247887E+04  2.459934E+01  5.874585E-03  1.021997E+01  8.200000E+01
+
+DDS is searching for a better solution.
+   1...   2...
+Operation is complete
+
+8     5.144032E+04  7.974102E-03  5.280282E-05  9.748532E+00  8.000000E+01
+
+DDS is searching for a better solution.
+   1...   2...
+Operation is complete
+
+10    7.158551E+02  2.048459E+00  3.798733E+02  8.540638E-01  7.800000E+01
+
+DDS is searching for a better solution.
+   1...   2...   3...   4...   5...   6...   7...   8...   9...  10...
+Operation is complete
+
+20    7.064227E+02  7.122625E-01  3.798733E+02  8.540638E-01  6.800000E+01
+
+DDS is searching for a better solution.
+   1...   2...   3...   4...   5...   6...
+Operation is complete
+
+26    4.205307E+02  3.358450E-02  3.798733E+02  8.830182E-01  6.200000E+01
+
+DDS is searching for a better solution.
+   1...   2...   3...   4...   5...   6...   7...   8...
+Operation is complete
+
+34    4.203656E+02  1.310655E-03  3.798733E+02  8.830182E-01  5.400000E+01
+
+DDS is searching for a better solution.
+   1...   2...   3...   4...   5...
+Operation is complete
+
+39    4.203612E+02  3.539762E-04  3.798733E+02  8.830182E-01  4.900000E+01
+
+DDS is searching for a better solution.
+   1...   2...   3...   4...   5...   6...   7...   8...
+Operation is complete
+
+47    4.203596E+02  9.619848E-09  3.798733E+02  8.830182E-01  4.100000E+01
+
+DDS is searching for a better solution.
+   1...   2...   3...   4...
+Operation is complete
+
+51    4.203583E+02  1.210477E-09  3.798733E+02  8.830182E-01  3.700000E+01
+
+DDS is searching for a better solution.
+   1...   2...   3...   4...
+Operation is complete
+
+55    4.202355E+02  1.210477E-09  8.810293E+02  8.830182E-01  3.300000E+01
+
+DDS is searching for a better solution.
+   1...   2...   3...   4...   5...   6...   7...   8...   9...  10...
+  11...  12...  13...  14...  15...  16...  17...  18...  19...  20...
+  21...  22...  23...  24...  25...  26...  27...  28...  29...  30...
+  31...  32...  33...
+Operation is complete
+
+88    4.202355E+02  1.210477E-09  8.810293E+02  8.830182E-01  0.000000E+00
+
+Optimal Parameter Set
+Objective Function : 4.202355E+02
+K1                 : 1.210477E-09
+K2                 : 8.810293E+02
+Kback              : 8.830182E-01
+
+Algorithm Metrics
+Algorithm               : Parallel Dynamically-Dimensioned Search Algorithm (PDDS)
+Desired Convergence Val : N/A
+Actual Convergence Val  : N/A
+Max Generations         : 88
+Actual Generations      : 88
+Peterbation Value       : 0.200000
+Debug Statements        : disabled
+Initial Solution        : Randomly Generated
+Special User Option     : standard
+Alpha Value             : not used
+Beta Value              : not used
+Number of Processors    : 5
+Total Evals             : 1
+Telescoping Strategy    : none
+Algorithm successfully converged on a solution, however more runs may be needed
+--------------------------------------------------------------------------
+ OSTRICH version 17.11.03 (Built Nov  3 2017 @ 09:02:31)
+
+ A computer program for model-independent calibration and optimization.
+
+ Author             L. Shawn Matott
+ Copyright (C) 2007 L. Shawn Matott
+
+ This program is free software; you can redistribute 
+ it and/or modify it under the terms of the GNU  
+ General Public License as published by the Free 
+ Software Foundation; either version 2 of the 
+ License, or(at your option) any later version. 
+
+ This program is distributed in the hope that it will 
+ be useful, but WITHOUT ANY WARRANTY; without even 
+ the implied warranty of MERCHANTABILITY or FITNESS 
+ FOR A PARTICULAR PURPOSE. See the GNU General Public 
+ License for more details. 
+
+ You should have received a copy of the GNU General 
+ Public License along with this program; if not, 
+ write to the Free Software Foundation, Inc., 59 
+ Temple Place, Suite 330, Boston, MA 02111-1307 USA 
+--------------------------------------------------------------------------
+
+Ostrich Setup
+Model                  : Split.exe > OstExeOut.txt
+Algorithm              : Parallel Dynamically Dimensioned Search Algorithm (PDDS)
+Objective Function     : WSSE
+Number of Parameters   : 3
+Number of Tied Params  : 0
+Number of Observations : 25
+Seed for Random Nums.  : 1509727947
+
+Ostrich Run Record
+trial    best fitness   K1            K2            Kback          trials remaining
+1     3.577463E+23  6.905677E-03  4.493358E-09  1.865962E-10  9.100000E+01
+
+DDS is searching for a better solution.
+   1...   2...
+Operation is complete
+
+3     1.594796E+13  7.911321E+01  1.760564E+01  2.792694E-05  8.900000E+01
+
+DDS is searching for a better solution.
+   1...
+Operation is complete
+
+4     5.698474E+09  2.933277E+00  6.727359E-08  1.501478E-03  8.800000E+01
+
+DDS is searching for a better solution.
+   1...   2...   3...   4...   5...
+Operation is complete
+
+9     2.040661E+04  3.459079E-05  6.807545E-08  3.070700E+00  8.300000E+01
+
+DDS is searching for a better solution.
+   1...
+Operation is complete
+
+10    6.895091E+01  1.397284E+01  3.838496E-08  1.055246E+00  8.200000E+01
+
+DDS is searching for a better solution.
+   1...   2...   3...   4...   5...   6...   7...   8...
+Operation is complete
+
+18    6.828224E+01  5.506434E+01  8.972364E-08  1.055246E+00  7.400000E+01
+
+DDS is searching for a better solution.
+   1...   2...   3...   4...   5...   6...
+Operation is complete
+
+24    6.828035E+01  5.506434E+01  9.241591E-05  1.055246E+00  6.800000E+01
+
+DDS is searching for a better solution.
+   1...   2...   3...   4...   5...   6...   7...
+Operation is complete
+
+31    6.807990E+01  4.217157E+02  9.241591E-05  1.055246E+00  6.100000E+01
+
+DDS is searching for a better solution.
+   1...
+Operation is complete
+
+32    6.732633E+01  5.506434E+01  5.362027E-02  1.055246E+00  6.000000E+01
+
+DDS is searching for a better solution.
+   1...   2...   3...   4...   5...   6...   7...   8...   9...  10...
+  11...  12...  13...
+Operation is complete
+
+45    6.543635E+01  5.506434E+01  5.835877E-01  1.055246E+00  4.700000E+01
+
+DDS is searching for a better solution.
+   1...   2...   3...   4...   5...   6...   7...   8...   9...  10...
+  11...
+Operation is complete
+
+56    6.528736E+01  1.173825E+02  5.835877E-01  1.055246E+00  3.600000E+01
+
+DDS is searching for a better solution.
+   1...   2...   3...   4...   5...   6...   7...   8...   9...  10...
+  11...  12...  13...  14...  15...  16...  17...  18...
+Operation is complete
+
+74    6.517642E+01  7.341954E+02  5.835877E-01  1.055246E+00  1.800000E+01
+
+DDS is searching for a better solution.
+   1...
+Operation is complete
+
+75    6.517558E+01  7.644051E+02  5.835877E-01  1.055246E+00  1.700000E+01
+
+DDS is searching for a better solution.
+   1...   2...   3...   4...   5...   6...
+Operation is complete
+
+81    6.501176E+01  7.644051E+02  3.455068E-01  1.055246E+00  1.100000E+01
+
+DDS is searching for a better solution.
+   1...   2...   3...   4...   5...   6...   7...   8...   9...  10...
+  11...
+Operation is complete
+
+92    6.501176E+01  7.644051E+02  3.455068E-01  1.055246E+00  0.000000E+00
+
+Optimal Parameter Set
+Objective Function : 6.501176E+01
+K1                 : 7.644051E+02
+K2                 : 3.455068E-01
+Kback              : 1.055246E+00
+
+Algorithm Metrics
+Algorithm               : Parallel Dynamically-Dimensioned Search Algorithm (PDDS)
+Desired Convergence Val : N/A
+Actual Convergence Val  : N/A
+Max Generations         : 92
+Actual Generations      : 92
+Peterbation Value       : 0.200000
+Debug Statements        : disabled
+Initial Solution        : Randomly Generated
+Special User Option     : standard
+Alpha Value             : not used
+Beta Value              : not used
+Number of Processors    : 5
+Total Evals             : 1
+Telescoping Strategy    : none
+Algorithm successfully converged on a solution, however more runs may be needed
+--------------------------------------------------------------------------
+ OSTRICH version 17.11.03 (Built Nov  3 2017 @ 09:02:31)
+
+ A computer program for model-independent calibration and optimization.
+
+ Author             L. Shawn Matott
+ Copyright (C) 2007 L. Shawn Matott
+
+ This program is free software; you can redistribute 
+ it and/or modify it under the terms of the GNU  
+ General Public License as published by the Free 
+ Software Foundation; either version 2 of the 
+ License, or(at your option) any later version. 
+
+ This program is distributed in the hope that it will 
+ be useful, but WITHOUT ANY WARRANTY; without even 
+ the implied warranty of MERCHANTABILITY or FITNESS 
+ FOR A PARTICULAR PURPOSE. See the GNU General Public 
+ License for more details. 
+
+ You should have received a copy of the GNU General 
+ Public License along with this program; if not, 
+ write to the Free Software Foundation, Inc., 59 
+ Temple Place, Suite 330, Boston, MA 02111-1307 USA 
+--------------------------------------------------------------------------
+
+Ostrich Setup
+Model                  : Split.exe > OstExeOut.txt
+Algorithm              : Parallel Dynamically Dimensioned Search Algorithm (PDDS)
+Objective Function     : WSSE
+Number of Parameters   : 3
+Number of Tied Params  : 0
+Number of Observations : 25
+Seed for Random Nums.  : 1509727952
+
+Ostrich Run Record
+trial    best fitness   K1            K2            Kback          trials remaining
+1     8.760949E+18  2.546306E-04  3.257179E-07  3.774881E-08  7.300000E+01
+
+DDS is searching for a better solution.
+   1...   2...
+Operation is complete
+
+3     9.229226E+04  9.686393E-06  5.690428E+02  1.200278E+02  7.100000E+01
+
+DDS is searching for a better solution.
+   1...   2...   3...   4...
+Operation is complete
+
+7     8.031283E+04  2.423391E-04  8.495430E+01  4.311643E+01  6.700000E+01
+
+DDS is searching for a better solution.
+   1...   2...
+Operation is complete
+
+9     2.778692E+03  5.068104E-03  3.361765E+01  7.413899E-01  6.500000E+01
+
+DDS is searching for a better solution.
+   1...   2...   3...   4...   5...
+Operation is complete
+
+14    2.773118E+03  5.068104E-03  3.886295E+02  7.413899E-01  6.000000E+01
+
+DDS is searching for a better solution.
+   1...   2...   3...   4...
+Operation is complete
+
+18    2.772681E+03  2.977288E-06  3.886295E+02  7.413899E-01  5.600000E+01
+
+DDS is searching for a better solution.
+   1...   2...   3...   4...   5...
+Operation is complete
+
+23    2.772367E+03  2.977288E-06  9.382016E+02  7.413899E-01  5.100000E+01
+
+DDS is searching for a better solution.
+   1...   2...   3...   4...   5...   6...   7...   8...   9...  10...
+  11...  12...  13...  14...  15...  16...  17...  18...  19...  20...
+  21...  22...  23...  24...
+Operation is complete
+
+47    2.772366E+03  2.769667E-08  9.382016E+02  7.413899E-01  2.700000E+01
+
+DDS is searching for a better solution.
+   1...   2...   3...   4...   5...   6...   7...   8...   9...  10...
+  11...  12...  13...  14...  15...  16...  17...  18...  19...  20...
+  21...  22...  23...  24...  25...  26...  27...
+Operation is complete
+
+74    2.772366E+03  2.769667E-08  9.382016E+02  7.413899E-01  0.000000E+00
+
+Optimal Parameter Set
+Objective Function : 2.772366E+03
+K1                 : 2.769667E-08
+K2                 : 9.382016E+02
+Kback              : 7.413899E-01
+
+Algorithm Metrics
+Algorithm               : Parallel Dynamically-Dimensioned Search Algorithm (PDDS)
+Desired Convergence Val : N/A
+Actual Convergence Val  : N/A
+Max Generations         : 74
+Actual Generations      : 74
+Peterbation Value       : 0.200000
+Debug Statements        : disabled
+Initial Solution        : Randomly Generated
+Special User Option     : standard
+Alpha Value             : not used
+Beta Value              : not used
+Number of Processors    : 5
+Total Evals             : 1
+Telescoping Strategy    : none
+Algorithm successfully converged on a solution, however more runs may be needed
+--------------------------------------------------------------------------
+ OSTRICH version 17.11.03 (Built Nov  3 2017 @ 09:02:31)
+
+ A computer program for model-independent calibration and optimization.
+
+ Author             L. Shawn Matott
+ Copyright (C) 2007 L. Shawn Matott
+
+ This program is free software; you can redistribute 
+ it and/or modify it under the terms of the GNU  
+ General Public License as published by the Free 
+ Software Foundation; either version 2 of the 
+ License, or(at your option) any later version. 
+
+ This program is distributed in the hope that it will 
+ be useful, but WITHOUT ANY WARRANTY; without even 
+ the implied warranty of MERCHANTABILITY or FITNESS 
+ FOR A PARTICULAR PURPOSE. See the GNU General Public 
+ License for more details. 
+
+ You should have received a copy of the GNU General 
+ Public License along with this program; if not, 
+ write to the Free Software Foundation, Inc., 59 
+ Temple Place, Suite 330, Boston, MA 02111-1307 USA 
+--------------------------------------------------------------------------
+
+Ostrich Setup
+Model                  : Split.exe > OstExeOut.txt
+Algorithm              : Parallel Dynamically Dimensioned Search Algorithm (PDDS)
+Objective Function     : WSSE
+Number of Parameters   : 3
+Number of Tied Params  : 0
+Number of Observations : 25
+Seed for Random Nums.  : 1509727957
+
+Ostrich Run Record
+trial    best fitness   K1            K2            Kback          trials remaining
+1     7.200701E+02  2.069424E-06  8.734089E+01  1.171803E+00  5.400000E+01
+
+DDS is searching for a better solution.
+   1...   2...   3...   4...   5...   6...   7...   8...   9...  10...
+  11...  12...
+Operation is complete
+
+13    7.172693E+02  2.069424E-06  3.144096E+01  1.171803E+00  4.200000E+01
+
+DDS is searching for a better solution.
+   1...   2...   3...
+Operation is complete
+
+16    6.908443E+02  2.069424E-06  3.316367E+00  1.171803E+00  3.900000E+01
+
+DDS is searching for a better solution.
+   1...   2...   3...   4...   5...
+Operation is complete
+
+21    6.240176E+02  2.069424E-06  1.826220E-02  1.171803E+00  3.400000E+01
+
+DDS is searching for a better solution.
+   1...   2...   3...   4...   5...
+Operation is complete
+
+26    6.239590E+02  1.024244E-03  1.826220E-02  1.171803E+00  2.900000E+01
+
+DDS is searching for a better solution.
+   1...
+Operation is complete
+
+27    6.238803E+02  2.400109E-03  1.826220E-02  1.171803E+00  2.800000E+01
+
+DDS is searching for a better solution.
+   1...   2...   3...   4...   5...   6...   7...   8...   9...
+Operation is complete
+
+36    6.228585E+02  2.400109E-03  1.204729E-03  1.171803E+00  1.900000E+01
+
+DDS is searching for a better solution.
+   1...
+Operation is complete
+
+37    6.228329E+02  2.400109E-03  7.811106E-04  1.171803E+00  1.800000E+01
+
+DDS is searching for a better solution.
+   1...   2...   3...   4...   5...   6...   7...   8...   9...
+Operation is complete
+
+46    6.218209E+02  2.049637E-02  7.811106E-04  1.171803E+00  9.000000E+00
+
+DDS is searching for a better solution.
+   1...   2...
+Operation is complete
+
+48    1.587433E+02  2.400109E-03  7.811106E-04  9.436010E-01  7.000000E+00
+
+DDS is searching for a better solution.
+   1...   2...   3...   4...   5...   6...
+Operation is complete
+
+54    1.570370E+02  2.400109E-03  1.565021E-02  9.436010E-01  1.000000E+00
+
+DDS is searching for a better solution.
+   1...
+Operation is complete
+
+55    1.570370E+02  2.400109E-03  1.565021E-02  9.436010E-01  0.000000E+00
+
+Optimal Parameter Set
+Objective Function : 1.570370E+02
+K1                 : 2.400109E-03
+K2                 : 1.565021E-02
+Kback              : 9.436010E-01
+
+Algorithm Metrics
+Algorithm               : Parallel Dynamically-Dimensioned Search Algorithm (PDDS)
+Desired Convergence Val : N/A
+Actual Convergence Val  : N/A
+Max Generations         : 55
+Actual Generations      : 55
+Peterbation Value       : 0.200000
+Debug Statements        : disabled
+Initial Solution        : Randomly Generated
+Special User Option     : standard
+Alpha Value             : not used
+Beta Value              : not used
+Number of Processors    : 5
+Total Evals             : 1
+Telescoping Strategy    : none
+Algorithm successfully converged on a solution, however more runs may be needed
+--------------------------------------------------------------------------
+ OSTRICH version 17.11.03 (Built Nov  3 2017 @ 09:02:31)
+
+ A computer program for model-independent calibration and optimization.
+
+ Author             L. Shawn Matott
+ Copyright (C) 2007 L. Shawn Matott
+
+ This program is free software; you can redistribute 
+ it and/or modify it under the terms of the GNU  
+ General Public License as published by the Free 
+ Software Foundation; either version 2 of the 
+ License, or(at your option) any later version. 
+
+ This program is distributed in the hope that it will 
+ be useful, but WITHOUT ANY WARRANTY; without even 
+ the implied warranty of MERCHANTABILITY or FITNESS 
+ FOR A PARTICULAR PURPOSE. See the GNU General Public 
+ License for more details. 
+
+ You should have received a copy of the GNU General 
+ Public License along with this program; if not, 
+ write to the Free Software Foundation, Inc., 59 
+ Temple Place, Suite 330, Boston, MA 02111-1307 USA 
+--------------------------------------------------------------------------
+
+Ostrich Setup
+Model                  : Split.exe > OstExeOut.txt
+Algorithm              : Parallel Dynamically Dimensioned Search Algorithm (PDDS)
+Objective Function     : WSSE
+Number of Parameters   : 3
+Number of Tied Params  : 0
+Number of Observations : 25
+Seed for Random Nums.  : 1509727962
+
+Ostrich Run Record
+trial    best fitness   K1            K2            Kback          trials remaining
+1     3.857295E+15  2.488250E-04  6.452570E-04  1.795765E-06  4.900000E+01
+
+DDS is searching for a better solution.
+   1...
+Operation is complete
+
+2     1.748662E+05  1.713879E-05  8.779307E+02  2.209986E-01  4.800000E+01
+
+DDS is searching for a better solution.
+   1...   2...
+Operation is complete
+
+4     9.307997E+04  1.392307E-09  1.217210E+00  1.325094E+02  4.600000E+01
+
+DDS is searching for a better solution.
+   1...
+Operation is complete
+
+5     9.510522E+03  3.305252E-08  1.840355E+00  1.992969E+00  4.500000E+01
+
+DDS is searching for a better solution.
+   1...   2...
+Operation is complete
+
+7     6.451749E+03  1.861235E-06  1.136699E+02  1.719376E+00  4.300000E+01
+
+DDS is searching for a better solution.
+   1...   2...   3...
+Operation is complete
+
+10    1.306503E+03  1.011801E-04  2.780412E+00  1.252036E+00  4.000000E+01
+
+DDS is searching for a better solution.
+   1...   2...   3...   4...   5...   6...   7...   8...   9...  10...
+Operation is complete
+
+20    1.223113E+03  1.011801E-04  9.578485E-02  1.252036E+00  3.000000E+01
+
+DDS is searching for a better solution.
+   1...   2...   3...   4...   5...
+Operation is complete
+
+25    1.223068E+03  7.673346E-04  9.578485E-02  1.252036E+00  2.500000E+01
+
+DDS is searching for a better solution.
+   1...
+Operation is complete
+
+26    1.214787E+03  1.011801E-04  2.110048E-04  1.252036E+00  2.400000E+01
+
+DDS is searching for a better solution.
+   1...   2...   3...   4...   5...
+Operation is complete
+
+31    1.214775E+03  2.841720E-04  2.110048E-04  1.252036E+00  1.900000E+01
+
+DDS is searching for a better solution.
+   1...   2...   3...
+Operation is complete
+
+34    1.213697E+03  1.662829E-02  2.110048E-04  1.252036E+00  1.600000E+01
+
+DDS is searching for a better solution.
+   1...   2...   3...   4...   5...   6...
+Operation is complete
+
+40    1.213677E+03  1.662829E-02  5.569700E-07  1.252036E+00  1.000000E+01
+
+DDS is searching for a better solution.
+   1...   2...   3...   4...
+Operation is complete
+
+44    1.146881E+03  5.401288E+01  2.110048E-04  1.252036E+00  6.000000E+00
+
+DDS is searching for a better solution.
+   1...   2...   3...   4...
+Operation is complete
+
+48    1.146867E+03  5.401288E+01  3.181763E-05  1.252036E+00  2.000000E+00
+
+DDS is searching for a better solution.
+   1...   2...
+Operation is complete
+
+50    1.146867E+03  5.401288E+01  3.181763E-05  1.252036E+00  0.000000E+00
+
+Optimal Parameter Set
+Objective Function : 1.146867E+03
+K1                 : 5.401288E+01
+K2                 : 3.181763E-05
+Kback              : 1.252036E+00
+
+Algorithm Metrics
+Algorithm               : Parallel Dynamically-Dimensioned Search Algorithm (PDDS)
+Desired Convergence Val : N/A
+Actual Convergence Val  : N/A
+Max Generations         : 50
+Actual Generations      : 50
+Peterbation Value       : 0.200000
+Debug Statements        : disabled
+Initial Solution        : Randomly Generated
+Special User Option     : standard
+Alpha Value             : not used
+Beta Value              : not used
+Number of Processors    : 5
+Total Evals             : 1
+Telescoping Strategy    : none
+Algorithm successfully converged on a solution, however more runs may be needed
+--------------------------------------------------------------------------
+ OSTRICH version 17.11.03 (Built Nov  3 2017 @ 09:02:31)
+
+ A computer program for model-independent calibration and optimization.
+
+ Author             L. Shawn Matott
+ Copyright (C) 2007 L. Shawn Matott
+
+ This program is free software; you can redistribute 
+ it and/or modify it under the terms of the GNU  
+ General Public License as published by the Free 
+ Software Foundation; either version 2 of the 
+ License, or(at your option) any later version. 
+
+ This program is distributed in the hope that it will 
+ be useful, but WITHOUT ANY WARRANTY; without even 
+ the implied warranty of MERCHANTABILITY or FITNESS 
+ FOR A PARTICULAR PURPOSE. See the GNU General Public 
+ License for more details. 
+
+ You should have received a copy of the GNU General 
+ Public License along with this program; if not, 
+ write to the Free Software Foundation, Inc., 59 
+ Temple Place, Suite 330, Boston, MA 02111-1307 USA 
+--------------------------------------------------------------------------
+
+Ostrich Setup
+Model                  : Split.exe > OstExeOut.txt
+Algorithm              : Parallel Dynamically Dimensioned Search Algorithm (PDDS)
+Objective Function     : WSSE
+Number of Parameters   : 3
+Number of Tied Params  : 0
+Number of Observations : 25
+Seed for Random Nums.  : 1509727967
+
+Ostrich Run Record
+trial    best fitness   K1            K2            Kback          trials remaining
+1     8.781446E+04  1.636618E-05  1.226712E-10  7.835543E+01  5.400000E+01
+
+DDS is searching for a better solution.
+   1...   2...   3...   4...
+Operation is complete
+
+5     7.996148E+04  3.108542E-01  1.086859E-07  4.249942E+01  5.000000E+01
+
+DDS is searching for a better solution.
+   1...
+Operation is complete
+
+6     2.828208E+04  2.951115E-09  2.530931E-09  4.079025E+00  4.900000E+01
+
+DDS is searching for a better solution.
+   1...   2...   3...   4...
+Operation is complete
+
+10    2.828206E+04  5.008962E-10  2.710033E-05  4.079025E+00  4.500000E+01
+
+DDS is searching for a better solution.
+   1...   2...   3...   4...   5...   6...   7...   8...   9...  10...
+  11...  12...  13...  14...  15...
+Operation is complete
+
+25    7.358616E+02  1.492059E-09  2.710033E-05  1.188810E+00  3.000000E+01
+
+DDS is searching for a better solution.
+   1...   2...   3...   4...   5...   6...   7...
+Operation is complete
+
+32    7.358609E+02  7.187891E-09  2.710033E-05  1.188810E+00  2.300000E+01
+
+DDS is searching for a better solution.
+   1...   2...
+Operation is complete
+
+34    7.358598E+02  1.492059E-09  5.236227E-08  1.188810E+00  2.100000E+01
+
+DDS is searching for a better solution.
+   1...   2...
+Operation is complete
+
+36    7.358594E+02  7.187891E-09  2.071777E-06  1.188810E+00  1.900000E+01
+
+DDS is searching for a better solution.
+   1...   2...   3...   4...
+Operation is complete
+
+40    7.358592E+02  7.187891E-09  2.250730E-08  1.188810E+00  1.500000E+01
+
+DDS is searching for a better solution.
+   1...   2...   3...   4...   5...   6...   7...
+Operation is complete
+
+47    7.358586E+02  2.867879E-10  2.250730E-08  1.188810E+00  8.000000E+00
+
+DDS is searching for a better solution.
+   1...
+Operation is complete
+
+48    7.358574E+02  1.508534E-10  2.250730E-08  1.188810E+00  7.000000E+00
+
+DDS is searching for a better solution.
+   1...   2...   3...   4...   5...   6...   7...
+Operation is complete
+
+55    7.358574E+02  1.508534E-10  2.250730E-08  1.188810E+00  0.000000E+00
+
+Optimal Parameter Set
+Objective Function : 7.358574E+02
+K1                 : 1.508534E-10
+K2                 : 2.250730E-08
+Kback              : 1.188810E+00
+
+Algorithm Metrics
+Algorithm               : Parallel Dynamically-Dimensioned Search Algorithm (PDDS)
+Desired Convergence Val : N/A
+Actual Convergence Val  : N/A
+Max Generations         : 55
+Actual Generations      : 55
+Peterbation Value       : 0.200000
+Debug Statements        : disabled
+Initial Solution        : Randomly Generated
+Special User Option     : standard
+Alpha Value             : not used
+Beta Value              : not used
+Number of Processors    : 5
+Total Evals             : 1
+Telescoping Strategy    : none
+Algorithm successfully converged on a solution, however more runs may be needed
+--------------------------------------------------------------------------
+ OSTRICH version 17.11.03 (Built Nov  3 2017 @ 09:02:31)
+
+ A computer program for model-independent calibration and optimization.
+
+ Author             L. Shawn Matott
+ Copyright (C) 2007 L. Shawn Matott
+
+ This program is free software; you can redistribute 
+ it and/or modify it under the terms of the GNU  
+ General Public License as published by the Free 
+ Software Foundation; either version 2 of the 
+ License, or(at your option) any later version. 
+
+ This program is distributed in the hope that it will 
+ be useful, but WITHOUT ANY WARRANTY; without even 
+ the implied warranty of MERCHANTABILITY or FITNESS 
+ FOR A PARTICULAR PURPOSE. See the GNU General Public 
+ License for more details. 
+
+ You should have received a copy of the GNU General 
+ Public License along with this program; if not, 
+ write to the Free Software Foundation, Inc., 59 
+ Temple Place, Suite 330, Boston, MA 02111-1307 USA 
+--------------------------------------------------------------------------
+
+Ostrich Setup
+Model                  : Split.exe > OstExeOut.txt
+Algorithm              : Parallel Dynamically Dimensioned Search Algorithm (PDDS)
+Objective Function     : WSSE
+Number of Parameters   : 3
+Number of Tied Params  : 0
+Number of Observations : 25
+Seed for Random Nums.  : 1509727972
+
+Ostrich Run Record
+trial    best fitness   K1            K2            Kback          trials remaining
+1     1.272462E+11  3.000803E+02  3.630025E+01  3.125792E-04  7.900000E+01
+
+DDS is searching for a better solution.
+   1...   2...   3...   4...
+Operation is complete
+
+5     1.387469E+10  4.503556E-09  1.281264E-02  9.432007E-04  7.500000E+01
+
+DDS is searching for a better solution.
+   1...
+Operation is complete
+
+6     4.717045E+07  4.987969E-01  6.858847E+02  1.603923E-02  7.400000E+01
+
+DDS is searching for a better solution.
+   1...
+Operation is complete
+
+7     2.631551E+04  2.491255E-01  1.599152E+01  3.758352E+00  7.300000E+01
+
+DDS is searching for a better solution.
+   1...   2...   3...   4...
+Operation is complete
+
+11    2.620354E+04  1.213373E+01  1.599152E+01  3.758352E+00  6.900000E+01
+
+DDS is searching for a better solution.
+   1...   2...   3...   4...   5...   6...   7...   8...   9...  10...
+  11...  12...
+Operation is complete
+
+23    2.228344E+04  1.213373E+01  3.389350E-02  3.303498E+00  5.700000E+01
+
+DDS is searching for a better solution.
+   1...
+Operation is complete
+
+24    7.686993E+02  1.213373E+01  2.322283E+01  1.186587E+00  5.600000E+01
+
+DDS is searching for a better solution.
+   1...   2...   3...   4...
+Operation is complete
+
+28    7.163535E+02  1.213373E+01  1.414755E+00  1.186587E+00  5.200000E+01
+
+DDS is searching for a better solution.
+   1...   2...   3...   4...   5...
+Operation is complete
+
+33    4.303749E+02  1.213373E+01  1.414755E+00  1.141222E+00  4.700000E+01
+
+DDS is searching for a better solution.
+   1...   2...   3...   4...   5...
+Operation is complete
+
+38    3.967198E+02  1.213373E+01  2.173200E-03  1.141222E+00  4.200000E+01
+
+DDS is searching for a better solution.
+   1...   2...   3...   4...
+Operation is complete
+
+42    3.938620E+02  3.424619E+02  2.173200E-03  1.141222E+00  3.800000E+01
+
+DDS is searching for a better solution.
+   1...
+Operation is complete
+
+43    3.937945E+02  8.682146E+02  2.173200E-03  1.141222E+00  3.700000E+01
+
+DDS is searching for a better solution.
+   1...   2...   3...   4...   5...   6...   7...   8...   9...  10...
+  11...  12...  13...  14...  15...
+Operation is complete
+
+58    3.937220E+02  8.682146E+02  5.905790E-08  1.141222E+00  2.200000E+01
+
+DDS is searching for a better solution.
+   1...   2...   3...   4...   5...   6...
+Operation is complete
+
+64    3.937220E+02  8.682146E+02  2.492567E-07  1.141222E+00  1.600000E+01
+
+DDS is searching for a better solution.
+   1...   2...   3...   4...   5...   6...   7...
+Operation is complete
+
+71    3.937220E+02  8.682146E+02  2.564478E-07  1.141222E+00  9.000000E+00
+
+DDS is searching for a better solution.
+   1...   2...   3...   4...   5...   6...   7...   8...   9...
+Operation is complete
+
+80    3.937220E+02  8.682146E+02  2.564478E-07  1.141222E+00  0.000000E+00
+
+Optimal Parameter Set
+Objective Function : 3.937220E+02
+K1                 : 8.682146E+02
+K2                 : 2.564478E-07
+Kback              : 1.141222E+00
+
+Algorithm Metrics
+Algorithm               : Parallel Dynamically-Dimensioned Search Algorithm (PDDS)
+Desired Convergence Val : N/A
+Actual Convergence Val  : N/A
+Max Generations         : 80
+Actual Generations      : 80
+Peterbation Value       : 0.200000
+Debug Statements        : disabled
+Initial Solution        : Randomly Generated
+Special User Option     : standard
+Alpha Value             : not used
+Beta Value              : not used
+Number of Processors    : 5
+Total Evals             : 1
+Telescoping Strategy    : none
+Algorithm successfully converged on a solution, however more runs may be needed
+--------------------------------------------------------------------------
+ OSTRICH version 17.11.03 (Built Nov  3 2017 @ 09:02:31)
+
+ A computer program for model-independent calibration and optimization.
+
+ Author             L. Shawn Matott
+ Copyright (C) 2007 L. Shawn Matott
+
+ This program is free software; you can redistribute 
+ it and/or modify it under the terms of the GNU  
+ General Public License as published by the Free 
+ Software Foundation; either version 2 of the 
+ License, or(at your option) any later version. 
+
+ This program is distributed in the hope that it will 
+ be useful, but WITHOUT ANY WARRANTY; without even 
+ the implied warranty of MERCHANTABILITY or FITNESS 
+ FOR A PARTICULAR PURPOSE. See the GNU General Public 
+ License for more details. 
+
+ You should have received a copy of the GNU General 
+ Public License along with this program; if not, 
+ write to the Free Software Foundation, Inc., 59 
+ Temple Place, Suite 330, Boston, MA 02111-1307 USA 
+--------------------------------------------------------------------------
+
+Ostrich Setup
+Model                  : Split.exe > OstExeOut.txt
+Algorithm              : Parallel Dynamically Dimensioned Search Algorithm (PDDS)
+Objective Function     : WSSE
+Number of Parameters   : 3
+Number of Tied Params  : 0
+Number of Observations : 25
+Seed for Random Nums.  : 1509727977
+
+Ostrich Run Record
+trial    best fitness   K1            K2            Kback          trials remaining
+1     2.403815E+15  8.877594E+01  8.384514E-05  2.275811E-06  7.400000E+01
+
+DDS is searching for a better solution.
+   1...
+Operation is complete
+
+2     8.841030E+11  8.845708E-05  2.701037E-05  1.199249E-04  7.300000E+01
+
+DDS is searching for a better solution.
+   1...
+Operation is complete
+
+3     1.681355E+08  8.257645E-10  3.922391E+02  8.509994E-03  7.200000E+01
+
+DDS is searching for a better solution.
+   1...
+Operation is complete
+
+4     7.461840E+04  7.615397E-10  3.799593E-02  3.017143E+01  7.100000E+01
+
+DDS is searching for a better solution.
+   1...   2...   3...   4...   5...
+Operation is complete
+
+9     3.880887E+04  1.225642E-09  1.626595E-02  5.973059E+00  6.600000E+01
+
+DDS is searching for a better solution.
+   1...   2...
+Operation is complete
+
+11    3.553912E+04  7.615397E-10  1.646598E-01  5.295673E+00  6.400000E+01
+
+DDS is searching for a better solution.
+   1...   2...   3...   4...   5...   6...   7...   8...   9...  10...
+  11...  12...  13...
+Operation is complete
+
+24    3.008348E+03  7.615397E-10  1.646598E-01  1.437302E+00  5.100000E+01
+
+DDS is searching for a better solution.
+   1...
+Operation is complete
+
+25    1.386129E+03  7.615397E-10  5.245963E-02  8.169224E-01  5.000000E+01
+
+DDS is searching for a better solution.
+   1...   2...   3...   4...   5...
+Operation is complete
+
+30    1.386129E+03  5.306427E-10  5.245963E-02  8.169224E-01  4.500000E+01
+
+DDS is searching for a better solution.
+   1...   2...   3...   4...   5...   6...   7...   8...
+Operation is complete
+
+38    1.377900E+03  5.306427E-10  8.282084E-02  8.169224E-01  3.700000E+01
+
+DDS is searching for a better solution.
+   1...   2...   3...
+Operation is complete
+
+41    1.260997E+03  5.306427E-10  1.198848E+00  8.169224E-01  3.400000E+01
+
+DDS is searching for a better solution.
+   1...   2...   3...   4...
+Operation is complete
+
+45    1.186709E+03  5.306427E-10  5.397638E+01  8.169224E-01  3.000000E+01
+
+DDS is searching for a better solution.
+   1...   2...   3...   4...   5...   6...
+Operation is complete
+
+51    1.184296E+03  5.306427E-10  9.190144E+02  8.169224E-01  2.400000E+01
+
+DDS is searching for a better solution.
+   1...   2...   3...
+Operation is complete
+
+54    7.247343E+02  5.306427E-10  5.397638E+01  8.516354E-01  2.100000E+01
+
+DDS is searching for a better solution.
+   1...   2...   3...   4...
+Operation is complete
+
+58    7.228917E+02  5.306427E-10  6.256614E+02  8.516354E-01  1.700000E+01
+
+DDS is searching for a better solution.
+   1...
+Operation is complete
+
+59    5.769751E+01  5.306427E-10  5.397638E+01  1.033421E+00  1.600000E+01
+
+DDS is searching for a better solution.
+   1...   2...   3...   4...   5...
+Operation is complete
+
+64    5.529532E+01  5.306427E-10  1.104048E+01  1.033421E+00  1.100000E+01
+
+DDS is searching for a better solution.
+   1...   2...   3...   4...   5...
+Operation is complete
+
+69    5.477367E+01  5.306427E-10  9.178277E+00  1.033421E+00  6.000000E+00
+
+DDS is searching for a better solution.
+   1...
+Operation is complete
+
+70    5.127640E+01  5.306427E-10  1.245362E-03  1.033421E+00  5.000000E+00
+
+DDS is searching for a better solution.
+   1...   2...   3...   4...   5...
+Operation is complete
+
+75    4.689683E+01  5.306427E-10  3.170806E-01  1.033421E+00  0.000000E+00
+
+Optimal Parameter Set
+Objective Function : 4.689683E+01
+K1                 : 5.306427E-10
+K2                 : 3.170806E-01
+Kback              : 1.033421E+00
+
+Algorithm Metrics
+Algorithm               : Parallel Dynamically-Dimensioned Search Algorithm (PDDS)
+Desired Convergence Val : N/A
+Actual Convergence Val  : N/A
+Max Generations         : 75
+Actual Generations      : 75
+Peterbation Value       : 0.200000
+Debug Statements        : disabled
+Initial Solution        : Randomly Generated
+Special User Option     : standard
+Alpha Value             : not used
+Beta Value              : not used
+Number of Processors    : 5
+Total Evals             : 1
+Telescoping Strategy    : none
+Algorithm successfully converged on a solution, however more runs may be needed
+--------------------------------------------------------------------------
+ OSTRICH version 17.11.03 (Built Nov  3 2017 @ 09:02:31)
+
+ A computer program for model-independent calibration and optimization.
+
+ Author             L. Shawn Matott
+ Copyright (C) 2007 L. Shawn Matott
+
+ This program is free software; you can redistribute 
+ it and/or modify it under the terms of the GNU  
+ General Public License as published by the Free 
+ Software Foundation; either version 2 of the 
+ License, or(at your option) any later version. 
+
+ This program is distributed in the hope that it will 
+ be useful, but WITHOUT ANY WARRANTY; without even 
+ the implied warranty of MERCHANTABILITY or FITNESS 
+ FOR A PARTICULAR PURPOSE. See the GNU General Public 
+ License for more details. 
+
+ You should have received a copy of the GNU General 
+ Public License along with this program; if not, 
+ write to the Free Software Foundation, Inc., 59 
+ Temple Place, Suite 330, Boston, MA 02111-1307 USA 
+--------------------------------------------------------------------------
+
+Ostrich Setup
+Model                  : Split.exe > OstExeOut.txt
+Algorithm              : Parallel Dynamically Dimensioned Search Algorithm (PDDS)
+Objective Function     : WSSE
+Number of Parameters   : 3
+Number of Tied Params  : 0
+Number of Observations : 25
+Seed for Random Nums.  : 1509727982
+
+Ostrich Run Record
+trial    best fitness   K1            K2            Kback          trials remaining
+1     7.183116E+07  4.448448E+02  3.413678E+00  1.303034E-02  5.600000E+01
+
+DDS is searching for a better solution.
+   1...   2...   3...   4...   5...   6...   7...   8...   9...  10...
+Operation is complete
+
+11    2.363430E+02  2.041427E+01  3.413678E+00  1.100162E+00  4.600000E+01
+
+DDS is searching for a better solution.
+   1...   2...   3...   4...   5...
+Operation is complete
+
+16    2.354207E+02  6.048265E+01  3.413678E+00  1.100162E+00  4.100000E+01
+
+DDS is searching for a better solution.
+   1...   2...   3...
+Operation is complete
+
+19    2.349902E+02  5.720108E+02  3.413678E+00  1.100162E+00  3.800000E+01
+
+DDS is searching for a better solution.
+   1...   2...   3...   4...   5...   6...   7...   8...   9...
+Operation is complete
+
+28    2.298426E+02  5.720108E+02  2.375536E+00  1.100162E+00  2.900000E+01
+
+DDS is searching for a better solution.
+   1...   2...   3...   4...
+Operation is complete
+
+32    1.361676E+02  5.720108E+02  2.375536E+00  9.358716E-01  2.500000E+01
+
+DDS is searching for a better solution.
+   1...   2...   3...   4...
+Operation is complete
+
+36    1.361095E+02  2.298449E+02  2.375536E+00  9.358716E-01  2.100000E+01
+
+DDS is searching for a better solution.
+   1...
+Operation is complete
+
+37    1.285164E+02  5.333648E-03  2.375536E+00  9.358716E-01  2.000000E+01
+
+DDS is searching for a better solution.
+   1...   2...
+Operation is complete
+
+39    1.229834E+02  5.720108E+02  1.108008E+01  9.358716E-01  1.800000E+01
+
+DDS is searching for a better solution.
+   1...
+Operation is complete
+
+40    1.228207E+02  2.298449E+02  1.137764E+01  9.358716E-01  1.700000E+01
+
+DDS is searching for a better solution.
+   1...   2...   3...   4...   5...
+Operation is complete
+
+45    1.226808E+02  9.375888E+01  1.137764E+01  9.358716E-01  1.200000E+01
+
+DDS is searching for a better solution.
+   1...   2...   3...   4...   5...   6...   7...   8...
+Operation is complete
+
+53    1.224008E+02  4.214367E+01  1.137764E+01  9.358716E-01  4.000000E+00
+
+DDS is searching for a better solution.
+   1...   2...
+Operation is complete
+
+55    1.189616E+02  9.375888E+01  2.038195E+02  9.358716E-01  2.000000E+00
+
+DDS is searching for a better solution.
+   1...   2...
+Operation is complete
+
+57    1.189616E+02  9.375888E+01  2.038195E+02  9.358716E-01  0.000000E+00
+
+Optimal Parameter Set
+Objective Function : 1.189616E+02
+K1                 : 9.375888E+01
+K2                 : 2.038195E+02
+Kback              : 9.358716E-01
+
+Algorithm Metrics
+Algorithm               : Parallel Dynamically-Dimensioned Search Algorithm (PDDS)
+Desired Convergence Val : N/A
+Actual Convergence Val  : N/A
+Max Generations         : 57
+Actual Generations      : 57
+Peterbation Value       : 0.200000
+Debug Statements        : disabled
+Initial Solution        : Randomly Generated
+Special User Option     : standard
+Alpha Value             : not used
+Beta Value              : not used
+Number of Processors    : 5
+Total Evals             : 1
+Telescoping Strategy    : none
+Algorithm successfully converged on a solution, however more runs may be needed
+--------------------------------------------------------------------------
+ OSTRICH version 17.11.03 (Built Nov  3 2017 @ 09:02:31)
+
+ A computer program for model-independent calibration and optimization.
+
+ Author             L. Shawn Matott
+ Copyright (C) 2007 L. Shawn Matott
+
+ This program is free software; you can redistribute 
+ it and/or modify it under the terms of the GNU  
+ General Public License as published by the Free 
+ Software Foundation; either version 2 of the 
+ License, or(at your option) any later version. 
+
+ This program is distributed in the hope that it will 
+ be useful, but WITHOUT ANY WARRANTY; without even 
+ the implied warranty of MERCHANTABILITY or FITNESS 
+ FOR A PARTICULAR PURPOSE. See the GNU General Public 
+ License for more details. 
+
+ You should have received a copy of the GNU General 
+ Public License along with this program; if not, 
+ write to the Free Software Foundation, Inc., 59 
+ Temple Place, Suite 330, Boston, MA 02111-1307 USA 
+--------------------------------------------------------------------------
+
+Ostrich Setup
+Model                  : Split.exe > OstExeOut.txt
+Algorithm              : Parallel Dynamically Dimensioned Search Algorithm (PDDS)
+Objective Function     : WSSE
+Number of Parameters   : 3
+Number of Tied Params  : 0
+Number of Observations : 25
+Seed for Random Nums.  : 1509727987
+
+Ostrich Run Record
+trial    best fitness   K1            K2            Kback          trials remaining
+1     8.559246E+13  9.910701E+01  6.910472E-04  1.205854E-05  9.200000E+01
+
+DDS is searching for a better solution.
+   1...
+Operation is complete
+
+2     2.948479E+12  3.720009E-06  9.857778E+02  6.469078E-05  9.100000E+01
+
+DDS is searching for a better solution.
+   1...
+Operation is complete
+
+3     2.674725E+11  4.245681E-02  3.794110E-08  2.193623E-04  9.000000E+01
+
+DDS is searching for a better solution.
+   1...   2...   3...
+Operation is complete
+
+6     1.710798E+06  2.931794E-06  2.077060E+02  7.976694E-02  8.700000E+01
+
+DDS is searching for a better solution.
+   1...   2...   3...   4...
+Operation is complete
+
+10    2.644619E+01  1.079555E-08  9.471855E+01  9.722939E-01  8.300000E+01
+
+DDS is searching for a better solution.
+   1...   2...   3...   4...   5...   6...   7...   8...   9...  10...
+  11...  12...
+Operation is complete
+
+22    2.637989E+01  1.079555E-08  3.269218E+02  9.722939E-01  7.100000E+01
+
+DDS is searching for a better solution.
+   1...   2...   3...   4...
+Operation is complete
+
+26    2.637980E+01  4.013787E-06  3.269218E+02  9.722939E-01  6.700000E+01
+
+DDS is searching for a better solution.
+   1...   2...   3...
+Operation is complete
+
+29    2.637938E+01  1.410265E-10  3.269218E+02  9.722939E-01  6.400000E+01
+
+DDS is searching for a better solution.
+   1...   2...
+Operation is complete
+
+31    2.612653E+01  1.085575E-02  3.269218E+02  9.722939E-01  6.200000E+01
+
+DDS is searching for a better solution.
+   1...   2...   3...   4...   5...   6...   7...   8...   9...
+Operation is complete
+
+40    1.977386E+01  5.649888E+01  3.269218E+02  9.722939E-01  5.300000E+01
+
+DDS is searching for a better solution.
+   1...   2...
+Operation is complete
+
+42    1.971382E+01  1.085575E-02  3.269218E+02  1.007324E+00  5.100000E+01
+
+DDS is searching for a better solution.
+   1...
+Operation is complete
+
+43    1.963452E+01  3.229238E+01  3.269218E+02  9.722939E-01  5.000000E+01
+
+DDS is searching for a better solution.
+   1...   2...   3...
+Operation is complete
+
+46    1.686930E+01  1.085575E-02  3.001027E+00  1.007324E+00  4.700000E+01
+
+DDS is searching for a better solution.
+   1...   2...   3...   4...   5...   6...
+Operation is complete
+
+52    1.672078E+01  1.592177E-02  3.001027E+00  1.007324E+00  4.100000E+01
+
+DDS is searching for a better solution.
+   1...
+Operation is complete
+
+53    8.894706E+00  4.664264E-01  3.001027E+00  1.007324E+00  4.000000E+01
+
+DDS is searching for a better solution.
+   1...   2...   3...
+Operation is complete
+
+56    7.653958E+00  6.071978E-01  3.001027E+00  1.007324E+00  3.700000E+01
+
+DDS is searching for a better solution.
+   1...
+Operation is complete
+
+57    1.657766E+00  5.244460E+00  3.001027E+00  1.007324E+00  3.600000E+01
+
+DDS is searching for a better solution.
+   1...   2...   3...   4...   5...   6...   7...   8...   9...
+Operation is complete
+
+66    1.144109E+00  2.666024E+02  3.001027E+00  1.007324E+00  2.700000E+01
+
+DDS is searching for a better solution.
+   1...   2...   3...   4...   5...   6...   7...   8...   9...  10...
+  11...  12...
+Operation is complete
+
+78    1.143585E+00  3.321345E+02  3.001027E+00  1.007324E+00  1.500000E+01
+
+DDS is searching for a better solution.
+   1...   2...   3...   4...   5...   6...   7...   8...   9...  10...
+  11...  12...  13...  14...
+Operation is complete
+
+92    1.143116E+00  4.299763E+02  3.001027E+00  1.007324E+00  1.000000E+00
+
+DDS is searching for a better solution.
+   1...
+Operation is complete
+
+93    1.143116E+00  4.299763E+02  3.001027E+00  1.007324E+00  0.000000E+00
+
+Optimal Parameter Set
+Objective Function : 1.143116E+00
+K1                 : 4.299763E+02
+K2                 : 3.001027E+00
+Kback              : 1.007324E+00
+
+Algorithm Metrics
+Algorithm               : Parallel Dynamically-Dimensioned Search Algorithm (PDDS)
+Desired Convergence Val : N/A
+Actual Convergence Val  : N/A
+Max Generations         : 93
+Actual Generations      : 93
+Peterbation Value       : 0.200000
+Debug Statements        : disabled
+Initial Solution        : Randomly Generated
+Special User Option     : standard
+Alpha Value             : not used
+Beta Value              : not used
+Number of Processors    : 5
+Total Evals             : 1
+Telescoping Strategy    : none
+Algorithm successfully converged on a solution, however more runs may be needed
+--------------------------------------------------------------------------
+ OSTRICH version 17.11.03 (Built Nov  3 2017 @ 09:02:31)
+
+ A computer program for model-independent calibration and optimization.
+
+ Author             L. Shawn Matott
+ Copyright (C) 2007 L. Shawn Matott
+
+ This program is free software; you can redistribute 
+ it and/or modify it under the terms of the GNU  
+ General Public License as published by the Free 
+ Software Foundation; either version 2 of the 
+ License, or(at your option) any later version. 
+
+ This program is distributed in the hope that it will 
+ be useful, but WITHOUT ANY WARRANTY; without even 
+ the implied warranty of MERCHANTABILITY or FITNESS 
+ FOR A PARTICULAR PURPOSE. See the GNU General Public 
+ License for more details. 
+
+ You should have received a copy of the GNU General 
+ Public License along with this program; if not, 
+ write to the Free Software Foundation, Inc., 59 
+ Temple Place, Suite 330, Boston, MA 02111-1307 USA 
+--------------------------------------------------------------------------
+
+Ostrich Setup
+Model                  : Split.exe > OstExeOut.txt
+Algorithm              : Parallel Dynamically Dimensioned Search Algorithm (PDDS)
+Objective Function     : WSSE
+Number of Parameters   : 3
+Number of Tied Params  : 0
+Number of Observations : 25
+Seed for Random Nums.  : 1509727992
+
+Ostrich Run Record
+trial    best fitness   K1            K2            Kback          trials remaining
+1     1.254015E+21  4.429769E-02  5.623601E-05  3.149446E-09  5.100000E+01
+
+DDS is searching for a better solution.
+   1...
+Operation is complete
+
+2     8.969337E+09  4.773089E+00  5.850405E-06  1.196966E-03  5.000000E+01
+
+DDS is searching for a better solution.
+   1...
+Operation is complete
+
+3     9.265966E+08  1.543592E-08  8.608115E-06  3.697493E-03  4.900000E+01
+
+DDS is searching for a better solution.
+   1...   2...   3...   4...
+Operation is complete
+
+7     7.175960E+07  2.529995E-07  3.928641E-08  1.319244E-02  4.500000E+01
+
+DDS is searching for a better solution.
+   1...
+Operation is complete
+
+8     5.803552E+07  3.068975E-10  8.884002E-09  1.465340E-02  4.400000E+01
+
+DDS is searching for a better solution.
+   1...
+Operation is complete
+
+9     4.823691E+07  1.337112E-09  1.066257E-01  1.583042E-02  4.300000E+01
+
+DDS is searching for a better solution.
+   1...   2...   3...   4...   5...   6...   7...
+Operation is complete
+
+16    4.804632E+07  1.947713E-06  5.109052E+01  1.583042E-02  3.600000E+01
+
+DDS is searching for a better solution.
+   1...   2...   3...
+Operation is complete
+
+19    7.577414E+04  1.337112E-09  1.066257E-01  3.236608E+01  3.300000E+01
+
+DDS is searching for a better solution.
+   1...   2...   3...   4...   5...
+Operation is complete
+
+24    7.567508E+04  1.337112E-09  1.066257E-01  3.216934E+01  2.800000E+01
+
+DDS is searching for a better solution.
+   1...   2...   3...   4...   5...
+Operation is complete
+
+29    7.567507E+04  3.528321E-07  1.066257E-01  3.216934E+01  2.300000E+01
+
+DDS is searching for a better solution.
+   1...
+Operation is complete
+
+30    2.721165E+03  1.337112E-09  1.066257E-01  1.410556E+00  2.200000E+01
+
+DDS is searching for a better solution.
+   1...   2...   3...   4...   5...   6...   7...
+Operation is complete
+
+37    2.708081E+03  1.337112E-09  7.927865E-05  1.410556E+00  1.500000E+01
+
+DDS is searching for a better solution.
+   1...   2...   3...   4...
+Operation is complete
+
+41    2.708080E+03  3.499249E-07  7.927865E-05  1.410556E+00  1.100000E+01
+
+DDS is searching for a better solution.
+   1...   2...   3...   4...   5...   6...   7...
+Operation is complete
+
+48    2.708080E+03  8.316498E-09  7.927865E-05  1.410556E+00  4.000000E+00
+
+DDS is searching for a better solution.
+   1...   2...
+Operation is complete
+
+50    5.078264E+02  3.499249E-07  7.927865E-05  8.882729E-01  2.000000E+00
+
+DDS is searching for a better solution.
+   1...   2...
+Operation is complete
+
+52    5.078264E+02  3.499249E-07  7.927865E-05  8.882729E-01  0.000000E+00
+
+Optimal Parameter Set
+Objective Function : 5.078264E+02
+K1                 : 3.499249E-07
+K2                 : 7.927865E-05
+Kback              : 8.882729E-01
+
+Algorithm Metrics
+Algorithm               : Parallel Dynamically-Dimensioned Search Algorithm (PDDS)
+Desired Convergence Val : N/A
+Actual Convergence Val  : N/A
+Max Generations         : 52
+Actual Generations      : 52
+Peterbation Value       : 0.200000
+Debug Statements        : disabled
+Initial Solution        : Randomly Generated
+Special User Option     : standard
+Alpha Value             : not used
+Beta Value              : not used
+Number of Processors    : 5
+Total Evals             : 1
+Telescoping Strategy    : none
+Algorithm successfully converged on a solution, however more runs may be needed
+--------------------------------------------------------------------------
+ OSTRICH version 17.11.03 (Built Nov  3 2017 @ 09:02:31)
+
+ A computer program for model-independent calibration and optimization.
+
+ Author             L. Shawn Matott
+ Copyright (C) 2007 L. Shawn Matott
+
+ This program is free software; you can redistribute 
+ it and/or modify it under the terms of the GNU  
+ General Public License as published by the Free 
+ Software Foundation; either version 2 of the 
+ License, or(at your option) any later version. 
+
+ This program is distributed in the hope that it will 
+ be useful, but WITHOUT ANY WARRANTY; without even 
+ the implied warranty of MERCHANTABILITY or FITNESS 
+ FOR A PARTICULAR PURPOSE. See the GNU General Public 
+ License for more details. 
+
+ You should have received a copy of the GNU General 
+ Public License along with this program; if not, 
+ write to the Free Software Foundation, Inc., 59 
+ Temple Place, Suite 330, Boston, MA 02111-1307 USA 
+--------------------------------------------------------------------------
+
+Ostrich Setup
+Model                  : Split.exe > OstExeOut.txt
+Algorithm              : Parallel Dynamically Dimensioned Search Algorithm (PDDS)
+Objective Function     : WSSE
+Number of Parameters   : 3
+Number of Tied Params  : 0
+Number of Observations : 25
+Seed for Random Nums.  : 1509727997
+
+Ostrich Run Record
+trial    best fitness   K1            K2            Kback          trials remaining
+1     5.916636E+04  1.257787E-08  2.852566E-03  1.358921E+01  5.100000E+01
+
+DDS is searching for a better solution.
+   1...   2...   3...   4...   5...
+Operation is complete
+
+6     5.224454E+02  9.290749E-04  1.110121E-02  8.863744E-01  4.600000E+01
+
+DDS is searching for a better solution.
+   1...
+Operation is complete
+
+7     3.576652E+01  5.516993E-09  1.048582E+00  1.026509E+00  4.500000E+01
+
+DDS is searching for a better solution.
+   1...   2...   3...   4...   5...   6...   7...
+Operation is complete
+
+14    3.576486E+01  5.029954E-05  1.048582E+00  1.026509E+00  3.800000E+01
+
+DDS is searching for a better solution.
+   1...   2...   3...   4...   5...   6...   7...   8...
+Operation is complete
+
+22    3.576480E+01  5.219538E-05  1.048582E+00  1.026509E+00  3.000000E+01
+
+DDS is searching for a better solution.
+   1...   2...   3...   4...   5...   6...   7...   8...   9...  10...
+Operation is complete
+
+32    3.558775E+01  5.449080E-03  1.048582E+00  1.026509E+00  2.000000E+01
+
+DDS is searching for a better solution.
+   1...   2...   3...
+Operation is complete
+
+35    3.098262E+01  1.811841E-01  1.048582E+00  1.026509E+00  1.700000E+01
+
+DDS is searching for a better solution.
+   1...   2...   3...   4...   5...
+Operation is complete
+
+40    1.680582E+01  1.811841E-01  1.048582E+00  9.889250E-01  1.200000E+01
+
+DDS is searching for a better solution.
+   1...
+Operation is complete
+
+41    1.545180E+01  7.470933E+02  1.048582E+00  1.026509E+00  1.100000E+01
+
+DDS is searching for a better solution.
+   1...   2...   3...
+Operation is complete
+
+44    1.127913E+01  4.327528E+01  1.048582E+00  9.889250E-01  8.000000E+00
+
+DDS is searching for a better solution.
+   1...   2...   3...   4...   5...   6...
+Operation is complete
+
+50    1.105558E+01  1.159507E+01  1.048582E+00  9.889250E-01  2.000000E+00
+
+DDS is searching for a better solution.
+   1...   2...
+Operation is complete
+
+52    3.206583E+00  4.327528E+01  1.941472E+02  9.889250E-01  0.000000E+00
+
+Optimal Parameter Set
+Objective Function : 3.206583E+00
+K1                 : 4.327528E+01
+K2                 : 1.941472E+02
+Kback              : 9.889250E-01
+
+Algorithm Metrics
+Algorithm               : Parallel Dynamically-Dimensioned Search Algorithm (PDDS)
+Desired Convergence Val : N/A
+Actual Convergence Val  : N/A
+Max Generations         : 52
+Actual Generations      : 52
+Peterbation Value       : 0.200000
+Debug Statements        : disabled
+Initial Solution        : Randomly Generated
+Special User Option     : standard
+Alpha Value             : not used
+Beta Value              : not used
+Number of Processors    : 5
+Total Evals             : 1
+Telescoping Strategy    : none
+Algorithm successfully converged on a solution, however more runs may be needed
+--------------------------------------------------------------------------
+ OSTRICH version 17.11.03 (Built Nov  3 2017 @ 09:02:31)
+
+ A computer program for model-independent calibration and optimization.
+
+ Author             L. Shawn Matott
+ Copyright (C) 2007 L. Shawn Matott
+
+ This program is free software; you can redistribute 
+ it and/or modify it under the terms of the GNU  
+ General Public License as published by the Free 
+ Software Foundation; either version 2 of the 
+ License, or(at your option) any later version. 
+
+ This program is distributed in the hope that it will 
+ be useful, but WITHOUT ANY WARRANTY; without even 
+ the implied warranty of MERCHANTABILITY or FITNESS 
+ FOR A PARTICULAR PURPOSE. See the GNU General Public 
+ License for more details. 
+
+ You should have received a copy of the GNU General 
+ Public License along with this program; if not, 
+ write to the Free Software Foundation, Inc., 59 
+ Temple Place, Suite 330, Boston, MA 02111-1307 USA 
+--------------------------------------------------------------------------
+
+Ostrich Setup
+Model                  : Split.exe > OstExeOut.txt
+Algorithm              : Parallel Dynamically Dimensioned Search Algorithm (PDDS)
+Objective Function     : WSSE
+Number of Parameters   : 3
+Number of Tied Params  : 0
+Number of Observations : 25
+Seed for Random Nums.  : 1509728002
+
+Ostrich Run Record
+trial    best fitness   K1            K2            Kback          trials remaining
+1     7.491185E+02  1.084631E-08  1.339993E+01  1.177127E+00  7.800000E+01
+
+DDS is searching for a better solution.
+   1...   2...   3...   4...   5...   6...   7...   8...   9...  10...
+  11...  12...  13...  14...
+Operation is complete
+
+15    6.764880E+02  3.892605E-09  3.611579E-01  1.177127E+00  6.400000E+01
+
+DDS is searching for a better solution.
+   1...   2...   3...   4...   5...   6...
+Operation is complete
+
+21    6.579671E+02  3.892605E-09  7.903588E-03  1.177127E+00  5.800000E+01
+
+DDS is searching for a better solution.
+   1...   2...   3...   4...   5...   6...
+Operation is complete
+
+27    6.579669E+02  1.871857E-09  7.903588E-03  1.177127E+00  5.200000E+01
+
+DDS is searching for a better solution.
+   1...   2...
+Operation is complete
+
+29    6.577579E+02  3.892605E-09  4.561494E-03  1.177127E+00  5.000000E+01
+
+DDS is searching for a better solution.
+   1...   2...   3...
+Operation is complete
+
+32    4.792430E+02  4.301801E-08  7.903588E-03  8.914356E-01  4.700000E+01
+
+DDS is searching for a better solution.
+   1...   2...   3...   4...
+Operation is complete
+
+36    3.763752E+02  4.301801E-08  3.076423E+00  8.914356E-01  4.300000E+01
+
+DDS is searching for a better solution.
+   1...   2...
+Operation is complete
+
+38    3.619551E+02  4.301801E-08  1.099711E+01  8.914356E-01  4.100000E+01
+
+DDS is searching for a better solution.
+   1...   2...   3...   4...   5...   6...   7...   8...   9...  10...
+  11...
+Operation is complete
+
+49    3.554854E+02  4.301801E-08  7.029462E+02  8.914356E-01  3.000000E+01
+
+DDS is searching for a better solution.
+   1...   2...   3...   4...   5...   6...   7...   8...
+Operation is complete
+
+57    3.554854E+02  7.468570E-08  7.029462E+02  8.914356E-01  2.200000E+01
+
+DDS is searching for a better solution.
+   1...   2...   3...
+Operation is complete
+
+60    3.554753E+02  4.301801E-08  7.762429E+02  8.914356E-01  1.900000E+01
+
+DDS is searching for a better solution.
+   1...   2...   3...   4...   5...   6...   7...   8...   9...  10...
+  11...  12...  13...  14...  15...  16...  17...  18...  19...
+Operation is complete
+
+79    3.554753E+02  4.301801E-08  7.762429E+02  8.914356E-01  0.000000E+00
+
+Optimal Parameter Set
+Objective Function : 3.554753E+02
+K1                 : 4.301801E-08
+K2                 : 7.762429E+02
+Kback              : 8.914356E-01
+
+Algorithm Metrics
+Algorithm               : Parallel Dynamically-Dimensioned Search Algorithm (PDDS)
+Desired Convergence Val : N/A
+Actual Convergence Val  : N/A
+Max Generations         : 79
+Actual Generations      : 79
+Peterbation Value       : 0.200000
+Debug Statements        : disabled
+Initial Solution        : Randomly Generated
+Special User Option     : standard
+Alpha Value             : not used
+Beta Value              : not used
+Number of Processors    : 5
+Total Evals             : 1
+Telescoping Strategy    : none
+Algorithm successfully converged on a solution, however more runs may be needed
+--------------------------------------------------------------------------
+ OSTRICH version 17.11.03 (Built Nov  3 2017 @ 09:02:31)
+
+ A computer program for model-independent calibration and optimization.
+
+ Author             L. Shawn Matott
+ Copyright (C) 2007 L. Shawn Matott
+
+ This program is free software; you can redistribute 
+ it and/or modify it under the terms of the GNU  
+ General Public License as published by the Free 
+ Software Foundation; either version 2 of the 
+ License, or(at your option) any later version. 
+
+ This program is distributed in the hope that it will 
+ be useful, but WITHOUT ANY WARRANTY; without even 
+ the implied warranty of MERCHANTABILITY or FITNESS 
+ FOR A PARTICULAR PURPOSE. See the GNU General Public 
+ License for more details. 
+
+ You should have received a copy of the GNU General 
+ Public License along with this program; if not, 
+ write to the Free Software Foundation, Inc., 59 
+ Temple Place, Suite 330, Boston, MA 02111-1307 USA 
+--------------------------------------------------------------------------
+
+Ostrich Setup
+Model                  : Split.exe > OstExeOut.txt
+Algorithm              : Parallel Dynamically Dimensioned Search Algorithm (PDDS)
+Objective Function     : WSSE
+Number of Parameters   : 3
+Number of Tied Params  : 0
+Number of Observations : 25
+Seed for Random Nums.  : 1509728007
+
+Ostrich Run Record
+trial    best fitness   K1            K2            Kback          trials remaining
+1     1.718370E+21  3.242807E+02  7.892687E-08  2.692026E-09  5.400000E+01
+
+DDS is searching for a better solution.
+   1...
+Operation is complete
+
+2     8.817359E+04  1.503629E+00  7.883362E-07  8.093429E+01  5.300000E+01
+
+DDS is searching for a better solution.
+   1...
+Operation is complete
+
+3     6.342150E+03  1.193014E+01  1.372313E-02  6.611083E-01  5.200000E+01
+
+DDS is searching for a better solution.
+   1...   2...   3...
+Operation is complete
+
+6     3.583911E+00  4.385785E+01  2.924803E+02  9.882121E-01  4.900000E+01
+
+DDS is searching for a better solution.
+   1...   2...   3...   4...   5...   6...
+Operation is complete
+
+12    3.504805E+00  4.385785E+01  3.050653E+01  9.882121E-01  4.300000E+01
+
+DDS is searching for a better solution.
+   1...   2...
+Operation is complete
+
+14    3.271254E+00  1.086467E+01  2.924803E+02  9.882121E-01  4.100000E+01
+
+DDS is searching for a better solution.
+   1...   2...
+Operation is complete
+
+16    3.122485E+00  7.932806E+00  3.050653E+01  9.882121E-01  3.900000E+01
+
+DDS is searching for a better solution.
+   1...   2...   3...   4...   5...   6...
+Operation is complete
+
+22    3.038297E+00  4.128805E+00  3.050653E+01  9.882121E-01  3.300000E+01
+
+DDS is searching for a better solution.
+   1...   2...   3...   4...   5...   6...   7...   8...   9...  10...
+  11...  12...  13...  14...  15...  16...  17...  18...  19...  20...
+  21...  22...  23...  24...  25...  26...  27...  28...  29...  30...
+  31...  32...  33...
+Operation is complete
+
+55    3.038297E+00  4.128805E+00  3.050653E+01  9.882121E-01  0.000000E+00
+
+Optimal Parameter Set
+Objective Function : 3.038297E+00
+K1                 : 4.128805E+00
+K2                 : 3.050653E+01
+Kback              : 9.882121E-01
+
+Algorithm Metrics
+Algorithm               : Parallel Dynamically-Dimensioned Search Algorithm (PDDS)
+Desired Convergence Val : N/A
+Actual Convergence Val  : N/A
+Max Generations         : 55
+Actual Generations      : 55
+Peterbation Value       : 0.200000
+Debug Statements        : disabled
+Initial Solution        : Randomly Generated
+Special User Option     : standard
+Alpha Value             : not used
+Beta Value              : not used
+Number of Processors    : 5
+Total Evals             : 1
+Telescoping Strategy    : none
+Algorithm successfully converged on a solution, however more runs may be needed
+--------------------------------------------------------------------------
+ OSTRICH version 17.11.03 (Built Nov  3 2017 @ 09:02:31)
+
+ A computer program for model-independent calibration and optimization.
+
+ Author             L. Shawn Matott
+ Copyright (C) 2007 L. Shawn Matott
+
+ This program is free software; you can redistribute 
+ it and/or modify it under the terms of the GNU  
+ General Public License as published by the Free 
+ Software Foundation; either version 2 of the 
+ License, or(at your option) any later version. 
+
+ This program is distributed in the hope that it will 
+ be useful, but WITHOUT ANY WARRANTY; without even 
+ the implied warranty of MERCHANTABILITY or FITNESS 
+ FOR A PARTICULAR PURPOSE. See the GNU General Public 
+ License for more details. 
+
+ You should have received a copy of the GNU General 
+ Public License along with this program; if not, 
+ write to the Free Software Foundation, Inc., 59 
+ Temple Place, Suite 330, Boston, MA 02111-1307 USA 
+--------------------------------------------------------------------------
+
+Ostrich Setup
+Model                  : Split.exe > OstExeOut.txt
+Algorithm              : Parallel Dynamically Dimensioned Search Algorithm (PDDS)
+Objective Function     : WSSE
+Number of Parameters   : 3
+Number of Tied Params  : 0
+Number of Observations : 25
+Seed for Random Nums.  : 1509728012
+
+Ostrich Run Record
+trial    best fitness   K1            K2            Kback          trials remaining
+1     1.508741E+19  6.359367E+00  1.804399E-06  2.872088E-08  6.600000E+01
+
+DDS is searching for a better solution.
+   1...
+Operation is complete
+
+2     3.895920E+08  1.022218E+00  6.423118E-05  5.723114E-03  6.500000E+01
+
+DDS is searching for a better solution.
+   1...
+Operation is complete
+
+3     2.583699E+08  5.905277E+01  4.259791E-06  7.022378E-03  6.400000E+01
+
+DDS is searching for a better solution.
+   1...   2...   3...
+Operation is complete
+
+6     5.634224E+02  6.799328E-06  4.596670E-07  8.821105E-01  6.100000E+01
+
+DDS is searching for a better solution.
+   1...   2...   3...   4...   5...
+Operation is complete
+
+11    5.634221E+02  2.687358E-04  4.359604E-05  8.821105E-01  5.600000E+01
+
+DDS is searching for a better solution.
+   1...   2...   3...   4...   5...   6...
+Operation is complete
+
+17    5.634143E+02  3.033332E-05  4.359604E-05  8.821105E-01  5.000000E+01
+
+DDS is searching for a better solution.
+   1...   2...   3...   4...   5...   6...
+Operation is complete
+
+23    4.840119E+02  3.033332E-05  9.031540E-01  8.821105E-01  4.400000E+01
+
+DDS is searching for a better solution.
+   1...   2...   3...
+Operation is complete
+
+26    4.840113E+02  6.196796E-08  9.031540E-01  8.821105E-01  4.100000E+01
+
+DDS is searching for a better solution.
+   1...   2...
+Operation is complete
+
+28    4.840111E+02  1.286829E-09  9.031540E-01  8.821105E-01  3.900000E+01
+
+DDS is searching for a better solution.
+   1...   2...   3...
+Operation is complete
+
+31    4.740893E+02  6.196796E-08  1.225178E+00  8.821105E-01  3.600000E+01
+
+DDS is searching for a better solution.
+   1...   2...   3...
+Operation is complete
+
+34    4.305482E+02  1.286829E-09  2.707738E+01  8.821105E-01  3.300000E+01
+
+DDS is searching for a better solution.
+   1...   2...   3...   4...   5...   6...
+Operation is complete
+
+40    4.305482E+02  2.473436E-08  2.707738E+01  8.821105E-01  2.700000E+01
+
+DDS is searching for a better solution.
+   1...   2...
+Operation is complete
+
+42    4.287582E+02  1.286829E-09  6.703363E+01  8.821105E-01  2.500000E+01
+
+DDS is searching for a better solution.
+   1...   2...   3...   4...
+Operation is complete
+
+46    4.287573E+02  1.376803E-08  6.703363E+01  8.821105E-01  2.100000E+01
+
+DDS is searching for a better solution.
+   1...   2...   3...
+Operation is complete
+
+49    4.287572E+02  2.814037E-09  6.703363E+01  8.821105E-01  1.800000E+01
+
+DDS is searching for a better solution.
+   1...
+Operation is complete
+
+50    4.281746E+02  1.376803E-08  1.271949E+02  8.821105E-01  1.700000E+01
+
+DDS is searching for a better solution.
+   1...   2...   3...   4...   5...   6...   7...   8...   9...  10...
+Operation is complete
+
+60    4.278635E+02  1.376803E-08  2.429287E+02  8.821105E-01  7.000000E+00
+
+DDS is searching for a better solution.
+   1...   2...   3...   4...   5...   6...   7...
+Operation is complete
+
+67    4.278635E+02  1.376803E-08  2.429287E+02  8.821105E-01  0.000000E+00
+
+Optimal Parameter Set
+Objective Function : 4.278635E+02
+K1                 : 1.376803E-08
+K2                 : 2.429287E+02
+Kback              : 8.821105E-01
+
+Algorithm Metrics
+Algorithm               : Parallel Dynamically-Dimensioned Search Algorithm (PDDS)
+Desired Convergence Val : N/A
+Actual Convergence Val  : N/A
+Max Generations         : 67
+Actual Generations      : 67
+Peterbation Value       : 0.200000
+Debug Statements        : disabled
+Initial Solution        : Randomly Generated
+Special User Option     : standard
+Alpha Value             : not used
+Beta Value              : not used
+Number of Processors    : 5
+Total Evals             : 1
+Telescoping Strategy    : none
+Algorithm successfully converged on a solution, however more runs may be needed
+--------------------------------------------------------------------------
+ OSTRICH version 17.11.03 (Built Nov  3 2017 @ 09:02:31)
+
+ A computer program for model-independent calibration and optimization.
+
+ Author             L. Shawn Matott
+ Copyright (C) 2007 L. Shawn Matott
+
+ This program is free software; you can redistribute 
+ it and/or modify it under the terms of the GNU  
+ General Public License as published by the Free 
+ Software Foundation; either version 2 of the 
+ License, or(at your option) any later version. 
+
+ This program is distributed in the hope that it will 
+ be useful, but WITHOUT ANY WARRANTY; without even 
+ the implied warranty of MERCHANTABILITY or FITNESS 
+ FOR A PARTICULAR PURPOSE. See the GNU General Public 
+ License for more details. 
+
+ You should have received a copy of the GNU General 
+ Public License along with this program; if not, 
+ write to the Free Software Foundation, Inc., 59 
+ Temple Place, Suite 330, Boston, MA 02111-1307 USA 
+--------------------------------------------------------------------------
+
+Ostrich Setup
+Model                  : Split.exe > OstExeOut.txt
+Algorithm              : Parallel Dynamically Dimensioned Search Algorithm (PDDS)
+Objective Function     : WSSE
+Number of Parameters   : 3
+Number of Tied Params  : 0
+Number of Observations : 25
+Seed for Random Nums.  : 1509728017
+
+Ostrich Run Record
+trial    best fitness   K1            K2            Kback          trials remaining
+1     9.207154E+09  2.543015E+02  8.414420E+02  1.161290E-03  5.500000E+01
+
+DDS is searching for a better solution.
+   1...   2...
+Operation is complete
+
+3     6.788342E+04  3.895232E-05  8.104706E-10  2.072169E+01  5.300000E+01
+
+DDS is searching for a better solution.
+   1...   2...   3...
+Operation is complete
+
+6     8.747480E+03  1.212859E-02  1.782927E-01  6.134896E-01  5.000000E+01
+
+DDS is searching for a better solution.
+   1...   2...   3...   4...   5...   6...   7...   8...   9...
+Operation is complete
+
+15    8.411279E+03  1.212859E-02  2.083558E+00  6.134896E-01  4.100000E+01
+
+DDS is searching for a better solution.
+   1...   2...
+Operation is complete
+
+17    8.305065E+03  1.212859E-02  1.515383E+01  6.134896E-01  3.900000E+01
+
+DDS is searching for a better solution.
+   1...   2...   3...   4...
+Operation is complete
+
+21    8.302226E+03  5.702584E-04  1.515383E+01  6.134896E-01  3.500000E+01
+
+DDS is searching for a better solution.
+   1...   2...   3...   4...   5...   6...   7...   8...
+Operation is complete
+
+29    8.302084E+03  1.742068E-08  1.515383E+01  6.134896E-01  2.700000E+01
+
+DDS is searching for a better solution.
+   1...   2...   3...   4...
+Operation is complete
+
+33    8.302084E+03  1.738531E-08  1.515383E+01  6.134896E-01  2.300000E+01
+
+DDS is searching for a better solution.
+   1...   2...   3...   4...   5...   6...   7...   8...   9...  10...
+  11...  12...  13...  14...  15...  16...  17...  18...  19...
+Operation is complete
+
+52    8.281691E+03  1.738531E-08  3.883417E+02  6.134896E-01  4.000000E+00
+
+DDS is searching for a better solution.
+   1...
+Operation is complete
+
+53    8.281534E+03  1.738531E-08  4.754406E+02  6.134896E-01  3.000000E+00
+
+DDS is searching for a better solution.
+   1...   2...   3...
+Operation is complete
+
+56    8.281534E+03  1.738531E-08  4.754406E+02  6.134896E-01  0.000000E+00
+
+Optimal Parameter Set
+Objective Function : 8.281534E+03
+K1                 : 1.738531E-08
+K2                 : 4.754406E+02
+Kback              : 6.134896E-01
+
+Algorithm Metrics
+Algorithm               : Parallel Dynamically-Dimensioned Search Algorithm (PDDS)
+Desired Convergence Val : N/A
+Actual Convergence Val  : N/A
+Max Generations         : 56
+Actual Generations      : 56
+Peterbation Value       : 0.200000
+Debug Statements        : disabled
+Initial Solution        : Randomly Generated
+Special User Option     : standard
+Alpha Value             : not used
+Beta Value              : not used
+Number of Processors    : 5
+Total Evals             : 1
+Telescoping Strategy    : none
+Algorithm successfully converged on a solution, however more runs may be needed
+--------------------------------------------------------------------------
+ OSTRICH version 17.11.03 (Built Nov  3 2017 @ 09:02:31)
+
+ A computer program for model-independent calibration and optimization.
+
+ Author             L. Shawn Matott
+ Copyright (C) 2007 L. Shawn Matott
+
+ This program is free software; you can redistribute 
+ it and/or modify it under the terms of the GNU  
+ General Public License as published by the Free 
+ Software Foundation; either version 2 of the 
+ License, or(at your option) any later version. 
+
+ This program is distributed in the hope that it will 
+ be useful, but WITHOUT ANY WARRANTY; without even 
+ the implied warranty of MERCHANTABILITY or FITNESS 
+ FOR A PARTICULAR PURPOSE. See the GNU General Public 
+ License for more details. 
+
+ You should have received a copy of the GNU General 
+ Public License along with this program; if not, 
+ write to the Free Software Foundation, Inc., 59 
+ Temple Place, Suite 330, Boston, MA 02111-1307 USA 
+--------------------------------------------------------------------------
+
+Ostrich Setup
+Model                  : Split.exe > OstExeOut.txt
+Algorithm              : Parallel Dynamically Dimensioned Search Algorithm (PDDS)
+Objective Function     : WSSE
+Number of Parameters   : 3
+Number of Tied Params  : 0
+Number of Observations : 25
+Seed for Random Nums.  : 1509728022
+
+Ostrich Run Record
+trial    best fitness   K1            K2            Kback          trials remaining
+1     6.548442E+04  1.253732E-10  2.362259E+00  1.830550E+01  6.300000E+01
+
+DDS is searching for a better solution.
+   1...   2...   3...   4...   5...   6...   7...   8...   9...
+Operation is complete
+
+10    2.308106E+03  1.507937E-09  2.499004E-01  1.368542E+00  5.400000E+01
+
+DDS is searching for a better solution.
+   1...   2...   3...   4...
+Operation is complete
+
+14    2.289294E+03  1.507937E-09  6.551234E-02  1.368542E+00  5.000000E+01
+
+DDS is searching for a better solution.
+   1...   2...
+Operation is complete
+
+16    2.281549E+03  1.904182E-09  4.111103E-06  1.368542E+00  4.800000E+01
+
+DDS is searching for a better solution.
+   1...   2...   3...   4...   5...
+Operation is complete
+
+21    2.281548E+03  1.687145E-08  4.111103E-06  1.368542E+00  4.300000E+01
+
+DDS is searching for a better solution.
+   1...   2...   3...   4...   5...
+Operation is complete
+
+26    2.281548E+03  1.687145E-08  1.765595E-06  1.368542E+00  3.800000E+01
+
+DDS is searching for a better solution.
+   1...   2...   3...
+Operation is complete
+
+29    2.281540E+03  2.023254E-10  4.111103E-06  1.368542E+00  3.500000E+01
+
+DDS is searching for a better solution.
+   1...   2...   3...   4...
+Operation is complete
+
+33    2.281540E+03  2.023254E-10  2.537301E-07  1.368542E+00  3.100000E+01
+
+DDS is searching for a better solution.
+   1...   2...   3...
+Operation is complete
+
+36    2.281530E+03  2.023254E-10  9.371331E-06  1.368542E+00  2.800000E+01
+
+DDS is searching for a better solution.
+   1...   2...   3...   4...   5...   6...   7...   8...   9...  10...
+  11...  12...  13...  14...  15...  16...  17...  18...  19...  20...
+  21...  22...
+Operation is complete
+
+58    2.281529E+03  2.023254E-10  2.507599E-06  1.368542E+00  6.000000E+00
+
+DDS is searching for a better solution.
+   1...   2...   3...   4...   5...   6...
+Operation is complete
+
+64    2.281529E+03  2.023254E-10  2.507599E-06  1.368542E+00  0.000000E+00
+
+Optimal Parameter Set
+Objective Function : 2.281529E+03
+K1                 : 2.023254E-10
+K2                 : 2.507599E-06
+Kback              : 1.368542E+00
+
+Algorithm Metrics
+Algorithm               : Parallel Dynamically-Dimensioned Search Algorithm (PDDS)
+Desired Convergence Val : N/A
+Actual Convergence Val  : N/A
+Max Generations         : 64
+Actual Generations      : 64
+Peterbation Value       : 0.200000
+Debug Statements        : disabled
+Initial Solution        : Randomly Generated
+Special User Option     : standard
+Alpha Value             : not used
+Beta Value              : not used
+Number of Processors    : 5
+Total Evals             : 1
+Telescoping Strategy    : none
+Algorithm successfully converged on a solution, however more runs may be needed
+--------------------------------------------------------------------------
+ OSTRICH version 17.11.03 (Built Nov  3 2017 @ 09:02:31)
+
+ A computer program for model-independent calibration and optimization.
+
+ Author             L. Shawn Matott
+ Copyright (C) 2007 L. Shawn Matott
+
+ This program is free software; you can redistribute 
+ it and/or modify it under the terms of the GNU  
+ General Public License as published by the Free 
+ Software Foundation; either version 2 of the 
+ License, or(at your option) any later version. 
+
+ This program is distributed in the hope that it will 
+ be useful, but WITHOUT ANY WARRANTY; without even 
+ the implied warranty of MERCHANTABILITY or FITNESS 
+ FOR A PARTICULAR PURPOSE. See the GNU General Public 
+ License for more details. 
+
+ You should have received a copy of the GNU General 
+ Public License along with this program; if not, 
+ write to the Free Software Foundation, Inc., 59 
+ Temple Place, Suite 330, Boston, MA 02111-1307 USA 
+--------------------------------------------------------------------------
+
+Ostrich Setup
+Model                  : Split.exe > OstExeOut.txt
+Algorithm              : Parallel Dynamically Dimensioned Search Algorithm (PDDS)
+Objective Function     : WSSE
+Number of Parameters   : 3
+Number of Tied Params  : 0
+Number of Observations : 25
+Seed for Random Nums.  : 1509728027
+
+Ostrich Run Record
+trial    best fitness   K1            K2            Kback          trials remaining
+1     1.521486E+21  8.728230E-03  2.178714E-07  2.859897E-09  6.900000E+01
+
+DDS is searching for a better solution.
+   1...
+Operation is complete
+
+2     1.461577E+20  6.854378E+00  5.398292E-05  9.225195E-09  6.800000E+01
+
+DDS is searching for a better solution.
+   1...
+Operation is complete
+
+3     6.278948E+04  5.883379E-03  5.006829E-02  3.361872E-01  6.700000E+01
+
+DDS is searching for a better solution.
+   1...   2...
+Operation is complete
+
+5     4.651998E+04  1.309088E-06  9.940625E-02  8.003721E+00  6.500000E+01
+
+DDS is searching for a better solution.
+   1...   2...
+Operation is complete
+
+7     2.255715E+04  1.322464E-04  6.881644E-06  4.799533E-01  6.300000E+01
+
+DDS is searching for a better solution.
+   1...   2...   3...   4...   5...
+Operation is complete
+
+12    2.255693E+04  1.336581E-04  9.521431E-05  4.799533E-01  5.800000E+01
+
+DDS is searching for a better solution.
+   1...   2...   3...
+Operation is complete
+
+15    9.296779E+02  1.322464E-04  1.796486E-05  8.489079E-01  5.500000E+01
+
+DDS is searching for a better solution.
+   1...   2...   3...   4...   5...
+Operation is complete
+
+20    9.286737E+02  8.558856E-04  4.013862E-03  8.489079E-01  5.000000E+01
+
+DDS is searching for a better solution.
+   1...   2...   3...   4...   5...   6...   7...
+Operation is complete
+
+27    9.286393E+02  2.100466E-04  4.013862E-03  8.489079E-01  4.300000E+01
+
+DDS is searching for a better solution.
+   1...   2...   3...   4...
+Operation is complete
+
+31    9.286368E+02  1.620569E-04  4.013862E-03  8.489079E-01  3.900000E+01
+
+DDS is searching for a better solution.
+   1...   2...
+Operation is complete
+
+33    9.038265E+02  2.100466E-04  1.149663E-01  8.489079E-01  3.700000E+01
+
+DDS is searching for a better solution.
+   1...   2...   3...   4...   5...
+Operation is complete
+
+38    9.038162E+02  9.492147E-09  1.149663E-01  8.489079E-01  3.200000E+01
+
+DDS is searching for a better solution.
+   1...   2...
+Operation is complete
+
+40    7.555730E+02  2.100466E-04  6.612453E+01  8.489079E-01  3.000000E+01
+
+DDS is searching for a better solution.
+   1...   2...   3...   4...   5...   6...   7...   8...   9...  10...
+Operation is complete
+
+50    7.555690E+02  2.304296E-08  6.612453E+01  8.489079E-01  2.000000E+01
+
+DDS is searching for a better solution.
+   1...   2...   3...   4...   5...
+Operation is complete
+
+55    7.540431E+02  2.304296E-08  7.187805E+02  8.489079E-01  1.500000E+01
+
+DDS is searching for a better solution.
+   1...   2...   3...   4...   5...   6...
+Operation is complete
+
+61    7.540430E+02  1.090985E-09  7.187805E+02  8.489079E-01  9.000000E+00
+
+DDS is searching for a better solution.
+   1...   2...   3...   4...   5...   6...   7...   8...   9...
+Operation is complete
+
+70    7.540430E+02  1.090985E-09  7.187805E+02  8.489079E-01  0.000000E+00
+
+Optimal Parameter Set
+Objective Function : 7.540430E+02
+K1                 : 1.090985E-09
+K2                 : 7.187805E+02
+Kback              : 8.489079E-01
+
+Algorithm Metrics
+Algorithm               : Parallel Dynamically-Dimensioned Search Algorithm (PDDS)
+Desired Convergence Val : N/A
+Actual Convergence Val  : N/A
+Max Generations         : 70
+Actual Generations      : 70
+Peterbation Value       : 0.200000
+Debug Statements        : disabled
+Initial Solution        : Randomly Generated
+Special User Option     : standard
+Alpha Value             : not used
+Beta Value              : not used
+Number of Processors    : 5
+Total Evals             : 1
+Telescoping Strategy    : none
+Algorithm successfully converged on a solution, however more runs may be needed
+Shutting down MPI required 0.063955 seconds
+Ostrich Error Report for Processor 0 
+A total of 2 errors and/or warnings were reported
+FILE I/O ERROR             : Using default PDDS algorithm setup. 
+FILE CLEANUP               : Ostrich deleted mod0/head.dat 
+num CTORS: 39 
+num DTORS: 39 

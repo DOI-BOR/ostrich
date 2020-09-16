@@ -1,0 +1,85 @@
+--------------------------------------------------------------------------
+ OSTRICH version 17.11.03 (Built Nov  3 2017 @ 09:02:31)
+
+ A computer program for model-independent calibration and optimization.
+
+ Author             L. Shawn Matott
+ Copyright (C) 2007 L. Shawn Matott
+
+ This program is free software; you can redistribute 
+ it and/or modify it under the terms of the GNU  
+ General Public License as published by the Free 
+ Software Foundation; either version 2 of the 
+ License, or(at your option) any later version. 
+
+ This program is distributed in the hope that it will 
+ be useful, but WITHOUT ANY WARRANTY; without even 
+ the implied warranty of MERCHANTABILITY or FITNESS 
+ FOR A PARTICULAR PURPOSE. See the GNU General Public 
+ License for more details. 
+
+ You should have received a copy of the GNU General 
+ Public License along with this program; if not, 
+ write to the Free Software Foundation, Inc., 59 
+ Temple Place, Suite 330, Boston, MA 02111-1307 USA 
+--------------------------------------------------------------------------
+
+Ostrich Setup
+Model                  : Split.exe > OstExeOut.txt
+Algorithm              : Parallel Dynamically Dimensioned Search Algorithm (PDDS)
+Objective Function     : WSSE
+Number of Parameters   : 3
+Number of Tied Params  : 0
+Number of Observations : 25
+Seed for Random Nums.  : 1509727907
+
+Ostrich Run Record
+trial    best fitness   K1            K2            Kback          trials remaining
+1     2.936979E+07  1.440975E-08  7.283102E-01  2.018789E-02  8.900000E+01
+3     1.030229E+05  6.697847E-04  6.921242E-04  6.404252E+02  8.700000E+01
+4     9.473802E+04  1.430505E-03  1.045042E-02  1.610478E+02  8.600000E+01
+5     8.153956E+04  1.396032E-08  1.061191E-06  4.748453E+01  8.500000E+01
+11    8.153956E+04  1.396032E-08  1.464392E-06  4.748453E+01  7.900000E+01
+12    8.153956E+04  1.480041E-08  2.111544E-08  4.748453E+01  7.800000E+01
+13    7.820000E+04  1.396032E-08  1.061191E-06  3.776020E+01  7.700000E+01
+18    7.819993E+04  3.807197E-10  2.688389E-04  3.776020E+01  7.200000E+01
+20    9.195911E+01  1.396032E-08  1.061191E-06  1.055355E+00  7.000000E+01
+25    9.195910E+01  1.396032E-08  9.910774E-07  1.055355E+00  6.500000E+01
+26    9.195907E+01  1.396032E-08  4.061103E-07  1.055355E+00  6.400000E+01
+28    9.195890E+01  1.122895E-09  1.061191E-06  1.055355E+00  6.200000E+01
+31    9.195842E+01  2.896817E-10  4.061103E-07  1.055355E+00  5.900000E+01
+33    9.195773E+01  1.122895E-09  1.470293E-04  1.055355E+00  5.700000E+01
+37    9.195772E+01  2.998426E-09  1.470293E-04  1.055355E+00  5.300000E+01
+38    9.195175E+01  1.122895E-09  7.962098E-04  1.055355E+00  5.200000E+01
+41    9.194189E+01  2.998426E-09  1.901332E-03  1.055355E+00  4.900000E+01
+51    9.194167E+01  4.056975E-10  1.901332E-03  1.055355E+00  3.900000E+01
+69    9.176673E+01  4.056975E-10  2.350244E-02  1.055355E+00  2.100000E+01
+76    9.176633E+01  1.003782E-07  2.350244E-02  1.055355E+00  1.400000E+01
+77    9.176632E+01  5.231466E-07  2.350244E-02  1.055355E+00  1.300000E+01
+78    9.176623E+01  1.526909E-09  2.350244E-02  1.055355E+00  1.200000E+01
+83    9.176593E+01  1.166403E-05  2.350244E-02  1.055355E+00  7.000000E+00
+87    6.793685E+01  1.137412E+02  2.350244E-02  1.055355E+00  3.000000E+00
+90    6.793685E+01  1.137412E+02  2.350244E-02  1.055355E+00  0.000000E+00
+
+Optimal Parameter Set
+Objective Function : 6.793685E+01
+K1                 : 1.137412E+02
+K2                 : 2.350244E-02
+Kback              : 1.055355E+00
+
+Algorithm Metrics
+Algorithm               : Parallel Dynamically-Dimensioned Search Algorithm (PDDS)
+Desired Convergence Val : N/A
+Actual Convergence Val  : N/A
+Max Generations         : 90
+Actual Generations      : 90
+Peterbation Value       : 0.200000
+Debug Statements        : disabled
+Initial Solution        : Randomly Generated
+Special User Option     : standard
+Alpha Value             : not used
+Beta Value              : not used
+Number of Processors    : 5
+Total Evals             : 1
+Telescoping Strategy    : none
+Algorithm successfully converged on a solution, however more runs may be needed

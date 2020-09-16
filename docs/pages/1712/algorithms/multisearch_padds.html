@@ -1,0 +1,194 @@
+<!DOCTYPE HTML>
+<!--
+	Future Imperfect by HTML5 UP
+	html5up.net | @ajlkn
+	Free for personal and commercial use under the CCA 3.0 license (html5up.net/license)
+-->
+<html>
+	<head>
+		<title>OSTRICH - Algorithms - Pareto Archived DDS (PADDS)</title>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+		<link rel="stylesheet" href="../../../assets/css/main.css" />
+	</head>
+	<body class="single is-preload">
+
+		<!-- Wrapper -->
+			<div id="wrapper">
+
+				<!-- Header -->
+					<header id="header">
+						<h1 class="bannerheading"><a href="../../../index.html">OSTRICH</a></h1>
+						<nav class="links">
+							<ul>
+								<li><a href="../overview.html">Overview</a></li>
+								<li><a href="algorithms.html">Algorithms</a></li>
+								<li><a href="../setup/setup.html">Setup</a></li>
+								<li>
+									<div class="dropdown">
+										<a href="../solution/solution.html"<button class="dropbtn">
+											Solution
+											<i class="fa fa-caret-down"></i></a>
+										</button>
+										<div class="dropdown-content">
+											<a href="../solution/running.html">Running OSTRICH</a>
+											<a href="../solution/building.html">Building OSTRICH</a>
+										</div>
+									</div>
+								</li>
+								<li><a href="../output/output.html">Output</a></li>
+								<li><a href="../examples/examples.html">Examples</a></li>
+								<li><a href="../../releases.html">Releases</a></li>
+							</ul>
+						</nav>
+						<nav class="main">
+							<ul>
+								<li class="menu">
+									<a class="fa-bars" href="#menu">Menu</a>
+								</li>
+							</ul>
+						</nav>
+					</header>
+
+				<!-- Menu -->
+				<section id="menu">
+
+					<!-- Links -->
+					<section>
+						<ul class="links">
+							<li>
+								<a href="../overview.html">
+									<h3>Overview</h3>
+									<p>The basics of OSTRICH</p>
+								</a>
+							</li>
+							<li>
+								<a href="algorithms.html">
+									<h3>Algorithms</h3>
+									<p>Algorithms available within OSTRICH</p>
+								</a>
+							</li>
+							<li>
+								<a href="../setup/setup.html">
+									<h3>Setup</h3>
+									<p>Organzing an OSTRICH analysis</p>
+								</a>
+							</li>
+							<li>
+								<a href="../solution/solution.html">
+									<h3>Solution</h3>
+									<p>Running an OSTRICH analysis</p>
+								</a>
+							</li>
+							<li>
+								<a href="../output/output.html">
+									<h3>Output</h3>
+									<p>Output of an OSTRICH analysis</p>
+								</a>
+							</li>
+							<li>
+								<a href="../examples/examples.html">
+									<h3>Examples</h3>
+									<p>Examples using OSTRICH</p>
+								</a>
+							</li>
+							<li>
+								<a href="../../contributing.html">
+									<h3>Contributing</h3>
+									<p>Contribute to OSTRICH</p>
+								</a>
+							</li>
+						</ul>
+					</section>
+
+				</section>
+
+				<!-- Main -->
+					<div id="main">
+
+						<!-- Post -->
+							<article class="post">
+								<header>
+									<div class="title">
+										<h2><a href="#">Algorithms - Pareto Archived DDS (PADDS)</a></h2>
+										<p>The OSTRICH Pareto Archived DDS multi-objective optimization algorithm</p>
+									</div>
+									<div class="meta">
+										<p align="left">Initial Publication:</p>
+										<time class="time" datetime="2015-11-01">September 16, 2020</time>
+										<p align="left">Modified:</p>
+										<time class="time" datetime="2015-11-01">September 16, 2020</time>
+									</div>
+								</header>
+								<p align="justify">
+									The following optional group will configure the multi-objective Pareto Archived DDS algorithm and will be processed if [ProgramType] is set to 
+									“PADDS”.
+								</p>
+								<!-- This has strange alignment for the code to render correctly on the page.-->
+								<table class="layouttable">
+									<tr>
+										<th>
+<pre><code>BeginPADDSAlg
+PerturbationValue      [r_val]
+MaxIterations          [budget]
+SelectionMetric        [metric]
+EndPADDSAlg
+</code></pre>
+</th>
+<th>
+<pre><code>BeginPADDSAlg
+PerturbationValue      0.2
+MaxIterations          50
+SelectionMetric        Random
+EndPADDSAlg
+</code></pre>
+										</th>
+									</tr>
+								</table>
+								<p align="center" id="fig1"><b>Figure 1: General Format (left) and Example (right) of the PADDS Group </b></p>
+								
+								<p align="justify">
+									Where BeginPADDSAlg and EndPADDSAlg are parsing tags that wrap a set of algorithm configuration variables. Alternatively, BeginPADDS and EndPADDS 
+									may be used as the parsing tags. PADDS configuration variables are described below:
+								</p>
+								<ul align="justify">
+									<li><b>PerturbationValue:</b> This parameter defines the standard deviation of the decision variable perturbations as follows: 
+									PerturbationValue = StdDev / DV_Range. The allowable range is 0 to 1. As the value increases, the sampling becomes more and more spread out from the 
+									current best value of the decision variable. The default and recommended value is 0.2.</li>
+									<li><b>MaxIterations:</b> The computational budget in terms of the number of objective function evaluations.  Users need to set this input for each 
+									problem according to how long each objective function evaluation takes and how quickly an answer is needed.  The more objective functions you use, 
+									the better your estimate of the globally optimal solution will be. The default value is 50.</li>
+									<li>
+										<p>
+											<b>SelectionMetric:</b> This metric for scoring non-dominated solutions when seeding DDS trials within the overall PADDS algorithm. Values 
+											currently supported are listed below: 
+										</p>
+										<ul>
+											<li>Random</li>
+											<li>CrowdingDistance</li>
+											<li>EstimatedHyperVolumeContribution</li>
+											<li>ExactHyperVolumeContribution</li>
+										</ul>
+										<p>
+											The default selection metric value is “ExactHyperVolumeContribution”. For a discussion on choosing the appropriate selection metric see 
+											Asadzadeh and Tolson (2013).
+										</p>
+									</li>
+								</ul>
+							</article>
+
+					</div>
+
+				
+
+			</div>
+
+		<!-- Scripts -->
+			<script src="../../../assets/js/jquery.min.js"></script>
+			<script src="../../../assets/js/browser.min.js"></script>
+			<script src="../../../assets/js/breakpoints.min.js"></script>
+			<script src="../../../assets/js/util.js"></script>
+			<script src="../../../assets/js/main.js"></script>
+
+	</body>
+</html>

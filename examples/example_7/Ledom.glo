@@ -1,0 +1,234 @@
+                                  MODFLOW-2000
+      U.S. GEOLOGICAL SURVEY MODULAR FINITE-DIFFERENCE GROUND-WATER FLOW MODEL
+                           VERSION 1.19.01 03/25/2010
+
+
+ This model run produced both GLOBAL and LIST files.  This is the GLOBAL file.
+
+ GLOBAL LISTING FILE: Ledom.glo
+                         UNIT    3
+
+ OPENING Ledom.lst
+ FILE TYPE:LIST   UNIT    2   STATUS:REPLACE
+ FORMAT:FORMATTED              ACCESS:SEQUENTIAL          
+
+ OPENING Ledom.bas
+ FILE TYPE:BAS6   UNIT    1   STATUS:OLD    
+ FORMAT:FORMATTED              ACCESS:SEQUENTIAL          
+
+ OPENING Ledom.lpf
+ FILE TYPE:LPF   UNIT   11   STATUS:OLD    
+ FORMAT:FORMATTED              ACCESS:SEQUENTIAL          
+
+ OPENING Ledom.dis
+ FILE TYPE:DIS   UNIT   29   STATUS:OLD    
+ FORMAT:FORMATTED              ACCESS:SEQUENTIAL          
+
+ OPENING Ledom.wel
+ FILE TYPE:WEL   UNIT   12   STATUS:OLD    
+ FORMAT:FORMATTED              ACCESS:SEQUENTIAL          
+
+ OPENING Ledom.riv
+ FILE TYPE:RIV   UNIT   14   STATUS:OLD    
+ FORMAT:FORMATTED              ACCESS:SEQUENTIAL          
+
+ OPENING Ledom.lak
+ FILE TYPE:LAK   UNIT   44   STATUS:OLD    
+ FORMAT:FORMATTED              ACCESS:SEQUENTIAL          
+
+ OPENING Ledom.rch
+ FILE TYPE:RCH   UNIT   18   STATUS:OLD    
+ FORMAT:FORMATTED              ACCESS:SEQUENTIAL          
+
+ OPENING Ledom.oc
+ FILE TYPE:OC   UNIT   22   STATUS:OLD    
+ FORMAT:FORMATTED              ACCESS:SEQUENTIAL          
+
+ OPENING Ledom.pcg
+ FILE TYPE:PCG   UNIT   19   STATUS:OLD    
+ FORMAT:FORMATTED              ACCESS:SEQUENTIAL          
+
+ OPENING Ledom.cbw
+ FILE TYPE:DATA(BINARY)   UNIT   54   STATUS:UNKNOWN
+ FORMAT:BINARY                 ACCESS:SEQUENTIAL          
+
+ OPENING Ledom.crc
+ FILE TYPE:DATA(BINARY)   UNIT   51   STATUS:UNKNOWN
+ FORMAT:BINARY                 ACCESS:SEQUENTIAL          
+
+ OPENING Ledom.cbb
+ FILE TYPE:DATA(BINARY)   UNIT   50   STATUS:UNKNOWN
+ FORMAT:BINARY                 ACCESS:SEQUENTIAL          
+
+ OPENING Ledom.hds
+ FILE TYPE:DATA   UNIT   30   STATUS:UNKNOWN
+ FORMAT:FORMATTED              ACCESS:SEQUENTIAL          
+
+ OPENING Ledom.ddn
+ FILE TYPE:DATA(BINARY)   UNIT   31   STATUS:UNKNOWN
+ FORMAT:BINARY                 ACCESS:SEQUENTIAL          
+
+
+ DISCRETIZATION INPUT DATA READ FROM UNIT   29
+ # MODFLOW2000 Discretization File
+    5 LAYERS        55 ROWS        65 COLUMNS
+    1 STRESS PERIOD(S) IN SIMULATION
+ MODEL TIME UNIT IS DAYS
+ MODEL LENGTH UNIT IS UNDEFINED
+ THE GROUND-WATER TRANSPORT PROCESS IS INACTIVE
+
+ THE OBSERVATION PROCESS IS INACTIVE
+ THE SENSITIVITY PROCESS IS INACTIVE
+ THE PARAMETER-ESTIMATION PROCESS IS INACTIVE
+
+ MODE: FORWARD
+
+  Confining bed flag for each layer:
+   0   0   0   0   0
+
+     160995  ELEMENTS OF GX ARRAY USED OUT OF     160995
+      17875  ELEMENTS OF GZ ARRAY USED OUT OF      17875
+      17875  ELEMENTS OF IG ARRAY USED OUT OF      17875
+
+                     DELR =   100.000    
+
+                     DELC =   100.000    
+
+ TOP ELEVATION OF LAYER 1 =   1050.00    
+
+   MODEL LAYER BOTTOM EL. =   980.000     FOR LAYER   1
+
+   MODEL LAYER BOTTOM EL. =   950.000     FOR LAYER   2
+
+   MODEL LAYER BOTTOM EL. =   810.000     FOR LAYER   3
+
+   MODEL LAYER BOTTOM EL. =   800.000     FOR LAYER   4
+
+   MODEL LAYER BOTTOM EL. =   600.000     FOR LAYER   5
+
+
+ STRESS PERIOD     LENGTH       TIME STEPS     MULTIPLIER FOR DELT    SS FLAG
+ ----------------------------------------------------------------------------
+        1         10.00000          1                    1.200         SS
+
+ STEADY-STATE SIMULATION
+
+
+
+
+ LPF1 -- LAYER PROPERTY FLOW PACKAGE, VERSION 1, 1/11/2000
+         INPUT READ FROM UNIT   11
+ # MODFLOW2000 Layer Property Flow (LPF) Package
+ CELL-BY-CELL FLOWS WILL BE SAVED ON UNIT   50
+ HEAD AT CELLS THAT CONVERT TO DRY= -1.00000E+30
+ No named parameters
+
+   LAYER FLAGS:
+ LAYER       LAYTYP        LAYAVG         CHANI        LAYVKA        LAYWET
+ ---------------------------------------------------------------------------
+    1             1             0     1.000E+00             0             0
+    2             3             0     1.000E+00             0             0
+    3             3             0     1.000E+00             0             0
+    4             3             0     1.000E+00             0             0
+    5             3             0     1.000E+00             0             0
+
+   INTERPRETATION OF LAYER FLAGS:
+                        INTERBLOCK     HORIZONTAL    DATA IN
+         LAYER TYPE   TRANSMISSIVITY   ANISOTROPY   ARRAY VKA   WETTABILITY
+ LAYER      (LAYTYP)      (LAYAVG)       (CHANI)      (LAYVKA)      (LAYWET)
+ ---------------------------------------------------------------------------
+    1   CONVERTIBLE      HARMONIC     1.000E+00    VERTICAL K  NON-WETTABLE
+    2   CONVERTIBLE      HARMONIC     1.000E+00    VERTICAL K  NON-WETTABLE
+    3   CONVERTIBLE      HARMONIC     1.000E+00    VERTICAL K  NON-WETTABLE
+    4   CONVERTIBLE      HARMONIC     1.000E+00    VERTICAL K  NON-WETTABLE
+    5   CONVERTIBLE      HARMONIC     1.000E+00    VERTICAL K  NON-WETTABLE
+
+      35750 ELEMENTS IN X ARRAY ARE USED BY LPF
+         30 ELEMENTS IN IX ARRAY ARE USED BY LPF
+
+ PCG2 -- CONJUGATE GRADIENT SOLUTION PACKAGE, VERSION 2.4, 12/29/98
+ #123456789 123456789 123456789 123456789 123456789 123456789 123456789
+ MAXIMUM OF    100 CALLS OF SOLUTION ROUTINE
+ MAXIMUM OF     25 INTERNAL ITERATIONS PER CALL TO SOLUTION ROUTINE
+ MATRIX PRECONDITIONING TYPE :    1
+      40750 ELEMENTS IN X ARRAY ARE USED BY PCG
+      17500 ELEMENTS IN IX ARRAY ARE USED BY PCG
+      71500 ELEMENTS IN Z ARRAY ARE USED BY PCG
+
+      76500  ELEMENTS OF X ARRAY USED OUT OF      76500
+      71500  ELEMENTS OF Z ARRAY USED OUT OF      71500
+      17530  ELEMENTS OF IX ARRAY USED OUT OF      17530
+          0  ELEMENTS OF XHS ARRAY USED OUT OF          1
+
+
+
+                                    SOLUTION BY THE CONJUGATE-GRADIENT METHOD
+                                   -------------------------------------------
+                    MAXIMUM NUMBER OF CALLS TO PCG ROUTINE =      100
+                        MAXIMUM ITERATIONS PER CALL TO PCG =       25
+                               MATRIX PRECONDITIONING TYPE =        1
+        RELAXATION FACTOR (ONLY USED WITH PRECOND. TYPE 1) =    0.97000E+00
+ PARAMETER OF POLYNOMIAL PRECOND. = 2 (2) OR IS CALCULATED :        2
+                         HEAD CHANGE CRITERION FOR CLOSURE =    0.10000E-02
+                     RESIDUAL CHANGE CRITERION FOR CLOSURE =    0.10000E+01
+            PCG HEAD AND RESIDUAL CHANGE PRINTOUT INTERVAL =        5
+     PRINTING FROM SOLVER IS LIMITED(1) OR SUPPRESSED (>1) =        0
+                                         DAMPING PARAMETER =    0.10000E+01
+
+ WETTING CAPABILITY IS NOT ACTIVE IN ANY LAYER
+
+
+
+              HYD. COND. ALONG ROWS FOR LAYER   1
+ READING ON UNIT   11 WITH FORMAT: (65e10.4)           
+
+
+
+                VERTICAL HYD. COND. FOR LAYER   1
+ READING ON UNIT   11 WITH FORMAT: (10e12.4)           
+
+
+
+              HYD. COND. ALONG ROWS FOR LAYER   2
+ READING ON UNIT   11 WITH FORMAT: (65e10.4)           
+
+
+
+                VERTICAL HYD. COND. FOR LAYER   2
+ READING ON UNIT   11 WITH FORMAT: (10e12.4)           
+
+
+
+              HYD. COND. ALONG ROWS FOR LAYER   3
+ READING ON UNIT   11 WITH FORMAT: (65e10.4)           
+
+
+
+                VERTICAL HYD. COND. FOR LAYER   3
+ READING ON UNIT   11 WITH FORMAT: (10e12.4)           
+
+
+
+              HYD. COND. ALONG ROWS FOR LAYER   4
+ READING ON UNIT   11 WITH FORMAT: (65e10.4)           
+
+
+
+                VERTICAL HYD. COND. FOR LAYER   4
+ READING ON UNIT   11 WITH FORMAT: (10e12.4)           
+
+
+
+              HYD. COND. ALONG ROWS FOR LAYER   5
+ READING ON UNIT   11 WITH FORMAT: (65e10.4)           
+
+
+
+                VERTICAL HYD. COND. FOR LAYER   5
+ READING ON UNIT   11 WITH FORMAT: (10e12.4)           
+
+
+     0 River parameters
+
+
+     0 Recharge parameters

@@ -13,7 +13,7 @@
 
 <html>
 	<head>
-		<title>Single - Future Imperfect by HTML5 UP</title>
+		<title>OSTRICH - Setup</title>
 		<meta charset="utf-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
 		<link rel="stylesheet" href="../../../assets/css/main.css" />
@@ -25,13 +25,24 @@
 
 				<!-- Header -->
 					<header id="header">
-						<h1 style="margin-top:0px ! important;"><a href="index.html">OSTRICH</a></h1>
+						<h1 class="bannerheading"><a href="../../../index.html">OSTRICH</a></h1>
 						<nav class="links">
 							<ul>
 								<li><a href="../overview.html">Overview</a></li>
 								<li><a href="../algorithms/algorithms.html">Algorithms</a></li>
 								<li><a href="setup.html">Setup</a></li>
-								<li><a href="../solution/solution.html">Solution</a></li>
+								<li>
+									<div class="dropdown">
+										<a href="../solution/solution.html"<button class="dropbtn">
+											Solution
+											<i class="fa fa-caret-down"></i></a>
+										</button>
+										<div class="dropdown-content">
+											<a href="../solution/running.html">Running OSTRICH</a>
+											<a href="../solution/building.html">Building OSTRICH</a>
+										</div>
+									</div>
+								</li>
 								<li><a href="../output/output.html">Output</a></li>
 								<li><a href="../examples/examples.html">Examples</a></li>
 								<li><a href="../../releases.html">Releases</a></li>
@@ -39,12 +50,6 @@
 						</nav>
 						<nav class="main">
 							<ul>
-								<li class="search">
-									<a class="fa-search" href="#search">Search</a>
-									<form id="search" method="get" action="#">
-										<input type="text" name="query" placeholder="Search" />
-									</form>
-								</li>
 								<li class="menu">
 									<a class="fa-bars" href="#menu">Menu</a>
 								</li>
@@ -53,53 +58,57 @@
 					</header>
 
 				<!-- Menu -->
-					<section id="menu">
+				<section id="menu">
 
-						<!-- Search -->
-							<section>
-								<form class="search" method="get" action="#">
-									<input type="text" name="query" placeholder="Search" />
-								</form>
-							</section>
-
-						<!-- Links -->
-							<section>
-								<ul class="links">
-									<li>
-										<a href="#">
-											<h3>Lorem ipsum</h3>
-											<p>Feugiat tempus veroeros dolor</p>
-										</a>
-									</li>
-									<li>
-										<a href="#">
-											<h3>Dolor sit amet</h3>
-											<p>Sed vitae justo condimentum</p>
-										</a>
-									</li>
-									<li>
-										<a href="#">
-											<h3>Feugiat veroeros</h3>
-											<p>Phasellus sed ultricies mi congue</p>
-										</a>
-									</li>
-									<li>
-										<a href="#">
-											<h3>Etiam sed consequat</h3>
-											<p>Porta lectus amet ultricies</p>
-										</a>
-									</li>
-								</ul>
-							</section>
-
-						<!-- Actions -->
-							<section>
-								<ul class="actions stacked">
-									<li><a href="#" class="button large fit">Log In</a></li>
-								</ul>
-							</section>
-
+					<!-- Links -->
+					<section>
+						<ul class="links">
+							<li>
+								<a href="../overview.html">
+									<h3>Overview</h3>
+									<p>The basics of OSTRICH</p>
+								</a>
+							</li>
+							<li>
+								<a href="../algorithms/algorithms.html">
+									<h3>Algorithms</h3>
+									<p>Algorithms available within OSTRICH</p>
+								</a>
+							</li>
+							<li>
+								<a href="setup.html">
+									<h3>Setup</h3>
+									<p>Organzing an OSTRICH analysis</p>
+								</a>
+							</li>
+							<li>
+								<a href="../solution/solution.html">
+									<h3>Solution</h3>
+									<p>Running an OSTRICH analysis</p>
+								</a>
+							</li>
+							<li>
+								<a href="../output/output.html">
+									<h3>Output</h3>
+									<p>Output of an OSTRICH analysis</p>
+								</a>
+							</li>
+							<li>
+								<a href="../examples/examples.html">
+									<h3>Examples</h3>
+									<p>Examples using OSTRICH</p>
+								</a>
+							</li>
+							<li>
+								<a href="../../contributing.html">
+									<h3>Contributing</h3>
+									<p>Contribute to OSTRICH</p>
+								</a>
+							</li>
+						</ul>
 					</section>
+
+				</section>
 
 				<!-- Main -->
 					<div id="main">
@@ -113,15 +122,63 @@
 									</div>
 									<div class="meta">
 										<p align="left">Initial Publication:</p>
-										<time class="time" datetime="2015-11-01">September 11, 2020</time>
+										<time class="time" datetime="2015-11-01">September 16, 2020</time>
 										<p align="left">Modified:</p>
-										<time class="time" datetime="2015-11-01">September 11, 2020</time>
+										<time class="time" datetime="2015-11-01">September 16, 2020</time>
 									</div>
 								</header>
 								
-								<h1>Introduction</h1>
+								<h1>Contents</h1>
+								<table class="layouttable">
+									<tr>
+										<th><a href="#sec_intro"><p class="tocheading">1 Introduction</p></a></th>
+										<th><a href="#sec_tied_param"><p class="tocheading">11 Tied Parameters</p></a></th>
+									</tr>
+									<tr>
+										<th><a href="#sec_intro"><p class="tocheading">2 Comments</p></a></th>
+										<th><a href="#sec_special_param"><p class="tocheading">12 Special Parameters and Preemption</p></a></th>
+									</tr>
+									<tr>
+										<th><a href="#sec_sens"><p class="tocheading">3 Case Sensitivity</p></a></th>
+										<th><a href="#sec_initial_param"><p class="tocheading">13 Initial Parameters</p></a></th>
+									</tr>
+									<tr>
+										<th><a href="#sec_basic"><p class="tocheading">4 Basic Configuration</p></a></th>
+										<th><a href="#sec_param_correct"><p class="tocheading">14 Initial Parameters</p></a></th>
+									</tr>
+									<tr>
+										<th><a href="#sec_config"><p class="tocheading">4.1 Configuration Groups</p></a></th>
+										<th><a href="#sec_observ"><p class="tocheading">15 Observations</p></a></th>
+									</tr>
+									<tr>
+										<th><a href="#sec_files"><p class="tocheading">5 File Pairs</p></a></th>
+										<th><a href="#sec_resp_var"><p class="tocheading">16 Response Variables</p></a></th>
+									</tr>
+									<tr>
+										<th><a href="#sec_extra_files"><p class="tocheading">6 Extra Files</p></a></th>
+										<th><a href="#sec_tied_resp_var"><p class="tocheading">17 Tied Response Variables</p></a></th>
+									</tr>
+									<tr>
+										<th><a href="#sec_extra_dir"><p class="tocheading">7 Extra Directories</p></a></th>
+										<th><a href="#sec_type_conv"><p class="tocheading">18 Type Conversion</p></a></th>
+									</tr>
+									<tr>
+										<th><a href="#sec_real_param"><p class="tocheading">8 Real-valued Parameters</p></a></th>
+										<th><a href="#sec_search"><p class="tocheading">19 Search Algorithms</p></a></th>
+									</tr>
+									<tr>
+										<th><a href="#sec_integer_param"><p class="tocheading">9 Integer Parameters</p></a></th>
+										<th><a href="#sec_constraints"><p class="tocheading">20 Constraints</p></a></th>
+									</tr>
+									<tr>
+										<th><a href="#sec_comb_param"><p class="tocheading">10 Combinatorial Parameters</p></a></th>
+										<th></th>
+									</tr>
+								</table>
+								
+								<h1 id="sec_intro">1 Introduction</h1>
 								<p align="justify">
-								This section summarizes the input file of the OSTRICH program. On case-sensitive Linux systems, the input file must be named ostIn.txt. On Windows systems 
+								This page summarizes the input file of the OSTRICH program. On case-sensitive Linux systems, the input file must be named ostIn.txt. On Windows systems 
 								the file could also be named OstIn.txt. OSTRICH is a command-line console driven tool and when launched it will look for ostIn.txt in the working directory 
 								(i.e. the directory from which OSTRICH is launched). If this file does not exist or if it contains syntax errors, OSTRICH will quickly recognize this and 
 								report an error message and close. Windows users will experience this behavior as a brief flash of the DOS console window as it opens and then rapidly 
@@ -133,12 +190,13 @@
 
 								<ul>
 									<li>The modeling program must use a text-based input/output file format. OSTRICH can also work with modeling programs that use the MS Access or NetCDF 
-									file formats, but users will need to configure an additional section of the OSTRICH input file. This section is described in Section 2.17 (Type Conversions).</li>
+									file formats, but users will need to configure an additional section of the OSTRICH input file. This section is described in 
+									<a href="#sec_type_conv">Type Conversions</a>.</li>
 									<li>The modeling program must be able to run without prompting for user intervention. This means, for example, that the modeling program cannot prompt 
 									the user to enter the name of an input file and the modeling program must not pause for user input at the end of a simulation. </li>
 									<li>The output of the modeling program must be in a consistent format that can be reliably parsed. OSTRICH can also work with modeling programs that 
-									sometimes fail to write consistently formatted output. In such cases users should configure the optional “OnObsError” feature described in Section 2.3 
-									(Basic Configuration).</li>
+									sometimes fail to write consistently formatted output. In such cases users should configure the optional “OnObsError” feature described in
+									<a href="#sec_basic">Basic Configuration</a>.</li>
 								</ul>
 
 								<p align="justify">
@@ -166,14 +224,15 @@
 									OSTRICH and may not be used in a given run of the program. In fact, the only groups that must be configured by the user are: Basic Configuration, File Pairs, 
 									and Parameters. You must also include an Observations group if calibrating using OSTRICH’s internal weighted least squares objective function. Otherwise, 
 									if using OSTRICH’s general-purpose constrained optimization platform (GCOP), you must include a Response Variables group, a Costs group, and a Constraints 
-									group. Sections 2.3 through 2.24 discuss the particular syntax and purpose of the various groups that may be included in the ostIn.txt file.
+									group.
 								</p>
 
-								<h1>Comments</h1>
+								<h1 id="sec_comments">2 Comments</h1>
 								<p align="justify" style="margin-bottom:0px ! important;">
 									Comment lines in the OSTRICH input files have the '#’'symbol as the first character. These lines are ignored and allow the user to make the input file more 
 									readable and disable configuration parameters or observations without completely deleting the corresponding lines. A sample comment line is given below in 
-									Listing 1. More examples can be found in the demonstration files distributed with the OSTRICH program and these are described in Section 5.
+									<a href="#fig1">Figure 1</a>. More examples can be found in the demonstration files distributed with the OSTRICH program and these are described in the 
+									<a href="../examples/examples.html">Examples</a> section.
 								</p>
 
 								<!-- This has strange alignment for the code to render correctly on the page.-->
@@ -184,29 +243,29 @@
 # choices.
 #
 </code></pre>
-								<p align="center"><b>Example 1: Comment Lines</b></p>
+								<p align="center" id="fig1"><b>Figure 1: Comment Lines</b></p>
 
-								<h1>Case sensitivity</h1>
+								<h1 id="sec_sens">3 Case sensitivity</h1>
 								<p align="justify">
 									Variable names and group tags in the OSTRICH input file are case sensitive; e.g. using beginfilepairs instead of BeginFilePairs will result in a parsing error. 
 									Meanwhile, values of variables are case insensitive; e.g. GENETICALGORITHM, geneticalgorithm, and GeneticAlgorithm will all correctly select the genetic algorithm 
 									ProgramType.
 								</p>
 
-								<h1>Basic configuration</h1>
+								<h1 id="sec_basic">4 Basic configuration</h1>
 								<p align="justify" style="margin-bottom:0px ! important;">
 									The “Basic Configuration” variables describe the modeling program that is to be optimized or calibrated and identify the optimization (or regression) algorithm 
-									that OSTRICH should use. In addition, there are a number of optional basic configuration variables that effect various aspects of the OSTRICH program. Listing 2 
-									summarizes the syntax for the variables that make up the basic configuration group. The third column of text is enclosed in brackets (i.e. “[   ]”) and provides 
-									the default settings for each variable. Only the first two columns (i.e. variable and desired value) should be included in an actual input file. An example 
-									syntactically correct configuration of the basic group is given in Listing 4. Users can “cut-and-paste” Listing 4 and edit as needed for their particular problem. 
-									Listing 3 and Listing 5 provide list of possible values for the TelescopingStrategy and ProgramType variables, respectively. Users interested in the details of the 
-									telescoping strategies are referred to the publication by Matott et al (2013).
+									that OSTRICH should use. In addition, there are a number of optional basic configuration variables that effect various aspects of the OSTRICH program. 
+									<a href="#fig2">Figure 2</a> summarizes the syntax for the variables that make up the basic configuration group. The third column of text is enclosed in brackets 
+									(i.e. “[   ]”) and provides the default settings for each variable. Only the first two columns (i.e. variable and desired value) should be included in an actual 
+									input file. An example syntactically correct configuration of the basic group is given in <a href="#fig3">Figure 3</a>. Users can “cut-and-paste” 
+									<a href="#fig3">Figure 3</a> and edit as needed for their particular problem. <a href="#tab1">Table 1</a> provide list of possible values for the ProgramType 
+									variables. Users interested in the details of the telescoping strategies are referred to the publication by Matott et al (2013).
 								</p>
 
 								<!-- This has strange alignment for the code to render correctly on the page.-->
 <pre><code># essential variables
-ProgramType       see_listing_5       [Levenberg-Marquardt]
+ProgramType       see_table_1         [Levenberg-Marquardt]
 ModelExecutable   name_of_model       [no default]
 ModelSubdir       name_of_subdir      [.]
 ObjectiveFunction wsse/gcop           [wsse]
@@ -216,7 +275,7 @@ PreserveBestModel    name_of_script   [no default]
 PreserveModelOutput  yes/no/name_of_script [no]
 OstrichWarmStart     yes/no           [no]
 NumDigitsOfPrecision val_from_1_to_32 [6]
-TelescopingStrategy  see_listing_3    [none]
+TelescopingStrategy  see_section_4.1    [none]
 RandomSeed           value            [randomly assigned]
 OnObsError           quit/value       [quit]
 
@@ -227,7 +286,7 @@ OstrichCaching        yes/no          [no]
 BoxCoxTransformation  value           [1.00]
 ModelOutputRedirectionFile  filename  [OstExeOut.txt]
 </code></pre>
-								<p align="center"><b>Example 2: Basic Configuration Groups</b></p>
+								<p align="center" id="fig2"><b>Figure 2: Basic Configuration Groups</b></p>
 
 								<p align="justify">
 									Values for the “ModelExecutable” and “PreserveBestModel” variables can include be fully qualified paths or relative paths and should reference an executable file, 
@@ -239,7 +298,7 @@ ModelOutputRedirectionFile  filename  [OstExeOut.txt]
 									these variables at the beginning of the file and avoid mixing them in with the other groups.</i>
 								</p>
 								
-								<h2>Configuration Groups</h2>
+								<h2 id="sec_config">4.1 Configuration Groups</h2>
 								<p>
 									<b>ProgramType</b>: This variable tells OSTRICH which algorithm should be used to perform the optimization or calibration.
 								</p>
@@ -383,7 +442,7 @@ ModelOutputRedirectionFile  filename  [OstExeOut.txt]
 									</tr>
 								</table>
 									
-								<p align="center"><b>Table 1: Supported Values for the Program Type Option</b></p>
+								<p align="center" id="tab1"><b>Table 1: Supported Values for the Program Type Option</b></p>
 
 								<p align="justify">
 									<b>ModelExecutable</b>: Specifies the model executable or driver program or script. If the executable is in the same directory as the working directory from which 
@@ -505,14 +564,14 @@ OstrichCaching        no
 BoxCoxTransformation  1.00
 ModelOutputRedirectionFile  ModelOutput.stdout
 </code></pre>
-								<p align="center"><b>Example 3: Example of a Syntactically Correct Basic Configuration Group</b></p>
+								<p align="center" id="fig3"><b>Figure 3: Example of a Syntactically Correct Basic Configuration Group</b></p>
 
-								<h1>File pairs</h1>
+								<h1 id="sec_files">5 File pairs</h1>
 								<p align="justify" style="margin-bottom:0px ! important;">
 									A file pair consists of a template file and a corresponding model input file. The contents of the template file should be identical to the paired model input file except that values 
 									of optimization (or calibration) parameters are replaced with unique parameter names defined in the Parameters section. During optimization, OSTRICH uses the template files to create 
-									syntactically correct model input files in preparation of running the model at different parameter values. Section (@@) describes this process in detail. The general syntax for the File 
-									Pair group is given in Listing 6 along with a concrete example. 
+									syntactically correct model input files in preparation of running the model at different parameter values. The general syntax for the File Pair group is given in 
+									<a href="#fig4">Figure 4</a> along with a concrete example. 
 								</p>
 								<!-- This has strange alignment for the code to render correctly on the page.-->
 								<table class="layouttable">
@@ -539,19 +598,19 @@ EndFilePairs
 										</th>
 									</tr>
 								</table>
-								<p align="center"><b>Example 4: General Format (left) and Example (right) for the File Pairs Group</b></p>
+								<p align="center" id="fig4"><b>Figure 4: General Format (left) and Example (right) for the File Pairs Group</b></p>
 
 								<p align="justify">
-									As shown in Listing 6, BeginFilePairs and EndFilePairs are parsing tags that wrap a list of file name pairs such that [template1] ... [templateN] are the names of the template files 
+									As shown in <a href="#fig4">Figure 4</a>, BeginFilePairs and EndFilePairs are parsing tags that wrap a list of file name pairs such that [template1] ... [templateN] are the names of the template files 
 									corresponding to the [input1] ... [inputN] model input files, and <sep> is a separator that tells OSTRICH when one filename ends and the next begins. Valid file name separators are 
 									the semi-colon character ’;’ and the TAB character. Spaces are not valid separator characters because OSTRICH allows spaces within file names.
 								</p>
 
-								<h1>Extra files</h1>
+								<h1 id="sec_extra_files">6 Extra files</h1>
 								<p align="justify">
 									Extra files are model input files not used by OSTRICH, but required for proper execution of the model. In parallel environments, OSTRICH needs to know about these extra input files so 
-									that it can copy them to each processor’s working directory (see ModelSubdir in Section 2.3, above). Sharing a working directory among parallel processors is not recommended because it 
-									can result in multiple processors trying to write to the same file at the same time. The general syntax for the Extra Files group is given in Listing 7 along with a concrete example.
+									that it can copy them to each processor’s working directory. Sharing a working directory among parallel processors is not recommended because it can result in multiple processors trying 
+									to write to the same file at the same time. The general syntax for the Extra Files group is given in <a href="#fig5">Figure 5</a> along with a concrete example.
 								</p>
 								<!-- This has strange alignment for the code to render correctly on the page.-->
 								<table class="layouttable">
@@ -578,21 +637,21 @@ EndExtraFiles
 										</th>
 									</tr>
 								</table>
-								<p align="center"><b>Example 5: General Format (left) and Example (right) for the Extra Files Group</b></p>
+								<p align="center"  id="fig5"><b>Figure 5: General Format (left) and Example (right) for the Extra Files Group</b></p>
 								<p align="justify">
-									As shown in Listing 7, BeginExtraFiles and EndExtraFiles are parsing tags that wrap a list of extra model input files. Extra files must be identified if the model is to be executed in 
+									As shown in <a href="#fig5">Figure 5</a>, BeginExtraFiles and EndExtraFiles are parsing tags that wrap a list of extra model input files. Extra files must be identified if the model is to be executed in 
 									a dynamically generated subdirectory (as specified by the ModelSubdir variable), so that OSTRICH knows to copy them to the subdirectory. For serial algorithms, creation of a dynamic 
 									subdirectory is unnecessary and specification of the extra files section is optional. However, this section is required if running a parallel algorithm to avoid aforementioned processor 
 									I/O conflicts.
 								</p>
 								
 
-								<h1>Extra directories</h1>
+								<h1 id="sec_extra_dir">7 Extra directories</h1>
 								<p align="justify">
 									Extra directories are directories containing model input files not used by OSTRICH, but required for proper execution of the model. In parallel environments, OSTRICH needs to know 
 									about these extra directories so that it can copy them (and all files and subdirectories contained within) to store in each processors working directory (as specified by the ModelSubdir 
 									variable). Sharing a working directory among parallel processors is not recommended because it can result in multiple processors trying to write to the same file of the same directory at 
-									the same time. Listing 8 contains the general syntax and a concrete example of the Extra Directories group. As shown in Listing 8, BeginExtraDirs and EndExtraDirs are parsing tags that 
+									the same time. <a href="#fig6">Figure 6</a> contains the general syntax and a concrete example of the Extra Directories group. As shown in <a href="#fig6">Figure 6</a>, BeginExtraDirs and EndExtraDirs are parsing tags that 
 									wrap a list of extra model input directories.
 								</p>
 								<!-- This has strange alignment for the code to render correctly on the page.-->
@@ -622,13 +681,13 @@ EndExtraDirs
 										</th>
 									</tr>
 								</table>
-								<p align="center"><b>Example 6: General Format (left) and Example (right) of the Extra Directories Group</b></p>
+								<p align="center" id="fig6"><b>Figure 6: General Format (left) and Example (right) of the Extra Directories Group</b></p>
 
-								<h1>Real-valued parameters</h1>
+								<h1 id="sec_real_param">8 Real-valued parameters</h1>
 								<p align="justify">
 									This configuration group describes the parameters to be calibrated or optimized. Parameter configuration variables include names, initial values, lower and upper bounds, input, output 
-									and internal transformations, and (optionally) fixed format printing codes. Parameters in this section are real and continuously varying. Listing 9 provides the general format for the 
-									parameters group and Listing 10 gives a concrete example.
+									and internal transformations, and (optionally) fixed format printing codes. Parameters in this section are real and continuously varying. <a href="#fig7">Figure 7</a> provides the general format for the 
+									parameters group and <a href="#fig8">Figure 8</a> gives a concrete example.
 								</p>
 <pre><code>BeginParams
 [name1] [init1] [lwr1] [upr1] [txIn1] [txOst1] [txOut1] [fmt1]
@@ -637,20 +696,20 @@ EndExtraDirs
 [nameN] [initN] [lwrN] [uprN] [txInN] [txOstN] [txOutN] [fmtN]
 EndParams
 </code></pre>
-								<p align="center"><b>Example 7: General Format for the Real-valued Parameters Group</b></p>
+								<p align="center"  id="fig7"><b>Figure 7: General Format for the Real-valued Parameters Group</b></p>
 		
 <pre><code>BeginParams
 _DIAM_ random 10.0  50.0   none none none free
 _LEN_  random 200.0 1000.0 none none none free
 EndParams
 </code></pre>
-								<p align="center"><b>Example 8: Example of the Real-valued Parameters Group</b></p>		
+								<p align="center" id="fig8"><b>Figure 8: Example of the Real-valued Parameters Group</b></p>		
 								
 								<p align="justify">
-									In Listing 9, BeginParams and EndParams are parsing tags that wrap a list of N model parameters made up of the following variables:
+									In <a href="#fig7">Figure 7</a>, BeginParams and EndParams are parsing tags that wrap a list of N model parameters made up of the following variables:
 								</p>
-								<ul>
-									<li><b>name:</b> The name of the parameter, parameter names must be unique and correspond identically to the names used in the template file(s) (see Section 2.4).</li>
+								<ul id="sec_fmt_list">
+									<li><b>name:</b> The name of the parameter, parameter names must be unique and correspond identically to the names used in the template file(s).</li>
 									<li>init: Initial value of the parameter, in units specified by the txIn variable. Alternatively, the keywords “random” or “extract” may be used instead of specifying a value. OSTRICH will 
 									assign a randomly generated initial value if the “random” keyword is used. OSTRICH will extract the initial value from existing model input files if the “extract” keyword is used.</li>
 									<li><b>lwr:</b> Lower bound (i.e. minimum value) of the parameter, in units specified by the txIn variable.</li>
@@ -675,10 +734,10 @@ EndParams
 									least equal to “d”+7.</li>
 								</ul> 
 
-								<h1>Integer parameters</h1>
+								<h1 id="sec_integer_param">9 Integer parameters</h1>
 								<p align="justify">
 									This configuration group describes those parameters to be calibrated or optimized which can take on only integer values. Like their real-parameter counterparts, integer parameter 
-									configuration variables include names, initial values, and lower and upper bounds. However, format codes and unit transformations are not supported for integer parameters. Listing 11 
+									configuration variables include names, initial values, and lower and upper bounds. However, format codes and unit transformations are not supported for integer parameters. <a href="#fig9">Figure 9</a> 
 									provides the general syntax and a concrete example of the integer parameters group.
 								</p>
 								<!-- This has strange alignment for the code to render correctly on the page.-->
@@ -702,13 +761,13 @@ EndIntegerParams
 										</th>
 									</tr>
 								</table>
-								<p align="center"><b>Example 9: General Format (left) and Example (right) for the Integer Parameters Group</b></p>
+								<p align="center" id="fig9"><b>Figure 9: General Format (left) and Example (right) for the Integer Parameters Group</b></p>
 
-								<h1>Combinatorial parameters</h1>
+								<h1 id="sec_comb_param">10 Combinatorial parameters</h1>
 								<p align="justify">
 									This configuration group describes those parameters to be calibrated or optimized which can take on a discrete set of values, which can be in the form of real, integer or string (text) 
 									values. Like integer and real parameters, combinatorial parameter configuration variables include names and initial values; but instead of lower and upper bounds, the user must supply a 
-									complete list of the discrete values that may be assigned to the parameter. Furthermore, format codes and unit transformations are not supported for combinatorial parameters. Listing 12 
+									complete list of the discrete values that may be assigned to the parameter. Furthermore, format codes and unit transformations are not supported for combinatorial parameters. <a href="#fig10">Figure 10</a> 
 									provides the general syntax of the combinatorial parameters group.
 								</p>
 <pre><code>BeginCombinatorialParams
@@ -718,7 +777,7 @@ EndIntegerParams
 [nameM] [typeM] [initM] [NM] [vM,1] [vM,2] ... [vM,NM]
 EndCombinatorialParams
 </code></pre>
-								<p align="center"><b>Example 10: General Format for the Combinatorial Parameters Group</b></p>
+								<p align="center" id="fig10"><b>Figure 10: General Format for the Combinatorial Parameters Group</b></p>
 								
 <pre><code>BeginCombinatorialParams
 COLOR string  blue 5 red orange yellow green blue
@@ -726,15 +785,15 @@ BOLTS real    0.25 4 0.0625 0.125 0.25 0.5
 PRIME integer 1    10 1 3 5 7 11 13 17 19 23 29
 EndCombinatorialParams
 </code></pre>
-								<p align="center"><b>Example 11: Example of the Combinatorial Parameters Group</b></p>
+								<p align="center" id="fig11"><b>Figure 11: Example of the Combinatorial Parameters Group</b></p>
 
 								<p align="justify">
-									In Listing 12, the “type” field should be either “real”, “integer”, or “string” and should correspond to the type of values in the subsequent combinatorial list. Furthermore, the “N1” 
-									through “NM” values specify the number of entries in the combinatorial list, which is generically represented in Listing 12 as vm,n for the nth discrete value that can be taken on by the 
-									mth parameter. Listing 13 provides a concrete example of the combinatorial parameters group.
+									In <a href="#fig10">Figure 10</a>, the “type” field should be either “real”, “integer”, or “string” and should correspond to the type of values in the subsequent combinatorial list. Furthermore, the “N1” 
+									through “NM” values specify the number of entries in the combinatorial list, which is generically represented in <a href="#fig10">Figure 10</a> as vm,n for the nth discrete value that can be taken on by the 
+									mth parameter. <a href="#fig11">Figure 11</a> provides a concrete example of the combinatorial parameters group.
 								</p>
 
-								<h1>Tied parameters</h1>
+								<h1 id="sec_tied_param">11 Tied parameters</h1>
 								<p align="justify">
 									Tied parameters are parameters which are computed as a function of integer, real or combinatorial parameter values. They may also be functions of other tied parameters.
 								</p>
@@ -742,13 +801,13 @@ EndCombinatorialParams
 									$$X_{tied} = f_{tied}(X_1, X_2, ... X_n, c_1, c_2, ... c_m)$$
 								</p>
 								<p align="justify">
-									Where, Xtied is the tied parameter value which is a function of n non-tied parameters (X1,X2,...Xn) and a set of m coefficients (c1,c2,...cm), which depend on the functional form of 
+									Where, \(X_{tied}\) is the tied parameter value which is a function of n non-tied parameters (\(X_1\),\(X_2\),...\(X_n\)) and a set of m coefficients (\(c_1\),\(c_2\),...\(c_m\)), which depend on the functional form of 
 									ftied(). Tied parameter configuration variables include: the name of the tied parameter; a list of the names of tied or non-tied parameters used in the computation of the tied-parameter 
-									value; a specification of the functional form of ftied(); and a list of coefficients used in the evaluation of ftied(). Listing 14 provides the general syntax for the tied parameters 
+									value; a specification of the functional form of ftied(); and a list of coefficients used in the evaluation of ftied(). <a href="#fig12">Figure 12</a> provides the general syntax for the tied parameters 
 									group.
 								</p>
 								<p align="justify">
-									In Listing 14, BeginTiedParams and EndTiedParams are parsing tags that wrap a list of tied model parameters made up of the following variables:
+									In <a href="#fig12">Figure 12</a>, BeginTiedParams and EndTiedParams are parsing tags that wrap a list of tied model parameters made up of the following variables:
 								</p>
 								<ul>
 									<li><b>name:</b> The name of the tied parameter, parameter names must be unique and correspond identically to the corresponding name used in the template file(s).</li>
@@ -766,48 +825,48 @@ EndCombinatorialParams
 											<li><b>ratio:</b> The tied parameter is the ratio of a linear combination of parameters. If selected, the value of np must be 2 or 3.</li>
 											<li><b>constant:</b> The tied parameter is a constant. If selected, the value of np must be 0.</li>
 										</ul>
-									<li><b>type_data:</b> Depending on the choice of type, the syntax of this field varies, as described below. The syntax for type_data includes a format specifier – see the description of the 
-										fmt variable in Section 2.7.</li>
+									<li><b>type_data:</b> Depending on the choice of type, the syntax of this field varies, as described below. The syntax for type_data includes a format specifier. See the description of the 
+										<a href="#sec_fmt_list">fmt</a> variable.</li>
 								</ul>
 								<p align="justify">
 									If type = ”linear” and np = "1": The functional relationship is linear and has the form:
 								</p>
 								<p align="center">
-									<code>Xtied = (c1 × X) + c0</code>
+									$$X_{tied} = c_1 X + c_0 $$
 								</p>
 								<p align="justify">
-									Where Xtied is the tied-parameter value, c0 and c1 are coefficients, X is the non-tied parameter value, and type_data should be replaced with the syntax
-									[c1] [c0] [fmt].
+									Where Xtied is the tied-parameter value, \(c_0\) and \(c_1\) are coefficients, \(X\) is the non-tied parameter value, and type_data should be replaced with the syntax
+									[\(c_1\) \(c_0\) fmt].
 								</p>
 								<p align="justify">
 									If type = ”linear” and np = "2": The functional relationship has the form:
 								</p>
 								<p align="center">
-									<code>Xtied = (c3 × X1 × X2) + (c2 × X2) + (c1 × X1) + c0 </code>
+									$$X_{tied} = (c_3 X_1 X_2) + (c_2 X_2) + (c_1 X_1) + c_0 $$
 								</p>
 								<p align="justify">
-									Where Xtied is the tied-parameter value, c0, c1, c2, and c3 are coefficients, X1 and X2 are the non-tied parameter values, and type_data should be replaced with the syntax
-									[c3] [c2] [c1] [c0] [fmt].
+									Where Xtied is the tied-parameter value, \(c_0\), \(c_1\), \(c_2\), and \(c_3\) are coefficients, \(X_1\) and \(X_2\) are the non-tied parameter values, and type_data should be replaced with the syntax
+									[\(c_3\) \(c_2\) \(c_1\) \(c_0\) fmt].
 								</p>
 								<p align="justify">
 										If type = ”exp”: The functional relationship has the form:
 								</p>
 								<p align="center">
-									<code>Xtied = c2 × b(c1 × X) + c0</code>
+									$$X_{tied} = c_2b^{c_1X} + c_0$$
 								</p>
 								<p align="justify">
-									Where Xtied is the tied-parameter value, c0, c1 and c2 are coefficients, b is the exponent base, X is the non-tied parameter value, and type_data should be replaced with
-									[base] [c2] [c1] [c0] [fmt] where base can be a numerical value, or “exp” if the natural base is to be used.
+									Where Xtied is the tied-parameter value, \(c_0\), \(c_1\) and \(c_2\) are coefficients, \(b\) is the exponent base, \(X\) is the non-tied parameter value, and type_data should be replaced with
+									[\(b\) \(c_2\) \(c_1\) \(c0\) fmt] where base can be a numerical value, or “exp” if the natural base is to be used.
 								</p>
 								<p align="justify">
 									If type = ”log”: The functional relationship has the form:
 								</p>
 								<p align="center">
-									<code>Xtied = c3 × loga(c2 × X + c1) + c0</code>
+									$$X_{tied} = c_3log_a(c_1 + c_2X) + c_0$$
 								</p>
 								<p align="justify">
-									Where Xtied is the tied-parameter value, c0, c1, c2 and c3 are coefficients, a is the logarithm base, X is the non-tied parameter, and type_data should be replaced with the 
-									syntax [base] [c3] [c2] [c1] [c0] [fmt]. Base can be a numerical value, or “ln” if the natural logarithm is to be used.
+									Where Xtied is the tied-parameter value, \(c_0\), \(c_1\), \(c_2\), and \(c_3\) are coefficients, \(a\) is the logarithm base, \(X\) is the non-tied parameter, and type_data should be replaced with the 
+									syntax [\(a\) \(c_3\) \(c_2\) \(c_1\) \(c_0\) fmt]. Base can be a numerical value, or “ln” if the natural logarithm is to be used.
 								</p>
 								<p align="justify">
 									If type = ”dist”: The type_data field should contain the desired fmt specification. 
@@ -819,38 +878,73 @@ EndCombinatorialParams
 									If type = ”ratio” and np = “2”: The functional relationship has the form:
 								</p>
 								<p align="center">
-									<code>Xtied = (c3 × X1 + c2) / (c1 × X2 + c0)</code>
+									$$X_{tied} = (c_3 X_1 + c_2) / (c_1 X_2 + c_0)$$
 								</p>
 								<p align="justify">
-									Where Xtied is the tied-parameter value, c3, c2, c1 and c0 are coefficients, X1 and X2 are non-tied parameters, and type_data should be replaced with the syntax
-									[c3] [c2] [c1] [c0] [fmt]
+									Where Xtied is the tied-parameter value, \(c_3\), \(c_2\), \(c_1\) and \(c_0\) are coefficients, \(X_1\) and \(X_2\) are non-tied parameters, and type_data should be replaced with the syntax
+									[\(c_3\) \(c_2\) \(c_1\) \(c_0\) fmt]
 								</p>
 								<p align="justify">
 									If type = ”ratio” and np = “3”: The functional relationship has the form:
 								</p>
 								<p align="center">
-									<code>Xtied =  [ (n7 × X1 × X2 × X3) + (n6 × X1 × X2) + (n5 × X1 × X3) + (n4 × X2 × X3) + (n3 × X1) + (n2 × X2) + (n1 × X3) + n0 ] / 
-												 [ (d7× X1 × X2 × X3) + (d6 × X1 × X2) + (d5 × X1 × X3) + (d4 × X2 × X3) + (d3 × X1) + (d2 × X2) + (d1 × X3) + d0 ]</code>
+									$$X_{tied} =  \frac{(n_7 X_1 X_2 X_3) + (n_6 X_1 X_2) + (n_5 X_1 X_3) + (n_4 X_2 X_3) + (n_3 X_1) + (n_2 X_2) + (n_1 X_3) + n_0}
+													{(d_7 X_1 X_2 X_3) + (d_6 X_1 X_2) + (d_5 X_1 X_3) + (d_4 X_2 X_3) + (d_3 X_1) + (d_2 X_2) + (d_1 X_3) + d_0}$$
 									</p>
 								<p align="justify">
-									Where Xtied is the tied-parameter value, n7 … n0 and d7 … d0 are coefficients, X1 … X3 are non-tied parameters, and type_data should be replaced with the syntax
-									n7 n6 n5 n4 n3 n2 n1 n0 d7 d6 d5 d4 d3 d2 d1 d0 fmt
+									Where Xtied is the tied-parameter value, \(n_7\) … \(n_0\) and \(d_7\) … \(d_0\) are coefficients, \(X_1\) … \(X_3\) are non-tied parameters, and type_data should be replaced with the syntax
+									[\(n_7\) \(n_6\) \(n_5\) \(n_4\) \(n_3\) \(n_2\) \(n_1\) \(n_0\) \(d_7\) \(d_6\) \(d_5\) \(d_4\) \(d_3\) \(d_2\) \(d_1\) \(d_0\) fmt]
 								</p>
 								<p align="justify">
 									If np = “0”: The tied parameter is assigned a constant value. No type field is required and the type_data field must contain the parameter value followed by a format specifier (fmt).
-									Listing 15 provides concrete examples of the different tied parameter types.
+									<a href="#fig13">Figure 13</a> provides examples of the different tied parameter types.
 								</p>
+<pre><code>BeginTiedParams
+[name1] [np1] [pname1,1] [pname1,2] ... [pname1,np1] [type1] [type_data1]
+[name2] [np2] [pname2,1] [pname2,2] ... [pname2,np2] [type2] [type_data2]
+. . .
+[nameN] [npN] [pnameN,1] [pnameN,2] ... [pnameN,npN] [typeN] [type_dataN]
+EndTiedParams
+</code></pre>
+								<p align="center" id="fig12"><b>Figure 12: General Format for the Tied Parameters Group</b></p>
+								
+<pre><code>BeginTiedParams
+# 1-parameter linear (TLIN = 2*XVAL)
+TLIN 1 XVAL linear 2.00 0.00 free
+# 2-parameter linear (TLN2 = 2*XVAL + YVAL)
+TLN2 2 XVAL YVAL linear 0.00 2.00 1.00 0.00 free
+# exponent, base e (TEXP = exp(-XVAL))
+TEXP 1 XVAL exp exp 1.00 -1.00 0.00 free
+# exponent, base 10 (TX2P = 10^(-XVAL))
+TXP2 1 XVAL exp 10.0 1.00 -1.00 0.00 free
+# logarithm, natural log (TLOG = 2*LN(XVAL))
+TLOG 1 XVAL log ln 2.00 -1.00 0.00 0.00 free
+# logarithm, base 2 (TLG2 = log2(XVAL/2)+1)
+TLG2 1 XVAL log 2.00 1.00 0.50 0.00 1.00 free
+# distance
+TDST 4 X1VAL Y1VAL X2VAL Y2VAL dist free
+# weighted sum (TSUM = (1/3)*(XVAL+YVAL+ZVAL))
+TSUM 3 XVAL YVAL ZVAL wsum 0.33 0.33 0.33 free
+# 2-parameter ratio (TRAT = (XVAL / YVAL))
+TRAT 2 XVAL YVAL ratio 1.00 0.00 1.00 0.00 free
+# 3-parameter ratio (TRT3 = (XVAL*YVAL)/(ZVAL+1))
+TRT3 3 XVAL YVAL ZVAL ratio 0 1 0 0 0 0 0 0 0 0 0 0 0 0 1 1 free 
+# constant (Pi)
+TPI 0 3.1415 free
+EndTiedParams
+</code></pre>
+								<p align="center" id="fig13"><b>Figure 13: Example of the Tied Parameters Group</b></p>								
 
-								<h1>Special parameters and preemption</h1>
+								<h1 id="sec_special_param">12 Special parameters and preemption</h1>
 								<p align="justify">
 									Certain models are capable of monitoring the progress of a simulation and aborting further processing if some threshold cost or constraint is exceeded. OSTRICH provides the 
 									“SpecialParams” group to support such models. Special parameters are cost and constraint thresholds that are tracked by selected algorithms in OSTRICH (see the relevant column in 
 									Table 1, above) and written to input files using the same template mechanism as regular calibration/optimization parameters. In this way OSTRICH can pass the most up to date 
-									threshold values on to the pre-emptive model. Pre-emption is described in detail by Razavi et al (2010). The general syntax for the SpecialParams group is given below in Listing 16 
-									and a concrete example is given in Listing 17.
+									threshold values on to the pre-emptive model. Pre-emption is described in detail by Razavi et al (2010). The general syntax for the SpecialParams group is given below in 
+									<a href="#fig14">Figure 14</a> and a concrete example is given in <a href="#fig15">Figure 15</a>.
 								</p>
 								<p align="justify">
-									In Listing 16, BeginSpecialParams and EndSpecialParams are parsing tags that wrap a list of model pre-emption parameters made up of the following variables:
+									In <a href="#fig14">Figure 14</a>, BeginSpecialParams and EndSpecialParams are parsing tags that wrap a list of model pre-emption parameters made up of the following variables:
 								</p>
 								<ul>
 									<li><b>name:</b> The name of the pre-emption parameter, parameter names must be unique and correspond identically to the corresponding name used in the template file(s).</li>
@@ -861,27 +955,86 @@ EndCombinatorialParams
 									computed constraint exceeds the value of the constraint specified by “con_name”. Set the value to “lower” if the model should pre-empt if it’s internally computed constraint is less than 
 									the value of the constraint specified by “con_name”. For “BestCost” pre-emption parameters, the “con_type” and “con_name” fields are ignored and should be set to “n/a”.</li>
 									<li><b>con_name:</b> The name of the constraint whose violation should trigger pre-emption. Constraints are defined in the Constraints group which, in turn, require specification of a Response 
-									Variable group --- see Sections 2.15 and 2.24, below.</li>
+									Variable group.</li>
+									
+<pre><code>BeginSpecialParams
+ [name1]  [init1] [type1] [con_type1] [con_name1]
+ [name1]  [init1] [type1] [con_type1] [con_name1]
+ .
+ .
+ .  
+ [name1]  [init1] [type1] [con_type1] [con_name1]
+EndSpecialParams
+</code></pre>
+								<p align="center" id="fig14"><b>Figure 14: General Format of the Special Parameters Group</b></p>	
+<pre><code>BeginSpecialParams
+#          initial    special       upper or  cons-
+#name      value     parameter      lower?    traint
+OST_COST    1E60     BestCost	       n/a      n/a
+# pre-emption based on violation of MyPen
+OST_MASS    1E60     BestConstraint   upper    MyPen    
+EndSpecialParams
 
-								<h1>Initial parameters</h1>
+BeginConstraints
+# require -9E99 < (PenRV*100) < 10
+#name type    conv.fact  lower   upper  resp.var
+MyPen general 100       -9E99    10.00  PenRV
+EndConstraints
+
+BeginResponseVars
+# tells OSTRICH how to extract values of PenRV from model output
+#name   filename     keyword         line    col     token
+PenRV   Simple.out ; OST_NULL        0       3       ' '
+EndResponseVars
+</code></pre>
+								<p align="center" id="fig15"><b>Figure 15: An Example of the Special Parameters Group</b></p>	
+
+								<h1 id="sec_initial_param">13 Initial parameters</h1>
 								<p align="justify">
 									As indicated in Table 1, users of certain algorithms can optionally seed some or all of the initial search entries with predefined parameter sets. This allows the user to incorporate 
 									prior information (such as previous optimization results or expert judgement) into the optimization, and may enhance the efficiency and/or effectiveness of the algorithm. To use this 
-									option, insert an “InitParams” group, which uses the general syntax given in Listing 18.  
+									option, insert an “InitParams” group, which uses the general syntax given in <a href="#fig16">Figure 16</a>.  
 								</p>
 								<p align="justify">
 									Where “BeginInitParams” and “EndInitParams” are parsing tags that wrap a list of initial parameters, and n is the number of parameters, m is the number of entries in the initial 
 									parameters group, and pi,j is the j-th initial value of the i-th parameter (ordered according to the order of the parameters section(s)). A concrete example of the “InitParams” group 
-									is given in Listing 19.
+									is given in <a href="#fig17">Figure 17</a>.
 								</p>
+<pre><code>BeginInitParams
+p1,1 p2,1 p3,1 . . . pn,1
+p1,2 p2,2 p3,2 . . . pn,2
+. . .
+. . .
+p1,m p2,m p3,m . . . pn,m    
+EndInitParams
+</code></pre>
+								<p align="center" id="fig16"><b>Figure 16: General Format of the Initial Parameters Group</b></p>	
 
-								<h1>Parameter correction</h1>
+<pre><code>BeginParams
+xval 0 -20.0 +20.0 none none none
+yval 0 -20.0 +20.0 none none none
+zval 0 -20.0 +20.0 none none none
+EndParams
+
+BeginInitParams
+#xval yval zval
+0.0  0.0  0.0 
+0.0  0.0  10.0
+0.0  10.0 0.0
+10.0 0.0  0.0
+20.0 20.0 20.0
+EndInitParams
+</code></pre>
+								<p align="center" id="fig17"><b>Figure 17: Example of the Initial Parameters Group</b></p>	
+
+								<h1 id="sec_param_correct">14 Parameter correction</h1>
 								<p align="justify">
 									The “ParameterCorrection” group and corresponding “Corrections” sub-group allows users to interface OSTRICH with an external program or script that makes adjustments to a candidate 
 									parameter set that has been calculated by an OSTRICH search algorithm but not yet evaluated. These corrections allows users to incorporate expert judgment or other information into 
 									the search procedure while still using one of the algorithms already implemented within OSTRICH. As an example, consider an optimization problem that seeks to install a well in an 
 									optimal location for extracting contaminated groundwater. Parameter correction can be used to adjust candidate well locations if they are found to be outside the boundaries of the 
-									contaminated plume. To use this option, insert a “ParameterCorrection” group, which uses the general syntax given in Listing 20 and which includes a “Corrections” sub-group.   
+									contaminated plume. To use this option, insert a “ParameterCorrection” group, which uses the general syntax given in <a href="#fig18">Figure 18</a> and which includes a “Corrections” 
+									sub-group.   
 								</p>
 								<p align="justify">
 									Where “BeginParameterCorrection” and “EndParameterCorrection” are parsing tags that wrap the configuration variables of the “ParameterCorrection” group and “BeginCorrections” and 
@@ -906,24 +1059,78 @@ EndCombinatorialParams
 									<li><b>sep:</b> A character that separates each column. This variable should be enclosed in single quotes (e.g. ' ' for space-separated, ',' for comma-separated, etc.).</li>
 								</ul>
 								<p align="justify">
-									A concrete example of the “ParameterCorrection” group and accompanying “Corrections” sub-group is given in Listing 21.
+									An example of the “ParameterCorrection” group and accompanying “Corrections” sub-group is given in <a href="#fig19">Figure 19</a>.
 								</p>
+<pre><code>BeginParameterCorrection
+Executable [name_of_exe]
+Template [tpl_name] ; [inp_name]
+BeginCorrections
+[name1]  [outfile1] ; [keyword1] [line1] [col1] '[sep1]'
+[name2]  [outfile2] ; [keyword2] [line2] [col2] '[sep2]'
+.
+.
+.
+[nameN]  [outfileN] ; [keywordN] [lineN] [colN] '[sepN]'
+EndCorrections
+EndParameterCorrection
+</code></pre>
+								<p align="center" id="fig18"><b>Figure 18: General Syntax for the Parameters Correction Group and Corrections Sub-Group</b></p>	
 
-								<h1>Observations</h1>
+<pre><code>#=================================================================
+# interface with an external program that will make corrections to  
+# the candidate parameter sets generated by the search algorithm.
+# Executable  --- the external program
+# Template    --- the template pair for creating the input file
+# Corrections --- instructions for parsing the output file
+#=================================================================
+BeginParameterCorrection
+  Executable "C:\Program Files\MakeWellCorrections.bat"
+  Template Corrector.tpl ; input.csv
+
+  BeginCorrections
+    XQ01	output.csv ;	OST_NULL	0	1	','
+    YQ01	output.csv ;	OST_NULL	0	2	','
+    RQ01	output.csv ;	OST_NULL	0	3	','
+  EndCorrections
+EndParameterCorrection
+</code></pre>
+								<p align="center" id="fig19"><b>Figure 19: Example of the Parameters Correction Group and Corrections Sub-Group</b></p>
+
+								<h1 id="sec_observ">15 Observations</h1>
 								<p align="justify">
 									For calibration problems that use the internal OSTRICH weighted sum of squared errors (WSSE) objective function, the Observations group is used to list the observation names, values, 
-									and weights, along with parsing instructions for reading simulated equivalent observations from model output files. The general syntax for the Observations group is given in Listing 
-									22 and a concrete example is given in Listing 23.
+									and weights, along with parsing instructions for reading simulated equivalent observations from model output files. The general syntax for the Observations group is given in 
+									<a href="#fig20">Figure 20</a>and a concrete example is given in <a href="#fig21">Figure 21</a>.
 								</p>
+<pre><code>BeginObservations							
+[name1][value1][wgt1][file1][sep1][key1][line1][col1][tok1][aug1][grp1]
+[name2][value2][wgt2][file2][sep2][key2][line2][col2][tok2][aug2][grp2]
+.
+.
+.
+[nameN][valueN][wgtN][fileN][sepN][keyN][lineN][colN][tokN][augN][grpN]
+EndObservations
+</code></pre>
+								<p align="center"  id="fig20"><b>Figure 20: General Format of the Observations Group</b></p>	
+
+<pre><code>BeginObservations							
+#name  val wgt  filenamee   ; keyword  line col tok aug? group 
+MW1    68  1.00 headerr.dat ; computed  2    3  ' '  no   mw
+MW2    70  1.00 headerr.dat ; computed  3    3  ' '  no   mw
+MW3    65  1.00 headerr.dat ; computed  4    3  ' '  no   mw
+EndObservations
+</code></pre>
+								<p align="center" id="fig21"><b>Figure 21: An Example of the Observations Group</b></p>
+								
 								<p align="justify">
-									In Listing 22 and Listing 23, BeginObservations and EndObservations are parsing tags that wrap a list of observations, which are made up of the following variables:
+									In <a href="#fig20">Figure 20</a> and <a href="#fig21">Figure 21</a>, BeginObservations and EndObservations are parsing tags that wrap a list of observations, which are made up of the following variables:
 								</p>
 								<ul>
 									<li><b>name:</b> The name of the observation, each observation should have a unique name.</li>
 									<li><b>value:</b> The field-measured value of the observation.</li>
 									<li><b>wgt:</b> The weight assigned to the observation. See Hill (1998) and Hill and Tiedeman (2007) for guidelines to assigning observation weights.</li>
 									<li><b>file:</b> The model output file where the simulated value of the observation will be stored following execution of the modeling program.</li>
-									<li><b>sep:</b> This variable is a filename separator (i.e. a tab or semi-colon). See also the File Pairs section (Section 2.4).</li>
+									<li><b>sep:</b> This variable is a filename separator (i.e. a tab or semi-colon). See also the <a href="#sec_files">File Pairs section.</a></li>
 									<li><b>key, line, col, tok:</b> These variables tell OSTRICH how to extract model simulated observation values from the model output file. First, OSTRICH positions the output file parser at 
 									the first line in file containing key(word). If OSTRICH should begin parsing at the beginning of the file, then the value of key should be OST_NULL. Next, the parser uses the line and 
 									col values to locate the position of the desired observation value. This value is then extracted and converted to a double precision number. The parsing process is repeated until all 
@@ -931,21 +1138,87 @@ EndCombinatorialParams
 									value is reached. Therefore, if the observation value is on the same line as key, then line should be equal to 0; if the observation value is on the line immediately following key, then 
 									line should be equal to 1, and so on. The col variable tells OSTRICH which column in the line contains the desired observation value; where column numbering begins at 1 and the tok 
 									variable specifies the column separator. Note that values for the tok variable should be enclosed in single quotes (e.g. ‘,’ for a comma token). Furthermore, providing a whitespace token 
-									(e.g. ‘ ‘) will cause any sequence of space or TAB characters to be treated as a single column separator token. Figure 1 illustrates the parse procedure using an example observation list 
-									(Listing 23) and model output file (Figure 2).</li>
-									<li><b>aug:</b> Setting the value of the aug (i.e. augmented output) variable to yes will cause OSTRICH to include the simulated values of the selected observation(s) in the OstModel output file 
-									(see Section 4.5). This can be useful, for example, when assembling samples for a predictive uncertainty analysis.</li>
+									(e.g. ‘ ‘) will cause any sequence of space or TAB characters to be treated as a single column separator token. <a href="#fig22">Figure 22</a> illustrates the parse procedure using an example 
+									observation list.</li>
+									<li><b>aug:</b> Setting the value of the aug (i.e. augmented output) variable to yes will cause OSTRICH to include the simulated values of the selected observation(s) in the OstModel output file. 
+									This can be useful, for example, when assembling samples for a predictive uncertainty analysis.</li>
 									<li><b>grp:</b> Use the grp variable to partition observations into meaningful groups (e.g. high- vs. low-flow observations, groundwater head vs. flow observations, nitrate vs. trichloroethylene 
 									concentrations, etc.). When performing multi-criteria calibration, OSTRICH will compute multiple WSSR objectives corresponding to each unique observation group.</li>
 								</ul>
+								<p align="justify">
+									The general process used by the observation parsing algorithm is:
+								</p>
+								<ol align="center">
+									<li> Locate [keyword] </li>
+									<li> Skip [line] lines </li>
+									<li> Read and convert [col] column </li>
+									<li> If num, obs, read = total num. obs, stop; else return to 1.</li>
+								</ol>
+								<p align="justify">
+									An example of the parsing algorithm processing an output file:
+								</p>
+								<table>
+									<tr>
+										<td colspan=3>Output of ACME Group Groundwater Flow Program</td>
+									</tr>
+									<tr>
+										<th>x</th>
+										<th>y</th>
+										<th>computed head</th>
+									</tr>
+									<tr>
+										<th>17.64,</th>
+										<th>77.24,</th>
+										<th>68.3652</th>
+									</tr>
+									<tr>
+										<th>24.43,</th>
+										<th>77.12,</th>
+										<th>67.9723,</th>
+									</tr>
+									<tr>
+										<th>17.32,</th>
+										<th>70.64,</th>
+										<th>68.3618</th>
+									</tr>
+								</table>
+								<p align="center"  id="fig22"><b>Figure 22: Example Model Output for Illustrating Extraction of Simulated Equivalent Observations</b></p>
+								
+								<ol>
+									<li> 
+										<ul>
+											<li>First iteration (Read obs1)</li>
+											<li>Locate 'computed' => 'computed head'</li>
+											<li>Skip 2 lines => '17.64, 77.24, 68.3652'</li>
+											<li>Read and convert thrid column => obs1 value = 68.3652</li>
+										</ul>
+									</li>
+									<li>
+										<ul>
+											<li>Second iteration (Read obs2)</li>
+											<li>Locate 'computed' => 'computed head'</li>
+											<li>Skip 3 lines => '24.43,  77.12, 67.9723'</li>
+											<li>Read and convert third column => obs2 value = 67.9723</li>
+										</ul>
+									</li>
+									<li>
+										<ul>
+											<li>Third iteration (Read obs3)</li>
+											<li>Locate 'computed' => 'computed head'</li>
+											<li>Skip 4 lines => '17.32, 70.64, 68.3618'</li>
+											<li>Read and convert third column => obs3 value = 68.3618</li>
+										</ul>
+									</li>
+								</ol>
+				
 
-								<h1>Response variables</h1>
+								<h1 id="sec_resp_var">16 Response variables</h1>
 								<p align="justify">
 									When performing optimization (as opposed to calibration), this group specifies the response variables that OSTRICH should read from model output files prior to evaluating costs and 
 									constraints. The syntax is very similar to the observations group used in model calibration, and includes variable name, output file name (from which the value of the variable is read), 
 									and parsing instructions for retrieving the value of the variable from the given model output file. The Constraints and GCOP sections (see below) build upon the Response and Tied Response 
-									Variable groups by associating response variables with a constraint or cost variable. The general syntax for the “ResponseVars” group is given in Listing 24 and a concrete example is given 
-									in Listing 25.
+									Variable groups by associating response variables with a constraint or cost variable. The general syntax for the “ResponseVars” group is given in <a href="#fig23">Figure 23</a> and an 
+									example is given in <a href="#fig24">Figure 24</a>.
 								</p>
 								<p align="justify">
 									Where BeginResponseVars and EndResponseVars are parsing tags that wrap a list of response variables, which are made up of the following variables:
@@ -953,21 +1226,40 @@ EndCombinatorialParams
 								<ul>
 									<li><b>name:</b> The name of the response variable, each should have a unique name.</li>
 									<li><b>file:</b> The model output file where the simulated value of the response variable will be stored following execution of the modeling program.</li>
-									<li><b>sep:</b> This variable is a filename separator (i.e. a tab or semi-colon). See also the File Pairs section (Section 2.4).</li>
+									<li><b>sep:</b> This variable is a filename separator (i.e. a tab or semi-colon). See also the <a href="#sec_files">File Pairs</a> section.</li>
 									<li><b>key, line, col, tok:</b> These variables tell OSTRICH how to extract model simulated response variable values from the model output file. The parsing procedure is identical to that used in 
-									extracting Observation group data (see Section 2.14 for details).</li>
-									<li><b>aug:</b> Setting the value of the aug (i.e. augmented output) variable to yes will cause OSTRICH to include the simulated values of the selected response variable(s) in the OstModel output file 
-									(see Section 4.5). For multi-objective problems, there should be a one-to-one correspondence between cost functions (see Section 2.23) and augmented response variables.</li>
+									extracting <a href="#sec_observ">Observation</a> group data.</li>
+									<li><b>aug:</b> Setting the value of the aug (i.e. augmented output) variable to yes will cause OSTRICH to include the simulated values of the selected response variable(s) in the OstModel output 
+									file. For multi-objective problems, there should be a one-to-one correspondence between cost functions and augmented response variables.</li>
 								</ul>
+<pre><code>BeginResponseVars							
+[name1][file1][sep1][key1][line1][col1][tok1][aug1]
+[name2][file2][sep2][key2][line2][col2][tok2][aug2]
+.
+.
+.
+[nameN][fileN][sepN][keyN][lineN][colN][tokN][augN]
+EndResponseVars
+</code></pre>
+								<p align="center"  id="fig23"><b>Figure 23: General Format of the ResponseVariable Group</b></p>	
 
-								<h1>Tied response variables</h1>
+<pre><code>BeginResponseVars
+#name   filename      key line    col     token augmented?
+F1      CanBeam.out ; F1    0      2       '='    yes
+F2      CanBeam.out ; F2    1      2       '='    yes
+EndResponseVars
+</code></pre>
+								<p align="center"  id="fig24"><b>Figure 24: An Example of the ResponseVariable Group</b></p>
+								
+
+								<h1 id="sec_tied_resp_var">17 Tied response variables</h1>
 								<p align="justify">
 									This group specifies ’tied’ response variables; variables whose values are computed by OSTRICH as functions of one or more response variables and/or parameters. The general syntax for the 
-									“TiedRespVars” group is given in Listing 26 and a concrete example is given in Listing 27. 
+									“TiedRespVars” group is given in <a href="#fig25">Figure 25</a> and a concrete example is given in <a href="#fig26">Figure 26</a>. 
 								</p>
 								<p align="justify">
-									In Listing 26 and Listing 27, BeginTiedRespVars and EndTiedRespVars are parsing tags that wrap a list of tied response variables. The parameters in this section are identical to those in 
-									the Tied Parameters (see Section 2.10), except fewer functional relationships are supported and the list of non-tied items (used in the calculation of the tied response variable) may be 
+									In <a href="#fig25">Figure 25</a> and <a href="#fig26">Figure 26</a>, BeginTiedRespVars and EndTiedRespVars are parsing tags that wrap a list of tied response variables. The parameters in this section are identical to those in 
+									the <a href="#sec_tied_param">Tied Parameters</a>, except fewer functional relationships are supported and the list of non-tied items (used in the calculation of the tied response variable) may be 
 									parameters, response variables, and/or other tied response variables.
 								</p>
 								<ul>
@@ -986,31 +1278,52 @@ EndCombinatorialParams
 									If type = ”linear” and np = "1": The functional relationship is linear and has the form:
 								</p>
 								<p align="center">
-									<code>Ytied = (c1 × Y) + c0</code>
+									$$Y_{tied} = (c_1 × Y) + c_0$$
 								</p>
 								<p align="justify">
-									Where Ytied is the tied response variable, c0 and c1 are coefficients, Y is the non-tied variable, and type_data should be replaced with the syntax [c1] [c0]
+									Where \(Y_{tied}\) is the tied response variable, \(c_0\) and \(c_1\) are coefficients, \(Y\) is the non-tied variable, and type_data should be replaced with the syntax [\(c_1\)] [\(c_-\)]
 								</p>
 								<p align="justify">
 									If type = ”linear” and np = "2": The functional relationship has the form:
 								</p>
 								<p align="center">
-									<code>Ytied = (c3 × Y1 × Y2) + (c2 × Y2) + (c1 × Y1) + c0 </code>
+									$$Y_{tied} = (c_3 × Y_1 × Y_2) + (c_2 × Y_2) + (c_1 × Y_1) + c_0$$
 								</p>
 								<p align="justify">
-									Where Ytied is the tied response variable, c0, c1, c2, and c3 are coefficients, Y1 and Y2 are the non-tied variables, and type_data should be replaced with the syntax [c3] [c2] [c1] [c0].
-									If type = ”wsum”: The type_data field should list the values of each weight, using the same ordering as the named list of non-tied variables.
+									Where Ytied is the tied response variable, \(c_0\), \(c_1\), \(c_2\), and \(c_3\) are coefficients, \(Y_1\) and \(Y_2\) are the non-tied variables, and type_data should be replaced with the syntax 
+									[\(c_3\)] [\(c_2\)] [\(c_1\)] [\(c_1\)]. If type = ”wsum”: The type_data field should list the values of each weight, using the same ordering as the named list of non-tied variables.
 								</p>
-								
+<pre><code>BeginTiedRespVars							
+[name1] [np1] [pname1,1] [pname1,2] ... [pname1,np1] [type1] [type_data1]
+[name2] [np2] [pname2,1] [pname2,2] ... [pname2,np2] [type2] [type_data2]
+. . .
+[nameN] [npN] [pnameN,1] [pnameN,2] ... [pnameN,npN] [typeN] [type_dataN]
+EndTiedRespVars
+</code></pre>
+								<p align="center" id="fig25"><b>Figure 25: General Format of the Tied Response Variable Group</b></p>	
 
-								<h1>Type conversion</h1>
+<pre><code>BeginTiedRespVars
+#negative Nash-Sutcliffe Efficiency
+NegNS 1 NSE wsum -1.00
+#W = (Y1 + Y2 + Y3 +Y4)/4
+W     4 Y1 Y2 Y3 Y4 wsum 0.25 0.25 0.25 0.25
+#Y = 2*Y1 + 3
+Y     1 Y1 linear 2 3
+#Z = X1*Y1 + 10
+Z     2 X1 Y1 linear 1 0 0 10
+EndTiedRespVars
+</code></pre>
+								<p align="center" id="fig26"><b>Figure 26: An Example of the Tied Response Variable Group</b></p>
+
+								<h1 id="sec_type_conv">18 Type conversion</h1>
 								<p align="justify">
 									Models that generate input or output files in MS Access or netcdf format can be interfaced with OSTRICH via specification of a corresponding “TypeConversion” group. Outputs specified in the 
-									TypeConversion group are extracted into text-based files that can then be processed into Observations (see Section 2.14) or ResponseVariables (see Section 2.15). As such, incorporating these 
+									TypeConversion group are extracted into text-based files that can then be processed into <a href="#sec_observ">Observations</a> or <a href="#sec_resp_var">ResponseVariables</a>. As such, incorporating these 
 									types of output data into OSTRICH is a two-step process that requires entries the TypeConversion group and corresponding entries in the ResponseVariable or Observation group. Inputs 
-									specified in the TypeConversion group provide a mapping between parameters (see Sections 2.7 through 2.10) and corresponding non-text input files. This mapping allows OSTRICH to adjust 
-									parameter values in these non-text input files in lieu of the template file mechanism described in Section 2.4. Listing 28 provides the general syntax for filling out the TypeConversion 
-									group in the ostIn.txt input file. Listing 29 provides a concrete example for converting MS Access files. Listing 30 provides a concrete example for converting NetCDF files.
+									specified in the TypeConversion group provide a mapping between parameters and corresponding non-text input files. This mapping allows OSTRICH to adjust 
+									parameter values in these non-text input files in lieu of the template file mechanism. <a href="#fig27">Figure 27</a> provides the general syntax for filling out the 
+									TypeConversion group in the ostIn.txt input file. <a href="#fig28">Figure 28</a> provides a concrete example for converting MS Access files. <a href="#fig29">Figure 29</a> provides a concrete 
+									example for converting NetCDF files.
 								</p>
 								<p align="justify">
 									Where “BeginTypeConversion” and “EndTypeConversion” are parsing tags that wrap a list of conversion instructions for converting the inputs and outputs of a given file that uses a non-text 
@@ -1034,18 +1347,46 @@ EndCombinatorialParams
 									field must reference an observation or response variable if the rw field is set to “Read”. Conversely, the name field must reference a parameter or tied parameter if the rw field is 
 									set to “Write”.</li>
 								</ul>
+<pre><code>BeginTypeConversion
+[type1] [fname1] [rw1] [table1] [keycol1] [key1] [col1] [name1]
+[type2] [fname2] [rw2] [table2] [keycol2] [key2] [col2] [name2]
+.
+.
+.
+[typeN] [fnameN] [rwN] [tableN] [keycolN] [keyN] [colN] [nameN]
+EndTypeConversion
+</code></pre>
+								<p align="center" id="fig27"><b>Figure 27: General Format of the Type Conversion Group</b> The keycol and key fields are only required if the type field is “Access”</p>	
 
-								<h1>Search algorithms</h1>
+<pre><code>BeginTypeConversion
+# _IBU_C0_ = initial upstream loading of ibuprofen
+Access PhateGR.mdb Write Loadings Chemical Ibuprofen C0 _IBU_C0_
+# _IBU_CX_ = final loading of ibuprofen at watershed pour point
+Access PhateGR.mdb Read Loadings Chemical Ibuprofen Cexit _IBU_CX_
+EndTypeConversion
+</code></pre>
+								<p align="center" id="fig28"><b>Figure 28: An Example of the Type Conversion Group Applied to an MS Access Database</b></p>
+<pre><code>BeginTypeConversion
+# _HG_C0_ = initial upstream loading of mercury
+NetCDF WASP_APES.ncdf Write Loads 0 _HG_C0_
+# _IBU_CX_ = final loading of mercury at watershed pour point
+NetCDF WASP_APES.ncdf Read Loads 250 _HG_CX_
+EndTypeConversion
+</code></pre>
+								<p align="center" id="fig29"><b>Figure 29: An Example of the Type Conversion Group Applied to a NetCDF File</b></p>
+								
+								
+								<h1 id="sec_search">19 Search algorithms</h1>
 								<p align="justify">
 									Each algorithm has its own configuration group, wherein the user can specify the values for various algorithm control variables. Additional optional configuration variables and groups 
 									(i.e. Warm Start, Pre-Emption, Parameter Correction, a List of Initial Parameters, Math and Stats, and Line Search) may also be available for a given algorithm, as indicated in Table 1. 
 									Please see the search algorithm page for more information about each algorithm, including the sytax required for each within the OstIn file.
 								</p>
 
-								<h1>Constraints</h1>
+								<h1 id="sec_constraints">20 Constraints</h1>
 								<p align="justify">
 									In the Constraints group, the user supplies information about the various constraints that are to be placed on a general constrained optimization problem. Any number and combination of 
-									constraints are supported. As shown in Listing 61, the configuration syntax for constraints consists of: constraint name, constraint type, conversion factor, and names of relevant response 
+									constraints are supported. As shown in <a href="#fig30">Figure 30</a>, the configuration syntax for constraints consists of: constraint name, constraint type, conversion factor, and names of relevant response 
 									(or tied-response) variables.
 								</p>
 								<p align="justify">
@@ -1055,34 +1396,38 @@ EndCombinatorialParams
 									<li><b>name:</b> A unique name for the constraint.</li>
 									<li><b>type:</b> The type of constraint – the only supported value is “general”.</li>
 									<li><b>CF:</b> A cost factor that is multiplied by the amount of constraint violation. This converts a constraint violation into a penalty cost.</li>
-									<li><b>lwr:</b> The lower constraint limit (gmin). If the actual constraint value (g) is less than gmin, a penalty of P = CF × (g − gmin) will be added to PTOTAL.</li>
-									<li><b>upr:</b> The upper constraint limit (gmax). If the actual constraint value (g) is greater than gmax, a penalty of P = CF × (gmax − g) will be added to PTOTAL.</li>
+									<li><b>lwr:</b> The lower constraint limit (\(g_{min}\)). If the actual constraint value \(g\) is less than \(g_{min}\), a penalty of P = CF × (g − \(g_{min}\)) will be added to PTOTAL.</li>
+									<li><b>upr:</b> The upper constraint limit (\(g_{max}\)). If the actual constraint value \(g\) is greater than \(g_{max}\), a penalty of P = CF × (\(g_{max}\) − g) will be added to PTOTAL.</li>
 									<li><b>resp:</b> The name of the response variable (tied or non-tied) used to evaluate the constraint.</li>
 								</ul>
-								<!--
-								<footer>
-									<ul class="stats">
-										<li><a href="#">General</a></li>
-										<li><a href="#" class="icon solid fa-heart">28</a></li>
-										<li><a href="#" class="icon solid fa-comment">128</a></li>
-									</ul>
-								</footer>
-								-->
+								<!-- This has strange alignment for the code to render correctly on the page.-->
+								<table class="layouttable">
+									<tr>
+										<th>
+<pre><code>BeginConstraints
+  Name1 type1 CF1 lwr1 upr1 resp1
+  Name2 type2 CF2 lwr2 upr2 resp2
+  .
+  .
+  NameN typeN CFN lwrN uprN respN
+EndConstraints
+</code></pre>
+</th>
+<th>
+<pre><code>BeginConstraints
+  MaxC general 1E6 0.00 1E-6 Cexit
+  MinQ general 100 1.00 1E99 Qtot
+EndConstraints
+</code></pre>
+										</th>
+									</tr>
+								</table>
+								<p align="center" id="fig30"><b>Figure 30: Format (left) and Example (right) of the Constraints Group</b></p>
 							</article>
 
 					</div>
 
-				<!-- Footer -->
-					<section id="footer">
-						<ul class="icons">
-							<li><a href="#" class="icon brands fa-twitter"><span class="label">Twitter</span></a></li>
-							<li><a href="#" class="icon brands fa-facebook-f"><span class="label">Facebook</span></a></li>
-							<li><a href="#" class="icon brands fa-instagram"><span class="label">Instagram</span></a></li>
-							<li><a href="#" class="icon solid fa-rss"><span class="label">RSS</span></a></li>
-							<li><a href="#" class="icon solid fa-envelope"><span class="label">Email</span></a></li>
-						</ul>
-						<p class="copyright">&copy; Untitled. Design: <a href="http://html5up.net">HTML5 UP</a>. Images: <a href="http://unsplash.com">Unsplash</a>.</p>
-					</section>
+				
 
 			</div>
 

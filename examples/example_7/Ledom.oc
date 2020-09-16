@@ -1,0 +1,6 @@
+# output control file - text based head output
+HEAD SAVE FORMAT (65E16.8)
+HEAD SAVE UNIT 30
+PERIOD 1 STEP 1
+SAVE HEAD
+

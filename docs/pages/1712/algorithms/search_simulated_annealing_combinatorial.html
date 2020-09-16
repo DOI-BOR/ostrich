@@ -1,0 +1,186 @@
+<!DOCTYPE HTML>
+<!--
+	Future Imperfect by HTML5 UP
+	html5up.net | @ajlkn
+	Free for personal and commercial use under the CCA 3.0 license (html5up.net/license)
+-->
+<html>
+	<head>
+		<title>OSTRICH - Algorithms - Combinatorial (Discrete) Simulated Annealing</title>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+		<link rel="stylesheet" href="../../../assets/css/main.css" />
+	</head>
+	<body class="single is-preload">
+
+		<!-- Wrapper -->
+			<div id="wrapper">
+
+				<!-- Header -->
+					<header id="header">
+						<h1 class="bannerheading"><a href="../../../index.html">OSTRICH</a></h1>
+						<nav class="links">
+							<ul>
+								<li><a href="../overview.html">Overview</a></li>
+								<li><a href="algorithms.html">Algorithms</a></li>
+								<li><a href="../setup/setup.html">Setup</a></li>
+								<li>
+									<div class="dropdown">
+										<a href="../solution/solution.html"<button class="dropbtn">
+											Solution
+											<i class="fa fa-caret-down"></i></a>
+										</button>
+										<div class="dropdown-content">
+											<a href="../solution/running.html">Running OSTRICH</a>
+											<a href="../solution/building.html">Building OSTRICH</a>
+										</div>
+									</div>
+								</li>
+								<li><a href="../output/output.html">Output</a></li>
+								<li><a href="../examples/examples.html">Examples</a></li>
+								<li><a href="../../releases.html">Releases</a></li>
+							</ul>
+						</nav>
+						<nav class="main">
+							<ul>
+								<li class="menu">
+									<a class="fa-bars" href="#menu">Menu</a>
+								</li>
+							</ul>
+						</nav>
+					</header>
+
+				<!-- Menu -->
+				<section id="menu">
+
+					<!-- Links -->
+					<section>
+						<ul class="links">
+							<li>
+								<a href="../overview.html">
+									<h3>Overview</h3>
+									<p>The basics of OSTRICH</p>
+								</a>
+							</li>
+							<li>
+								<a href="algorithms.html">
+									<h3>Algorithms</h3>
+									<p>Algorithms available within OSTRICH</p>
+								</a>
+							</li>
+							<li>
+								<a href="../setup/setup.html">
+									<h3>Setup</h3>
+									<p>Organzing an OSTRICH analysis</p>
+								</a>
+							</li>
+							<li>
+								<a href="../solution/solution.html">
+									<h3>Solution</h3>
+									<p>Running an OSTRICH analysis</p>
+								</a>
+							</li>
+							<li>
+								<a href="../output/output.html">
+									<h3>Output</h3>
+									<p>Output of an OSTRICH analysis</p>
+								</a>
+							</li>
+							<li>
+								<a href="../examples/examples.html">
+									<h3>Examples</h3>
+									<p>Examples using OSTRICH</p>
+								</a>
+							</li>
+							<li>
+								<a href="../../contributing.html">
+									<h3>Contributing</h3>
+									<p>Contribute to OSTRICH</p>
+								</a>
+							</li>
+						</ul>
+					</section>
+
+				</section>
+
+				<!-- Main -->
+					<div id="main">
+
+						<!-- Post -->
+							<article class="post">
+								<header>
+									<div class="title">
+										<h2><a href="#">Algorithms - Combinatorial (Discrete) Simulated Annealing</a></h2>
+										<p>The OSTRICH combinatorial simulated annealing optimization algorithm</p>
+									</div>
+									<div class="meta">
+										<p align="left">Initial Publication:</p>
+										<time class="time" datetime="2015-11-01">September 16, 2020</time>
+										<p align="left">Modified:</p>
+										<time class="time" datetime="2015-11-01">September 16, 2020</time>
+									</div>
+								</header>
+								<p align="justify">
+									The following optional group will configure the combinatorial Simulated Annealing algorithm and will be processed if [ProgramType] is set to 
+									“DiscreteSimulatedAnnealing”.
+								</p>
+								<!-- This has strange alignment for the code to render correctly on the page.-->
+								<table class="layouttable">
+									<tr>
+										<th>
+<pre><code>BeginSimulatedAlg
+NumInitialTrials       [n_init]
+TemperatureScaleFactor [tscale]
+OuterIterations        [nouter]
+InnerIterations        [ninner]
+ConvergenceVal         [conval]
+EndSimulatedAlg
+</code></pre>
+</th>
+<th>
+<pre><code>BeginSimulatedAlg
+NumInitialTrials       100
+TemperatureScaleFactor 0.9
+OuterIterations        20
+InnerIterations        10
+ConvergenceVal         1.00E-3
+EndSimulatedAlg
+</code></pre>
+										</th>
+									</tr>
+								</table>
+								<p align="center" id="fig1"><b>Figure 1: General Format (left) and Example (right) of the Discrete Simulated Annealing Group</b></p>
+								
+								<p align="justify">
+									Where BeginSimulatedAlg and EndSimulatedAlg are parsing tags that wrap a set of algorithm configuration variables. These variables are described 
+									below:
+								</p>
+								<ul align="justify">
+									<li><b>NumInitialTrials:</b> This is the number of uphill moves that are attempted in the melting process. Larger values will result in more accurate 
+									estimates of the initial temperature, but at the expense of additional model runs. The default value is 100.</li>
+									<li><b>TemperatureScaleFactor:</b> After each (outer) iteration, the temperature is reduced by multiplying by this value. This value should be less 
+									than 1.00. The default value is 0.90.</li>
+									<li><b>OuterIterations:</b> This is the number of iterations in the overall algorithm, where one outer iteration corresponds to one temperature reduction. 
+									The default value is 20.</li>
+									<li><b>InnerIterations:</b> This is the number of iterations in each temperature equilibration, where one inner iteration corresponds to a single 
+									transitional move. The default value is 10.</li>
+									<li><b>ConvergenceVal</b>: This is the convergence value for the algorithm. If the relative difference between the current minimum and the median of the 
+									latest series of equilibration moves is less than or equal to this value, the algorithm will halt. The default value is 0.001.</li>
+								</ul>
+							</article>
+
+					</div>
+
+				
+
+			</div>
+
+		<!-- Scripts -->
+			<script src="../../../assets/js/jquery.min.js"></script>
+			<script src="../../../assets/js/browser.min.js"></script>
+			<script src="../../../assets/js/breakpoints.min.js"></script>
+			<script src="../../../assets/js/util.js"></script>
+			<script src="../../../assets/js/main.js"></script>
+
+	</body>
+</html>

@@ -6,10 +6,10 @@
 -->
 <html>
 	<head>
-		<title>Single - Future Imperfect by HTML5 UP</title>
+		<title>OSTRICH - Output</title>
 		<meta charset="utf-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
-		<link rel="stylesheet" href="assets/css/main.css" />
+		<link rel="stylesheet" href="../../../assets/css/main.css" />
 	</head>
 	<body class="single is-preload">
 
@@ -18,25 +18,31 @@
 
 				<!-- Header -->
 					<header id="header">
-						<h1><a href="index.html">OSTRICH</a></h1>
+						<h1 class="bannerheading"><a href="../../../index.html">OSTRICH</a></h1>
 						<nav class="links">
 							<ul>
-								<li><a href="overview.html">Overview</a></li>
-								<li><a href="algorithms.html">Algorithms</a></li>
-								<li><a href="setup.html">Setup</a></li>
-								<li><a href="solution.html">Solution</a></li>
+								<li><a href="../overview.html">Overview</a></li>
+								<li><a href="../algorithms/algorithms.html">Algorithms</a></li>
+								<li><a href="../setup/setup.html">Setup</a></li>
+								<li>
+									<div class="dropdown">
+										<a href="../solution/solution.html"<button class="dropbtn">
+											Solution
+											<i class="fa fa-caret-down"></i></a>
+										</button>
+										<div class="dropdown-content">
+											<a href="../solution/running.html">Running OSTRICH</a>
+											<a href="../solution/building.html">Building OSTRICH</a>
+										</div>
+									</div>
+								</li>
 								<li><a href="output.html">Output</a></li>
-								<li><a href="examples.html">Examples</a></li>
+								<li><a href="../examples/examples.html">Examples</a></li>
+								<li><a href="../../releases.html">Releases</a></li>
 							</ul>
 						</nav>
 						<nav class="main">
 							<ul>
-								<li class="search">
-									<a class="fa-search" href="#search">Search</a>
-									<form id="search" method="get" action="#">
-										<input type="text" name="query" placeholder="Search" />
-									</form>
-								</li>
 								<li class="menu">
 									<a class="fa-bars" href="#menu">Menu</a>
 								</li>
@@ -45,53 +51,57 @@
 					</header>
 
 				<!-- Menu -->
-					<section id="menu">
+				<section id="menu">
 
-						<!-- Search -->
-							<section>
-								<form class="search" method="get" action="#">
-									<input type="text" name="query" placeholder="Search" />
-								</form>
-							</section>
-
-						<!-- Links -->
-							<section>
-								<ul class="links">
-									<li>
-										<a href="#">
-											<h3>Lorem ipsum</h3>
-											<p>Feugiat tempus veroeros dolor</p>
-										</a>
-									</li>
-									<li>
-										<a href="#">
-											<h3>Dolor sit amet</h3>
-											<p>Sed vitae justo condimentum</p>
-										</a>
-									</li>
-									<li>
-										<a href="#">
-											<h3>Feugiat veroeros</h3>
-											<p>Phasellus sed ultricies mi congue</p>
-										</a>
-									</li>
-									<li>
-										<a href="#">
-											<h3>Etiam sed consequat</h3>
-											<p>Porta lectus amet ultricies</p>
-										</a>
-									</li>
-								</ul>
-							</section>
-
-						<!-- Actions -->
-							<section>
-								<ul class="actions stacked">
-									<li><a href="#" class="button large fit">Log In</a></li>
-								</ul>
-							</section>
-
+					<!-- Links -->
+					<section>
+						<ul class="links">
+							<li>
+								<a href="../overview.html">
+									<h3>Overview</h3>
+									<p>The basics of OSTRICH</p>
+								</a>
+							</li>
+							<li>
+								<a href="../algorithms/algorithms.html">
+									<h3>Algorithms</h3>
+									<p>Algorithms available within OSTRICH</p>
+								</a>
+							</li>
+							<li>
+								<a href="../setup/setup.html">
+									<h3>Setup</h3>
+									<p>Organzing an OSTRICH analysis</p>
+								</a>
+							</li>
+							<li>
+								<a href="../solution/solution.html">
+									<h3>Solution</h3>
+									<p>Running an OSTRICH analysis</p>
+								</a>
+							</li>
+							<li>
+								<a href="output.html">
+									<h3>Output</h3>
+									<p>Output of an OSTRICH analysis</p>
+								</a>
+							</li>
+							<li>
+								<a href="../examples/examples.html">
+									<h3>Examples</h3>
+									<p>Examples using OSTRICH</p>
+								</a>
+							</li>
+							<li>
+								<a href="../../contributing.html">
+									<h3>Contributing</h3>
+									<p>Contribute to OSTRICH</p>
+								</a>
+							</li>
+						</ul>
 					</section>
+
+				</section>
 
 				<!-- Main -->
 					<div id="main">
@@ -101,47 +111,281 @@
 								<header>
 									<div class="title">
 										<h2><a href="#">Output</a></h2>
-										<p>Lorem ipsum dolor amet nullam consequat etiam feugiat</p>
+										<p>Output of an OSTRICH analysis</p>
 									</div>
 									<div class="meta">
-										<time class="published" datetime="2015-11-01">November 1, 2015</time>
-										<a href="#" class="author"><span class="name">Jane Doe</span><img src="images/avatar.jpg" alt="" /></a>
+										<p align="left">Initial Publication:</p>
+										<time class="time" datetime="2015-11-01">September 16, 2020</time>
+										<p align="left">Modified:</p>
+										<time class="time" datetime="2015-11-01">September 16, 2020</time>
 									</div>
 								</header>
-								<span class="image featured"><img src="images/pic01.jpg" alt="" /></span>
-								<p>Mauris neque quam, fermentum ut nisl vitae, convallis maximus nisl. Sed mattis nunc id lorem euismod placerat. Vivamus porttitor magna enim, ac accumsan tortor cursus at. Phasellus sed ultricies mi non congue ullam corper. Praesent tincidunt sed tellus ut rutrum. Sed vitae justo condimentum, porta lectus vitae, ultricies congue gravida diam non fringilla.</p>
-								<p>Nunc quis dui scelerisque, scelerisque urna ut, dapibus orci. Sed vitae condimentum lectus, ut imperdiet quam. Maecenas in justo ut nulla aliquam sodales vel at ligula. Sed blandit diam odio, sed fringilla lectus molestie sit amet. Praesent eu tortor viverra lorem mattis pulvinar feugiat in turpis. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Fusce ullamcorper tellus sit amet mattis dignissim. Phasellus ut metus ligula. Curabitur nec leo turpis. Ut gravida purus quis erat pretium, sed pellentesque massa elementum. Fusce vestibulum porta augue, at mattis justo. Integer sed sapien fringilla, dapibus risus id, faucibus ante. Pellentesque mattis nunc sit amet tortor pellentesque, non placerat neque viverra. </p>
-								<footer>
-									<ul class="stats">
-										<li><a href="#">General</a></li>
-										<li><a href="#" class="icon solid fa-heart">28</a></li>
-										<li><a href="#" class="icon solid fa-comment">128</a></li>
-									</ul>
-								</footer>
+								<h1>Contents</h1>
+								<table class="layouttable">
+									<tr>
+										<th><a href="#sec_intro"><p class="tocheading">1 Introduction</p></a></th>
+										<th><a href="#sec_norm"><p class="tocheading">3.6 Normality of Residuals</p></a></th>
+									</tr>
+									<tr>
+										<th><a href="#sec_main"><p class="tocheading">2 OstOutput - The Main Output File</p></a></th>
+										<th><a href="#sec_influential"><p class="tocheading">3.7 Influential Observations</p></a></th>
+									</tr>
+									<tr>
+										<th><a href="#sec_stat"><p class="tocheading">3 OstOutput - Statistical Output</p></a></th>
+										<th><a href="#sec_param_sens"><p class="tocheading">3.8 Parameter Sensitivities</p></a></th>
+									</tr>
+									<tr>
+										<th><a href="#sec_obs"><p class="tocheading">3.1 Observation Residuals</p></a></th>
+										<th><a href="#sec_matrices"><p class="tocheading">3.9 Matrices</p></a></th>
+									</tr>
+									<tr>
+										<th><a href="#sec_error_var"><p class="tocheading">3.2 Error Variance and Standard Error of the Regression</p></a></th>
+										<th><a href="#sec_error"><p class="tocheading">4 OstError – OSTRICH Error and Warning Messages</p></a></th>
+									</tr>
+									<tr>
+										<th><a href="#sec_param_var"><p class="tocheading">3.3 Parameter Variance-Covariance and Correlation</p></a></th>
+										<th><a href="#sec_exe"><p class="tocheading">5 OstExeOut – Redirected Model Output</p></a></th>
+									</tr>
+									<tr>
+										<th><a href="#sec_confidence"><p class="tocheading">3.4 Confidence Intervals</p></a></th>
+										<th><a href="#sec_model"><p class="tocheading">6 OstModel – Model Run Record</p></a></th>
+									</tr>
+									<tr>
+										<th><a href="#sec_linearity"><p class="tocheading">3.5 Model Linearity</p></a></th>
+									</tr>									
+								</table>
+								
+								<h1 id="sec_intro">1 Introduction</h1> 
+								<p align="justify">Upon completion, OSTRICH will have generated various output files. The name of each file will contain the id of the corresponding processor N, where N=0 is the 
+								supervisor/master processor responsible for gathering and reporting the majority of the output. Output files generated by subordinate processors are generally only useful for 
+								troubleshooting.</p>
+								<ul>
+									<li><b>OstOutputN.txt:</b> The main output file, it contains an optimization (or regression) record along with statistical output (if applicable).</li>
+									<li><b>OstErrorsN.txt:</b> Any errors or warnings encountered by processor N are stored in this file.</li>
+									<li><b>OstModelN.txt:</b> A sequential record of every model run evaluated by processor N is stored in this file.</li>
+									<li><b>OstExeOut.txt:</b> The standard output and standard error of Model runs are redirected to this file. For a given processor, only the output from the most recent 
+									evaluation is retained. </li>
+									<li><b>OstStatusN.txt:</b> This file is periodically updated with the current progress (i.e. percent complete and number of model evaluations) of the selected search algorithm.</li>
+									<li><b>OstGcopOut:</b> This file keeps track of the cost and constraint information for each model evaluation when the General-purpose Constrained Optimization Platform (GCOP) is used.</li>
+									<li><b>OstNonDomSolutions:</b> When a multi-objective search is performed, this file is periodically updated with the current list of non-dominated solutions that have been 
+									discovered by the selected search algorithm.</li>
+								</ul>
+								<p align="justify">The following sections describe selected OSTRICH output files in more detail.</p>
+								
+								<h1 id="sec_main">2 OstOutput - The Main Output File</h1>
+								<p align="justify"> 
+									The main output file always contains the following elements (i) a GNU Public License disclaimer; (ii) a summary of the basic configuration variables; (iii) an OSTRICH run record 
+									detailing each iteration of the optimization algorithm; and (iv) the resulting optimal parameter set(s) and objective function value. The run record contains the parameter and 
+									objective function values at each iteration along with an algorithm-dependent value that indicates progress of the algorithm toward convergence. For most algorithms, the parameter 
+									and objective function values for the current best solution are reported.
+								</p>
+								
+								<h1 id="sec_stat">3 OstOutput - Statistical Output</h1>
+								<p align="justify">
+									Various statistical measures may be reported if calibration using the WSSE objective function is being performed. See the <a href="../overview.html">Overview</a> for a summary of 
+									the supported measures. The statistics that are reported will depend on whether or not they were selected in the input file. The following sections describe the output of these 
+									statistics.
+								</p>
+								
+								<h2 id="sec_obs">3.1 Observation Residuals</h2>
+								<p align="justify">
+									Observations residuals are reported automatically at the end of every WSSE calibration. Also included in the observation residual output is the correlation between measured and 
+									simulated observations (Ry).
+								</p>
+								
+								<h2 id="sec_error_var">3.2 Error Variance and Standard Error of the Regression</h2>
+								<p align="justify">
+									Including the StdDev option in the MathAndStats group will cause the error variance (s2) and standard error of the regression (s) to be reported.
+								</p>
+								
+								<h2 id="sec_param_var">3.3 Parameter Variance-Covariance and Correlation</h2>
+								<p align="justify">
+									Including StdErr in the MathAndStats group will cause OSTRICH to output the parameter variance-covariance matrix along with the standard error of each parameter. Furthermore, including 
+									CorrCoeff in the MathAndStats group will cause OSTRICH to output the parameter correlation matrix.
+								</p>
+								
+								<h2 id="sec_confidence">3.4 Confidence Intervals</h2>
+								<p align="justify">
+									Including Confidence in the MathAndStats groups triggers the reporting of linear confidence intervals (CI) for each parameter. OSTRICH will use the value of the CI_PCT variable as the 
+									corresponding confidence level (e.g. CI_PCT = 0.95 selects a 95% confidence interval).
+								</p>
+								
+								<h2 id="sec_linearity">3.5 Model Linearity</h2>
+								<p align="justify">
+									Including either Beale or Linssen in the MathAndStats group will trigger reporting of the corresponding non-linearity measures and linearity thresholds.
+								</p>
+								
+								<h2 id="sec_norm">3.6 Normality of Residuals</h2>
+								<p align="justify">
+									Inclusion of the NormPlot variable will cause OSTRICH to report a list of normalized residuals and the corresponding normal probability correlation coefficient (R2N).
+								</p>
+								
+								<h2 id="sec_influential">3.7 Influential Observations</h2>
+								<p align="justify">
+									When either the CooksD or DFBETAS variable (or both) is set, OSTRICH will generate and output the corresponding measures of observation influence, along with an assessment of which 
+									observations are influential, based on influence thresholds suggested in the literature.
+								</p>
+								
+								<h2 id="sec_param_sens">3.8 Parameter Sensitivities</h2>
+								<p align="justify">
+									Including the Sensitivity variable in the MathAndStats group causes OSTRICH to report parameter sensitivity measures. These are measures of local parameter sensitivity and are 
+									centered on the optimal parameter set.
+								</p>
+								
+								<h2 id="sec_matrices">3.9 Matrices</h2>
+								<p align="justify">
+									OSTRICH can be configured to output matrices used for various statistical calculations by including the Matrices variable in the MathAndStats group.
+								</p>
+								
+								<h1 id="sec_error">4 OstError – OSTRICH Error and Warning Messages</h1>
+								<p align="justify">
+									During execution, OSTRICH logs errors and warnings to the file ostErrorsN.txt, where N corresponds to the processor number. Some errors are severe and will cause OSTRICH to abort while 
+									others serve as warnings that the results may not be optimal even though OSTRICH is able to proceed. Error codes and brief descriptions are given in Table 1.
+								</p>
+								
+								<p align="center" id="tab1"><b>Table 1: OSTRICH Error Codes</b></p>
+								<table>
+									<tr>
+										<th><b>Error Message</b></th>
+										<th><b>Description</b></th>
+									</tr>
+									<tr>
+										<th>NO ERROR</th>
+										<th>No errors were reported.</th>
+									</tr>
+									<tr>
+										<th>BAD ARGUMENTS</th>
+										<th>A variable in the ostIn.txt file was assigned an invalid value.</th>
+									</tr>
+									<tr>
+										<th>FILE I/O ERROR</th>
+										<th>A file could not be opened for reading or writing.</th>
+									</tr>
+									<tr>
+										<th>MODEL EXECUTION ERROR</th>
+										<th>The model executable reported an error.</th>
+									</tr>
+									<tr>
+										<th>ARRAY OUT OF BOUNDS</th>
+										<th>An array index got assigned a value outside the bounds of the array.</th>
+									</tr>
+									<tr>
+										<th>PARAMETER MISMATCH</th>
+										<th>The search engine lost track of the number of parameters.</th>
+									</tr>
+									<tr>
+										<th>SINGULAR MATRIX</th>
+										<th>Matrix inversion failed because of a singular matrix.</th>
+									</tr>
+									<tr>
+										<th>GRID SIZE IS TOO LARGE</th>
+										<th>The exhaustive search grid is too large.</th>
+									</tr>
+									<tr>
+										<th>INITIAL SA TEMPERATURE</th>
+										<th>There was a problem with the final simulated annealing temperature.</th>
+									</tr>
+									<tr>
+										<th>PARAMETER BOUNDS</th>
+										<th>The upper or lower bound of a parameter value was exceeded.</th>
+									</tr>
+									<tr>
+										<th>COULDN'T BOUND MINIMUM</th>
+										<th>A line search failed to bound the minimum.</th>
+									</tr>
+									<tr>
+										<th>UNKNOWN BOUND CONDITION</th>
+										<th>A line search lost track of its state.</th>
+									</tr>
+									<tr>
+										<th>COULDN'T PARSE INPUT</th>
+										<th>Failed to parse a line of input in the ostIn.txt file.</th>
+									</tr>
+									<tr>
+										<th>MALLOC/NEW FAILED</th>
+										<th>Dynamic memory allocation failed.</th>
+									</tr>
+									<tr>
+										<th>JACOBIAN ERROR</th>
+										<th>Insensitivity of parameters or simulated observations while computing the Jacobian matrix.</th>
+									</tr>
+									<tr>
+										<th>USER ABORT</th>
+										<th>User requested the program abort via OstQuit.txt file.</th>
+									</tr>
+									<tr>
+										<th>BINARY CODED GA</th>
+										<th>The range of a parameter can’t be encoded into a 32-bit string.</th>
+									</tr>
+									<tr>
+										<th>OBSERVATION WEIGHTS</th>
+										<th>An observation weight less than or equal to zero was detected.</th>
+									</tr>
+									<tr>
+										<th>INSENSITIVE PARAMETER</th>
+										<th>A parameter had no influence on any simulated observation.</th>
+									</tr>
+									<tr>
+										<th>INSENSITIVE OBSERVATION</th>
+										<th>A simulated observation was insensitive to changes in parameters.</th>
+									</tr>
+									<tr>
+										<th>SUPERMUSE</th>
+										<th>A SuperMUSE operation failed or timed out.</th>
+									</tr>
+									<tr>
+										<th>OVERFLOW (DIV-BY-ZERO?)</th>
+										<th>A computed value is larger than can be represented by the system.</th>
+									</tr>
+									<tr>
+										<th>NULL POINTER</th>
+										<th>A subroutine returned NULL unexpectedly.</th>
+									</tr>
+									<tr>
+										<th>ALGORITHM STALLED</th>
+										<th>The selected algorithm appears to have stalled.</th>
+									</tr>
+									<tr>
+										<th>FILE CLEANUP</th>
+										<th>This is message alerts users to the deletion of temporary files. </th>
+									</tr>
+									<tr>
+										<th>NON-UNIQUE PARAMETER NAME</th>
+										<th>A parameter or tied parameter was assigned a non-unique name or a name that is a sub-string of the name of another parameter.</th>
+									</tr>
+									<tr>
+										<th>FIXED FORMAT PARAMETERS</th>
+										<th>A fixed format specification contains bad values.</th>
+									</tr>
+									<tr>
+										<th>DEGREES OF FREEDOM</th>
+										<th>A statistic could not be calculated due to too few degrees of freedom.</th>
+									</tr>
+								</table>
+								
+								<h1 id="sec_exe">5 OstExeOut – Redirected Model Output</h1>
+								<p align="justify">
+									OSTRICH redirects the standard error and standard output of each model run to a file named ’OstExeOut.txt’. The output of each new model run will overwrite the output of the previous 
+									model run so that OstExeOut.txt always contains the standard error and standard output of the most recent model run.
+								</p>
+								
+								<h1 id="sec_model">6 OstModel – Model Run Record</h1>
+								<p align="justify">
+									OSTRICH maintains a file named ’OstModelN.txt’, where N is the processor number, containing the parameter set and objective function of each model run. This list of model runs is numbered 
+									in increasing sequential order, with the highest value corresponding to the most recent model run.
+								</p>
+								
 							</article>
 
 					</div>
-
-				<!-- Footer -->
-					<section id="footer">
-						<ul class="icons">
-							<li><a href="#" class="icon brands fa-twitter"><span class="label">Twitter</span></a></li>
-							<li><a href="#" class="icon brands fa-facebook-f"><span class="label">Facebook</span></a></li>
-							<li><a href="#" class="icon brands fa-instagram"><span class="label">Instagram</span></a></li>
-							<li><a href="#" class="icon solid fa-rss"><span class="label">RSS</span></a></li>
-							<li><a href="#" class="icon solid fa-envelope"><span class="label">Email</span></a></li>
-						</ul>
-						<p class="copyright">&copy; Untitled. Design: <a href="http://html5up.net">HTML5 UP</a>. Images: <a href="http://unsplash.com">Unsplash</a>.</p>
-					</section>
-
 			</div>
 
 		<!-- Scripts -->
-			<script src="assets/js/jquery.min.js"></script>
-			<script src="assets/js/browser.min.js"></script>
-			<script src="assets/js/breakpoints.min.js"></script>
-			<script src="assets/js/util.js"></script>
-			<script src="assets/js/main.js"></script>
+			<script src="../../../assets/js/jquery.min.js"></script>
+			<script src="../../../assets/js/browser.min.js"></script>
+			<script src="../../../assets/js/breakpoints.min.js"></script>
+			<script src="../../../assets/js/util.js"></script>
+			<script src="../../../assets/js/main.js"></script>
 
 	</body>
 </html>

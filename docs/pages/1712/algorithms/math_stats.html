@@ -1,0 +1,249 @@
+<!DOCTYPE HTML>
+<!--
+	Future Imperfect by HTML5 UP
+	html5up.net | @ajlkn
+	Free for personal and commercial use under the CCA 3.0 license (html5up.net/license)
+-->
+<html>
+	<head>
+		<title>OSTRICH - Algorithms - Mathematics and Statistics</title>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+		<link rel="stylesheet" href="../../../assets/css/main.css" />
+	</head>
+	<body class="single is-preload">
+
+		<!-- Wrapper -->
+			<div id="wrapper">
+
+				<!-- Header -->
+					<header id="header">
+						<h1 class="bannerheading"><a href="../../../index.html">OSTRICH</a></h1>
+						<nav class="links">
+							<ul>
+								<li><a href="../overview.html">Overview</a></li>
+								<li><a href="algorithms.html">Algorithms</a></li>
+								<li><a href="../setup/setup.html">Setup</a></li>
+								<li>
+									<div class="dropdown">
+										<a href="../solution/solution.html"<button class="dropbtn">
+											Solution
+											<i class="fa fa-caret-down"></i></a>
+										</button>
+										<div class="dropdown-content">
+											<a href="../solution/running.html">Running OSTRICH</a>
+											<a href="../solution/building.html">Building OSTRICH</a>
+										</div>
+									</div>
+								</li>
+								<li><a href="../output/output.html">Output</a></li>
+								<li><a href="../examples/examples.html">Examples</a></li>
+								<li><a href="../../releases.html">Releases</a></li>
+							</ul>
+						</nav>
+						<nav class="main">
+							<ul>
+								<li class="menu">
+									<a class="fa-bars" href="#menu">Menu</a>
+								</li>
+							</ul>
+						</nav>
+					</header>
+
+				<!-- Menu -->
+				<section id="menu">
+
+					<!-- Links -->
+					<section>
+						<ul class="links">
+							<li>
+								<a href="../overview.html">
+									<h3>Overview</h3>
+									<p>The basics of OSTRICH</p>
+								</a>
+							</li>
+							<li>
+								<a href="algorithms.html">
+									<h3>Algorithms</h3>
+									<p>Algorithms available within OSTRICH</p>
+								</a>
+							</li>
+							<li>
+								<a href="../setup/setup.html">
+									<h3>Setup</h3>
+									<p>Organzing an OSTRICH analysis</p>
+								</a>
+							</li>
+							<li>
+								<a href="../solution/solution.html">
+									<h3>Solution</h3>
+									<p>Running an OSTRICH analysis</p>
+								</a>
+							</li>
+							<li>
+								<a href="../output/output.html">
+									<h3>Output</h3>
+									<p>Output of an OSTRICH analysis</p>
+								</a>
+							</li>
+							<li>
+								<a href="../examples/examples.html">
+									<h3>Examples</h3>
+									<p>Examples using OSTRICH</p>
+								</a>
+							</li>
+							<li>
+								<a href="../../contributing.html">
+									<h3>Contributing</h3>
+									<p>Contribute to OSTRICH</p>
+								</a>
+							</li>
+						</ul>
+					</section>
+
+				</section>
+
+				<!-- Main -->
+					<div id="main">
+
+						<!-- Post -->
+							<article class="post">
+								<header>
+									<div class="title">
+										<h2><a href="#">Algorithms - Mathematics and Statistics</a></h2>
+										<p>OSTRICH Mathematics and Statistics features</p>
+									</div>
+									<div class="meta">
+										<p align="left">Initial Publication:</p>
+										<time class="time" datetime="2015-11-01">September 16, 2020</time>
+										<p align="left">Modified:</p>
+										<time class="time" datetime="2015-11-01">September 16, 2020</time>
+									</div>
+								</header>
+								<p align="justify">
+									This group describes the finite difference method employed by algorithms in Table 1 with shaded entries in the “Math and Stats?” column. If calibration 
+									is being performed, additional variables in this group are used to request various statistical and diagnostic output. The general format of the MathAndStats 
+									group is given in Listing 58 and Listing 58 is a concrete example.
+								</p>
+								<!-- This has strange alignment for the code to render correctly on the page.-->
+<pre><code>BeginMathAndStats
+DiffType         [dtype]
+DiffIncType      [ditype]
+DiffRelIncrement [drinc]
+DIffIncrement    [dinc]
+DiffMinIncrement [dmin]
+CI_Pct           [cipct]
+<Stat1>
+. . .
+<StatN>
+BeginPredictions
+  --- see section 2.15
+EndPredictions
+EndMathAndStats
+</code></pre>
+								<p align="center" id="fig1"><b>Figure 1: General Format of the Math and Stats Group</b></p>
+								
+								<p align="justify">
+									As shown in Figure 1, a “Predictions” sub-group can be used to instruct OSTRICH to compute confidence limits on predicted quantities of a calibrated model. 
+									The format of the Predictions sub-group is identical to the Response Variables group.
+								</p>
+								
+<pre><code>BeginMathAndStats
+DiffType forward
+DiffIncType value-relative
+DIffIncrement 0.01
+DiffMinIncrement 1.00E-6
+CI_Pct 0.95
+AllStats
+ExcludeInsensitiveParameters
+ExcludeInsensitiveObservations
+WriteResidualsEachIteration
+
+BeginPredictions
+#name   filename      key  line    col     token augmented?
+MinDef  CanBeam.out ; Umin   2      2       '='    no
+MaxDef  CanBeam.out ; Umax   3      2       '='    no
+EndPredictions
+EndMathAndStats
+</code></pre>
+								<p align="center" id="fig1"><b>Figure 2: Example of the Math and Stats Group</b></p>
+								
+								<p align="justify">
+									Variables in the Math and Stats group are described below:
+								</p>
+								<ul align="justify">
+									<li><b>DiffType:</b> This variable selects the type of finite-difference approach to use for approximating derivatives (i.e. ∂Y/∂p, where Y is some model output and p is a 
+									parameter). Options are “forward” (forward differences), “outside” (outside central differences), “parabolic” (parabolic central differences), and “best-fit” 
+									(linear central differences). Central differences require twice as much computation as forward differences but can be more accurate. The default value is “forward”.</li>
+									<li>
+										<p>
+											DiffIncType: The type of increment used in the selected finite-difference approach. Supported values for this variable are described below, and the default is 
+											“range-relative”:
+										</p>
+										<ul align="justify">
+											<li><b>range-relative:</b> Increments will be computed by multiplying the range of a given parameter by the value of the“DiffIncrement” or “DiffRelIncrement” variable. </li>
+											<li><b>value-relative:</b> Increments will be computed by multiplying the current value of a given parameter by the value of the “DiffIncrement” variable.</li>
+											<li><b>absolute:</b> Increments will be directly specified by the value of the “DiffIncrement” variable.</li>
+											<li><b>optimal:</b> Finite-difference increments will be computed according to the iterative procedure outlined by Yager (2004).</li>
+										</ul>
+									</li>
+									<li><b>DiffRelIncrement:</b> When this variable is assigned the program will use a range-relative finite-difference increment, irrespective of the value of DiffIncType. 
+									The value of this variable can be a single value that will be applied to each parameter, or a space-separated list of values corresponding to each parameter listed 
+									in the parameters group. The default value is 0.001 for all parameters.</li>
+									<li><b>DiffIncrement:</b> The value used in computing a finite-difference for each parameter. The value of this variable can be a single value that will be applied to each 
+									parameter, or a space-separated list of values corresponding to each parameter listed in the parameters group. The default value is 0.001 for all 
+									parameters.</li>
+									<li><b>DiffMinIncrement:</b> The minimum increment that will be used irrespective of the compute valued. The default value is 1.00E-20.</li>
+									<li><b>CI_Pct:</b> The desired confidence level for computing linear confidence intervals on parameters and predictions. The default value is 95.</li>
+									<li>
+										<p>
+											<b>Stat1 .. StatN:</b> These entries serve as flags to select various statistical output. Options are described below. The default flags are “NoStats”, 
+											“ExcludeInsensitiveParameters”, and “ExcludeInsensitiveObservations”:
+										</p>
+										<ul align="justify">
+											<li><b>Default:</b> Selects a default list of parameter statistics, including correlation, standard error, and linear confidence intervals.</li>
+											<li><b>AllStats:</b> Enables all available statistical output.</li>
+											<li><b>NoStats:</b> Disables all statistical output.</li>
+											<li><b>BestBoxCox:</b> Instructs OSTRICH to compute an estimate of the best Box-Cox power transformation for obtaining normalized residuals.</li>
+											<li><b>StdDev:</b> Selects standard deviation of the regression (i.e. root mean squared error, RMSE).</li>
+											<li><b>StdErr:</b> Selects parameter standard error.</li>
+											<li><b>CorrCoeff:</b> Selects parameter correlation matrix.</li>
+											<li><b>NormPlot:</b> Selects plot points for a normal probability plot along with corresponding R2N value.</li>
+											<li><b>Beale:</b> Selects Beale’s linearity measure.</li>
+											<li><b>Linssen:</b> Selects Linssen’s linearity measure.</li>
+											<li><b>CooksD:</b> Selects the Cook’s D measure of observation influence.</li>
+											<li><b>DFBETAS:</b> Selects the DFBETAS measure of observation influence.</li>
+											<li><b>Matrices:</b> Selects non-linear regression matrices, including the Jacobian, normal and inverse normal matrices.</li>
+											<li><b>Confidence:</b> Selects linear confidence intervals on estimated parameters.</li>
+											<li><b>Sensitivity:</b> Selects measures of parameter sensitivity, including composite and dimensionless scaled sensitivities.</li>
+											<li><b>RunsTest:</b> Selects the runs test for serial correlation among residuals.</li>
+											<li><b>AutorunFunction:</b> Selects the autorun function for serial correlation among residuals.</li>
+											<li><b>MMRI:</b> Selects various information-theoretic measures for assessing multi-model ranking and inference.</li>
+											<li><b>ExcludeInsensitiveParameters:</b> If present, insensitive parameters will be excluded from statistical calculations. This can help avoid problems with singular matrices.</li>
+											<li><b>IncludeInsensitiveParameters:</b> If present, insensitive parameters will be included in statistical calculations.</li>
+											<li><b>ExcludeInsensitiveObservations:</b> If present, insensitive observations will be excluded from statistical calculations. This can help avoid problems with singular matrices.</li>
+											<li><b>IncludeInsensitiveObservations:</b> If present, insensitive observations will be included in statistical calculations.</li>
+											<li><b>WriteResidualsEachIteration:</b> If present, a residuals file will be created for each iteration or step of the algorithm and named OstResiduals_P*_S*.txt. The P* portion 
+											of the filename will identify the processor (i.e. rank) and the S* portion of the filename will identify the iteration (i.e. step). The file will list the residuals associated with 
+											the best-fit parameter set discovered by the algorithm up to the indicated algorithm iteration (i.e. step). This option only applies to the WSSE objective function and is not available 
+											for the following algorithms: DDSAU, GLUE, MCMC, PADDS, ParaPADDS, RJSMP, BEERS, and SMOOTH.</li>
+										</ul>
+									</li>
+								</ul>
+							</article>
+
+					</div>
+
+				
+
+			</div>
+
+		<!-- Scripts -->
+			<script src="../../../assets/js/jquery.min.js"></script>
+			<script src="../../../assets/js/browser.min.js"></script>
+			<script src="../../../assets/js/breakpoints.min.js"></script>
+			<script src="../../../assets/js/util.js"></script>
+			<script src="../../../assets/js/main.js"></script>
+
+	</body>
+</html>

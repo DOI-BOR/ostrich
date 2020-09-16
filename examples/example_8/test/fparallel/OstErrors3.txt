@@ -1,0 +1,5 @@
+Ostrich Error Report for Processor 3 
+A total of 3 errors and/or warnings were reported
+FILE CLEANUP               : Ostrich deleted mod3/Nighthawk.bat 
+FILE CLEANUP               : Ostrich deleted mod3/Nighthawk.exe 
+FILE CLEANUP               : Ostrich deleted mod3/nZones.exe 

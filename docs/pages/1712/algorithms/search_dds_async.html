@@ -1,0 +1,201 @@
+<!DOCTYPE HTML>
+<!--
+	Future Imperfect by HTML5 UP
+	html5up.net | @ajlkn
+	Free for personal and commercial use under the CCA 3.0 license (html5up.net/license)
+-->
+<html>
+	<head>
+		<title>OSTRICH - Algorithms - Asynchronous Parallel Dynamically Dimensioned Search</title>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+		<link rel="stylesheet" href="../../../assets/css/main.css" />
+	</head>
+	<body class="single is-preload">
+
+		<!-- Wrapper -->
+			<div id="wrapper">
+
+				<!-- Header -->
+					<header id="header">
+						<h1 class="bannerheading"><a href="../../../index.html">OSTRICH</a></h1>
+						<nav class="links">
+							<ul>
+								<li><a href="../overview.html">Overview</a></li>
+								<li><a href="algorithms.html">Algorithms</a></li>
+								<li><a href="../setup/setup.html">Setup</a></li>
+								<li>
+									<div class="dropdown">
+										<a href="../solution/solution.html"<button class="dropbtn">
+											Solution
+											<i class="fa fa-caret-down"></i></a>
+										</button>
+										<div class="dropdown-content">
+											<a href="../solution/running.html">Running OSTRICH</a>
+											<a href="../solution/building.html">Building OSTRICH</a>
+										</div>
+									</div>
+								</li>
+								<li><a href="../output/output.html">Output</a></li>
+								<li><a href="../examples/examples.html">Examples</a></li>
+								<li><a href="../../releases.html">Releases</a></li>
+							</ul>
+						</nav>
+						<nav class="main">
+							<ul>
+								<li class="menu">
+									<a class="fa-bars" href="#menu">Menu</a>
+								</li>
+							</ul>
+						</nav>
+					</header>
+
+				<!-- Menu -->
+				<section id="menu">
+
+					<!-- Links -->
+					<section>
+						<ul class="links">
+							<li>
+								<a href="../overview.html">
+									<h3>Overview</h3>
+									<p>The basics of OSTRICH</p>
+								</a>
+							</li>
+							<li>
+								<a href="algorithms.html">
+									<h3>Algorithms</h3>
+									<p>Algorithms available within OSTRICH</p>
+								</a>
+							</li>
+							<li>
+								<a href="../setup/setup.html">
+									<h3>Setup</h3>
+									<p>Organzing an OSTRICH analysis</p>
+								</a>
+							</li>
+							<li>
+								<a href="../solution/solution.html">
+									<h3>Solution</h3>
+									<p>Running an OSTRICH analysis</p>
+								</a>
+							</li>
+							<li>
+								<a href="../output/output.html">
+									<h3>Output</h3>
+									<p>Output of an OSTRICH analysis</p>
+								</a>
+							</li>
+							<li>
+								<a href="../examples/examples.html">
+									<h3>Examples</h3>
+									<p>Examples using OSTRICH</p>
+								</a>
+							</li>
+							<li>
+								<a href="../../contributing.html">
+									<h3>Contributing</h3>
+									<p>Contribute to OSTRICH</p>
+								</a>
+							</li>
+						</ul>
+					</section>
+
+				</section>
+
+				<!-- Main -->
+					<div id="main">
+
+						<!-- Post -->
+							<article class="post">
+								<header>
+									<div class="title">
+										<h2><a href="#">Algorithms - Asynchronous Parallel Dynamically Dimensioned Search (DDS)</a></h2>
+										<p>The OSTRICH asynchronous parallel dynamically dimensioned search optimization algorithm</p>
+									</div>
+									<div class="meta">
+										<p align="left">Initial Publication:</p>
+										<time class="time" datetime="2015-11-01">September 16, 2020</time>
+										<p align="left">Modified:</p>
+										<time class="time" datetime="2015-11-01">September 16, 2020</time>
+									</div>
+								</header>
+								<p align="justify">
+									The following optional group will configure the asynchronous parallel implementation of the DDS algorithm and will be processed if [ProgramType] is set to “ParallelDDS”.
+								</p>
+								<!-- This has strange alignment for the code to render correctly on the page.-->
+								<table class="layouttable">
+									<tr>
+										<th>
+<pre><code>BeginParallelDDSAlg
+PerturbationValue      [r_val]
+MaxIterations          [budget]
+UseInitialParamValues
+UseRandomParamValues
+UseOpt                 [option]
+AlphaValue             [alpha]
+BetaValue              [beta]
+EnableDebugging
+EndParallelDDSAlg
+</code></pre>
+</th>
+<th>
+<pre><code>BeginParallelDDSAlg
+PerturbationValue      0.2
+MaxIterations          100
+UseRandomParamValues
+UseOpt                 standard
+EndParallelDDSAlg
+</code></pre>
+										</th>
+									</tr>
+								</table>
+								<p align="center" id="fig1"><b>Figure 1: General Format (left) and Example (right) of the parallel DDS Group </b></p>
+								
+								<p align="justify">
+									Where BeginParallelDDSAlg and EndParallelDDSAlg are parsing tags that wrap a set of algorithm configuration variables. Other acceptable parsing tags are: 
+								</p>
+								<ul>
+									<li>BeginParallelDDS and EndParallelDDS</li>
+									<li>BeginParaDDSAlg and EndParaDDSAlg</li>
+									<li>BeginParaDDS and EndParaDDS</li>
+									<li>BeginDDSAlg and EndDDSAlg</li>
+									<li>BeginDDS and EndDDS</li>
+								</ul>
+								<p align="justify">
+									Configuration variables for the parallel DDS algorithm are as follows:
+								</p>
+								<ul align="justify">
+									<li><b>PerturbationValue:</b> This parameter defines the standard deviation of the decision variable perturbations as follows: 
+									PerturbationValue = StdDev / DV_Range. The allowable range is 0 to 1. As the value increases, the sampling becomes more and more spread 
+									out from the current best value of the decision variable. The default and recommended value is 0.2.</li>
+									<li><b>MaxIterations:</b> The computational budget in terms of the number of objective function evaluations.  Users need to set this 
+									input for each problem according to how long each objective function evaluation takes and how quickly an answer is needed.  The more 
+									objective functions you use, the better your estimate of the globally optimal solution will be. The default value is 100.</li>
+									<li><b>UseInitialParamValues:</b> The algorithm will be initiated from the initial values specified in the parameter group if this line is included. 
+									This variable is mutually exclusive with the “UseRandomParamValues” variable – only one should be included.  If neither are included the algorithm will 
+									default to “UseRandomParamValues”.</li>
+									<li><b>UseRandomParamValues:</b> If this line is included the algorithm will be initiated from a randomly generated location. This 
+									variable is mutually exclusive with the “UseInitialParamValues” variable – only one should be included.  If neither are included the 
+									algorithm will default to “UseRandomParamValues”.</li>
+									<li><b>UseOpt:</b> Users wanting to apply the original DDS algorithm can ignore specifying this option. This option is used by OSTRICH and DDS developers to compare the DDS algorithm implemented in different programming languages. It is an experimental developer option that controls the calculation of parameter adjustments within the parallel DDS algorithm. Three values are acceptable: “no-rand-num”, “try-int-solution”, and “standard”. The default and recommended value is “standard”. The “Alpha” and “Beta” values will be used by the algorithm if “no-rand-num” is selected. Otherwise, these variables are ignored (i.e. if either “try-int-solution” or “standard” are selected).</li>
+									<li><b>AlphaValue, BetaValue:</b> These parameters control the parallel DDS perturbation scheme if the UseOpt variable is set to “no-rand-num”. Otherwise, these variables are ignored. Both variables have a default value of 0.5.</li>
+									<li><b>EnableDebugging:</b> The parallel DDS algorithm will report additional development-level debugging information if this variable is included. The default behavior of the algorithm is to not report debugging information.</li>
+								</ul>
+							</article>
+
+					</div>
+
+				
+
+			</div>
+
+		<!-- Scripts -->
+			<script src="../../../assets/js/jquery.min.js"></script>
+			<script src="../../../assets/js/browser.min.js"></script>
+			<script src="../../../assets/js/breakpoints.min.js"></script>
+			<script src="../../../assets/js/util.js"></script>
+			<script src="../../../assets/js/main.js"></script>
+
+	</body>
+</html>

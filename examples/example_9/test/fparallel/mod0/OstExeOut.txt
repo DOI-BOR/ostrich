@@ -1,0 +1,42 @@
+ --------------------------------------------------------------------------
+ SPLIT version 2.3
+  
+ Win32 computer program for analytic-based
+ modeling of single-layer groundwater flow
+ in heterogeneous aquifers with particle
+ tracking, capture-zone delineation,
+ and parameter estimation
+  
+ Author             Igor Jankovic
+ Copyright (C) 2000 Igor Jankovic
+  
+ This program is free software; you can redistribute
+ it and/or modify it under the terms of the GNU 
+ General Public License as published by the Free 
+ Software Foundation; either version 2 of the 
+ License, or(at your option) any later version.
+  
+ This program is distributed in the hope that it will
+ be useful, but WITHOUT ANY WARRANTY; without even
+ the implied warranty of MERCHANTABILITY or FITNESS
+ FOR A PARTICULAR PURPOSE. See the GNU General Public
+ License for more details.
+  
+ You should have received a copy of the GNU General
+ Public License along with this program; if not,
+ write to the Free Software Foundation, Inc., 59
+ Temple Place, Suite 330, Boston, MA 02111-1307 USA
+ --------------------------------------------------------------------------
+ Reading Input ------------------------------------------------------------
+ Solving-------------------------------------------------------------------
+ Iteration:   1  Maxchange: 0.232E+04  Maxerror: 0.130E-02
+ Iteration:   2  Maxchange: 0.190E-05  Maxerror: 0.127E-02
+ Iteration:   3  Maxchange: 0.714E-07  Maxerror: 0.129E-02
+ Iteration:   4  Maxchange: 0.209E-08  Maxerror: 0.129E-02
+ Iteration:   5  Maxchange: 0.714E-10  Maxerror: 0.128E-02
+ Iteration:   6  Maxchange: 0.246E-11  Maxerror: 0.127E-02
+ Iteration:   7  Maxchange: 0.846E-13  Maxerror: 0.127E-02
+ Iteration:   8  Maxchange: 0.291E-14  Maxerror: 0.131E-02
+ Iteration:   9  Maxchange: 0.990E-16  Maxerror: 0.132E-02
+ Iteration:  10  Maxchange: 0.253E-17  Maxerror: 0.130E-02
+ Final NetExtraction  0.000000000000000E+000

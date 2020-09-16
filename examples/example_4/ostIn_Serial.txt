@@ -1,0 +1,97 @@
+#Basic Configuration Data for Ostrich Program
+#ProgramType APPSO
+#ProgramType ParallelDDS
+#ProgramType ParticleSwarm
+#ProgramType ModelEvaluations
+#ProgramType DDS
+ProgramType ShuffledComplexEvolution
+
+ModelExecutable TUSWAMP.exe
+ModelSubdir mod
+ObjectiveFunction GCOP
+
+#RandomSeed 1419614690
+
+PreserveModelOutput no
+
+PreserveBestModel SaveBest_Serial.bat
+
+#Template File Configuration
+BeginFilePairs
+TUSWAMP.hmn.tpl ; TUSWAMP.hmn
+TUSWAMP.prm.tpl ; TUSWAMP.prm
+EndFilePairs
+
+BeginExtraFiles
+TUSWAMP.flw
+TUSWAMP.frc
+EndExtraFiles
+
+#Real-valued Parameters
+BeginParams
+<kb> random 0 1 none none none
+<kn> random 0 1 none none none
+<mlt> random 0 4 none none none
+<sn0> random 0 100 none none none
+<gw0> random 0 1000 none none none
+<st0> random 0 1000 none none none
+<CN1> random 50 100 none none none
+<CN2> random 50 100 none none none
+<ss1> random 0 25.4 none none none
+<ss2> random 0 25.4 none none none
+<kh> random 0.9 2 none none none
+EndParams
+
+BeginResponseVars
+#name   filename            keyword         line    col     token
+SSE     TUSWAMP.obs ;        Total           0       5       ' '
+EndResponseVars
+
+BeginGCOP
+CostFunction SSE
+PenaltyFunction APM
+EndGCOP
+
+BeginConstraints
+EndConstraints
+
+BeginDDSAlg
+PerturbationValue 0.2
+MaxIterations 500
+# UseInitialParamValues
+EndDDSAlg
+
+BeginParallelDDSAlg
+PerturbationValue 0.2
+MaxIterations 500
+# EnableDebugging
+# UseInitialParamValues
+EndParallelDDSAlg
+
+BeginParticleSwarm
+SwarmSize 100
+NumGenerations 50
+ConstrictionFactor 1.0
+CognitiveParam 2.0
+SocialParam 2.0
+InertiaWeight 1.2
+InertiaReductionRate linear
+InitPopulationMethod random
+ConvergenceVal -1.00
+EndParticleSwarm
+
+BeginAPPSO
+SwarmSize 10
+NumGenerations 10
+ConstrictionFactor 1.0
+CognitiveParam 2.0
+SocialParam 2.0
+InertiaWeight 1.2
+InertiaReductionRate linear
+EndAPPSO
+
+BeginInitParams
+#5.588822E-002  5.161356E-001  1.439530E-001  9.592335E-016  2.305801E+000  1.878724E-001  8.148572E+001  8.326194E+001  1.159638E-012  2.470260E+001  1.150825E+000
+#5.509106E-02   5.150734E-01   1.438143E-01   3.916528E-05   7.996773E+00   1.066719E-05   8.223278E+01   8.223571E+01   7.165775E-05   1.814168E-04   1.152547E+00
+#5.787574E-002  5.532817E-001  1.470308E-001  4.075180E-001  0.000000E+000  0.000000E+000  7.781880E+001  8.784586E+001  3.727769E-001  2.470174E+001  1.144231E+000  
+EndInitParams
