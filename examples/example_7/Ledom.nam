@@ -1,0 +1,16 @@
+GLOBAL 3 Ledom.glo
+LIST 2 Ledom.lst
+BAS6 1 Ledom.bas
+LPF 11 Ledom.lpf
+DIS 29 Ledom.dis
+WEL 12 Ledom.wel
+RIV 14 Ledom.riv
+LAK 44 Ledom.lak
+RCH 18 Ledom.rch
+OC 22 Ledom.oc
+PCG 19 Ledom.pcg
+DATA(BINARY) 54 Ledom.cbw
+DATA(BINARY) 51 Ledom.crc
+DATA(BINARY) 50 Ledom.cbb
+DATA 30 Ledom.hds
+DATA(BINARY) 31 Ledom.ddn

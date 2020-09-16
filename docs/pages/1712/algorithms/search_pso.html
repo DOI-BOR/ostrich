@@ -1,0 +1,201 @@
+<!DOCTYPE HTML>
+<!--
+	Future Imperfect by HTML5 UP
+	html5up.net | @ajlkn
+	Free for personal and commercial use under the CCA 3.0 license (html5up.net/license)
+-->
+<html>
+	<head>
+		<title>OSTRICH - Algorithms - Particle Swarm Optimization</title>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+		<link rel="stylesheet" href="../../../assets/css/main.css" />
+	</head>
+	<body class="single is-preload">
+
+		<!-- Wrapper -->
+			<div id="wrapper">
+
+				<!-- Header -->
+					<header id="header">
+						<h1 class="bannerheading"><a href="../../../index.html">OSTRICH</a></h1>
+						<nav class="links">
+							<ul>
+								<li><a href="../overview.html">Overview</a></li>
+								<li><a href="algorithms.html">Algorithms</a></li>
+								<li><a href="../setup/setup.html">Setup</a></li>
+								<li>
+									<div class="dropdown">
+										<a href="../solution/solution.html"<button class="dropbtn">
+											Solution
+											<i class="fa fa-caret-down"></i></a>
+										</button>
+										<div class="dropdown-content">
+											<a href="../solution/running.html">Running OSTRICH</a>
+											<a href="../solution/building.html">Building OSTRICH</a>
+										</div>
+									</div>
+								</li>
+								<li><a href="../output/output.html">Output</a></li>
+								<li><a href="../examples/examples.html">Examples</a></li>
+								<li><a href="../../releases.html">Releases</a></li>
+							</ul>
+						</nav>
+						<nav class="main">
+							<ul>
+								<li class="menu">
+									<a class="fa-bars" href="#menu">Menu</a>
+								</li>
+							</ul>
+						</nav>
+					</header>
+
+				<!-- Menu -->
+				<section id="menu">
+
+					<!-- Links -->
+					<section>
+						<ul class="links">
+							<li>
+								<a href="../overview.html">
+									<h3>Overview</h3>
+									<p>The basics of OSTRICH</p>
+								</a>
+							</li>
+							<li>
+								<a href="algorithms.html">
+									<h3>Algorithms</h3>
+									<p>Algorithms available within OSTRICH</p>
+								</a>
+							</li>
+							<li>
+								<a href="../setup/setup.html">
+									<h3>Setup</h3>
+									<p>Organzing an OSTRICH analysis</p>
+								</a>
+							</li>
+							<li>
+								<a href="../solution/solution.html">
+									<h3>Solution</h3>
+									<p>Running an OSTRICH analysis</p>
+								</a>
+							</li>
+							<li>
+								<a href="../output/output.html">
+									<h3>Output</h3>
+									<p>Output of an OSTRICH analysis</p>
+								</a>
+							</li>
+							<li>
+								<a href="../examples/examples.html">
+									<h3>Examples</h3>
+									<p>Examples using OSTRICH</p>
+								</a>
+							</li>
+							<li>
+								<a href="../../contributing.html">
+									<h3>Contributing</h3>
+									<p>Contribute to OSTRICH</p>
+								</a>
+							</li>
+						</ul>
+					</section>
+
+				</section>
+
+				<!-- Main -->
+					<div id="main">
+
+						<!-- Post -->
+							<article class="post">
+								<header>
+									<div class="title">
+										<h2><a href="#">Algorithms - Particle Swarm Optimization (PSO)</a></h2>
+										<p>The OSTRICH particle swarm optimization (PSO) algorithm</p>
+									</div>
+									<div class="meta">
+										<p align="left">Initial Publication:</p>
+										<time class="time" datetime="2015-11-01">September 16, 2020</time>
+										<p align="left">Modified:</p>
+										<time class="time" datetime="2015-11-01">September 16, 2020</time>
+									</div>
+								</header>
+								<p align="justify">
+									The following optional group will configure the PSO algorithm and will be processed if [ProgramType] is set to “ParticleSwarm”.
+								</p>
+								<!-- This has strange alignment for the code to render correctly on the page.-->
+								<table class="layouttable">
+									<tr>
+										<th>
+<pre><code>BeginParticleSwarm
+SwarmSize            <swarm>
+NumGenerations       <ngen>
+ConstrictionFactor   <cfact>
+CognitiveParam       <cwght>
+SocialParam          <swght>
+InertiaWeight        <iwght>
+InertiaReductionRate <irate>
+InitPopulationMethod <imethod>
+ConvergenceVal       <conv_val>
+EndParticleSwarm
+</code></pre>
+</th>
+<th>
+<pre><code>BeginParticleSwarm
+SwarmSize            20
+NumGenerations       50
+ConstrictionFactor   1.00
+CognitiveParam       2.00
+SocialParam          2.00
+InertiaWeight        1.20
+InertiaReductionRate 0.10
+InitPopulationMethod Random
+ConvergenceVal       1.00E-4
+EndParticleSwarm
+</code></pre>
+										</th>
+									</tr>
+								</table>
+								<p align="center" id="fig1"><b>Figure 1: General Format (left) and Example (right) of the PSO Algorithm Group</b></p>
+								
+								<p align="justify">
+									Where BeginParticleSwarm and EndParticleSwarm are parsing tags that wrap a set of algorithm configuration variables. The variables are described below:
+								</p>
+								<ul align="justify">
+									<li><b>SwarmSize:</b> The size of the particle swarm. The default value is 20.</li>
+									<li><b>NumGenerations:</b> The number of generations in the PSO. The default value is 50.</li>
+									<li><b>ConstrictionFactor:</b> The value of χ¬ in the PSO algorithm. Setting¬ less than 1.00 will restrict the searchable design space after each iteration 
+									and accelerate convergence, but can lead to entrapment in local minima. The default value is 1.00.</li>
+									<li><b>CognitiveParam:</b> The weight given to the local knowledge of each particle. High values (relative to the SocialParam) will cause particles to bias 
+									their search to the area surrounding each particles local best. The default value is 2.00.</li>
+									<li><b>SocialParam:</b> The weight given to the global (social) knowledge of each particle. High values (relative to the CognitiveParam) will cause particles 
+									to bias their search to the area surrounding the global best. The default value is 2.00.</li>
+									<li><b>InertiaWeight:</b> The initial weight given to the velocity used in each particle’s previous generation of movement. High values tend to cause particles 
+									to ’overshoot’ their destination, which is desirable in initial generations because it allows for more complete exploration of the design space. The 
+									default is 1.2. </li>
+									<li><b>InertiaReductionRate:</b> Relative reduction rate for the inertia weight. As the optimization proceeds, the inertia weight is reduced by 
+									InertiaReductionRate × 100% of its current value. This reduces overshoot over successive generations such that late-generation searches are clustered 
+									around the global best solution. If this value is set to linear, the inertia weight will be linearly reduced from its initial value to a final value 
+									(i.e. at the last generation) of zero. The default value is 0.10.</li>
+									<li><b>InitPopulationMethod:</b> This variable controls how the algorithm configures the initial swarm of candidate solutions. Supported values are: “random”, 
+									“LHS” (Latin Hypercube Sampling), and “QuadTree”. The default value is “random”.</li>
+									<li><b>ConvergenceVal:</b> This is the convergence value for the algorithm. If the relative difference between the current minimum and the median of the latest 
+									generation is less than or equal to this value, the algorithm will halt. The default value is 1.00E-4.</li>
+								</ul>
+							</article>
+
+					</div>
+
+				
+
+			</div>
+
+		<!-- Scripts -->
+			<script src="../../../assets/js/jquery.min.js"></script>
+			<script src="../../../assets/js/browser.min.js"></script>
+			<script src="../../../assets/js/breakpoints.min.js"></script>
+			<script src="../../../assets/js/util.js"></script>
+			<script src="../../../assets/js/main.js"></script>
+
+	</body>
+</html>

@@ -1,0 +1,270 @@
+<!DOCTYPE HTML>
+<!--
+	Future Imperfect by HTML5 UP
+	html5up.net | @ajlkn
+	Free for personal and commercial use under the CCA 3.0 license (html5up.net/license)
+-->
+<html>
+	<head>
+		<title>OSTRICH - Solution - Running</title>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+		<link rel="stylesheet" href="../../../assets/css/main.css" />
+	</head>
+	<body class="single is-preload">
+
+		<!-- Wrapper -->
+			<div id="wrapper">
+
+				<!-- Header -->
+					<header id="header">
+						<h1 class="bannerheading"><a href="../../../index.html">OSTRICH</a></h1>
+						<nav class="links">
+							<ul>
+								<li><a href="../overview.html">Overview</a></li>
+								<li><a href="../algorithms/algorithms.html">Algorithms</a></li>
+								<li><a href="../setup/setup.html">Setup</a></li>
+								<li>
+									<div class="dropdown">
+										<a href="solution.html"<button class="dropbtn">
+											Solution
+											<i class="fa fa-caret-down"></i></a>
+										</button>
+										<div class="dropdown-content">
+											<a href="running.html">Running OSTRICH</a>
+											<a href="building.html">Building OSTRICH</a>
+										</div>
+									</div>
+								</li>
+								<li><a href="../output/output.html">Output</a></li>
+								<li><a href="../examples/examples.html">Examples</a></li>
+								<li><a href="../../releases.html">Releases</a></li>
+							</ul>
+						</nav>
+						<nav class="main">
+							<ul>
+								<li class="menu">
+									<a class="fa-bars" href="#menu">Menu</a>
+								</li>
+							</ul>
+						</nav>
+					</header>
+
+				<!-- Menu -->
+				<section id="menu">
+
+					<!-- Links -->
+					<section>
+						<ul class="links">
+							<li>
+								<a href="../overview.html">
+									<h3>Overview</h3>
+									<p>The basics of OSTRICH</p>
+								</a>
+							</li>
+							<li>
+								<a href="../algorithms/algorithms.html">
+									<h3>Algorithms</h3>
+									<p>Algorithms available within OSTRICH</p>
+								</a>
+							</li>
+							<li>
+								<a href="../setup/setup.html">
+									<h3>Setup</h3>
+									<p>Organzing an OSTRICH analysis</p>
+								</a>
+							</li>
+							<li>
+								<a href="solution.html">
+									<h3>Solution</h3>
+									<p>Running an OSTRICH analysis</p>
+								</a>
+							</li>
+							<li>
+								<a href="../output/output.html">
+									<h3>Output</h3>
+									<p>Output of an OSTRICH analysis</p>
+								</a>
+							</li>
+							<li>
+								<a href="../examples/examples.html">
+									<h3>Examples</h3>
+									<p>Examples using OSTRICH</p>
+								</a>
+							</li>
+							<li>
+								<a href="../../contributing.html">
+									<h3>Contributing</h3>
+									<p>Contribute to OSTRICH</p>
+								</a>
+							</li>
+						</ul>
+					</section>
+
+				</section>
+
+				<!-- Main -->
+					<div id="main">
+
+						<!-- Post -->
+							<article class="post">
+								<header>
+									<div class="title">
+										<h2><a href="#">Running an Analysis</a></h2>
+										<p>Running an OSTRICH analysis</p>
+									</div>
+									<div class="meta">
+										<p align="left">Initial Publication:</p>
+										<time class="time" datetime="2015-11-01">September 16, 2020</time>
+										<p align="left">Modified:</p>
+										<time class="time" datetime="2015-11-01">September 16, 2020</time>
+									</div>
+								</header>
+								<h1>Contents</h1>
+								<table class="layouttable">
+									<tr>
+										<th><a href="#sec_intro"><p class="tocheading">1 Introduction</p></a></th>
+										<th><a href="#sec_multi_win"><p class="tocheading">3 Multi-core Parallel Execution in Windows</p></a></th>
+									</tr>
+									<tr>
+										<th><a href="#sec_wsse"><p class="tocheading">1.1 Using Weighted Sum of Squared Errors (WSSE) Calibration</p></a></th>
+										<th><a href="#sec_multi_linux"><p class="tocheading">4 Distributed or Multi-core Parallel Execution in Linux</p></a></th>
+									</tr>
+									<tr>
+										<th><a href="#sec_gcop"><p class="tocheading">1.2 Using the General Constrained Optimization Platform (GCOP) </p></a></th>
+										<th><a href="#sec_abort"><p class="tocheading">5 Aborting an OSTRICH run</p></a></th>
+									</tr>
+									<tr>
+										<th><a href="#sec_serial"><p class="tocheading">2 Serial (Single Processor) Execution</p></a></th>
+										<th><a href="#sec_restart"><p class="tocheading">6 Restarting an OSTRICH Run </p></a></th>
+									</tr>
+								</table>
+								
+								<h1 id="sec_intro">1 Introduction</h1>
+								<p>
+									This chapter describes the execution of OSTRICH from the command line and parallel computing environments. Four OSTRICH executables are available: a serial version which 
+									runs on Windows, a multi-core parallel version that runs on Windows, a serial version which runs on Linux, and a parallel version which runs on Linux-based parallel clusters. 
+									Regardless of which version of OSTRICH is used, the following components must be created and stored in a working directory before running OSTRICH:
+								</p>
+								<ul>
+									<li><b>ostIn.txt:</b> This is the main configuration file which should be created using the syntax described in the <a href="../setup/setup.html">Setup</a> section. Different 
+									groups should be filled out depending on the objective function (GCOP or WSSE)</li>
+									<li>
+										<p> 
+											<b>Template File(s):</b> These are file(s) that OSTRICH uses to create a syntactically correct model input file(s), so as to evaluate some set of model parameters (X).
+										</p>
+										<ol>
+											<li>Create a template file by making a copy of the corresponding model input file.</li>
+											<li>Edit the template file by replacing parameter values with the corresponding parameter names.</li>
+											<li>Check that template file has been listed in the FilePairs section of ostIn.txt.</li>
+											<li>Check that parameter names in Params section of ostIn.txt are consistent with those used in template file.</li>
+											<li>[optional] If including a ParameterCorrections group, prepare and include appropriate template files for parameter corrections</li>
+											<li>[optional] If including a ParameterCorrections group, check that parameter names listed in the Corrections sub-group are consistent with the Params section as well 
+											as the template files for parameter corrections.</li>
+										</ol>
+									</li>
+									<li><b>Extra Model Input Files:</b> Any model input files not required by OSTRICH (i.e. there is no corresponding template file), but needed by the model.</li>
+								</ul>
+								
+								<h2 id="sec_wsse">1.1 Using Weighted Sum of Squared Errors (WSSE) Calibration </h2>
+								<p align="justify">Several groups and variables of the ostIn.txt input file should be filled out if calibration is desired. These include the ObjectiveFunction (set to WSSE), 
+								ProgramType (select desired search algorithm), ModelExecutable (specify executable or batch/script file), <a href="../setup/setup.html#sec_files">FilePairs</a>, 
+								<a href="../setup/setup.html#sec_real_param">Parameters</a>, <a href="../setup/setup.html#sec_observ">Observations, and <a href="../algorithms/math_stats.html">Math and Stats</a>. </p>
+								
+								<h2 id="sec_gcop">1.2 Using the General Constrained Optimization Platform (GCOP) </h2>
+								<p align="justify">
+									Several groups and variables of the ostIn.txt input file should be filled to use the general constrained optimization platform. These include the ObjectiveFunction (set to 
+									GCOP), ProgramType (select desired search algorithm), ModelExecutable (specify executable or batch/script file), <a href="../setup/setup.html#sec_files">FilePairs</a>, 
+									<a href="../setup/setup.html#sec_real_param">Parameters</a>, <a href="../setup/setup.html#sec_resp_var">Response Variables</a>, <a href="../algorithms/gcop.html">GCOP</a>, 
+									and <a href="../setup/setup.html#sec_constraints">Constraints</a>.
+								</p>
+								
+								<h1 id="sec_serial">2 Serial (Single Processor) Execution</h1>
+								<p align="justify">
+									Once all files have been created and placed in the working directory, serial execution of OSTRICH is straightforward: open a command line prompt, change directory (cd) to 
+									the working directory, and run OSTRICH by typing:
+								</p>
+								<p align="justify">
+									Using Linux:
+								</p>
+								<p align="center">
+									<code>/[path]/Ostrich</code>
+								</p>
+								<p align="justify">
+									Using Windows:
+								</p>
+								<p align="center">
+									<code align="center"> [path]\Ostrich.exe </code>
+								</p>
+								<p align="justify">
+									Where [path] is the path to the location of the OSTRICH executable (e.g. “C:\Program Files\Ostrich” or /home/usr/bin). When run in serial, an optimization run record is 
+									printed for each iteration of the chosen algorithm.
+								</p>
+								
+								<h1 id="sec_multi_win">3 Multi-core Parallel Execution in Windows</h1>
+								<p align="justify">
+									Prior to running OSTRICH in parallel, the ostIn.txt file must be adjusted to include appropriate <a href="../setup/setup.html#sec_extra_files">ExtraFiles</a>, 
+									<a href="../setup/setup.html#sec_extra_dirs">ExtraDirs</a>, and <a href="../setup/setup.html#sec_basic">ModelSubdir</a> entries as needed for your project.
+								</p>
+								<p align="justify">
+									OSTRICH can be launched in parallel on a single Windows machine using Microsoft’s MS-MPI implementation. Note that MS-MPI must be installed before OSTRICH can be run in 
+									parallel on a Windows machine. Consistent with other MPI implementations, the Windows-based parallel version of OSTRICH is launched using a program named mpiexec. For 
+									example, to run OSTRICH in parallel on an 8-core Windows desktop you would type the following from a DOS command line (or in a batch file): 
+								</p>
+								<p align="center">
+									<code>mpiexec -n 8 OstrichMPI.exe</code>
+								</p>
+								
+								<h1 id="sec_multi_linux">4 Distributed or Multi-core Parallel Execution in Linux</h1>
+								<p align="justify">
+									Prior to running OSTRICH in parallel, the ostIn.txt file must be adjusted to include appropriate <a href="../setup/setup.html#sec_extra_files">ExtraFiles</a>, 
+									<a href="../setup/setup.html#sec_extra_dirs">ExtraDirs</a>, and <a href="../setup/setup.html#sec_basic">ModelSubdir</a> entries as needed for your project.
+								</p>
+								<p align="justify">
+									To run OSTRICH in parallel on a Linux machine or Linux-based cluster of machines, the Linux environment must provide MPI (Message Passing Interface) libraries. Any MPI 
+									implementation will suffice and pre-compiled RedHat/CentOS OSTRICH binaries compatible with various versions of OpenMPI and Intel-MPI are provided with the OSTRICH 
+									distribution. For systems not supported by the pre-compiled binaries it is necessary to re-compile OSTRICH source so that it can link with a supported MPI implementation. 
+								</p>
+								<p align="justify">
+									Currently supported parallel algorithms implemented in OSTRICH are listed in the <a href="../overview.html">Overview</a>. While any of the other algorithms can be successfully run in a parallel 
+									environment, doing so will not result in any performance improvement. Launching an MPI program requires the use of a compatible launcher, such that one cannot simply invoke 
+									the OSTRICH binary and expect parallel calculations (i.e. running /<path>/OstrichMPI won’t work). Rather, a typical command line for launching OSTRICH in parallel on a 
+									Linux machine or cluster is given below:
+								</p>
+								<p align="center">
+									<code> mpirun –n 12 /home/user/bin/OstrichMPI </code>
+								<p>
+								<p align="justify">
+									Where “mpirun” is a launcher provided with many implementations of MPI – other common launchers include “mpiexec” and “mpiexec.hydra”. On clusters managed using SLURM 
+									(Simple Linux Utility for Resource Management) an alternative launcher named “srun” may also be used. With respect to “mpirun”, the “-n 12” argument requests OSTRICH to be 
+									run on 12 processors. A “-hostfile” and/or “-rankfile” argument may also be required if running OSTRICH across multiple nodes is desired. Users should consult the 
+									documentation and man pages of a given launcher for details on using these and other command-line arguments.
+								</p>
+								
+								<h1 id="sec_abort">5 Aborting an OSTRICH run</h1>
+								<p align="justify">
+									An OSTRICH run can be aborted by creating a file named OstQuit.txt and placing it in the working directory where the corresponding ostIn.txt file is located. OSTRICH will 
+									detect the presence of the OstQuit.txt file during the next iteration of search and will exit gracefully.
+								</p>
+								
+								<h1 id="sec_restart">6 Restarting an OSTRICH Run </h1> 
+								<p align="justify">
+									Some OSTRICH search algorithms can be restarted from previous runs of a potentially different algorithm. These algorithms are indicated by the shaded entries in the 
+									“Warm Start?” column of <a href="../overview.html">Overview</a>. Users should include a line containing “OstrichWarmStart yes” in the ostIn.txt input file to activate an 
+									OSTRICH restart. OSTRICH will then read in the contents of previous output files to configure the restart state of the selected search algorithm.
+								</p>
+								
+							</article>
+
+					</div>
+			</div>
+
+		<!-- Scripts -->
+			<script src="../../../assets/js/jquery.min.js"></script>
+			<script src="../../../assets/js/browser.min.js"></script>
+			<script src="../../../assets/js/breakpoints.min.js"></script>
+			<script src="../../../assets/js/util.js"></script>
+			<script src="../../../assets/js/main.js"></script>
+
+	</body>
+</html>

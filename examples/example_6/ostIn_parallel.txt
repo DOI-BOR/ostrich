@@ -1,0 +1,43 @@
+ProgramType ParaPADDS
+
+ModelExecutable CanBeam.exe
+
+ModelSubdir mod
+
+ObjectiveFunction GCOP
+
+#Template File Configuration
+BeginFilePairs
+  CanBeam.tpl ; CanBeam.in
+EndFilePairs
+
+#Real-valued Parameters
+BeginParams
+_DIAM_ random 10.0 50.0 none none none
+_LEN_  random 200.0 1000.0 none none none
+EndParams
+
+BeginResponseVars
+#name   filename      key line    col     token augmented?
+F1      CanBeam.out ; F1    0      2       '='    yes
+F2      CanBeam.out ; F2    0      2       '='    yes
+EndResponseVars
+
+BeginGCOP
+  CostFunction F1
+  CostFunction F2
+  PenaltyFunction APM
+EndGCOP
+
+BeginConstraints
+  #name type     conv.fact  lower   upper  resp.var 
+EndConstraints
+
+BeginParaPADDS
+  MaxIterations 500
+  PerturbationValue 0.2
+#  SelectionMetric Random
+#  SelectionMetric CrowdingDistance
+#  SelectionMetric EstimatedHyperVolumeContribution
+  SelectionMetric ExactHyperVolumeContribution
+EndParaPADDS

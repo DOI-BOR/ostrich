@@ -1,0 +1,13 @@
+Optimal Parameter Set
+Objective Function : 3.301793E+001
+_HYD_K_SG_         : 7.623480E+000
+_HYD_K_SS_         : 6.008000E-002
+_HYD_K_GR_         : 1.093000E+002
+_HYD_K_TL_         : 1.165000E-001
+_HYD_K_SH_         : 2.194000E-004
+_HYD_K_SA_         : 4.425820E-002
+_RECHRG_U_         : 1.578000E-004
+_RECHRG_C_         : 2.540150E-004
+_RECHRG_F_         : 4.667000E-004
+_RECHRG_W_         : 2.324000E-003
+_RECHRG_P_         : 5.300000E-004

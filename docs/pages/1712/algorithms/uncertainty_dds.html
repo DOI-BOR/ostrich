@@ -1,0 +1,206 @@
+<!DOCTYPE HTML>
+<!--
+	Future Imperfect by HTML5 UP
+	html5up.net | @ajlkn
+	Free for personal and commercial use under the CCA 3.0 license (html5up.net/license)
+-->
+<html>
+	<head>
+		<title>OSTRICH - Algorithms - DDS Uncertainty Approximation</title>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+		<link rel="stylesheet" href="../../../assets/css/main.css" />
+	</head>
+	<body class="single is-preload">
+
+		<!-- Wrapper -->
+			<div id="wrapper">
+
+				<!-- Header -->
+					<header id="header">
+						<h1 class="bannerheading"><a href="../../../index.html">OSTRICH</a></h1>
+						<nav class="links">
+							<ul>
+								<li><a href="../overview.html">Overview</a></li>
+								<li><a href="algorithms.html">Algorithms</a></li>
+								<li><a href="../setup/setup.html">Setup</a></li>
+								<li>
+									<div class="dropdown">
+										<a href="../solution/solution.html"<button class="dropbtn">
+											Solution
+											<i class="fa fa-caret-down"></i></a>
+										</button>
+										<div class="dropdown-content">
+											<a href="../solution/running.html">Running OSTRICH</a>
+											<a href="../solution/building.html">Building OSTRICH</a>
+										</div>
+									</div>
+								</li>
+								<li><a href="../output/output.html">Output</a></li>
+								<li><a href="../examples/examples.html">Examples</a></li>
+								<li><a href="../../releases.html">Releases</a></li>
+							</ul>
+						</nav>
+						<nav class="main">
+							<ul>
+								<li class="menu">
+									<a class="fa-bars" href="#menu">Menu</a>
+								</li>
+							</ul>
+						</nav>
+					</header>
+
+				<!-- Menu -->
+				<section id="menu">
+
+					<!-- Links -->
+					<section>
+						<ul class="links">
+							<li>
+								<a href="../overview.html">
+									<h3>Overview</h3>
+									<p>The basics of OSTRICH</p>
+								</a>
+							</li>
+							<li>
+								<a href="algorithms.html">
+									<h3>Algorithms</h3>
+									<p>Algorithms available within OSTRICH</p>
+								</a>
+							</li>
+							<li>
+								<a href="../setup/setup.html">
+									<h3>Setup</h3>
+									<p>Organzing an OSTRICH analysis</p>
+								</a>
+							</li>
+							<li>
+								<a href="../solution/solution.html">
+									<h3>Solution</h3>
+									<p>Running an OSTRICH analysis</p>
+								</a>
+							</li>
+							<li>
+								<a href="../output/output.html">
+									<h3>Output</h3>
+									<p>Output of an OSTRICH analysis</p>
+								</a>
+							</li>
+							<li>
+								<a href="../examples/examples.html">
+									<h3>Examples</h3>
+									<p>Examples using OSTRICH</p>
+								</a>
+							</li>
+							<li>
+								<a href="../../contributing.html">
+									<h3>Contributing</h3>
+									<p>Contribute to OSTRICH</p>
+								</a>
+							</li>
+						</ul>
+					</section>
+
+				</section>
+
+				<!-- Main -->
+					<div id="main">
+
+						<!-- Post -->
+							<article class="post">
+								<header>
+									<div class="title">
+										<h2><a href="#">Algorithms - DDS Uncertainty Approximation</a></h2>
+										<p>The OSTRICH dynamically dimensioned search uncertainty algorithm</p>
+									</div>
+									<div class="meta">
+										<p align="left">Initial Publication:</p>
+										<time class="time" datetime="2015-11-01">September 16, 2020</time>
+										<p align="left">Modified:</p>
+										<time class="time" datetime="2015-11-01">September 16, 2020</time>
+									</div>
+								</header>
+								<p align="justify">
+									This algorithm seeks to identify behavioral parameters set by repeatedly applying a DDS search from alternative starting points in the parameter space. 
+									The following optional group will configure the DDS for Approximation of Uncertainty (DDS-AU) algorithm and will be processed if [ProgramType] is set 
+									to “DDSAU”.
+								</p>
+								<!-- This has strange alignment for the code to render correctly on the page.-->
+								<table class="layouttable">
+									<tr>
+										<th>
+<pre><code>Begin_DDSAU_Alg
+PerturbationValue      [r_val]
+NumSearches            [nsols]
+MinItersPerSearch      [imin]
+MaxItersPerSearch      [imax]
+ParallelSearches       yes|no
+Threshold              [fmax]
+Randomize              yes|no
+ReviseAU               yes|no
+End_DDSAU_Alg
+</code></pre>
+</th>
+<th>
+<pre><code>Begin_DDSAU_Alg
+PerturbationValue      0.2
+NumSearches            25
+MinItersPerSearch      30
+MaxItersPerSearch      70
+ParallelSearches       no
+Threshold              1000
+Randomize              no
+ReviseAU               yes
+End_DDSAU_Alg
+</code></pre>
+										</th>
+									</tr>
+								</table>
+								<p align="center" id="fig1"><b>Figure 1: General Format (left) and Example (right) of the DDS-AU Group  </b></p>
+								
+								<p align="justify">
+									Where Begin_DDSAU_Alg and End_DDSAU_Alg are parsing tags that wrap a set of algorithm configuration variables. These variables are described below:
+								</p>
+								<ul align="justify">
+									<li><b>PerturbationValue:</b> This parameter defines the standard deviation of the decision variable perturbations as follows: PerturbationValue = StdDev / DV_Range. 
+									The allowable range is 0 to 1. As the value increases, the sampling becomes more and more spread out from the current best value of the decision variable. The 
+									default and recommended value is 0.2.</li>
+									<li><b>NumSearches:</b> The number of independent DDS searches to perform as part of the overall DDS-AU uncertainty approximation algorithm. The default value is 25. 
+									Each search will be run using either the <a href="search_dds.html">DDS algorithm</a> or the <a href="search_dds_async.html">asynchronous parallel DDS algorithm</a> 
+									depending on the value assigned to the ParallelSearches variable. Results for each search will be stored in output files named OstModel[N]_DDS[M].txt and 
+									OstOutput[N]_DDS[M].txt, where [N] is the processor number and [M] is the DDS search number. A DDS-AU summary file named OstOutputDDSAU.txt will be created when all 
+									DDS searches are complete. This file will contain results of the various optimization trials as well as a summary of the behavioral parameter sets that were discovered.</li>
+									<li><b>MinItersPerSearch, MaxItersPerSearch:</b> The minimum and maximum computational budget for each independent DDS search. If the same budget is desired for each 
+									search, assign the desired value to both MinItersPerSearch and MaxItersPerSearch. If different values are assigned to these variables, the DDS-AU algorithm will 
+									randomly generate a different budget for each search. The randomly generated budget will fall within the range specified by MinItersPerSearch and MaxItersPerSearch. 
+									The default value for MinItersPerSearch is 30. The default value for MaxItersPerSearch is 70.</li>
+									<li><b>ParallelSearches:</b> Each independent search will be run using the asynchronous parallel DDS algorithm if this variable is set to “yes”. Otherwise, each 
+									independent search will be run using a serial implementation of the DDS algorithm. The default value is “no”.</li>
+									<li><b>Threshold:</b> The behavioral threshold for approximating uncertainty. Parameter sets with corresponding objective function values less than the threshold will 
+									be considered behavioral. The default value is 1000.</li>
+									<li><b>Randomize:</b> The DDS-AU algorithm will randomly select a behavioral parameter set from each independent trial if this variable is set to “yes”. Otherwise, 
+									the DDS-AU algorithm will select the best behavioral parameter set from each independent trial. Random selection can help prevent clustering problems in the 
+									approximation of uncertainty. The default value is “no”.</li>
+									<li><b>ReviseAU:</b> Set this variable to “yes” to re-run a DDS-AU analysis without re-running previously completed independent DDS searches. This allows for DDS-AU to 
+									consider a different threshold value or randomization setting without repeating the required independent DDS searches. Results from previous searches will be read from 
+									corresponding “OstModel[N]_DDS[M].txt” output files. A given independent search will be re-run if corresponding output files are missing or unreadable. All existing 
+									“OstModel[N]_DDS[M].txt” and “OstOutput[N]_DDS[M].txt” files found in the OSTRICH launch directory will be deleted as part of DDS-AU initialization if this variable is 
+									set to “no”. The default value for this variable is “no”.</li>
+								</ul>
+							</article>
+
+					</div>
+
+				
+
+			</div>
+
+		<!-- Scripts -->
+			<script src="../../../assets/js/jquery.min.js"></script>
+			<script src="../../../assets/js/browser.min.js"></script>
+			<script src="../../../assets/js/breakpoints.min.js"></script>
+			<script src="../../../assets/js/util.js"></script>
+			<script src="../../../assets/js/main.js"></script>
+
+	</body>
+</html>

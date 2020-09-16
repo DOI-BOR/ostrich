@@ -1,0 +1,92 @@
+ProgramType DDS
+#ProgramType  ParticleSwarm
+PenalizeInfeasibleParameters  yes 1.0
+ModelSubdir  mod
+NumDigitsOfPrecision  16
+ObjectiveFunction  GCOP
+ModelExecutable  Bluebird.exe
+
+RandomSeed 25
+
+BeginFilePairs
+split.tpl ; split.dat
+EndFilePairs
+
+BeginParams
+#name  init.	  lower  	upper	 	transformations
+XQ01   2670.00    2450.00       4600.00         none   none   none
+YQ01   1520.00    750.00        1750.00         none   none   none
+RQ01   10000.00    0.00   	20000.00	none   none   none
+XQ02   3340.00    2450.00       4600.00         none   none   none
+YQ02   1000.00    750.00        1750.00         none   none   none
+RQ02   10000.00    0.00   	20000.00	none   none   none
+XQ03   4430.00    4250.00       5700.00         none   none   none
+YQ03   5020.00    3400.00       5100.00         none   none   none
+RQ03   10000.00    0.00   	20000.00	none   none   none
+XQ04   5130.00    4250.00       5700.00         none   none   none
+YQ04   3715.00    3400.00       5100.00         none   none   none
+RQ04   10000.00    0.00   	20000.00	none   none   none
+XQ05   4770.00    4250.00       5700.00         none   none   none
+YQ05   4170.00    3400.00       5100.00         none   none   none
+RQ05   10000.00    0.00   	20000.00	none   none   none
+XQ06   4500.00    4250.00       5700.00         none   none   none
+YQ06   4585.00    3400.00       5100.00         none   none   none
+RQ06   10000.00    0.00   	20000.00	none   none   none
+EndParams
+
+BeginResponseVars
+#name	filename		keyword		line	col	token
+ZFlux1	ZoneBudget.csv ;	OST_NULL	0	2	','
+ZFlux2	ZoneBudget.csv ;	OST_NULL	1	2	','
+Qout1	split.dat ; 		Well_1		1	3	' '
+Qout2	split.dat ; 		Well_2		1	3	' '
+Qout3	split.dat ; 		Well_3		1	3	' '
+Qout4	split.dat ; 		Well_4		1	3	' '
+Qout5	split.dat ; 		Well_5		1	3	' '
+Qout6	split.dat ; 		Well_6		1	3	' '
+EndResponseVars
+
+BeginTiedRespVars
+QCost 6 Qout1 Qout2 Qout3 Qout4 Qout5 Qout6 wsum 1.00 1.00 1.00 1.00 1.00 1.00  
+EndTiedRespVars
+
+BeginGCOP
+CostFunction QCost
+PenaltyFunction APM
+EndGCOP
+
+BeginConstraints
+#name     type     penalty    lwr   upr   resp.var
+OutFlux1  general  100000.00  0.00  0.00  ZFlux1
+OutFlux2  general  100000.00  0.00  0.00  ZFlux2
+EndConstraints
+
+BeginInitParams
+#X1          Y1           Q1           X2           Y2           Q2           X3           Y3           Q3           X4           Y4           Q4           X5           Y5           Q5           X6           Y6           Q6   
+2.670000E+03 1.520000E+03 1.000000E+04 3.340000E+03 1.000000E+03 1.000000E+04 4.430000E+03 5.020000E+03 1.000000E+04 5.130000E+03 3.715000E+03 1.000000E+04 4.770000E+03 4.170000E+03 1.000000E+04 4.500000E+03 4.585000E+03 1.000000E+04
+EndInitParams
+
+BeginParticleSwarm
+SwarmSize 72
+NumGenerations 42
+ConstrictionFactor 1.0
+CognitiveParam 2.0
+SocialParam 2.0
+InertiaWeight 1.2
+InertiaReductionRate linear
+InitPopulationMethod random
+ConvergenceVal -1.00
+EndParticleSwarm
+
+BeginParallelDDSAlg
+PerturbationValue      0.2
+MaxIterations          100
+UseInitialParamValues
+UseOpt                 standard
+EndParallelDDSAlg
+
+BeginDDS
+PerturbationValue      0.2
+MaxIterations          100
+UseInitialParamValues
+EndDDS

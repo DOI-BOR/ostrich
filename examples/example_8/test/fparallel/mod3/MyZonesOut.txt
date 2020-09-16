@@ -1,0 +1,21 @@
+Param[01] = 01
+Param[02] = 10
+Param[03] = 10
+Param[04] = 09
+Param[05] = 05
+Param[06] = 10
+Pollutant = Benzene
+Cost Threshold : none specified
+Height : 0.900000
+Complexity : 12
+Material Costs
+Layer : Cost
+01 : 19.33
+02 : 10.65
+03 : 10.65
+04 : 2.31
+05 : 37.68
+06 : 10.65
+Total : 91.28
+Flux Threshold : none specified
+Mass : 2.428396E-007

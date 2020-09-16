@@ -1,0 +1,63 @@
+ProgramType BinaryGeneticAlgorithm
+
+ModelExecutable nZones.bat
+
+ModelSubdir mod
+
+ObjectiveFunction GCOP
+
+OstrichWarmStart yes
+
+#Template File Configuration
+BeginFilePairs
+  MyZonesIn.tpl ; MyZonesIn.txt
+EndFilePairs
+
+BeginExtraFiles
+  Nighthawk.bat
+  Nighthawk.exe
+  nZones.exe
+EndExtraFiles
+
+#Integer Parameters
+BeginIntegerParams
+  L1 7 1 13 none none none
+  L2 7 1 13 none none none
+  L3 7 1 13 none none none
+  L4 7 1 13 none none none
+  L5 7 1 14 none none none
+  L6 7 1 14 none none none
+EndIntegerParams
+
+BeginResponseVars
+  #name   filename         keyword    line    col     token
+  Cost    MyZonesOut.txt ; Total       0       2       ':'
+  Mass    MyZonesOut.txt ; Mass        0       2       ':'
+EndResponseVars
+
+BeginGCOP
+  CostFunction Cost
+  PenaltyFunction APM
+EndGCOP
+
+BeginConstraints
+  #name   type     conv.fact  lower   upper  resp.var 
+  MassCon general  10000000   0.000   5E-6   Mass
+EndConstraints
+
+BeginParticleSwarm
+  SwarmSize 5
+  NumGenerations 10
+  ConstrictionFactor 1.0
+  CognitiveParam 2.0
+  SocialParam 2.0
+  InertiaWeight 1.2
+  InertiaReductionRate linear
+  InitPopulationMethod LHS
+  ConvergenceVal -1.00
+EndParticleSwarm
+
+BeginGeneticAlg
+PopulationSize 10
+NumGenerations 10
+EndGeneticAlg

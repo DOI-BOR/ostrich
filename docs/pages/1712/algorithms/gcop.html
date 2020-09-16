@@ -1,0 +1,204 @@
+<!DOCTYPE HTML>
+<!--
+	Future Imperfect by HTML5 UP
+	html5up.net | @ajlkn
+	Free for personal and commercial use under the CCA 3.0 license (html5up.net/license)
+-->
+
+<!-- MathJax -->
+<script type="text/javascript"
+  src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.3/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+
+<html>
+	<head>
+		<title>OSTRICH - Algorithms - General Purpose Constrained Optimization Platform (GCOP)</title>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+		<link rel="stylesheet" href="../../../assets/css/main.css" />
+	</head>
+	<body class="single is-preload">
+
+		<!-- Wrapper -->
+			<div id="wrapper">
+
+				<!-- Header -->
+					<header id="header">
+						<h1 class="bannerheading"><a href="../../../index.html">OSTRICH</a></h1>
+						<nav class="links">
+							<ul>
+								<li><a href="../overview.html">Overview</a></li>
+								<li><a href="algorithms.html">Algorithms</a></li>
+								<li><a href="../setup/setup.html">Setup</a></li>
+								<li>
+									<div class="dropdown">
+										<a href="../solution/solution.html"<button class="dropbtn">
+											Solution
+											<i class="fa fa-caret-down"></i></a>
+										</button>
+										<div class="dropdown-content">
+											<a href="../solution/running.html">Running OSTRICH</a>
+											<a href="../solution/building.html">Building OSTRICH</a>
+										</div>
+									</div>
+								</li>
+								<li><a href="../output/output.html">Output</a></li>
+								<li><a href="../examples/examples.html">Examples</a></li>
+								<li><a href="../../releases.html">Releases</a></li>
+							</ul>
+						</nav>
+						<nav class="main">
+							<ul>
+								<li class="menu">
+									<a class="fa-bars" href="#menu">Menu</a>
+								</li>
+							</ul>
+						</nav>
+					</header>
+
+				<!-- Menu -->
+				<section id="menu">
+
+					<!-- Links -->
+					<section>
+						<ul class="links">
+							<li>
+								<a href="../overview.html">
+									<h3>Overview</h3>
+									<p>The basics of OSTRICH</p>
+								</a>
+							</li>
+							<li>
+								<a href="algorithms.html">
+									<h3>Algorithms</h3>
+									<p>Algorithms available within OSTRICH</p>
+								</a>
+							</li>
+							<li>
+								<a href="../setup/setup.html">
+									<h3>Setup</h3>
+									<p>Organzing an OSTRICH analysis</p>
+								</a>
+							</li>
+							<li>
+								<a href="../solution/solution.html">
+									<h3>Solution</h3>
+									<p>Running an OSTRICH analysis</p>
+								</a>
+							</li>
+							<li>
+								<a href="../output/output.html">
+									<h3>Output</h3>
+									<p>Output of an OSTRICH analysis</p>
+								</a>
+							</li>
+							<li>
+								<a href="../examples/examples.html">
+									<h3>Examples</h3>
+									<p>Examples using OSTRICH</p>
+								</a>
+							</li>
+							<li>
+								<a href="../../contributing.html">
+									<h3>Contributing</h3>
+									<p>Contribute to OSTRICH</p>
+								</a>
+							</li>
+						</ul>
+					</section>
+
+				</section>
+
+				<!-- Main -->
+					<div id="main">
+
+						<!-- Post -->
+							<article class="post">
+								<header>
+									<div class="title">
+										<h2><a href="#">Algorithms - General Purpose Constrained Optimization Platform (GCOP)</a></h2>
+										<p>The OSTRICH generalized extensions</p>
+									</div>
+									<div class="meta">
+										<p align="left">Initial Publication:</p>
+										<time class="time" datetime="2015-11-01">September 16, 2020</time>
+										<p align="left">Modified:</p>
+										<time class="time" datetime="2015-11-01">September 16, 2020</time>
+									</div>
+								</header>
+								<p align="justify">
+									In this group users can specify the response variable (or variables if performing multi-objective optimization or multi-criteria calibration) that will serve as the cost 
+									function (or functions) for the general constrained optimization platform. Each “Cost Function” identifies a single response variable or tied response variable that 
+									represents a system cost (CSYS) to be minimized by the optimizer. The overall GCOP objective function \(F_{SYS}\) is a combination of the system cost \(C_{SYS}\) and a penalty 
+									function, \(P_{TOTAL}\), which accounts for the cost of all constraint violations.
+								</p>
+								<p align="justify">
+									<i><b>Note:</b></i> To use GCOP, the model executable or script specified by the user must generate response variables that are suitable for computation of the \(C_{SYS}\) and 
+									\(P_{TOTAL}\) values. Furthermore, this executable should return a terrible \(C_{SYS}\) value or grossly infeasible \(P_{TOTAL}\) value in the event a model run fails or crashes.
+								</p>
+								<p align="justify">
+									The OSTRICH GCOP module offers several techniques for combining \(C_{SYS}\) and \(P_{TOTAL}\) to form the objective function; namely the additive penalty method (APM), the 
+									multiplicative penalty method (MPM), and the exponential penalty method (EPM). The mathematics of these techniques are given below and they are described in detail 
+									by Chan-Hilton and Culver (2000):
+								</p>
+								<p align="center">
+									$$F_{APM}(X) = C_{SYS} + P_{TOTAL}$$
+								</p>
+								<p align="center">
+									$$F_{MPM}(X) = max(C_{SYS}, P_{TOTAL})P_{TOTAL}$$
+								</p>
+								<p align="center">
+									$$F_{EPM}(X) = max(C_{SYS}, P_{TOTAL})e^{P_{TOTAL}}$$
+								</p>
+								<p align="justify">
+									Where, \(F_{APM}\) is the objective function using APM; \(F_{MPM}\) is the objective function using MPM; \(F_{EPM}\) is the objective function using EPM; and X is a vector of design parameters. 
+									The general format and a concrete example of the GCOP section is given in Listing 60.
+								</p>
+								<!-- This has strange alignment for the code to render correctly on the page.-->
+								<table class="layouttable">
+									<tr>
+										<th>
+<pre><code>BeginGCOP
+CostFunction  [cost_1]
+CostFunction  [cost_2]
+.
+.
+CostFunction  [cost_N]
+
+PenaltyFunction APM|EPM|MPM
+EndGCOP
+</code></pre>
+</th>
+<th>
+<pre><code>BeginGCOP
+CostFunction  QTOTAL
+PenaltyFunction APM
+EndGCOP
+</code></pre>
+										</th>
+									</tr>
+								</table>
+								<p align="center" id="fig1"><b>Figure 1: Format (left) and Example (right) of the GCOP Group</b></p>
+								
+								<p align="justify">
+									Where BeginGCOP and EndGCOP are parsing tags that wrap a list of GCOP configuration variables:
+								</p>
+								<ul align="justify">
+									<li><b>CostFunction:</b> The value of this variable must be the name of a response variable (or tied response variable) and corresponds to the system cost (CSYS). For 
+									multi-objective problems, users should list one cost function entry for each objective. Only the first objective listed will appear in OSTRICH run record reports unless the 
+									additional costs are marked as augmented response variables.</li>
+									<li><b>PenaltyFunction:</b> The three options for this variable are “APM”, “MPM” and “EPM”, corresponding to desired penalty function method. The default value is “MPM”.</li>
+								</ul>
+							</article>
+					</div>
+			</div>
+
+		<!-- Scripts -->
+			<script src="../../../assets/js/jquery.min.js"></script>
+			<script src="../../../assets/js/browser.min.js"></script>
+			<script src="../../../assets/js/breakpoints.min.js"></script>
+			<script src="../../../assets/js/util.js"></script>
+			<script src="../../../assets/js/main.js"></script>
+
+	</body>
+</html>

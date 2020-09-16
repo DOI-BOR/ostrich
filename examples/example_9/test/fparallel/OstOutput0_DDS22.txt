@@ -1,0 +1,71 @@
+--------------------------------------------------------------------------
+ OSTRICH version 17.11.03 (Built Nov  3 2017 @ 09:02:31)
+
+ A computer program for model-independent calibration and optimization.
+
+ Author             L. Shawn Matott
+ Copyright (C) 2007 L. Shawn Matott
+
+ This program is free software; you can redistribute 
+ it and/or modify it under the terms of the GNU  
+ General Public License as published by the Free 
+ Software Foundation; either version 2 of the 
+ License, or(at your option) any later version. 
+
+ This program is distributed in the hope that it will 
+ be useful, but WITHOUT ANY WARRANTY; without even 
+ the implied warranty of MERCHANTABILITY or FITNESS 
+ FOR A PARTICULAR PURPOSE. See the GNU General Public 
+ License for more details. 
+
+ You should have received a copy of the GNU General 
+ Public License along with this program; if not, 
+ write to the Free Software Foundation, Inc., 59 
+ Temple Place, Suite 330, Boston, MA 02111-1307 USA 
+--------------------------------------------------------------------------
+
+Ostrich Setup
+Model                  : Split.exe > OstExeOut.txt
+Algorithm              : Parallel Dynamically Dimensioned Search Algorithm (PDDS)
+Objective Function     : WSSE
+Number of Parameters   : 3
+Number of Tied Params  : 0
+Number of Observations : 25
+Seed for Random Nums.  : 1509728017
+
+Ostrich Run Record
+trial    best fitness   K1            K2            Kback          trials remaining
+1     9.207154E+09  2.543015E+02  8.414420E+02  1.161290E-03  5.500000E+01
+3     6.788342E+04  3.895232E-05  8.104706E-10  2.072169E+01  5.300000E+01
+6     8.747480E+03  1.212859E-02  1.782927E-01  6.134896E-01  5.000000E+01
+15    8.411279E+03  1.212859E-02  2.083558E+00  6.134896E-01  4.100000E+01
+17    8.305065E+03  1.212859E-02  1.515383E+01  6.134896E-01  3.900000E+01
+21    8.302226E+03  5.702584E-04  1.515383E+01  6.134896E-01  3.500000E+01
+29    8.302084E+03  1.742068E-08  1.515383E+01  6.134896E-01  2.700000E+01
+33    8.302084E+03  1.738531E-08  1.515383E+01  6.134896E-01  2.300000E+01
+52    8.281691E+03  1.738531E-08  3.883417E+02  6.134896E-01  4.000000E+00
+53    8.281534E+03  1.738531E-08  4.754406E+02  6.134896E-01  3.000000E+00
+56    8.281534E+03  1.738531E-08  4.754406E+02  6.134896E-01  0.000000E+00
+
+Optimal Parameter Set
+Objective Function : 8.281534E+03
+K1                 : 1.738531E-08
+K2                 : 4.754406E+02
+Kback              : 6.134896E-01
+
+Algorithm Metrics
+Algorithm               : Parallel Dynamically-Dimensioned Search Algorithm (PDDS)
+Desired Convergence Val : N/A
+Actual Convergence Val  : N/A
+Max Generations         : 56
+Actual Generations      : 56
+Peterbation Value       : 0.200000
+Debug Statements        : disabled
+Initial Solution        : Randomly Generated
+Special User Option     : standard
+Alpha Value             : not used
+Beta Value              : not used
+Number of Processors    : 5
+Total Evals             : 1
+Telescoping Strategy    : none
+Algorithm successfully converged on a solution, however more runs may be needed

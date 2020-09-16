@@ -1,0 +1,100 @@
+        1 file(s) copied.
+        1 file(s) copied.
+        1 file(s) copied.
+        1 file(s) copied.
+Starting up MPI required 1.085253 seconds
+Warm Start has been activated
+Ostrich will resume a pervious search.
+--------------------------------------------------------------------------
+ OSTRICH version 17.11.03 (Built Nov  3 2017 @ 09:02:31)
+
+ A computer program for model-independent calibration and optimization.
+
+ Author             L. Shawn Matott
+ Copyright (C) 2007 L. Shawn Matott
+
+ This program is free software; you can redistribute 
+ it and/or modify it under the terms of the GNU  
+ General Public License as published by the Free 
+ Software Foundation; either version 2 of the 
+ License, or(at your option) any later version. 
+
+ This program is distributed in the hope that it will 
+ be useful, but WITHOUT ANY WARRANTY; without even 
+ the implied warranty of MERCHANTABILITY or FITNESS 
+ FOR A PARTICULAR PURPOSE. See the GNU General Public 
+ License for more details. 
+
+ You should have received a copy of the GNU General 
+ Public License along with this program; if not, 
+ write to the Free Software Foundation, Inc., 59 
+ Temple Place, Suite 330, Boston, MA 02111-1307 USA 
+--------------------------------------------------------------------------
+
+Ostrich Setup
+Model                  : nZones.bat > OstExeOut.txt
+Algorithm              : Binary-coded Genetic Algorithm (BGA)
+Objective Function     : GCOP
+Number of Parameters   : 6
+Number of Tied Params  : 0
+Number of Observations : 0
+Seed for Random Nums.  : 1509725797
+Number of Resp. Vars        : 2
+Number of Tied Resp. Vars   : 0
+Number of Constraints       : 1
+Penalty Method              : Additive Penalty Method (APM)
+
+Ostrich Run Record
+gen    best fitness   L1            L2            L3            L4            L5            L6             convergence value
+0     -1.170000E+02  1              10             10             12             5              10             6.611869E-01
+1     -9.997000E+01  1              11             10             9              5              10             2.825205E-01
+2     -9.997000E+01  1              11             10             9              5              10             2.555386E-01
+3     -9.128000E+01  1              10             10             9              5              10             1.585934E-01
+4     -9.128000E+01  1              10             10             9              5              10             1.249581E-01
+5     -9.128000E+01  1              10             10             9              5              10             0.000000E+00
+
+Optimal Parameter Set
+Objective Function : -9.128000E+01
+L1                 : 1
+L2                 : 10
+L3                 : 10
+L4                 : 9
+L5                 : 5
+L6                 : 10
+
+Summary of Constraints
+Name           Violation      Penalty        
+MassCon       0.000000E+00  0.000000E+00  
+
+Algorithm Metrics
+Algorithm               : Binary-coded Genetic Algorithm (BGA)
+Desired Convergence Val : 1.000000E-04
+Actual Convergence Val  : 0.000000E+00
+Max Generations         : 10
+Actual Generations      : 5
+Population Size         : 10
+Number of Elites        : 1
+Initialization Method   : Random
+L1           Mutations : 0
+L2           Mutations : 0
+L3           Mutations : 3
+L4           Mutations : 8
+L5           Mutations : 1
+L6           Mutations : 1
+Total Evals             : 64
+Telescoping Strategy    : none
+Algorithm successfully converged on a solution
+Shutting down MPI required 0.080716 seconds
+Ostrich Error Report for Processor 0 
+A total of 9 errors and/or warnings were reported
+PARAMETER BOUNDS           : 16 > upper bound (13) 
+PARAMETER BOUNDS           : 16 > upper bound (13) 
+PARAMETER BOUNDS           : 16 > upper bound (13) 
+PARAMETER BOUNDS           : 16 > upper bound (13) 
+PARAMETER BOUNDS           : 16 > upper bound (14) 
+PARAMETER BOUNDS           : 16 > upper bound (14) 
+FILE CLEANUP               : Ostrich deleted mod0/Nighthawk.bat 
+FILE CLEANUP               : Ostrich deleted mod0/Nighthawk.exe 
+FILE CLEANUP               : Ostrich deleted mod0/nZones.exe 
+num CTORS: 184 
+num DTORS: 184 

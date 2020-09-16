@@ -1,0 +1,21 @@
+Solveonly
+Formatted
+CompareHeadOn
+Precision  5
+MaximumSolveIterations  100
+MinimumSolveIterations  10
+PotentialTolerance  .000001
+Window  32.9602825  67.4011575  .4663245125  100  100
+BaseAndThickness  0  100
+Conductivity  8.489079E-01
+Porosity  .3
+Uniform  10  0
+ReferencePoint  256.7961  67.40115  0
+CircularInhomogeneity Cir. Inhom. # 1 
+  21.3253  72.89156  1.231934E-07  7.017998
+&
+CircularInhomogeneity Cir. Inhom. # 2 
+  42.16867  64.33735  7.187805E+02  9.444593
+&
+ForwardTracing
+Time  100  100

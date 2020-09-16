@@ -217,12 +217,16 @@ input, select, textarea {
 			border-bottom: 0;
 		}
 
+	h1 {
+		font-size: 1.15em;
+	}
+	
 	h2 {
-		font-size: 1.1em;
+		font-size: 0.9em;
 	}
 
 	h3 {
-		font-size: 0.9em;
+		font-size: 0.8em;
 	}
 
 	h4 {
@@ -300,6 +304,38 @@ input, select, textarea {
 
 	.align-right {
 		text-align: right;
+	}
+	
+	.tocheading {
+		color: #3c3b3b;
+		font-family: "Raleway", Helvetica, sans-serif;
+		font-weight: 800;
+		letter-spacing: 0.25em;
+		line-height: 1.65;
+		margin: 0.25em 0 0.25em 0;
+		text-transform: uppercase;
+		font-size: 0.7em;
+	}
+	
+	.bannerheading{
+		color: #3c3b3b;
+		font-family: "Raleway", Helvetica, sans-serif;
+		font-weight: 800;
+		letter-spacing: 0.25em;
+		line-height: 1.65;
+		margin: 0 0 0 0;
+		text-transform: uppercase;
+	}
+	
+	.titleheading{
+		color: #3c3b3b;
+		font-family: "Raleway", Helvetica, sans-serif;
+		font-weight: 800;
+		letter-spacing: 0.25em;
+		line-height: 1.65;
+		margin: 2em 0 0.5em 0;
+		text-transform: uppercase;
+		font-size: 1.1em;
 	}
 
 /* Row */
@@ -1870,14 +1906,13 @@ input, select, textarea {
 		transition: background-color 0.2s ease, box-shadow 0.2s ease, color 0.2s ease;
 		background-color: transparent;
 		border: 0;
-		box-shadow: inset 0 0 0 1px rgba(160, 160, 160, 0.3);
 		color: #3c3b3b !important;
 		cursor: pointer;
 		display: inline-block;
 		font-family: "Raleway", Helvetica, sans-serif;
 		font-size: 0.6em;
 		font-weight: 800;
-		height: 4.8125em;
+		/*height: 4.8125em;*/
 		letter-spacing: 0.25em;
 		line-height: 4.8125em;
 		padding: 0 2.5em;
@@ -1887,103 +1922,7 @@ input, select, textarea {
 		white-space: nowrap;
 	}
 
-		input[type="submit"]:hover,
-		input[type="reset"]:hover,
-		input[type="button"]:hover,
-		button:hover,
-		.button:hover {
-			box-shadow: inset 0 0 0 1px #2ebaae;
-			color: #2ebaae !important;
-		}
-
-			input[type="submit"]:hover:active,
-			input[type="reset"]:hover:active,
-			input[type="button"]:hover:active,
-			button:hover:active,
-			.button:hover:active {
-				background-color: rgba(46, 186, 174, 0.05);
-			}
-
-		input[type="submit"]:before, input[type="submit"]:after,
-		input[type="reset"]:before,
-		input[type="reset"]:after,
-		input[type="button"]:before,
-		input[type="button"]:after,
-		button:before,
-		button:after,
-		.button:before,
-		.button:after {
-			color: #aaaaaa;
-			position: relative;
-		}
-
-		input[type="submit"]:before,
-		input[type="reset"]:before,
-		input[type="button"]:before,
-		button:before,
-		.button:before {
-			left: -1em;
-			padding: 0 0 0 0.75em;
-		}
-
-		input[type="submit"]:after,
-		input[type="reset"]:after,
-		input[type="button"]:after,
-		button:after,
-		.button:after {
-			left: 1em;
-			padding: 0 0.75em 0 0;
-		}
-
-		input[type="submit"].fit,
-		input[type="reset"].fit,
-		input[type="button"].fit,
-		button.fit,
-		.button.fit {
-			width: 100%;
-		}
-
-		input[type="submit"].large,
-		input[type="reset"].large,
-		input[type="button"].large,
-		button.large,
-		.button.large {
-			font-size: 0.7em;
-			padding: 0 3em;
-		}
-
-		input[type="submit"].small,
-		input[type="reset"].small,
-		input[type="button"].small,
-		button.small,
-		.button.small {
-			font-size: 0.5em;
-		}
-
-		input[type="submit"].disabled, input[type="submit"]:disabled,
-		input[type="reset"].disabled,
-		input[type="reset"]:disabled,
-		input[type="button"].disabled,
-		input[type="button"]:disabled,
-		button.disabled,
-		button:disabled,
-		.button.disabled,
-		.button:disabled {
-			pointer-events: none;
-			color: rgba(160, 160, 160, 0.3) !important;
-		}
-
-			input[type="submit"].disabled:before, input[type="submit"]:disabled:before,
-			input[type="reset"].disabled:before,
-			input[type="reset"]:disabled:before,
-			input[type="button"].disabled:before,
-			input[type="button"]:disabled:before,
-			button.disabled:before,
-			button:disabled:before,
-			.button.disabled:before,
-			.button:disabled:before {
-				color: rgba(160, 160, 160, 0.3) !important;
-			}
+		
 
 /* Form */
 
@@ -2760,12 +2699,12 @@ input, select, textarea {
 				-ms-flex-grow: 1;
 				flex-grow: 1;
 				-ms-flex: 1;
-				padding: 3.75em 3em 3.3em 3em;
+				padding: .5em 3em 3.3em 3em;
 			}
 
 				.post > header .title h2 {
 					font-weight: 900;
-					font-size: 1.5em;
+					font-size: 1.7em;
 				}
 
 				.post > header .title > :last-child {
@@ -3218,6 +3157,7 @@ input, select, textarea {
 			#header ul li {
 				display: inline-block;
 				padding-left: 0;
+				
 			}
 
 		#header h1 {
@@ -3265,6 +3205,67 @@ input, select, textarea {
 					letter-spacing: 0.25em;
 					text-transform: uppercase;
 				}
+				
+		#header .dropdown{
+			
+			overflow: hidden;
+			height: inherit;
+			line-height:inherit;
+			margin-right:0em;
+			padding-right:0em;
+			display:inline-block;		
+		}
+				
+		#header .dropbtn {
+			display:inline-block;
+			position:flex;
+			padding: 0px;
+			cursor: pointer;
+			height: inherit;
+			line-height:inherit;
+			flex:1;
+			
+			font-family: "Raleway", Helvetica, sans-serif;
+			font-size: 0.7em;
+			font-weight: 400;
+			letter-spacing: 0.25em;
+			text-transform: uppercase;
+
+			margin-right:0em;
+			padding-right:0em;
+		}
+		
+		#header .dropdown-content {
+			display: none;
+			position: absolute;
+			border-bottom: 0;			
+			
+			font-family: "Raleway", Helvetica, sans-serif;
+			font-size: 0.7em;
+			font-weight: 400;
+			letter-spacing: 0.25em;
+			text-transform: uppercase;
+			background-color:white;
+		}
+		
+		#header .dropdown-content a {
+			float: none;
+			color: black;
+			
+			padding: 25px 16px;
+			text-decoration: none;
+			display: block;
+			text-align: left;
+		}
+		
+		#header .dropdown-content a:hover {
+			background-color: #ddd;
+						
+		}
+
+		#header .dropdown:hover .dropdown-content {
+			display: block;
+		}
 
 		#header .main {
 			height: inherit;

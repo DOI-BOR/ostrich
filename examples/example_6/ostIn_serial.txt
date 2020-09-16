@@ -1,0 +1,54 @@
+ProgramType PADDS
+
+RandomSeed 1431708594
+
+ModelExecutable CanBeam.exe
+
+ModelSubdir .
+
+ObjectiveFunction GCOP
+
+PreserveModelOutput PostProcess.bat
+
+#Template File Configuration
+BeginFilePairs
+  CanBeam.tpl ; CanBeam.in
+EndFilePairs
+
+#Real-valued Parameters
+BeginParams
+_DIAM_ random 10.0 50.0 none log10 none
+_LEN_  random 200.0 1000.0 none log10 none
+EndParams
+
+BeginInitParams
+11 900
+21 800
+31 700
+41 600
+EndInitParams
+
+BeginResponseVars
+#name   filename      key line    col     token augmented?
+F1      CanBeam.out ; F1    0      2       '='    yes
+F2      CanBeam.out ; F2    0      2       '='    yes
+EndResponseVars
+
+BeginGCOP
+  CostFunction F1
+  CostFunction F2
+  PenaltyFunction APM
+EndGCOP
+
+BeginConstraints
+  #name type     conv.fact  lower   upper  resp.var 
+EndConstraints
+
+BeginPADDS
+  MaxIterations 50
+  PerturbationValue 0.2
+#  SelectionMetric Random
+#  SelectionMetric CrowdingDistance
+#  SelectionMetric EstimatedHyperVolumeContribution
+  SelectionMetric ExactHyperVolumeContribution
+EndPADDS
