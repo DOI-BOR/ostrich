@@ -104,30 +104,30 @@
 				</section>
 
 				<!-- Main -->
-					<div id="main">
+				<div id="main">
 
-						<!-- Post -->
-							<article class="post">
-								<header>
-									<div class="title">
-										<h2><a href="#">Algorithms - Binary and Real Genetic Algorithms</a></h2>
-										<p>The OSTRICH genetic optimization algorithms</p>
-									</div>
-									<div class="meta">
-										<p align="left">Initial Publication:</p>
-										<time class="time" datetime="2015-11-01">September 16, 2020</time>
-										<p align="left">Modified:</p>
-										<time class="time" datetime="2015-11-01">September 16, 2020</time>
-									</div>
-								</header>
-								<p align="justify">
-									The following optional group will configure either the binary- or real-coded genetic algorithm and will be processed if [ProgramType] is set to 
-									“BinaryGeneticAlgorithm” (i.e. BGA) or “GeneticAlgorithm” (i.e. RGA).
-								</p>
-								<!-- This has strange alignment for the code to render correctly on the page.-->
-								<table class="layouttable">
-									<tr>
-										<th>
+					<!-- Post -->
+						<article class="post">
+							<header>
+								<div class="title">
+									<h2><a href="#">Algorithms - Binary and Real Genetic Algorithms</a></h2>
+									<p>The OSTRICH genetic optimization algorithms</p>
+								</div>
+								<div class="meta">
+									<p align="left">Initial Publication:</p>
+									<time class="time" datetime="2015-11-01">September 16, 2020</time>
+									<p align="left">Modified:</p>
+									<time class="time" datetime="2015-11-01">September 16, 2020</time>
+								</div>
+							</header>
+							<p align="justify">
+								The following optional group will configure either the binary- or real-coded genetic algorithm and will be processed if [ProgramType] is set to 
+								“BinaryGeneticAlgorithm” (i.e. BGA) or “GeneticAlgorithm” (i.e. RGA).
+							</p>
+							<!-- This has strange alignment for the code to render correctly on the page.-->
+							<table class="layouttable">
+								<tr>
+									<th>
 <pre><code>BeginGeneticAlg
 ParallelMethod       [pmethod]
 PopulationSize       [pop_size]
@@ -150,37 +150,48 @@ InitPopulationMethod random
 ConvergenceVal       1.00E-4
 EndGeneticAlg
 </code></pre>
-										</th>
-									</tr>
-								</table>
-								<p align="center" id="fig1"><b>Figure 1: General Format (left) and Example (right) of the Binary and Real-coded Genetic Algorithm Groups</b></p>
-								
-								<p align="justify">
-									Where BeginGeneticAlg and EndGeneticAlg are parsing tags that wrap a set of algorithm configuration variables. These variables are described below:
-								</p>
-								<ul align="justify">
-									<li><b>ParallelMethod:</b> This variable controls how the algorithm is to be run if parallel computing is used. Supported values are “synchronous” and 
-									“asynchronous”. The default value is “synchronous”.</li>
-									<li><b>InitPopulationMethod:</b> This variable controls how the algorithm configures the initial population of candidate solutions. Supported values are: 
-									“random”, “LHS” (Latin Hypercube Sampling), and “QuadTree”. The default value is “random”.</li>
-									<li><b>PopulationSize:</b> The population size. The default value is 50.</li>
-									<li><b>MutationRate:</b> The mutation rate for child members. The default value is 0.05 (i.e. 5%).</li>
-									<li><b>Survivors:</b> The number of elites who pass unchanged to next generation. The default value is 1.</li>
-									<li><b>NumGenerations:</b> The number of generations in the search algorithm. The default value is 10.</li>
-									<li><b>ConvergenceVal:</b> This is the convergence value for the algorithm. If the relative difference between the current minimum and the median of the 
-									latest generation is less than or equal to this value, the algorithm will halt. The default value is 1.00E-4.</li>
-								</ul>
-							</article>
-
-					</div>
+							</th>
+						</tr>
+					</table>
+					<p align="center" id="fig1"><b>Figure 1: General Format (left) and Example (right) of the Binary and Real-coded Genetic Algorithm Groups</b></p>
+					
+					<p align="justify">
+						Where BeginGeneticAlg and EndGeneticAlg are parsing tags that wrap a set of algorithm configuration variables. These variables are described below:
+					</p>
+					<ul align="justify">
+						<li><b>ParallelMethod:</b> This variable controls how the algorithm is to be run if parallel computing is used. Supported values are “synchronous” and 
+						“asynchronous”. The default value is “synchronous”.</li>
+						<li><b>InitPopulationMethod:</b> This variable controls how the algorithm configures the initial population of candidate solutions. Supported values are: 
+						“random”, “LHS” (Latin Hypercube Sampling), and “QuadTree”. The default value is “random”.</li>
+						<li><b>PopulationSize:</b> The population size. The default value is 50.</li>
+						<li><b>MutationRate:</b> The mutation rate for child members. The default value is 0.05 (i.e. 5%).</li>
+						<li><b>Survivors:</b> The number of elites who pass unchanged to next generation. The default value is 1.</li>
+						<li><b>NumGenerations:</b> The number of generations in the search algorithm. The default value is 10.</li>
+						<li><b>ConvergenceVal:</b> This is the convergence value for the algorithm. If the relative difference between the current minimum and the median of the 
+						latest generation is less than or equal to this value, the algorithm will halt. The default value is 1.00E-4.</li>
+					</ul>
+					
+					<h1>References</h1>
+					<p align="justify">
+						Chan Hilton, A. B.,Culver, T. B. 2000. Constraint handling for genetic algorithms in optimal remediation design. Journal of Water Resources Planning 
+						and Management 126, 128-137.
+					</p>
+					<p align="justify">
+						Yoon, J.-H.,Shoemaker, C. A. 2001. Improved real-coded GA for groundwater bioremediation. Journal of Computing in Civil Engineering 15, 224-231.
+					</p>
+					<p align="justify">
+						Yoon, J.-H.,Shoemaker, C. A. 1999. Comparison of optimization methods for ground-water bioremediation. Journal of Water Resources Planning and Management 
+					</p>
+				</article>
 			</div>
+		</div>
 
 		<!-- Scripts -->
-			<script src="../../../assets/js/jquery.min.js"></script>
-			<script src="../../../assets/js/browser.min.js"></script>
-			<script src="../../../assets/js/breakpoints.min.js"></script>
-			<script src="../../../assets/js/util.js"></script>
-			<script src="../../../assets/js/main.js"></script>
+		<script src="../../../assets/js/jquery.min.js"></script>
+		<script src="../../../assets/js/browser.min.js"></script>
+		<script src="../../../assets/js/breakpoints.min.js"></script>
+		<script src="../../../assets/js/util.js"></script>
+		<script src="../../../assets/js/main.js"></script>
 
 	</body>
 </html>

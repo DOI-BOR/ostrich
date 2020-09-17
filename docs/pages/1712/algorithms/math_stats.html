@@ -104,28 +104,28 @@
 				</section>
 
 				<!-- Main -->
-					<div id="main">
+				<div id="main">
 
-						<!-- Post -->
-							<article class="post">
-								<header>
-									<div class="title">
-										<h2><a href="#">Algorithms - Mathematics and Statistics</a></h2>
-										<p>OSTRICH Mathematics and Statistics features</p>
-									</div>
-									<div class="meta">
-										<p align="left">Initial Publication:</p>
-										<time class="time" datetime="2015-11-01">September 16, 2020</time>
-										<p align="left">Modified:</p>
-										<time class="time" datetime="2015-11-01">September 16, 2020</time>
-									</div>
-								</header>
-								<p align="justify">
-									This group describes the finite difference method employed by algorithms in Table 1 with shaded entries in the “Math and Stats?” column. If calibration 
-									is being performed, additional variables in this group are used to request various statistical and diagnostic output. The general format of the MathAndStats 
-									group is given in Listing 58 and Listing 58 is a concrete example.
-								</p>
-								<!-- This has strange alignment for the code to render correctly on the page.-->
+					<!-- Post -->
+					<article class="post">
+						<header>
+							<div class="title">
+								<h2><a href="#">Algorithms - Mathematics and Statistics</a></h2>
+								<p>OSTRICH Mathematics and Statistics features</p>
+							</div>
+							<div class="meta">
+								<p align="left">Initial Publication:</p>
+								<time class="time" datetime="2015-11-01">September 16, 2020</time>
+								<p align="left">Modified:</p>
+								<time class="time" datetime="2015-11-01">September 16, 2020</time>
+							</div>
+						</header>
+						<p align="justify">
+							This group describes the finite difference method employed by algorithms in Table 1 with shaded entries in the “Math and Stats?” column. If calibration 
+							is being performed, additional variables in this group are used to request various statistical and diagnostic output. The general format of the MathAndStats 
+							group is given in Listing 58 and Listing 58 is a concrete example.
+						</p>
+						<!-- This has strange alignment for the code to render correctly on the page.-->
 <pre><code>BeginMathAndStats
 DiffType         [dtype]
 DiffIncType      [ditype]
@@ -166,76 +166,131 @@ MaxDef  CanBeam.out ; Umax   3      2       '='    no
 EndPredictions
 EndMathAndStats
 </code></pre>
-								<p align="center" id="fig1"><b>Figure 2: Example of the Math and Stats Group</b></p>
-								
-								<p align="justify">
-									Variables in the Math and Stats group are described below:
+						<p align="center" id="fig1"><b>Figure 2: Example of the Math and Stats Group</b></p>
+						
+						<p align="justify">
+							Variables in the Math and Stats group are described below:
+						</p>
+						<ul align="justify">
+							<li><b>DiffType:</b> This variable selects the type of finite-difference approach to use for approximating derivatives (i.e. ∂Y/∂p, where Y is some model output and p is a 
+							parameter). Options are “forward” (forward differences), “outside” (outside central differences), “parabolic” (parabolic central differences), and “best-fit” 
+							(linear central differences). Central differences require twice as much computation as forward differences but can be more accurate. The default value is “forward”.</li>
+							<li>
+								<p>
+									DiffIncType: The type of increment used in the selected finite-difference approach. Supported values for this variable are described below, and the default is 
+									“range-relative”:
 								</p>
 								<ul align="justify">
-									<li><b>DiffType:</b> This variable selects the type of finite-difference approach to use for approximating derivatives (i.e. ∂Y/∂p, where Y is some model output and p is a 
-									parameter). Options are “forward” (forward differences), “outside” (outside central differences), “parabolic” (parabolic central differences), and “best-fit” 
-									(linear central differences). Central differences require twice as much computation as forward differences but can be more accurate. The default value is “forward”.</li>
-									<li>
-										<p>
-											DiffIncType: The type of increment used in the selected finite-difference approach. Supported values for this variable are described below, and the default is 
-											“range-relative”:
-										</p>
-										<ul align="justify">
-											<li><b>range-relative:</b> Increments will be computed by multiplying the range of a given parameter by the value of the“DiffIncrement” or “DiffRelIncrement” variable. </li>
-											<li><b>value-relative:</b> Increments will be computed by multiplying the current value of a given parameter by the value of the “DiffIncrement” variable.</li>
-											<li><b>absolute:</b> Increments will be directly specified by the value of the “DiffIncrement” variable.</li>
-											<li><b>optimal:</b> Finite-difference increments will be computed according to the iterative procedure outlined by Yager (2004).</li>
-										</ul>
-									</li>
-									<li><b>DiffRelIncrement:</b> When this variable is assigned the program will use a range-relative finite-difference increment, irrespective of the value of DiffIncType. 
-									The value of this variable can be a single value that will be applied to each parameter, or a space-separated list of values corresponding to each parameter listed 
-									in the parameters group. The default value is 0.001 for all parameters.</li>
-									<li><b>DiffIncrement:</b> The value used in computing a finite-difference for each parameter. The value of this variable can be a single value that will be applied to each 
-									parameter, or a space-separated list of values corresponding to each parameter listed in the parameters group. The default value is 0.001 for all 
-									parameters.</li>
-									<li><b>DiffMinIncrement:</b> The minimum increment that will be used irrespective of the compute valued. The default value is 1.00E-20.</li>
-									<li><b>CI_Pct:</b> The desired confidence level for computing linear confidence intervals on parameters and predictions. The default value is 95.</li>
-									<li>
-										<p>
-											<b>Stat1 .. StatN:</b> These entries serve as flags to select various statistical output. Options are described below. The default flags are “NoStats”, 
-											“ExcludeInsensitiveParameters”, and “ExcludeInsensitiveObservations”:
-										</p>
-										<ul align="justify">
-											<li><b>Default:</b> Selects a default list of parameter statistics, including correlation, standard error, and linear confidence intervals.</li>
-											<li><b>AllStats:</b> Enables all available statistical output.</li>
-											<li><b>NoStats:</b> Disables all statistical output.</li>
-											<li><b>BestBoxCox:</b> Instructs OSTRICH to compute an estimate of the best Box-Cox power transformation for obtaining normalized residuals.</li>
-											<li><b>StdDev:</b> Selects standard deviation of the regression (i.e. root mean squared error, RMSE).</li>
-											<li><b>StdErr:</b> Selects parameter standard error.</li>
-											<li><b>CorrCoeff:</b> Selects parameter correlation matrix.</li>
-											<li><b>NormPlot:</b> Selects plot points for a normal probability plot along with corresponding R2N value.</li>
-											<li><b>Beale:</b> Selects Beale’s linearity measure.</li>
-											<li><b>Linssen:</b> Selects Linssen’s linearity measure.</li>
-											<li><b>CooksD:</b> Selects the Cook’s D measure of observation influence.</li>
-											<li><b>DFBETAS:</b> Selects the DFBETAS measure of observation influence.</li>
-											<li><b>Matrices:</b> Selects non-linear regression matrices, including the Jacobian, normal and inverse normal matrices.</li>
-											<li><b>Confidence:</b> Selects linear confidence intervals on estimated parameters.</li>
-											<li><b>Sensitivity:</b> Selects measures of parameter sensitivity, including composite and dimensionless scaled sensitivities.</li>
-											<li><b>RunsTest:</b> Selects the runs test for serial correlation among residuals.</li>
-											<li><b>AutorunFunction:</b> Selects the autorun function for serial correlation among residuals.</li>
-											<li><b>MMRI:</b> Selects various information-theoretic measures for assessing multi-model ranking and inference.</li>
-											<li><b>ExcludeInsensitiveParameters:</b> If present, insensitive parameters will be excluded from statistical calculations. This can help avoid problems with singular matrices.</li>
-											<li><b>IncludeInsensitiveParameters:</b> If present, insensitive parameters will be included in statistical calculations.</li>
-											<li><b>ExcludeInsensitiveObservations:</b> If present, insensitive observations will be excluded from statistical calculations. This can help avoid problems with singular matrices.</li>
-											<li><b>IncludeInsensitiveObservations:</b> If present, insensitive observations will be included in statistical calculations.</li>
-											<li><b>WriteResidualsEachIteration:</b> If present, a residuals file will be created for each iteration or step of the algorithm and named OstResiduals_P*_S*.txt. The P* portion 
-											of the filename will identify the processor (i.e. rank) and the S* portion of the filename will identify the iteration (i.e. step). The file will list the residuals associated with 
-											the best-fit parameter set discovered by the algorithm up to the indicated algorithm iteration (i.e. step). This option only applies to the WSSE objective function and is not available 
-											for the following algorithms: DDSAU, GLUE, MCMC, PADDS, ParaPADDS, RJSMP, BEERS, and SMOOTH.</li>
-										</ul>
-									</li>
+									<li><b>range-relative:</b> Increments will be computed by multiplying the range of a given parameter by the value of the“DiffIncrement” or “DiffRelIncrement” variable. </li>
+									<li><b>value-relative:</b> Increments will be computed by multiplying the current value of a given parameter by the value of the “DiffIncrement” variable.</li>
+									<li><b>absolute:</b> Increments will be directly specified by the value of the “DiffIncrement” variable.</li>
+									<li><b>optimal:</b> Finite-difference increments will be computed according to the iterative procedure outlined by Yager (2004).</li>
 								</ul>
-							</article>
-
-					</div>
-
-				
-
+							</li>
+							<li><b>DiffRelIncrement:</b> When this variable is assigned the program will use a range-relative finite-difference increment, irrespective of the value of DiffIncType. 
+							The value of this variable can be a single value that will be applied to each parameter, or a space-separated list of values corresponding to each parameter listed 
+							in the parameters group. The default value is 0.001 for all parameters.</li>
+							<li><b>DiffIncrement:</b> The value used in computing a finite-difference for each parameter. The value of this variable can be a single value that will be applied to each 
+							parameter, or a space-separated list of values corresponding to each parameter listed in the parameters group. The default value is 0.001 for all 
+							parameters.</li>
+							<li><b>DiffMinIncrement:</b> The minimum increment that will be used irrespective of the compute valued. The default value is 1.00E-20.</li>
+							<li><b>CI_Pct:</b> The desired confidence level for computing linear confidence intervals on parameters and predictions. The default value is 95.</li>
+							<li>
+								<p>
+									<b>Stat1 .. StatN:</b> These entries serve as flags to select various statistical output. Options are described below. The default flags are “NoStats”, 
+									“ExcludeInsensitiveParameters”, and “ExcludeInsensitiveObservations”:
+								</p>
+								<ul align="justify">
+									<li><b>Default:</b> Selects a default list of parameter statistics, including correlation, standard error, and linear confidence intervals.</li>
+									<li><b>AllStats:</b> Enables all available statistical output.</li>
+									<li><b>NoStats:</b> Disables all statistical output.</li>
+									<li><b>BestBoxCox:</b> Instructs OSTRICH to compute an estimate of the best Box-Cox power transformation for obtaining normalized residuals.</li>
+									<li><b>StdDev:</b> Selects standard deviation of the regression (i.e. root mean squared error, RMSE).</li>
+									<li><b>StdErr:</b> Selects parameter standard error.</li>
+									<li><b>CorrCoeff:</b> Selects parameter correlation matrix.</li>
+									<li><b>NormPlot:</b> Selects plot points for a normal probability plot along with corresponding R2N value.</li>
+									<li><b>Beale:</b> Selects Beale’s linearity measure.</li>
+									<li><b>Linssen:</b> Selects Linssen’s linearity measure.</li>
+									<li><b>CooksD:</b> Selects the Cook’s D measure of observation influence.</li>
+									<li><b>DFBETAS:</b> Selects the DFBETAS measure of observation influence.</li>
+									<li><b>Matrices:</b> Selects non-linear regression matrices, including the Jacobian, normal and inverse normal matrices.</li>
+									<li><b>Confidence:</b> Selects linear confidence intervals on estimated parameters.</li>
+									<li><b>Sensitivity:</b> Selects measures of parameter sensitivity, including composite and dimensionless scaled sensitivities.</li>
+									<li><b>RunsTest:</b> Selects the runs test for serial correlation among residuals.</li>
+									<li><b>AutorunFunction:</b> Selects the autorun function for serial correlation among residuals.</li>
+									<li><b>MMRI:</b> Selects various information-theoretic measures for assessing multi-model ranking and inference.</li>
+									<li><b>ExcludeInsensitiveParameters:</b> If present, insensitive parameters will be excluded from statistical calculations. This can help avoid problems with singular matrices.</li>
+									<li><b>IncludeInsensitiveParameters:</b> If present, insensitive parameters will be included in statistical calculations.</li>
+									<li><b>ExcludeInsensitiveObservations:</b> If present, insensitive observations will be excluded from statistical calculations. This can help avoid problems with singular matrices.</li>
+									<li><b>IncludeInsensitiveObservations:</b> If present, insensitive observations will be included in statistical calculations.</li>
+									<li><b>WriteResidualsEachIteration:</b> If present, a residuals file will be created for each iteration or step of the algorithm and named OstResiduals_P*_S*.txt. The P* portion 
+									of the filename will identify the processor (i.e. rank) and the S* portion of the filename will identify the iteration (i.e. step). The file will list the residuals associated with 
+									the best-fit parameter set discovered by the algorithm up to the indicated algorithm iteration (i.e. step). This option only applies to the WSSE objective function and is not available 
+									for the following algorithms: DDSAU, GLUE, MCMC, PADDS, ParaPADDS, RJSMP, BEERS, and SMOOTH.</li>
+								</ul>
+							</li>
+						</ul>
+						
+						<h1>References</h1>
+						<p align="justify">
+							Akaike, H. 1974. A new look at the statistical model identification. IEEE Transactions on Automatic Control 19, 716-723.
+						</p>
+						<p align="justify">
+							Beale, E. M. 1968. Confidence Regions in Non-linear Estimation. Journal of the Royal Statistical Society, Series B 22, 41-88.
+						</p>
+						<p align="justify">
+							Belsley, D., Kuh, E.,Welsch, R. 1980. Regression Diagnostics: Identifying Influential Data and Sources of Colinearity. John Wiley & Sons, New York (NY).
+						</p>
+						<p align="justify">
+							Belsley, D. A., Kuh, E.,Welsch, R. E. 2005. Regression diagnostics: Identifying influential data and sources of collinearity. John Wiley & Sons.
+						</p>
+						<p align="justify">
+							Carroll, R. J.,Ruppert, D. 1988. Transformation and weighting in regression. CRC Press.
+						</p>
+						<p align="justify">
+							Chatterjee, S.,Hadi, A. S. 1986. Influential observations, high leverage points, and outliers in linear regression. Statistical Science 379-393.
+						</p>
+						<p align="justify">
+							Cook, R.,Weisberg, S. 1982. Residuals and Influence in Regression. Chapman and Hall, New York (NY).
+						</p>
+						<p align="justify">
+							Draper, N. R., Smith, H.,Pownell, E. 1966. Applied regression analysis. Wiley New York.
+						</p>
+						<p align="justify">
+							Filliben, J. J. 1975. The Probability Plot Correlation Coefficient Test for Normality. Technometrics 17, 111-117.
+						</p>
+						<p align="justify">
+							Hannan, E.,Quinn, B. 1979. The determination of the order of an autoregression. Journal of the Royal Statistical Society, Series B 41, 190–195.
+						</p>
+						<p align="justify">
+							Hurvich, C. M.,Tsai, C. L. 1993. A corrected Akaike information criterion for vector autoregressive model selection. Journal of time series analysis 14, 271-279.
+						</p>
+						<p align="justify">
+							Hurvich, C. M.,Tsai, C.-L. 1994. Autoregressive model selection in small samples using a bias-corrected  version of AIC. Kluwer Academic Publishers, Dordrecht, Netherlands.
+						</p>
+						<p align="justify"> 
+							Linssen, H. N. 1975. Nonlinearity measures: A case study. Statistica Neerlandica 29, 93-99.
+						</p>
+						<p align="justify">
+							Looney, S. W.,Gulledge Jr, T. R. 1985. Use of the correlation coefficient with normal probability plots. The American Statistician 39, 75-79.
+						</p>
+						<p align="justify">
+							McKenzie, E. 1984. The autorun function: A non-parametric autocorrelation function. Journal of Hydrology 67, 45-53.
+						</p>
+						<p align="justify">
+							Sakia, R. 1992. The Box-Cox transformation technique: a review. The statistician 169-178.
+						</p>
+						<p align="justify">
+							Schwarz, G. 1978. Estimating the dimension of a model. Annals of Statistics 6, 461–464.
+						</p>
+						<p align="justify">
+							Seber, G. A.,Wild, C. J. 1989. Nonlinear Regression. John Wiley and Sons, New York (NY).
+						</p>
+						<p align="justify">
+							Straume, M.,Johnson, M. L. 2010. Analysis of residuals: criteria for determining goodness-of-fit. Essential Numerical Computer Methods 37.
+						</p>
+					</article>
+				</div>
 			</div>
 
 		<!-- Scripts -->

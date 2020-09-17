@@ -104,29 +104,29 @@
 				</section>
 
 				<!-- Main -->
-					<div id="main">
+				<div id="main">
 
-						<!-- Post -->
-							<article class="post">
-								<header>
-									<div class="title">
-										<h2><a href="#">Algorithms - Fletcher Reeves</a></h2>
-										<p>The OSTRICH Fletcher Reeves optimization algorithm</p>
-									</div>
-									<div class="meta">
-										<p align="left">Initial Publication:</p>
-										<time class="time" datetime="2015-11-01">September 16, 2020</time>
-										<p align="left">Modified:</p>
-										<time class="time" datetime="2015-11-01">September 16, 2020</time>
-									</div>
-								</header>
-								<p align="justify">
-									The following optional group will configure the Fletcher-Reeves algorithm and will be processed if [ProgramType] is set to “Fletcher-Reeves”.
-								</p>
-																<!-- This has strange alignment for the code to render correctly on the page.-->
-								<table class="layouttable">
-									<tr>
-										<th>
+					<!-- Post -->
+						<article class="post">
+							<header>
+								<div class="title">
+									<h2><a href="#">Algorithms - Fletcher Reeves</a></h2>
+									<p>The OSTRICH Fletcher Reeves optimization algorithm</p>
+								</div>
+								<div class="meta">
+									<p align="left">Initial Publication:</p>
+									<time class="time" datetime="2015-11-01">September 16, 2020</time>
+									<p align="left">Modified:</p>
+									<time class="time" datetime="2015-11-01">September 16, 2020</time>
+								</div>
+							</header>
+							<p align="justify">
+								The following optional group will configure the Fletcher-Reeves algorithm and will be processed if [ProgramType] is set to “Fletcher-Reeves”.
+							</p>
+															<!-- This has strange alignment for the code to render correctly on the page.-->
+							<table class="layouttable">
+								<tr>
+									<th>
 <pre><code>BeginFletchReevesAlg
 ConvergenceVal [conv_val]
 MaxStalls      [max_stalls]
@@ -141,30 +141,35 @@ MaxStalls      3
 MaxIterations  20
 EndFletchReevesAlg
 </code></pre>
-										</th>
-									</tr>
-								</table>
-								<p align="center" id="fig1"><b>General Format (left) and Example (right) of the Fletcher-Reeves Group</b></p>
-								
-								<p align="justify">
-									Where BeginFletchReevesAlg and EndFletchReevesAlg are parsing tags that wrap the following set of algorithm configuration variables:
-								</p>
-								<ul align="justify">
-									<li><b>ConvergenceVal, MaxStalls:</b> These variables control the convergence termination criterion for the algorithm. The algorithm will 
-									stop when the relative reduction in the objective function over max_stalls iterations is less than conv_val. The default value for 
-									conv_val is 1.00E-6 and the default value for max_stalls is 3.</li>
-									<li><b>MaxIterations:</b>The maximum number of iterations of the algorithm. The default value is 20.</li>
-								</ul>
-							</article>
-					</div>
+								</th>
+							</tr>
+						</table>
+						<p align="center" id="fig1"><b>General Format (left) and Example (right) of the Fletcher-Reeves Group</b></p>
+						
+						<p align="justify">
+							Where BeginFletchReevesAlg and EndFletchReevesAlg are parsing tags that wrap the following set of algorithm configuration variables:
+						</p>
+						<ul align="justify">
+							<li><b>ConvergenceVal, MaxStalls:</b> These variables control the convergence termination criterion for the algorithm. The algorithm will 
+							stop when the relative reduction in the objective function over max_stalls iterations is less than conv_val. The default value for 
+							conv_val is 1.00E-6 and the default value for max_stalls is 3.</li>
+							<li><b>MaxIterations:</b>The maximum number of iterations of the algorithm. The default value is 20.</li>
+						</ul>
+					</article>
+					
+					<h1>References</h1>
+					<p align="justify">
+						Fletcher, R.,Reeves, C. M. 1964. Function minimization by conjugate gradients. The computer journal 7, 149-154.
+					</p>
+				</div>
 			</div>
 
 		<!-- Scripts -->
-			<script src="../../../assets/js/jquery.min.js"></script>
-			<script src="../../../assets/js/browser.min.js"></script>
-			<script src="../../../assets/js/breakpoints.min.js"></script>
-			<script src="../../../assets/js/util.js"></script>
-			<script src="../../../assets/js/main.js"></script>
+		<script src="../../../assets/js/jquery.min.js"></script>
+		<script src="../../../assets/js/browser.min.js"></script>
+		<script src="../../../assets/js/breakpoints.min.js"></script>
+		<script src="../../../assets/js/util.js"></script>
+		<script src="../../../assets/js/main.js"></script>
 
 	</body>
 </html>

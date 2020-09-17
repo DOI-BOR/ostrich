@@ -103,41 +103,45 @@
 
 				</section>
 
-				<!-- Main -->
-					<div id="main">
+			<!-- Main -->
+			<div id="main">
 
-						<!-- Post -->
-							<article class="post">
-								<header>
-									<div class="title">
-										<h2><a href="#">Example #4 - Calibrating a TUSWAMP Watershed Model</a></h2>
-										<p>Example using the OSTRICH GCOP method</p>
-									</div>
-									<div class="meta">
-										<p align="left">Initial Publication:</p>
-										<time class="time" datetime="2015-11-01">September 16, 2020</time>
-										<p align="left">Modified:</p>
-										<time class="time" datetime="2015-11-01">September 16, 2020</time>
-									</div>
-								</header>
-								<p align="justify">
-									This example demonstrates the use of GCOP to calibrate rainfall-runoff behavior in a watershed that is modeled using TUSWAMP (Tufts University Simple Watershed Modeling Program) – an implementation 
-									of the watershed model described by Vogel et al. (2005). The example also illustrates the “PreserveBestModel” feature – a batch file named “SaveBest.bat” will be run each time a new optimal parameter 
-									set is discovered. This batch script copies various model input and output files to a “safe” location that will not be overwritten by OSTRICH. Running the example using OSTRICH.bat will launch the 
-									<a href="../algorithms/search_dds.html">DDS</a> algorithm in serial (i.e. on a single processor). Running the example using mpirun.bat will launch <a href="../algorithms/search_dds_async.html">DDS</a> 
-									in parallel.
-								</p>
-							</article>
-
-					</div>
+				<!-- Post -->
+				<article class="post">
+					<header>
+						<div class="title">
+							<h2><a href="#">Example #4 - Calibrating a TUSWAMP Watershed Model</a></h2>
+							<p>Example using the OSTRICH GCOP method</p>
+						</div>
+						<div class="meta">
+							<p align="left">Initial Publication:</p>
+							<time class="time" datetime="2015-11-01">September 16, 2020</time>
+							<p align="left">Modified:</p>
+							<time class="time" datetime="2015-11-01">September 16, 2020</time>
+						</div>
+					</header>
+					<p align="justify">
+						This example demonstrates the use of GCOP to calibrate rainfall-runoff behavior in a watershed that is modeled using TUSWAMP (Tufts University Simple Watershed Modeling Program) – an implementation 
+						of the watershed model described by Vogel et al. (2005). The example also illustrates the “PreserveBestModel” feature – a batch file named “SaveBest.bat” will be run each time a new optimal parameter 
+						set is discovered. This batch script copies various model input and output files to a “safe” location that will not be overwritten by OSTRICH. Running the example using OSTRICH.bat will launch the 
+						<a href="../algorithms/search_dds.html">DDS</a> algorithm in serial (i.e. on a single processor). Running the example using mpirun.bat will launch <a href="../algorithms/search_dds_async.html">DDS</a> 
+						in parallel.
+					</p>
+					
+					<h1>References</h1>
+					<p align="justify">
+						Vogel, R. M., Chapra, S. C.,Limbrunner, J. F. 2005. A Parsimonious Watershed Model. In Watershed Models (Frevert, D. K., and Singh, V. P., eds.), pp. 549-567. CRC Press, Boca Raton, FL.
+					</p>
+				</article>
 			</div>
+		</div>
 
 		<!-- Scripts -->
-			<script src="../../../assets/js/jquery.min.js"></script>
-			<script src="../../../assets/js/browser.min.js"></script>
-			<script src="../../../assets/js/breakpoints.min.js"></script>
-			<script src="../../../assets/js/util.js"></script>
-			<script src="../../../assets/js/main.js"></script>
+		<script src="../../../assets/js/jquery.min.js"></script>
+		<script src="../../../assets/js/browser.min.js"></script>
+		<script src="../../../assets/js/breakpoints.min.js"></script>
+		<script src="../../../assets/js/util.js"></script>
+		<script src="../../../assets/js/main.js"></script>
 
 	</body>
 </html>

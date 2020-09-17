@@ -103,29 +103,29 @@
 				</section>
 
 				<!-- Main -->
-					<div id="main">
+				<div id="main">
 
-						<!-- Post -->
-							<article class="post">
-								<header>
-									<div class="title">
-										<h2><a href="#">Algorithms - Dynamically Dimensioned Search (DDS)</a></h2>
-										<p>The OSTRICH dynamically dimensioned search optimization algorithm</p>
-									</div>
-									<div class="meta">
-										<p align="left">Initial Publication:</p>
-										<time class="time" datetime="2015-11-01">September 16, 2020</time>
-										<p align="left">Modified:</p>
-										<time class="time" datetime="2015-11-01">September 16, 2020</time>
-									</div>
-								</header>
-								<p align="justify">
-									The following optional group will configure the DDS algorithm and will be processed if [ProgramType] is set to “DDS”.
-								</p>
-								<!-- This has strange alignment for the code to render correctly on the page.-->
-								<table class="layouttable">
-									<tr>
-										<th>
+					<!-- Post -->
+						<article class="post">
+							<header>
+								<div class="title">
+									<h2><a href="#">Algorithms - Dynamically Dimensioned Search (DDS)</a></h2>
+									<p>The OSTRICH dynamically dimensioned search optimization algorithm</p>
+								</div>
+								<div class="meta">
+									<p align="left">Initial Publication:</p>
+									<time class="time" datetime="2015-11-01">September 16, 2020</time>
+									<p align="left">Modified:</p>
+									<time class="time" datetime="2015-11-01">September 16, 2020</time>
+								</div>
+							</header>
+							<p align="justify">
+								The following optional group will configure the DDS algorithm and will be processed if [ProgramType] is set to “DDS”.
+							</p>
+							<!-- This has strange alignment for the code to render correctly on the page.-->
+							<table class="layouttable">
+								<tr>
+									<th>
 <pre><code>BeginDDSAlg
 PerturbationValue      [r_val]
 MaxIterations          [budget]
@@ -141,42 +141,47 @@ MaxIterations          100
 UseRandomParamValues
 EndDDSAlg
 </code></pre>
-										</th>
-									</tr>
-								</table>
-								<p align="center" id="fig1"><b>Figure 1: General Format (left) and Example (right) of the DDS Group</b></p>
-								
-								<p align="justify">
-									Where BeginDDSAlg and EndDDSAlg are parsing tags that wrap a set of algorithm configuration variables. Alternatively, BeginDDS and EndDDS may be used as parsing tags. 
-								</p>
-								<ul align="justify">
-									<li><b>PerturbationValue:</b> This parameter defines the standard deviation of the decision variable perturbations as follows: 
-									PerturbationValue = StdDev / DV_Range. The allowable range is 0 to 1. As the value increases, the sampling becomes more and more spread 
-									out from the current best value of the decision variable. The default and recommended value is 0.2.</li>
-									<li><b>MaxIterations:</b> The computational budget in terms of the number of objective function evaluations.  Users need to set this 
-									input for each problem according to how long each objective function evaluation takes and how quickly an answer is needed.  The more 
-									objective functions you use, the better your estimate of the globally optimal solution will be. The default value is 100.</li>
-									<li><b>UseInitialParamValues:</b> The algorithm will be initiated from the initial values specified in the parameter group if this line is included. This variable is 
-									mutually exclusive with the “UseRandomParamValues” variable – only one should be included.  If neither are included the algorithm will default to 
-									“UseRandomParamValues”.</li>
-									<li><b>UseRandomParamValues:</b> If this line is included the algorithm will be initiated from a randomly generated location. This 
-									variable is mutually exclusive with the “UseInitialParamValues” variable – only one should be included.  If neither are included the 
-									algorithm will default to “UseRandomParamValues”.</li>
-								</ul>
-							</article>
+								</th>
+							</tr>
+						</table>
+						<p align="center" id="fig1"><b>Figure 1: General Format (left) and Example (right) of the DDS Group</b></p>
+						
+						<p align="justify">
+							Where BeginDDSAlg and EndDDSAlg are parsing tags that wrap a set of algorithm configuration variables. Alternatively, BeginDDS and EndDDS may be used as parsing tags. 
+						</p>
+						<ul align="justify">
+							<li><b>PerturbationValue:</b> This parameter defines the standard deviation of the decision variable perturbations as follows: 
+							PerturbationValue = StdDev / DV_Range. The allowable range is 0 to 1. As the value increases, the sampling becomes more and more spread 
+							out from the current best value of the decision variable. The default and recommended value is 0.2.</li>
+							<li><b>MaxIterations:</b> The computational budget in terms of the number of objective function evaluations.  Users need to set this 
+							input for each problem according to how long each objective function evaluation takes and how quickly an answer is needed.  The more 
+							objective functions you use, the better your estimate of the globally optimal solution will be. The default value is 100.</li>
+							<li><b>UseInitialParamValues:</b> The algorithm will be initiated from the initial values specified in the parameter group if this line is included. This variable is 
+							mutually exclusive with the “UseRandomParamValues” variable – only one should be included.  If neither are included the algorithm will default to 
+							“UseRandomParamValues”.</li>
+							<li><b>UseRandomParamValues:</b> If this line is included the algorithm will be initiated from a randomly generated location. This 
+							variable is mutually exclusive with the “UseInitialParamValues” variable – only one should be included.  If neither are included the 
+							algorithm will default to “UseRandomParamValues”.</li>
+						</ul>
+						<h1>References</h1>
+						<p align="justify">
+							Tolson, B. A.,Shoemaker, C. A. 2007. Dynamically dimensioned search algorithm for computationally efficient watershed model calibration. Water Resources Research 43(1): 
+							W01413, doi:10.1029/2005WR004723 
+						</p>
+					</article>
 
-					</div>
+				</div>
 
 				
 
 			</div>
 
 		<!-- Scripts -->
-			<script src="../../../assets/js/jquery.min.js"></script>
-			<script src="../../../assets/js/browser.min.js"></script>
-			<script src="../../../assets/js/breakpoints.min.js"></script>
-			<script src="../../../assets/js/util.js"></script>
-			<script src="../../../assets/js/main.js"></script>
+		<script src="../../../assets/js/jquery.min.js"></script>
+		<script src="../../../assets/js/browser.min.js"></script>
+		<script src="../../../assets/js/breakpoints.min.js"></script>
+		<script src="../../../assets/js/util.js"></script>
+		<script src="../../../assets/js/main.js"></script>
 
 	</body>
 </html>

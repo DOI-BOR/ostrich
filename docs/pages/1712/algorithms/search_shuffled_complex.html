@@ -104,30 +104,30 @@
 				</section>
 
 				<!-- Main -->
-					<div id="main">
+				<div id="main">
 
-						<!-- Post -->
-							<article class="post">
-								<header>
-									<div class="title">
-										<h2><a href="#">Algorithms - Shuffled Complex Evolution (SCE)</a></h2>
-										<p>The OSTRICH shuffled complex evolution optimization algorithm</p>
-									</div>
-									<div class="meta">
-										<p align="left">Initial Publication:</p>
-										<time class="time" datetime="2015-11-01">September 16, 2020</time>
-										<p align="left">Modified:</p>
-										<time class="time" datetime="2015-11-01">September 16, 2020</time>
-									</div>
-								</header>
-								<p align="justify">
-									The following optional group will configure the shuffled complex evolution (SCE) algorithm and will be processed if [ProgramType] is set 
-									to “ShuffledComplexEvolution”.
-								</p>
-								<!-- This has strange alignment for the code to render correctly on the page.-->
-								<table class="layouttable">
-									<tr>
-										<th>
+					<!-- Post -->
+						<article class="post">
+							<header>
+								<div class="title">
+									<h2><a href="#">Algorithms - Shuffled Complex Evolution (SCE)</a></h2>
+									<p>The OSTRICH shuffled complex evolution optimization algorithm</p>
+								</div>
+								<div class="meta">
+									<p align="left">Initial Publication:</p>
+									<time class="time" datetime="2015-11-01">September 16, 2020</time>
+									<p align="left">Modified:</p>
+									<time class="time" datetime="2015-11-01">September 16, 2020</time>
+								</div>
+							</header>
+							<p align="justify">
+								The following optional group will configure the shuffled complex evolution (SCE) algorithm and will be processed if [ProgramType] is set 
+								to “ShuffledComplexEvolution”.
+							</p>
+							<!-- This has strange alignment for the code to render correctly on the page.-->
+							<table class="layouttable">
+								<tr>
+									<th>
 <pre><code>BeginSCEUA
 Budget                  [MAXN]
 LoopStagnationCriteria  [KSTOP]
@@ -156,48 +156,60 @@ MinNumberOfCOmplexes    3
 UseInitialPoint         no
 EndSCEUA
 </code></pre>
-										</th>
-									</tr>
-								</table>
-								<p align="center" id="fig1"><b>Figure 1: General Format (left) and Example (right) of the SCE Group </b></p>
-								
-								<p align="justify">
-									Where BeginSCEUA and EndSCEUA are parsing tags that wrap a set of algorithm configuration variables. These variables are described below and 
-									descriptions are based on comments within the FORTRAN implementation provided by Duan et al. (1993). The corresponding variable names used in 
-									the FORTRAN implementation are provided in brackets (‘[’ and ‘]’) in the general format of Figure 1.
-								</p>
-								<ul align="justify">
-									<li><b>LoopStagnationCriteria</b> (KSTOP): Number of shuffling loops in which the optimization criterion must improve by the specified 
-									percentage or else optimization will be restarted.</li>
-									<li><b>PctChangeCriteria</b> (PCENTO): Percentage by which the optimization criterion value must change in the specified number of shuffling 
-									loops or else optimization is restarted. Use decimal equivalent: Percentage/100. Recommended value: 0.01.</li>
-									<li><b>PopConvCriteria</b> (PEPS): The optimization will be restarted if the shuffling and/or evolution process results in a population that 
-									is entirely within PEPS×100 percent of the feasible space. The default value is 0.001.</li>
-									<li><b>NumComplexes</b> (NGS): Number of complexes used for optimization search.  Minimum value is 1. Recommended value is between 2 and 20 
-									depending on the number of parameters to be optimized and on the degree of difficulty of the problem. If not specified OSTRICH will use the 
-									following calculation: NGS = sqrt(np) , where np is the number of parameters.</li>
-									<li><b>NumPointsPerComplex</b> (NPG): The number of points in each complex.  NPG should be greater than or equal to 2.  The default value is: 
-									NPG = 2 × np + 1.</li>
-									<li><b>NumPointsPerSubComplex</b> (NPS): The number of points in each sub-complex.  NPS should be greater than or equal to 2 and less than NPG.  
-									The default value is: NPS = np + 1.</li>
-									<li><b>NumEvolutionSteps</b> (NSPL): The number of evolution steps taken by each complex before next shuffling.  The default value is: NSPL = 
-									2 × np +1.</li>
-									<li><b>MinNumberOfComplexes</b> (MINGS): Minimum number of complexes required for optimization search, if the number of complexes is allowed 
-									to reduce as the optimization search proceeds.  The default value is: MINGS = sqrt(np).</li>
-									<li><b>UseInitialPoint</b> (INIFLG): Flag on whether to include an initial point in the starting population.  Enter “yes” if the initial point 
-									is to be included.  The default value is “no”.</li>
-								</ul>
-							</article>
-
-					</div>
+								</th>
+							</tr>
+						</table>
+						<p align="center" id="fig1"><b>Figure 1: General Format (left) and Example (right) of the SCE Group </b></p>
+						
+						<p align="justify">
+							Where BeginSCEUA and EndSCEUA are parsing tags that wrap a set of algorithm configuration variables. These variables are described below and 
+							descriptions are based on comments within the FORTRAN implementation provided by Duan et al. (1993). The corresponding variable names used in 
+							the FORTRAN implementation are provided in brackets (‘[’ and ‘]’) in the general format of Figure 1.
+						</p>
+						<ul align="justify">
+							<li><b>LoopStagnationCriteria</b> (KSTOP): Number of shuffling loops in which the optimization criterion must improve by the specified 
+							percentage or else optimization will be restarted.</li>
+							<li><b>PctChangeCriteria</b> (PCENTO): Percentage by which the optimization criterion value must change in the specified number of shuffling 
+							loops or else optimization is restarted. Use decimal equivalent: Percentage/100. Recommended value: 0.01.</li>
+							<li><b>PopConvCriteria</b> (PEPS): The optimization will be restarted if the shuffling and/or evolution process results in a population that 
+							is entirely within PEPS×100 percent of the feasible space. The default value is 0.001.</li>
+							<li><b>NumComplexes</b> (NGS): Number of complexes used for optimization search.  Minimum value is 1. Recommended value is between 2 and 20 
+							depending on the number of parameters to be optimized and on the degree of difficulty of the problem. If not specified OSTRICH will use the 
+							following calculation: NGS = sqrt(np) , where np is the number of parameters.</li>
+							<li><b>NumPointsPerComplex</b> (NPG): The number of points in each complex.  NPG should be greater than or equal to 2.  The default value is: 
+							NPG = 2 × np + 1.</li>
+							<li><b>NumPointsPerSubComplex</b> (NPS): The number of points in each sub-complex.  NPS should be greater than or equal to 2 and less than NPG.  
+							The default value is: NPS = np + 1.</li>
+							<li><b>NumEvolutionSteps</b> (NSPL): The number of evolution steps taken by each complex before next shuffling.  The default value is: NSPL = 
+							2 × np +1.</li>
+							<li><b>MinNumberOfComplexes</b> (MINGS): Minimum number of complexes required for optimization search, if the number of complexes is allowed 
+							to reduce as the optimization search proceeds.  The default value is: MINGS = sqrt(np).</li>
+							<li><b>UseInitialPoint</b> (INIFLG): Flag on whether to include an initial point in the starting population.  Enter “yes” if the initial point 
+							is to be included.  The default value is “no”.</li>
+						</ul>
+						
+						<h1>References</h1>
+						<p align="justify">
+							Deb, K. 2001. Multi-objective optimization using evolutionary algorithms. John Wiley & Sons, Chichester, UK.
+						</p>
+						<p align="justify">
+							Duan, Q., Sorooshian, S.,Gupta, V. K. 1992. Effective and efficient global optimization for conceptual rainfall-runoff models. Water Resources 
+							Research 28, 1015– 1031.
+						</p>
+						<p align="justify">
+							Duan, Q., Gupta, V. K.,Sorooshian, S. 1993. A shuffled complex evolution approach for effective and efficient global minimization. Journal of 
+							Optimization Theory and Applications 76, 501– 521.
+						</p>
+					</article>
+				</div>
 			</div>
 
 		<!-- Scripts -->
-			<script src="../../../assets/js/jquery.min.js"></script>
-			<script src="../../../assets/js/browser.min.js"></script>
-			<script src="../../../assets/js/breakpoints.min.js"></script>
-			<script src="../../../assets/js/util.js"></script>
-			<script src="../../../assets/js/main.js"></script>
+		<script src="../../../assets/js/jquery.min.js"></script>
+		<script src="../../../assets/js/browser.min.js"></script>
+		<script src="../../../assets/js/breakpoints.min.js"></script>
+		<script src="../../../assets/js/util.js"></script>
+		<script src="../../../assets/js/main.js"></script>
 
 	</body>
 </html>

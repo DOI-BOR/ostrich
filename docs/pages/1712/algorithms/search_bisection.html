@@ -104,29 +104,29 @@
 				</section>
 
 				<!-- Main -->
-					<div id="main">
+				<div id="main">
 
-						<!-- Post -->
-							<article class="post">
-								<header>
-									<div class="title">
-										<h2><a href="#">Algorithms - Bisection</a></h2>
-										<p>The OSTRICH bisection optimization algorithm</p>
-									</div>
-									<div class="meta">
-										<p align="left">Initial Publication:</p>
-										<time class="time" datetime="2015-11-01">September 16, 2020</time>
-										<p align="left">Modified:</p>
-										<time class="time" datetime="2015-11-01">September 16, 2020</time>
-									</div>
-								</header>
-								<p align="justify">
-									The following optional group will configure the bisection algorithm and will be processed if [ProgramType] is set to “BisectionAlgorithm”.
-								</p>
-								<!-- This has strange alignment for the code to render correctly on the page.-->
-								<table class="layouttable">
-									<tr>
-										<th>
+					<!-- Post -->
+						<article class="post">
+							<header>
+								<div class="title">
+									<h2><a href="#">Algorithms - Bisection</a></h2>
+									<p>The OSTRICH bisection optimization algorithm</p>
+								</div>
+								<div class="meta">
+									<p align="left">Initial Publication:</p>
+									<time class="time" datetime="2015-11-01">September 16, 2020</time>
+									<p align="left">Modified:</p>
+									<time class="time" datetime="2015-11-01">September 16, 2020</time>
+								</div>
+							</header>
+							<p align="justify">
+								The following optional group will configure the bisection algorithm and will be processed if [ProgramType] is set to “BisectionAlgorithm”.
+							</p>
+							<!-- This has strange alignment for the code to render correctly on the page.-->
+							<table class="layouttable">
+								<tr>
+									<th>
 <pre><code>BeginBisectionAlg
 MaxOuterIterations [max_outer]
 MaxInnerIterations [max_inner]
@@ -139,34 +139,35 @@ MaxOuterIterations 50
 MaxInnerIterations 20
 EndBisectionAlg
 </code></pre>
-										</th>
-									</tr>
-								</table>
-								<p align="center" id="fig1"><b>Figure 1: General Format (left) and Example (right) of the Bisection Group</b></p>
-								
-								<p align="justify">
-									Where BeginBisectionAlg and EndBisectionAlg are parsing tags that wrap the following set of algorithm configuration variables:
-								</p>
-								<ul align="justify">
-									<li><b>MaxOuterIterations:</b> The maximum number of outer iterations of the algorithm. One outer iteration corresponds to application of the bisection 
-									method to a randomly chosen initial parameter set. The default value is 50.</li>
-									<li><b>MaxInnerIterations:</b> The maximum number of inner iterations of the algorithm. Each inner iteration reduces the searchable parameter range by 50%. 
-									Default value is 20.</li>
-								</ul>
-							</article>
-
-					</div>
-
-				
-
+								</th>
+							</tr>
+						</table>
+						<p align="center" id="fig1"><b>Figure 1: General Format (left) and Example (right) of the Bisection Group</b></p>
+						
+						<p align="justify">
+							Where BeginBisectionAlg and EndBisectionAlg are parsing tags that wrap the following set of algorithm configuration variables:
+						</p>
+						<ul align="justify">
+							<li><b>MaxOuterIterations:</b> The maximum number of outer iterations of the algorithm. One outer iteration corresponds to application of the bisection 
+							method to a randomly chosen initial parameter set. The default value is 50.</li>
+							<li><b>MaxInnerIterations:</b> The maximum number of inner iterations of the algorithm. Each inner iteration reduces the searchable parameter range by 50%. 
+							Default value is 20.</li>
+						</ul>
+						
+						<h1>References</h1>
+						<p align="justify">
+							Corliss, G. 1977. Which root does the bisection algorithm find? Siam Review 19, 325-327.
+						</p>
+					</article>
+				</div>
 			</div>
 
 		<!-- Scripts -->
-			<script src="../../../assets/js/jquery.min.js"></script>
-			<script src="../../../assets/js/browser.min.js"></script>
-			<script src="../../../assets/js/breakpoints.min.js"></script>
-			<script src="../../../assets/js/util.js"></script>
-			<script src="../../../assets/js/main.js"></script>
+		<script src="../../../assets/js/jquery.min.js"></script>
+		<script src="../../../assets/js/browser.min.js"></script>
+		<script src="../../../assets/js/breakpoints.min.js"></script>
+		<script src="../../../assets/js/util.js"></script>
+		<script src="../../../assets/js/main.js"></script>
 
 	</body>
 </html>

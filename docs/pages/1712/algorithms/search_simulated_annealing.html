@@ -104,29 +104,29 @@
 				</section>
 
 				<!-- Main -->
-					<div id="main">
+				<div id="main">
 
-						<!-- Post -->
-							<article class="post">
-								<header>
-									<div class="title">
-										<h2><a href="#">Algorithms - Simulated Annealing</a></h2>
-										<p>The OSTRICH simulated annealing optimization algorithm</p>
-									</div>
-									<div class="meta">
-										<p align="left">Initial Publication:</p>
-										<time class="time" datetime="2015-11-01">September 16, 2020</time>
-										<p align="left">Modified:</p>
-										<time class="time" datetime="2015-11-01">September 16, 2020</time>
-									</div>
-								</header>
-								<p align="justify">
-									The following optional group will configure the continuous variable Simulated Annealing algorithm and will be processed if [ProgramType] is set to “SimulatedAnnealing”.
-								</p>
-																<!-- This has strange alignment for the code to render correctly on the page.-->
-								<table class="layouttable">
-									<tr>
-										<th>
+					<!-- Post -->
+						<article class="post">
+							<header>
+								<div class="title">
+									<h2><a href="#">Algorithms - Simulated Annealing</a></h2>
+									<p>The OSTRICH simulated annealing optimization algorithm</p>
+								</div>
+								<div class="meta">
+									<p align="left">Initial Publication:</p>
+									<time class="time" datetime="2015-11-01">September 16, 2020</time>
+									<p align="left">Modified:</p>
+									<time class="time" datetime="2015-11-01">September 16, 2020</time>
+								</div>
+							</header>
+							<p align="justify">
+								The following optional group will configure the continuous variable Simulated Annealing algorithm and will be processed if [ProgramType] is set to “SimulatedAnnealing”.
+							</p>
+															<!-- This has strange alignment for the code to render correctly on the page.-->
+							<table class="layouttable">
+								<tr>
+									<th>
 <pre><code>BeginSimulatedAlg
 NumInitialTrials       [n_init]
 TemperatureScaleFactor [tscale]
@@ -149,48 +149,59 @@ FinalTemperature       10.0
 TransitionMethod       Gauss
 EndSimulatedAlg
 </code></pre>
-										</th>
-									</tr>
-								</table>
-								<p align="center" id="fig1"><b>Figure 1: General Format (left) and Example (right) of the Continuous Variable Simulated Annealing Group </b></p>
-								
-								<p align="justify">
-									Where BeginSimulatedAlg and EndSimulatedAlg are parsing tags that wrap the following set of algorithm configuration variables:
-								</p>
-								<ul align="justify">
-									<li><b>NumInitialTrials:</b> This is the number of uphill moves that are attempted in the melting process. Larger values will result in more accurate 
-									estimates of the initial temperature, but at the expense of additional model runs. The default value is 100.</li>
-									<li><b>TemperatureScaleFactor:</b> After each (outer) iteration, the temperature is reduced by multiplying by this value. This value should be less 
-									than 1.00. The default value is 0.90.</li>
-									<li><b>OuterIterations:</b> This is the number of iterations in the overall algorithm, where one outer iteration corresponds to one temperature reduction. 
-									The default value is 20.</li>
-									<li><b>InnerIterations:</b> This is the number of iterations in each temperature equilibration, where one inner iteration corresponds to a single 
-									transitional move. The default value is 10.</li>
-									<li><b>ConvergenceVal</b>: This is the convergence value for the algorithm. If the relative difference between the current minimum and the median of the 
-									latest series of equilibration moves is less than or equal to this value, the algorithm will halt. The default value is 0.001.</li>
-									<li><b>FinalTemperature:</b> This variable can be used to set a specific value for the final temperature in the SA algorithm. The temperature scale factor will 
-									be adjusted to achieve the desired temperature. Alternatively, OSTRICH supports two options for dynamically pre-computing the final temperature. These 
-									dynamic options are based on the methods of Vanderbilt and Louie (1984) and Ben-Ameur (2004), respectively. Set the FinalTemperature to “computed-vanderbilt” 
-									to select the Vanderbilt-Louie approach. Set the FinalTemperature to “compute-ben-ameur” to select the Ben-Ameur approach. If a final temperature option 
-									or value is not specified, the final temperature will be determined from the initial temperature, temperature scale factor, and number of outer iterations.</li>
-									<li><b>TransitionMethod:</b> This variable selects the method used to compute randomized parameter perturbations during the transition phase of the SA algorithm. 
-									Set this variable to “Uniform” to sample from a uniform distribution, or use a value of “Gauss” to select a Gaussian (i.e. normal) distribution. The default 
-									value is “Gauss”.</li>
-								</ul>
-							</article>
-
-					</div>
-
-				
-
+								</th>
+							</tr>
+						</table>
+						<p align="center" id="fig1"><b>Figure 1: General Format (left) and Example (right) of the Continuous Variable Simulated Annealing Group </b></p>
+						
+						<p align="justify">
+							Where BeginSimulatedAlg and EndSimulatedAlg are parsing tags that wrap the following set of algorithm configuration variables:
+						</p>
+						<ul align="justify">
+							<li><b>NumInitialTrials:</b> This is the number of uphill moves that are attempted in the melting process. Larger values will result in more accurate 
+							estimates of the initial temperature, but at the expense of additional model runs. The default value is 100.</li>
+							<li><b>TemperatureScaleFactor:</b> After each (outer) iteration, the temperature is reduced by multiplying by this value. This value should be less 
+							than 1.00. The default value is 0.90.</li>
+							<li><b>OuterIterations:</b> This is the number of iterations in the overall algorithm, where one outer iteration corresponds to one temperature reduction. 
+							The default value is 20.</li>
+							<li><b>InnerIterations:</b> This is the number of iterations in each temperature equilibration, where one inner iteration corresponds to a single 
+							transitional move. The default value is 10.</li>
+							<li><b>ConvergenceVal</b>: This is the convergence value for the algorithm. If the relative difference between the current minimum and the median of the 
+							latest series of equilibration moves is less than or equal to this value, the algorithm will halt. The default value is 0.001.</li>
+							<li><b>FinalTemperature:</b> This variable can be used to set a specific value for the final temperature in the SA algorithm. The temperature scale factor will 
+							be adjusted to achieve the desired temperature. Alternatively, OSTRICH supports two options for dynamically pre-computing the final temperature. These 
+							dynamic options are based on the methods of Vanderbilt and Louie (1984) and Ben-Ameur (2004), respectively. Set the FinalTemperature to “computed-vanderbilt” 
+							to select the Vanderbilt-Louie approach. Set the FinalTemperature to “compute-ben-ameur” to select the Ben-Ameur approach. If a final temperature option 
+							or value is not specified, the final temperature will be determined from the initial temperature, temperature scale factor, and number of outer iterations.</li>
+							<li><b>TransitionMethod:</b> This variable selects the method used to compute randomized parameter perturbations during the transition phase of the SA algorithm. 
+							Set this variable to “Uniform” to sample from a uniform distribution, or use a value of “Gauss” to select a Gaussian (i.e. normal) distribution. The default 
+							value is “Gauss”.</li>
+						</ul>
+						
+						<h1>References</h1>
+						<p align="justify">
+							Ben-Ameur, W. 2004. Computing the Initial Temperature of Simulated Annealing. Computational Optimization and Applications 29, 369-385.
+						</p>
+						<p align="justify">
+							Dougherty, D. E.,Marryott, R. A. 1991. Optimal groundwater management: 1. Simulated annealing. Water Resources Research 27, 2493-2508.
+						</p>
+						<p align="justify">
+							Kirkpatrick, S., Gelatt, C. D., Jr.,Vecchi, M. P. 1983. Optimization by Simulated Annealing. Science 220, 671-680.
+						</p>
+						<p align="justify">
+							Marryott, R. A., Dougherty, D. E.,Stollar, R. L. 1993. Optimal groundwater management: 2. Application of simulated annealing to a field-scale contamination 
+							site. Water Resources Research 29, 847-860.
+						</p>
+					</article>
+				</div>
 			</div>
 
 		<!-- Scripts -->
-			<script src="../../../assets/js/jquery.min.js"></script>
-			<script src="../../../assets/js/browser.min.js"></script>
-			<script src="../../../assets/js/breakpoints.min.js"></script>
-			<script src="../../../assets/js/util.js"></script>
-			<script src="../../../assets/js/main.js"></script>
+		<script src="../../../assets/js/jquery.min.js"></script>
+		<script src="../../../assets/js/browser.min.js"></script>
+		<script src="../../../assets/js/breakpoints.min.js"></script>
+		<script src="../../../assets/js/util.js"></script>
+		<script src="../../../assets/js/main.js"></script>
 
 	</body>
 </html>
