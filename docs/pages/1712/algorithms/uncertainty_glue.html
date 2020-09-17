@@ -144,37 +144,44 @@ MaxSamples        100
 Threshold         1000
 EndGLUE
 </code></pre>
-										</th>
-									</tr>
-								</table>
-								<p align="center" id="fig1"><b>Figure 1: General Format (left) and Example (right) of the GLUE Group  </b></p>
-								
-								<p align="justify">
-									Where BeginGLUE and EndGLUE are parsing tags that wrap a set of algorithm configuration variables. These variables are described below:
-								</p>
-								<ul align="justify">
-									<li><b>SamplesPerIter:</b> This variable controls the frequency of output within the OSTRICH run record. 
-									The current best solution will be reported after every SamplesPerIter model evaluations. The current number of behavioral solutions that 
-									have been discovered will also be reported. The default value is 10.</li>
-									<li><b>NumBehavioral:</b> The desired number of behavioral solutions. The GLUE algorithm will halt if the desired number of behavioral 
-									solutions has been found or if the computational budget (i.e. MaxSamples) has been exhausted. The default value is 10.</li>
-									<li><b>MaxSamples:</b> The maximum number of model evaluations allowed before the GLUE search is terminated. The default value is 100. 
-									However, studies have shown that GLUE can require 100,000 or more evaluations to discover a sufficiently representative number of behavioral 
-									samples.</li>
-									<li><b>Threshold:</b> The threshold for separating behavioral and non-behavioral parameter sets. Parameter sets with corresponding 
-									objective function values less than the threshold will be considered behavioral. The default value is 1000.</li>
-								</ul>
-							</article>
-
-					</div>
+							</th>
+						</tr>
+					</table>
+					<p align="center" id="fig1"><b>Figure 1: General Format (left) and Example (right) of the GLUE Group  </b></p>
+					
+					<p align="justify">
+						Where BeginGLUE and EndGLUE are parsing tags that wrap a set of algorithm configuration variables. These variables are described below:
+					</p>
+					<ul align="justify">
+						<li><b>SamplesPerIter:</b> This variable controls the frequency of output within the OSTRICH run record. 
+						The current best solution will be reported after every SamplesPerIter model evaluations. The current number of behavioral solutions that 
+						have been discovered will also be reported. The default value is 10.</li>
+						<li><b>NumBehavioral:</b> The desired number of behavioral solutions. The GLUE algorithm will halt if the desired number of behavioral 
+						solutions has been found or if the computational budget (i.e. MaxSamples) has been exhausted. The default value is 10.</li>
+						<li><b>MaxSamples:</b> The maximum number of model evaluations allowed before the GLUE search is terminated. The default value is 100. 
+						However, studies have shown that GLUE can require 100,000 or more evaluations to discover a sufficiently representative number of behavioral 
+						samples.</li>
+						<li><b>Threshold:</b> The threshold for separating behavioral and non-behavioral parameter sets. Parameter sets with corresponding 
+						objective function values less than the threshold will be considered behavioral. The default value is 1000.</li>
+					</ul>
+					
+					<h1>References</h1>
+					<p align="justify">
+						Beven, K.,Binley, A. 1992. The future of distributed models: model calibration and uncertainty prediction. Hydrological Processes 6, 279-298.
+					</p>
+					<p align="justify">
+						Stedinger, J. R., Vogel, R. M., Lee, S. U.,Batchelder, R. 2008. Appraisal of the generalized likelihood uncertainty estimation (GLUE) method. Water Resources Research 44.
+					</p>
+				</article>
 			</div>
+		</div>
 
 		<!-- Scripts -->
-			<script src="../../../assets/js/jquery.min.js"></script>
-			<script src="../../../assets/js/browser.min.js"></script>
-			<script src="../../../assets/js/breakpoints.min.js"></script>
-			<script src="../../../assets/js/util.js"></script>
-			<script src="../../../assets/js/main.js"></script>
+		<script src="../../../assets/js/jquery.min.js"></script>
+		<script src="../../../assets/js/browser.min.js"></script>
+		<script src="../../../assets/js/breakpoints.min.js"></script>
+		<script src="../../../assets/js/util.js"></script>
+		<script src="../../../assets/js/main.js"></script>
 
 	</body>
 </html>

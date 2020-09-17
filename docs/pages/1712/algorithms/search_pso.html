@@ -104,29 +104,29 @@
 				</section>
 
 				<!-- Main -->
-					<div id="main">
+				<div id="main">
 
-						<!-- Post -->
-							<article class="post">
-								<header>
-									<div class="title">
-										<h2><a href="#">Algorithms - Particle Swarm Optimization (PSO)</a></h2>
-										<p>The OSTRICH particle swarm optimization (PSO) algorithm</p>
-									</div>
-									<div class="meta">
-										<p align="left">Initial Publication:</p>
-										<time class="time" datetime="2015-11-01">September 16, 2020</time>
-										<p align="left">Modified:</p>
-										<time class="time" datetime="2015-11-01">September 16, 2020</time>
-									</div>
-								</header>
-								<p align="justify">
-									The following optional group will configure the PSO algorithm and will be processed if [ProgramType] is set to “ParticleSwarm”.
-								</p>
-								<!-- This has strange alignment for the code to render correctly on the page.-->
-								<table class="layouttable">
-									<tr>
-										<th>
+					<!-- Post -->
+						<article class="post">
+							<header>
+								<div class="title">
+									<h2><a href="#">Algorithms - Particle Swarm Optimization (PSO)</a></h2>
+									<p>The OSTRICH particle swarm optimization (PSO) algorithm</p>
+								</div>
+								<div class="meta">
+									<p align="left">Initial Publication:</p>
+									<time class="time" datetime="2015-11-01">September 16, 2020</time>
+									<p align="left">Modified:</p>
+									<time class="time" datetime="2015-11-01">September 16, 2020</time>
+								</div>
+							</header>
+							<p align="justify">
+								The following optional group will configure the PSO algorithm and will be processed if [ProgramType] is set to “ParticleSwarm”.
+							</p>
+							<!-- This has strange alignment for the code to render correctly on the page.-->
+							<table class="layouttable">
+								<tr>
+									<th>
 <pre><code>BeginParticleSwarm
 SwarmSize            <swarm>
 NumGenerations       <ngen>
@@ -153,49 +153,62 @@ InitPopulationMethod Random
 ConvergenceVal       1.00E-4
 EndParticleSwarm
 </code></pre>
-										</th>
-									</tr>
-								</table>
-								<p align="center" id="fig1"><b>Figure 1: General Format (left) and Example (right) of the PSO Algorithm Group</b></p>
-								
-								<p align="justify">
-									Where BeginParticleSwarm and EndParticleSwarm are parsing tags that wrap a set of algorithm configuration variables. The variables are described below:
-								</p>
-								<ul align="justify">
-									<li><b>SwarmSize:</b> The size of the particle swarm. The default value is 20.</li>
-									<li><b>NumGenerations:</b> The number of generations in the PSO. The default value is 50.</li>
-									<li><b>ConstrictionFactor:</b> The value of χ¬ in the PSO algorithm. Setting¬ less than 1.00 will restrict the searchable design space after each iteration 
-									and accelerate convergence, but can lead to entrapment in local minima. The default value is 1.00.</li>
-									<li><b>CognitiveParam:</b> The weight given to the local knowledge of each particle. High values (relative to the SocialParam) will cause particles to bias 
-									their search to the area surrounding each particles local best. The default value is 2.00.</li>
-									<li><b>SocialParam:</b> The weight given to the global (social) knowledge of each particle. High values (relative to the CognitiveParam) will cause particles 
-									to bias their search to the area surrounding the global best. The default value is 2.00.</li>
-									<li><b>InertiaWeight:</b> The initial weight given to the velocity used in each particle’s previous generation of movement. High values tend to cause particles 
-									to ’overshoot’ their destination, which is desirable in initial generations because it allows for more complete exploration of the design space. The 
-									default is 1.2. </li>
-									<li><b>InertiaReductionRate:</b> Relative reduction rate for the inertia weight. As the optimization proceeds, the inertia weight is reduced by 
-									InertiaReductionRate × 100% of its current value. This reduces overshoot over successive generations such that late-generation searches are clustered 
-									around the global best solution. If this value is set to linear, the inertia weight will be linearly reduced from its initial value to a final value 
-									(i.e. at the last generation) of zero. The default value is 0.10.</li>
-									<li><b>InitPopulationMethod:</b> This variable controls how the algorithm configures the initial swarm of candidate solutions. Supported values are: “random”, 
-									“LHS” (Latin Hypercube Sampling), and “QuadTree”. The default value is “random”.</li>
-									<li><b>ConvergenceVal:</b> This is the convergence value for the algorithm. If the relative difference between the current minimum and the median of the latest 
-									generation is less than or equal to this value, the algorithm will halt. The default value is 1.00E-4.</li>
-								</ul>
-							</article>
-
-					</div>
-
-				
-
+								</th>
+							</tr>
+						</table>
+						<p align="center" id="fig1"><b>Figure 1: General Format (left) and Example (right) of the PSO Algorithm Group</b></p>
+						
+						<p align="justify">
+							Where BeginParticleSwarm and EndParticleSwarm are parsing tags that wrap a set of algorithm configuration variables. The variables are described below:
+						</p>
+						<ul align="justify">
+							<li><b>SwarmSize:</b> The size of the particle swarm. The default value is 20.</li>
+							<li><b>NumGenerations:</b> The number of generations in the PSO. The default value is 50.</li>
+							<li><b>ConstrictionFactor:</b> The value of χ¬ in the PSO algorithm. Setting¬ less than 1.00 will restrict the searchable design space after each iteration 
+							and accelerate convergence, but can lead to entrapment in local minima. The default value is 1.00.</li>
+							<li><b>CognitiveParam:</b> The weight given to the local knowledge of each particle. High values (relative to the SocialParam) will cause particles to bias 
+							their search to the area surrounding each particles local best. The default value is 2.00.</li>
+							<li><b>SocialParam:</b> The weight given to the global (social) knowledge of each particle. High values (relative to the CognitiveParam) will cause particles 
+							to bias their search to the area surrounding the global best. The default value is 2.00.</li>
+							<li><b>InertiaWeight:</b> The initial weight given to the velocity used in each particle’s previous generation of movement. High values tend to cause particles 
+							to ’overshoot’ their destination, which is desirable in initial generations because it allows for more complete exploration of the design space. The 
+							default is 1.2. </li>
+							<li><b>InertiaReductionRate:</b> Relative reduction rate for the inertia weight. As the optimization proceeds, the inertia weight is reduced by 
+							InertiaReductionRate × 100% of its current value. This reduces overshoot over successive generations such that late-generation searches are clustered 
+							around the global best solution. If this value is set to linear, the inertia weight will be linearly reduced from its initial value to a final value 
+							(i.e. at the last generation) of zero. The default value is 0.10.</li>
+							<li><b>InitPopulationMethod:</b> This variable controls how the algorithm configures the initial swarm of candidate solutions. Supported values are: “random”, 
+							“LHS” (Latin Hypercube Sampling), and “QuadTree”. The default value is “random”.</li>
+							<li><b>ConvergenceVal:</b> This is the convergence value for the algorithm. If the relative difference between the current minimum and the median of the latest 
+							generation is less than or equal to this value, the algorithm will halt. The default value is 1.00E-4.</li>
+						</ul>
+						
+						<h1>References</h1>
+						<p align="justify">
+							Beielstein, T., Parsopoulos, K. E.,Vrahatis, M. N. 2002. Tuning  PSO parameters through sensitivity analysis. Technical Report, Reihe Computational Intelligence 
+							CI 124\/02. Collaborative Research Center, Department of Computer Science, University of Dortmund (available online at 
+							<a href="http://ls11-www.cs.uni-dortmund.de/people/tom/">http://ls11-www.cs.uni-dortmund.de/people/tom/</a>).
+						</p>
+						<p align="justify">
+							Katare, S., Kalos, A.,West, D. Year. "A hybrid swarm optimizer for efficient parameter estimation." Paper presented at the Proceedings of the IEEE Congress on 
+							Evolutionary Computation (CEC2004), vol. 1, 2004.
+						</p>
+						<p align="justify">
+							Kennedy, J.,Eberhart, R. C. 1995. Particle swarm optimization, Piscataway, NJ.
+						</p>
+						<p align="justify">
+							Kennedy, J., Eberhardt, R. C.,Shi, Y. 2001. Swarm Intelligence. Morgan Kaufmann, San Francisco(CA).
+						</p>
+					</article>
+				</div>
 			</div>
 
 		<!-- Scripts -->
-			<script src="../../../assets/js/jquery.min.js"></script>
-			<script src="../../../assets/js/browser.min.js"></script>
-			<script src="../../../assets/js/breakpoints.min.js"></script>
-			<script src="../../../assets/js/util.js"></script>
-			<script src="../../../assets/js/main.js"></script>
+		<script src="../../../assets/js/jquery.min.js"></script>
+		<script src="../../../assets/js/browser.min.js"></script>
+		<script src="../../../assets/js/breakpoints.min.js"></script>
+		<script src="../../../assets/js/util.js"></script>
+		<script src="../../../assets/js/main.js"></script>
 
 	</body>
 </html>

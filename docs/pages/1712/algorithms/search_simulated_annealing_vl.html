@@ -104,29 +104,29 @@
 				</section>
 
 				<!-- Main -->
-					<div id="main">
+				<div id="main">
 
-						<!-- Post -->
-							<article class="post">
-								<header>
-									<div class="title">
-										<h2><a href="#">Algorithms - Vanderbilt/Louie Simulated Annealing</a></h2>
-										<p>The OSTRICH Vanderbilt/Louie simulated annealing optimization algorithm</p>
-									</div>
-									<div class="meta">
-										<p align="left">Initial Publication:</p>
-										<time class="time" datetime="2015-11-01">September 16, 2020</time>
-										<p align="left">Modified:</p>
-										<time class="time" datetime="2015-11-01">September 16, 2020</time>
-									</div>
-								</header>
-								<p align="justify">
-									The following optional group will configure the continuous variable Vanderbilt-Louie variant of the Simulated Annealing algorithm and will be processed if [ProgramType] is set to “VanderbiltSimulatedAnnealing”.
-								</p>
-																<!-- This has strange alignment for the code to render correctly on the page.-->
-								<table class="layouttable">
-									<tr>
-										<th>
+					<!-- Post -->
+						<article class="post">
+							<header>
+								<div class="title">
+									<h2><a href="#">Algorithms - Vanderbilt/Louie Simulated Annealing</a></h2>
+									<p>The OSTRICH Vanderbilt/Louie simulated annealing optimization algorithm</p>
+								</div>
+								<div class="meta">
+									<p align="left">Initial Publication:</p>
+									<time class="time" datetime="2015-11-01">September 16, 2020</time>
+									<p align="left">Modified:</p>
+									<time class="time" datetime="2015-11-01">September 16, 2020</time>
+								</div>
+							</header>
+							<p align="justify">
+								The following optional group will configure the continuous variable Vanderbilt-Louie variant of the Simulated Annealing algorithm and will be processed if [ProgramType] is set to “VanderbiltSimulatedAnnealing”.
+							</p>
+															<!-- This has strange alignment for the code to render correctly on the page.-->
+							<table class="layouttable">
+								<tr>
+									<th>
 <pre><code>BeginSimulatedAlg
 NumInitialTrials       [n_init]
 TemperatureScaleFactor [tscale]
@@ -149,46 +149,48 @@ FinalTemperature       10.0
 TransitionMethod       Gauss
 EndSimulatedAlg
 </code></pre>
-										</th>
-									</tr>
-								</table>
-								<p align="center" id="fig1"><b>Figure 1: General Format (left) and Example (right) of the Vanderbilt-Louie Simulated Annealing Group </b></p>
-								
-								<p align="justify">
-									Where BeginSimulatedAlg and EndSimulatedAlg are parsing tags that  wrap the following set of algorithm configuration variables:
-								</p>
-								<ul align="justify">
-									<li><b>NumInitialTrials:</b> This is the number of uphill moves that are attempted in the melting process. Larger values will result in more accurate 
-									estimates of the initial temperature, but at the expense of additional model runs. The default value is 100.</li>
-									<li><b>TemperatureScaleFactor:</b> After each (outer) iteration, the temperature is reduced by multiplying by this value. This value should be less 
-									than 1.00. The default value is 0.90.</li>
-									<li><b>OuterIterations:</b> This is the number of iterations in the overall algorithm, where one outer iteration corresponds to one temperature reduction. 
-									The default value is 20.</li>
-									<li><b>InnerIterations:</b> This is the number of iterations in each temperature equilibration, where one inner iteration corresponds to a single 
-									transitional move. The default value is 10.</li>
-									<li><b>ConvergenceVal</b>: This is the convergence value for the algorithm. If the relative difference between the current minimum and the median of the 
-									latest series of equilibration moves is less than or equal to this value, the algorithm will halt. The default value is 0.001.</li>
-									<li><b>FinalTemperature:</b> This variable can be used to set a specific value for the final temperature in the SA algorithm. The temperature scale 
-									factor will be adjusted to achieve the desired temperature. If a final temperature option or value is not specified, the final temperature will be 
-									determined from the initial melting phase using a procedure described by Vanderbilt and Louie (1984).</li>
-									<li><b>TransitionMethod:</b> This variable selects the method used to compute randomized parameter perturbations during the transition phase of the 
-									SA algorithm. Set this variable to “Vanderbilt” to sample according to the procedure outlined by Vanderbilt and Louie (1984). Use a value of “Gauss” to 
-									select a Gaussian (i.e. normal) distribution. The default value is “Gauss”.</li>
-								</ul>
-							</article>
-
-					</div>
-
-				
-
+								</th>
+							</tr>
+						</table>
+						<p align="center" id="fig1"><b>Figure 1: General Format (left) and Example (right) of the Vanderbilt-Louie Simulated Annealing Group </b></p>
+						
+						<p align="justify">
+							Where BeginSimulatedAlg and EndSimulatedAlg are parsing tags that  wrap the following set of algorithm configuration variables:
+						</p>
+						<ul align="justify">
+							<li><b>NumInitialTrials:</b> This is the number of uphill moves that are attempted in the melting process. Larger values will result in more accurate 
+							estimates of the initial temperature, but at the expense of additional model runs. The default value is 100.</li>
+							<li><b>TemperatureScaleFactor:</b> After each (outer) iteration, the temperature is reduced by multiplying by this value. This value should be less 
+							than 1.00. The default value is 0.90.</li>
+							<li><b>OuterIterations:</b> This is the number of iterations in the overall algorithm, where one outer iteration corresponds to one temperature reduction. 
+							The default value is 20.</li>
+							<li><b>InnerIterations:</b> This is the number of iterations in each temperature equilibration, where one inner iteration corresponds to a single 
+							transitional move. The default value is 10.</li>
+							<li><b>ConvergenceVal</b>: This is the convergence value for the algorithm. If the relative difference between the current minimum and the median of the 
+							latest series of equilibration moves is less than or equal to this value, the algorithm will halt. The default value is 0.001.</li>
+							<li><b>FinalTemperature:</b> This variable can be used to set a specific value for the final temperature in the SA algorithm. The temperature scale 
+							factor will be adjusted to achieve the desired temperature. If a final temperature option or value is not specified, the final temperature will be 
+							determined from the initial melting phase using a procedure described by Vanderbilt and Louie (1984).</li>
+							<li><b>TransitionMethod:</b> This variable selects the method used to compute randomized parameter perturbations during the transition phase of the 
+							SA algorithm. Set this variable to “Vanderbilt” to sample according to the procedure outlined by Vanderbilt and Louie (1984). Use a value of “Gauss” to 
+							select a Gaussian (i.e. normal) distribution. The default value is “Gauss”.</li>
+						</ul>
+						
+						<h1>References</h1>
+						<p align="justify">
+							Vanderbilt, D.,Louie, S. G. 1984. A Monte carlo simulated annealing approach to optimization over continuous variables. Journal of Computational 
+							Physics 56, 259-271.
+						</p>
+					</article>
+				</div>
 			</div>
 
 		<!-- Scripts -->
-			<script src="../../../assets/js/jquery.min.js"></script>
-			<script src="../../../assets/js/browser.min.js"></script>
-			<script src="../../../assets/js/breakpoints.min.js"></script>
-			<script src="../../../assets/js/util.js"></script>
-			<script src="../../../assets/js/main.js"></script>
+		<script src="../../../assets/js/jquery.min.js"></script>
+		<script src="../../../assets/js/browser.min.js"></script>
+		<script src="../../../assets/js/breakpoints.min.js"></script>
+		<script src="../../../assets/js/util.js"></script>
+		<script src="../../../assets/js/main.js"></script>
 
 	</body>
 </html>

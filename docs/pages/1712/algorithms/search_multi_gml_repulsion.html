@@ -104,26 +104,26 @@
 				</section>
 
 				<!-- Main -->
-					<div id="main">
+				<div id="main">
 
-						<!-- Post -->
-							<article class="post">
-								<header>
-									<div class="title">
-										<h2><a href="#">Algorithms - Multi-start GML with Trajectory Repulsion</a></h2>
-										<p>The OSTRICH multi-start GML optimization algorithm</p>
-									</div>
-									<div class="meta">
-										<p align="left">Initial Publication:</p>
-										<time class="time" datetime="2015-11-01">September 16, 2020</time>
-										<p align="left">Modified:</p>
-										<time class="time" datetime="2015-11-01">September 16, 2020</time>
-									</div>
-								</header>
-								<p align="justify">
-									The following optional group will configure the Multi-Start Trajectory Repulsion Gauss-Marquardt-Levenberg algorithm and will be processed if [ProgramType] is set to “GML-MS”.
-								</p>
-								<!-- This has strange alignment for the code to render correctly on the page.-->
+					<!-- Post -->
+						<article class="post">
+							<header>
+								<div class="title">
+									<h2><a href="#">Algorithms - Multi-start GML with Trajectory Repulsion</a></h2>
+									<p>The OSTRICH multi-start GML optimization algorithm</p>
+								</div>
+								<div class="meta">
+									<p align="left">Initial Publication:</p>
+									<time class="time" datetime="2015-11-01">September 16, 2020</time>
+									<p align="left">Modified:</p>
+									<time class="time" datetime="2015-11-01">September 16, 2020</time>
+								</div>
+							</header>
+							<p align="justify">
+								The following optional group will configure the Multi-Start Trajectory Repulsion Gauss-Marquardt-Levenberg algorithm and will be processed if [ProgramType] is set to “GML-MS”.
+							</p>
+							<!-- This has strange alignment for the code to render correctly on the page.-->
 <pre><code>BeginLevMar
 InitialLambda              [init_lambda]
 LambdaScaleFactor          [lambda_sf]
@@ -136,41 +136,42 @@ MaxIterations              [max_iters]
 NumMultiStarts             [num_starts]
 EndLevMar
 </code></pre>
-								<p align="center" id="fig1"><b>Figure 1: General Format of the Multi-Start GML Group</b></p>
-								
-								<p align="justify">
-									Where BeginLevMar and EndLevMar are parsing tags that wrap a set of algorithm configuration variables:
-								</p>
-								<ul align="justify">
-									<li><b>InitialLambda:</b> The initial Marquardt λ. The λ variable controls the algorithm’s transition from using a Steepest-Descent approach to using a Taylor 
-									Series approximation. The default is 10.00.</li>
-									<li><b>LambdaScaleFactor:</b> The Marquardt λ scale factor – this is the factor by which λ is multiplied or divided during λ adjustment. The default is 1.10.</li>
-									<li><b>MoveLimit:</b> Parameter move limits – the maximum adjustment of a parameter (relative to the range of the parameter) that is allowed in a single iteration. 
-									The default is 0.10, or 10%.</li>
-									<li><b>AlgorithmConvergenceValue:</b> The algorithm convergence value – regression will stop when the relative reduction in the objective function (i.e. phi, Φ) over 
-									two iterations is less than this value. The default value is 1.00E-4.</li>
-									<li><b>LambdaPhiRatio:</b> This is the reduction criteria for deciding on optimal adjustments of the λ term. Adjustments for the given iteration are complete when the 
-									relative reduction in Φ is greater than this value. The default value is 0.30.</li>
-									<li><b>LambdaRelReduction:</b> This is the reduction criteria for abandoning λ adjustment. Adjustments for the given iteration are halted when the relative reduction 
-									in Φ is less than this value. The default value is 0.01.</li>
-									<li><b>MaxLambdas:</b> The maximum number of λ adjustments per iteration. The default value is 10.</li>
-									<li><b>MaxIterations:</b> The maximum iterations in the overall method. The default value is 30.</li>
-									<li><b>NumMultiStarts:</b> The number of times the GML algorithm will be run using a different initial set of parameter values. The default value is 1 (i.e. no multi-starts).</li>
-								</ul>
-							</article>
-
-					</div>
-
-				
-
+						<p align="center" id="fig1"><b>Figure 1: General Format of the Multi-Start GML Group</b></p>
+						
+						<p align="justify">
+							Where BeginLevMar and EndLevMar are parsing tags that wrap a set of algorithm configuration variables:
+						</p>
+						<ul align="justify">
+							<li><b>InitialLambda:</b> The initial Marquardt λ. The λ variable controls the algorithm’s transition from using a Steepest-Descent approach to using a Taylor 
+							Series approximation. The default is 10.00.</li>
+							<li><b>LambdaScaleFactor:</b> The Marquardt λ scale factor – this is the factor by which λ is multiplied or divided during λ adjustment. The default is 1.10.</li>
+							<li><b>MoveLimit:</b> Parameter move limits – the maximum adjustment of a parameter (relative to the range of the parameter) that is allowed in a single iteration. 
+							The default is 0.10, or 10%.</li>
+							<li><b>AlgorithmConvergenceValue:</b> The algorithm convergence value – regression will stop when the relative reduction in the objective function (i.e. phi, Φ) over 
+							two iterations is less than this value. The default value is 1.00E-4.</li>
+							<li><b>LambdaPhiRatio:</b> This is the reduction criteria for deciding on optimal adjustments of the λ term. Adjustments for the given iteration are complete when the 
+							relative reduction in Φ is greater than this value. The default value is 0.30.</li>
+							<li><b>LambdaRelReduction:</b> This is the reduction criteria for abandoning λ adjustment. Adjustments for the given iteration are halted when the relative reduction 
+							in Φ is less than this value. The default value is 0.01.</li>
+							<li><b>MaxLambdas:</b> The maximum number of λ adjustments per iteration. The default value is 10.</li>
+							<li><b>MaxIterations:</b> The maximum iterations in the overall method. The default value is 30.</li>
+							<li><b>NumMultiStarts:</b> The number of times the GML algorithm will be run using a different initial set of parameter values. The default value is 1 (i.e. no multi-starts).</li>
+						</ul>
+						
+						<h1>References</h1>
+						<p align="justify">
+							Skahill, B. E.,Doherty, J. 2006. Efficient accommodation of local minima in watershed model calibration. Journal of Hydrology 329, 122-139.
+						</p>
+					</article>
+				</div>
 			</div>
 
 		<!-- Scripts -->
-			<script src="../../../assets/js/jquery.min.js"></script>
-			<script src="../../../assets/js/browser.min.js"></script>
-			<script src="../../../assets/js/breakpoints.min.js"></script>
-			<script src="../../../assets/js/util.js"></script>
-			<script src="../../../assets/js/main.js"></script>
+		<script src="../../../assets/js/jquery.min.js"></script>
+		<script src="../../../assets/js/browser.min.js"></script>
+		<script src="../../../assets/js/breakpoints.min.js"></script>
+		<script src="../../../assets/js/util.js"></script>
+		<script src="../../../assets/js/main.js"></script>
 
 	</body>
 </html>
