@@ -985,7 +985,10 @@ void ChromosomePool::Initialize(void)
           upr = m_Proto->GetGenePtr(j)->GetUpr();
           pLHS->InitRow(j, lwr, upr);
       }/* end for() */
-   }/* end if() */
+   }
+   else {
+       pVals = NULL;
+   }
 
    lvl = idx = 0;
    for(i = 0; i < m_PoolSize; i++)

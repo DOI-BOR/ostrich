@@ -10,7 +10,7 @@ Version History
 ******************************************************************************/
 #include "ADOConnection.h"
 
-#ifdef WIN32
+#ifdef _WIN32
 #include <string>
 #include <iostream>
 using namespace std;
@@ -143,7 +143,7 @@ void ADOConnection::Write(char * table, char * keyColumn, char * key, char * col
     CoUninitialize();
 }/* end Write */
 
-#else /* not WIN32, no support */
+#else /* not _WIN32, no support */
 /******************************************************************************
 CTOR
 
@@ -169,5 +169,5 @@ Writes to an ADO database.
 void ADOConnection::Write(char * table, char * keyColumn, char * key, char * column, const char * param)
 {
 }/* end Write */
-#endif /* not WIN32 */
+#endif /* not _WIN32 */
 

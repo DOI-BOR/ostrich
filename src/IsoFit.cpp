@@ -160,6 +160,7 @@ int Isotherm(bool bSave)
       LogError(ERR_CONTINUE, "   TothIsotherm");
       LogError(ERR_CONTINUE, "**********************************");
 
+      pIso = NULL;
       delete [] pStr;
       ExitProgram(1);
    }

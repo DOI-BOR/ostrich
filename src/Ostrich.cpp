@@ -66,10 +66,6 @@ int main(int argc, StringType argv[])
    Windows uses a non-standard 3-digit exponent that messes up 
    applications that rely on standard 2-digit fixed formatting.
    --------------------------------------------------------------------*/
-#ifdef WIN32
-      _set_output_format(_TWO_DIGIT_EXPONENT);
-#endif
-
    //initialize time tracker
    GetElapsedTime();
 

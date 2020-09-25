@@ -25,7 +25,7 @@ Version History
 #include "Exception.h"
 
 //definition of sleep() is platform-dependent
-#ifdef WIN32
+#ifdef _WIN32
    #include <Windows.h> //needed for Sleep() and GetWindowsDirectory() commands
 #else
    #include <unistd.h> //needed for sleep() command
@@ -291,7 +291,7 @@ bool SuperMUSE::WaitForTasker(void)
    nticks = 0;
    while(1)
    {
-#ifdef WIN32
+#ifdef _WIN32
       Sleep(1000); //1 second polling intervals
 #else
       sleep(1); //1 second polling intervals
@@ -410,7 +410,7 @@ void SuperMUSE::EnvVarCleanup(void)
    //replace environment vars used in temp, task, success, error files
    m_pEnvVars = NULL;
    char iemVarsFile[1000];
-   #ifdef WIN32
+   #ifdef _WIN32
    GetWindowsDirectoryA(iemVarsFile, 1000);
    #else
    strcpy(iemVarsFile, "");

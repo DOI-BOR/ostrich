@@ -658,6 +658,10 @@ double SAAlgorithm::Melt(double initVal)
       pdE      = new double[m_NumMelts];
       MEM_CHECK(pdE);
    }
+   else {
+       pdE = new double[m_NumMelts];
+       MEM_CHECK(pdE);
+   }
 
    while(CheckOverflow(initVal*initVal) == true)
    {
@@ -832,6 +836,10 @@ double SAAlgorithm::MeltMaster(double fbest, int nprocs)
       m_pMelts = new double[m_NumMelts];
       pdE = new double[m_NumMelts];
       MEM_CHECK(pdE);
+   }
+   else {
+       pdE = new double[m_NumMelts];
+       MEM_CHECK(pdE);
    }
 
    pGroup = m_pModel->GetParamGroupPtr();

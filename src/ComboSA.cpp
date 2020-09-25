@@ -260,6 +260,10 @@ double ComboSA::Melt(double initVal)
       pdE      = new double[m_NumMelts];
       MEM_CHECK(m_pMelts);
    }
+   else {
+       pdE = new double[m_NumMelts];
+       MEM_CHECK(m_pMelts);
+   }
 
    Ebest = Ecur = initVal;
    dE = dEavg = 0.00;

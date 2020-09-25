@@ -11,7 +11,7 @@ Version History
 #ifndef ADO_CONNECTION_H
 #define ADO_CONNECTION_H
 
-#ifdef WIN32
+#ifdef _WIN32
 
 #import "msado15.dll"  \
     rename( "EOF", "AdoNSEOF" )
@@ -31,7 +31,7 @@ class ADOConnection
 	   HRESULT hr;
 	   _bstr_t bstrConnect;
 }; /* end class ADOConnection */
-#else /* not WIN32 */
+#else /* not _WIN32 */
 /******************************************************************************
 class ADOConnection
 ******************************************************************************/
@@ -42,6 +42,6 @@ class ADOConnection
      void Read(char * table, char * keyColumn, char * key, char * column, char * name, char * fileName);
      void Write(char * table, char * keyColumn, char * key, char * column, const char * param);
 }; /* end class ADOConnection */
-#endif /* not WIN32 */
+#endif /* not _WIN32 */
 #endif /* ADO_CONNECTION_H */
 

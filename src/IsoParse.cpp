@@ -1251,6 +1251,9 @@ void ISO_CreateParamList(IsoParamList * pList, IsoGlobStruct * pArgs)
    IsoParamList * pTmp;
    char * pCur;
 
+   // Initialize pointers for the compiler
+   pTmp = NULL;
+
    if(strcmp(pArgs->isoStr, "LinearIsotherm") == 0)
    {
       strcpy(pList->name, "KdVal");

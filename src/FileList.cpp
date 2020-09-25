@@ -81,7 +81,7 @@ void FileList::Cleanup(IroncladString dir)
       }
       if(MY_ACCESS(tmp, 0) != -1)
       {
-         #ifdef WIN32
+         #ifdef _WIN32
             sprintf(tmp, "del %s 1>> %s 2>>&1", pCur->GetName(), GetOstExeOut());
          #else
             sprintf(tmp, "rm %s 2>&1 | >> %s", pCur->GetName(), GetOstExeOut());

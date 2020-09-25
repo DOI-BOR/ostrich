@@ -2501,7 +2501,7 @@ void StatsClass::CalcBestBoxCox(void)
    }
    
    //Create BoxCoxIn.tpl
-   #ifdef WIN32
+   #ifdef _WIN32
    system("mkdir BoxCoxModel 2> NUL");
    FILE * pTpl = fopen(".\\BoxCoxModel\\BoxCoxIn.tpl", "w");
    #else
@@ -2546,7 +2546,7 @@ void StatsClass::CalcBestBoxCox(void)
    fclose(pTpl);
 
    //create input file
-   #ifdef WIN32
+   #ifdef _WIN32
    FILE * pIn = fopen(".\\BoxCoxModel\\ostIn.txt", "w");
    #else
    FILE * pIn = fopen("./BoxCoxModel/ostIn.txt", "w");
@@ -2603,7 +2603,7 @@ End1dSearch\n");
    MyStrRep(OstExe, "IsoFit", "Ostrich");
    MyStrRep(OstExe, "OstrichMPI", "Ostrich");
    MyStrRep(OstExe, "OstrichFMPI", "Ostrich");
-   #ifdef WIN32
+   #ifdef _WIN32
       sprintf(cmd, "cd BoxCoxModel & %s > NUL & cd ..", OstExe);
    #else
       sprintf(cmd, "cd BoxCoxModel; %s > /dev/null; cd ..", OstExe);
@@ -2612,12 +2612,13 @@ End1dSearch\n");
    system(cmd);
 
    //retrieve result   
-   #ifdef WIN32
-   max_line_size = GetMaxLineSizeInFile(".\\BoxCoxModel\\OstOutput0.txt");
-   FILE * pOut = fopen(".\\BoxCoxModel\\OstOutput0.txt", "r");   
+   #ifdef _WIN32
+    char boxCoxName[] = ".\\BoxCoxModel\\OstOutput0.txt";
+    max_line_size = GetMaxLineSizeInFile(boxCoxName);
+    FILE * pOut = fopen(".\\BoxCoxModel\\OstOutput0.txt", "r");   
    #else
-   max_line_size = GetMaxLineSizeInFile((char *)"./BoxCoxModel/OstOutput0.txt");
-   FILE * pOut = fopen("./BoxCoxModel/OstOutput0.txt", "r");
+    max_line_size = GetMaxLineSizeInFile((char *)"./BoxCoxModel/OstOutput0.txt");
+    FILE * pOut = fopen("./BoxCoxModel/OstOutput0.txt", "r");
    #endif
    line = new char[max_line_size];
    if(pOut == NULL)
@@ -4214,7 +4215,7 @@ void StatsClass::WriteResiduals(int step, char * prefix)
    // previously recorded value is best
    else if (fprevbest < fcur) 
    {
-      #ifdef WIN32
+      #ifdef _WIN32
          sprintf(cmd, "copy %s %s", pname, fname);
       #else
          sprintf(cmd, "cp %s %s", pname, fname);
@@ -4467,7 +4468,10 @@ void EVAL_Program(int argc, StringType argv[])
          pList[i] = new double[num+1];
          MEM_CHECK(pList[i]);
       }
-   }/* end if() */
+   }
+   else {
+       pList = NULL;
+   }
 
    //read in entries
    rewind(pFile);
