@@ -129,6 +129,9 @@ void BinaryGA::Optimize(void)
    double medFitness;
    //double avgFitness;
    Chromosome * pBest;
+
+   // Initialize pointers for compiler
+   pBest = NULL;
         
    MPI_Comm_rank(MPI_COMM_WORLD, &id);   
 

@@ -38,11 +38,11 @@ Version History
 #include "Utility.h"
 #include "Exception.h"
 
-#ifndef WIN32
+#ifndef _WIN32
    #include <sys/time.h>
 #endif
 
-#ifdef WIN32
+#ifdef _WIN32
   #include <string>
   using namespace std;
 #endif
@@ -213,7 +213,7 @@ bool IsNonDominated(double * pF, int nObj)
    }
    else
    {
-#ifdef WIN32
+#ifdef _WIN32
       sprintf(prefix, "..\\OstModel");
 #else
       sprintf(prefix, "../OstModel");
@@ -675,7 +675,7 @@ void ConvertToASCII(void)
       j = ExtractString(lineStr, tmpFileName);
       lineStr += j;
 	   //deletes converted file, if it exists
-      #ifdef WIN32
+      #ifdef _WIN32
         string s_fileName(tmpFileName);
         s_fileName = s_fileName.substr(0, s_fileName.find_last_of('.'));
         s_fileName += ".txt";
@@ -2108,7 +2108,7 @@ Get the time elapsed (in clock tics) from the start of the program.
 ******************************************************************************/
 double GetElapsedTics(void)
 {
-#ifdef WIN32
+#ifdef _WIN32
   long long tics, tics_per_sec;
   QueryPerformanceCounter((LARGE_INTEGER *)&tics);
   QueryPerformanceFrequency((LARGE_INTEGER *)&tics_per_sec);
@@ -2413,7 +2413,7 @@ void ExecuteCommandLine(IroncladString cmd, bool isRead, IroncladString fileName
 	char output[DEF_STR_SZ];
    FILE * pPipe;
 
-   #ifdef WIN32
+   #ifdef _WIN32
       pPipe = _popen(cmd, "rt");
 	   if (isRead)
 	   {

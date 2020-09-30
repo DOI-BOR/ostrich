@@ -937,7 +937,7 @@ void ParaPADDS::Calc_Z(ArchiveStruct * archive)
                double F1 = pSorted[i - 1]->F[obj];
                double F2 = pSorted[i + 1]->F[obj];
                double F4 = pSorted[archive_size - 1]->F[obj];
-               pSorted[i]->Z += abs(F1 - F2) / abs(F0 - F4);
+               pSorted[i]->Z += fabs(F1 - F2) / fabs(F0 - F4);
             }
 
             if(archive_size > 1)

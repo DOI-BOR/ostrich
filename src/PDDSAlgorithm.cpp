@@ -383,6 +383,9 @@ void PDDSAlgorithm::Optimize(void)
    ParameterGroup * pGroup = m_pModel->GetParamGroupPtr();
    int nSpecial = pGroup->GetNumSpecialParams();
    double Fbest, * Cbest;
+
+   // Initilize cbest for the compiler
+   Cbest = NULL;
    
    //write setup
    WriteSetup(m_pModel, "Parallel Dynamically Dimensioned Search Algorithm (PDDS)");

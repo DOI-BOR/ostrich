@@ -28,7 +28,7 @@ class FileList
       ~FileList(void){ DBG_PRINT("FileList::DTOR"); Destroy(); }
       void Destroy(void);
       void Insert(IroncladString name);
-      void Cleanup(IroncladString dir);
+      void Cleanup(IroncladString dir, const char* dirName, int rank);
       FileList * GetNext(void){ return m_pNxt;}
       IroncladString GetName(void){ return m_Name;}
 

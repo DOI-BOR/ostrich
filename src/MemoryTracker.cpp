@@ -26,7 +26,7 @@ double GetMemUsage(void)
 }
 #else
 
-#ifdef WIN32
+#ifdef _WIN32
   #include "windows.h"
   #include "psapi.h"
 #else
@@ -35,7 +35,7 @@ double GetMemUsage(void)
 #endif
 
 extern "C" {   
-#ifndef WIN32
+#ifndef _WIN32
    double parseLine(char* line);
    double getVmSize(void);
    double getVmRSS(void);
@@ -52,7 +52,7 @@ http://stackoverflow.com/questions/63166/how-to-determine-cpu-and-memory-consump
 ******************************************************************************/
 double GetMemUsage(void)
 {  
-#ifdef WIN32
+#ifdef _WIN32
    MEMORYSTATUSEX memInfo;
    memInfo.dwLength = sizeof(MEMORYSTATUSEX);
    GlobalMemoryStatusEx(&memInfo);
@@ -114,7 +114,7 @@ void LogMemUsage(char * file, const char * tag)
    if(file == NULL) pFile = stdout;
    else pFile = fopen(file, "a");
 
-#ifdef WIN32
+#ifdef _WIN32
    MEMORYSTATUSEX memInfo;
    memInfo.dwLength = sizeof(MEMORYSTATUSEX);
    GlobalMemoryStatusEx(&memInfo);
@@ -173,7 +173,7 @@ void LogMemUsage(char * file, const char * tag)
 }/* end ShowPhysMemUsage() */
 
 
-#ifndef WIN32
+#ifndef _WIN32
    double parseLine(char* line)
    {
       int i = strlen(line);

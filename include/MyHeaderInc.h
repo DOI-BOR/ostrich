@@ -21,7 +21,7 @@ Version History
 #include "GeometryUtility.h" // Point, Circle, etc. data structs
 
 /* macros for access and chdir */
-#ifdef WIN32
+#ifdef _WIN32
   #include <direct.h>
   #include <io.h>
   #define MY_ACCESS _access

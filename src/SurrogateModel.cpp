@@ -115,7 +115,7 @@ SurrogateModel::SurrogateModel
       ExitProgram(1);
    }
 
-   #ifdef WIN32 //windows version
+   #ifdef _WIN32 //windows version
       strcat(tmp1, " > ");
       strcat(tmp1, GetOstExeOut());
    #else
@@ -155,7 +155,7 @@ SurrogateModel::SurrogateModel
       if(pDir[0] != '.')
       {
          strcpy(tmp3, pDir);
-         #ifdef WIN32
+         #ifdef _WIN32
             strcat(tmp3, "\\");
          #else
             strcat(tmp3, "/");

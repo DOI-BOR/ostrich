@@ -54,7 +54,6 @@ Version History
 #include <mpi.h>
 #include <math.h>
 #include <string.h>
-#include <stdlib.h>
 
 #include "Model.h"
 #include "ObservationGroup.h"
@@ -150,31 +149,39 @@ void Model::PreserveModel(int rank, int trial, int counter, IroncladString ofcat
    {
       IroncladString dirName = GetExeDirName();
 
-      #ifdef WIN32
-         sprintf(tmp, "mkdir %%TMP%%\\mod%drun%d", rank, counter); //use temp dir for temporary location, due to xcopy rules
-         system(tmp);
-         sprintf(tmp, "dir /B run* > Exclude.txt"); //need to exclude previous 'run' directories
-         system(tmp); 
-         sprintf(tmp, "xcopy * %%TMP%%\\mod%drun%d /S /EXCLUDE:Exclude.txt >> %s", rank, counter, GetOstExeOut());  //perform copy
-         system(tmp);
-         sprintf(tmp, "move %%TMP%%\\mod%drun%d .\\run%d >> %s", rank, counter, counter, GetOstExeOut());  //relocate the directory
-         system(tmp);
+      #ifdef _WIN32
+        // Create the archive directory
+        sprintf(tmp, "mkdir ..\\archive\\%s%d\\run_%d >> %s", m_DirPrefix, rank, counter, GetOstExeOut());
+        system(tmp);
+
+        // Get the the files in the working directory
+        sprintf(tmp, "dir /B run* > Exclude.txt"); //need to exclude previous 'run' directories
+        system(tmp);
+
+        // Copy the data
+        sprintf(tmp, "xcopy * ..\\archive\\%s%d\\run_%d /S /EXCLUDE:Exclude.txt >> %s", m_DirPrefix, rank, counter, GetOstExeOut());  //perform copy
+        system(tmp);
+
+        sprintf(tmp, "..\\archive\\%s%d\\run_%d", m_DirPrefix, rank, counter);
+
       #else
-         sprintf(tmp, "mkdir run%d", counter);
-         system(tmp);
-         sprintf(tmp, "cp * run%d 2>&1 | >> %s", counter, GetOstExeOut());
-         system(tmp);
+        sprintf(tmp, "mkdir -p ../archive/%s%d/run_%d", m_DirPrefix, rank, counter);
+        system(tmp);
+        sprintf(tmp, "cp * ../archive/%s%d/run_%d 2>&1 | >> %s", m_DirPrefix, rank, counter, GetOstExeOut());
+        system(tmp);
+
+        sprintf(tmp, "../archive/%s%d/run_%d", m_DirPrefix, rank, counter);
       #endif
 
-      sprintf(tmp, "run%d", counter);
-      m_pFileCleanupList->Cleanup(tmp);
+
+      m_pFileCleanupList->Cleanup(tmp, m_DirPrefix, rank);
    }/* end if() */
    /* run the user-supplied preservation command */
    else
    {
       sprintf(tmp, "%s %d %d %d %s", m_PreserveCmd, rank, trial, counter, ofcat); 
 
-      #ifdef WIN32 //windows version
+      #ifdef _WIN32 //windows version
          strcat(tmp, " > OstPreserveModelOut.txt");
       #else //Linux (bash, dash, and csh)
          // '>&' redircts both output and error
@@ -234,7 +241,7 @@ Model::Model(void)
    m_NumCacheHits = 0;
    m_firstCall = true;
 
-   #ifdef WIN32
+   #ifdef _WIN32
       m_pFileCleanupList = new FileList("Ostrich.exe");
    #else
       m_pFileCleanupList = new FileList("Ostrich");
@@ -366,7 +373,7 @@ Model::Model(void)
 
    if((pDirName[0] != '.') && (m_InternalModel == false))
    {      
-      #ifdef WIN32
+      #ifdef _WIN32
          sprintf(tmp2, "copy %s %s", tmp1, pDirName);
       #else
          sprintf(tmp2, "cp %s %s", tmp1, pDirName);
@@ -387,12 +394,11 @@ Model::Model(void)
       }
       if(MY_ACCESS(tmp2, 0 ) == -1)
       {
-         sprintf(tmp1, "Model executable (|%s|) not found", tmp2);
          LogError(ERR_FILE_IO, tmp1);
          ExitProgram(1);
       }
 
-      #ifdef WIN32 //windows version
+      #ifdef _WIN32 //windows version
          strcat(tmp1, " > ");
          strcat(tmp1, GetOstExeOut());
       #else //Linux (bash, dash, csh)
@@ -433,7 +439,7 @@ Model::Model(void)
       if(pDirName[0] != '.')
       {
          strcpy(tmp3, pDirName);
-         #ifdef WIN32
+         #ifdef _WIN32
             strcat(tmp3, "\\");
          #else
             strcat(tmp3, "/");
@@ -475,7 +481,7 @@ Model::Model(void)
 
          if(pDirName[0] != '.')
          {
-            #ifdef WIN32
+            #ifdef _WIN32
                sprintf(tmp2, "copy %s %s", tmp1, pDirName);
             #else
                sprintf(tmp2, "cp %s %s", tmp1, pDirName);
@@ -509,7 +515,7 @@ Model::Model(void)
 
          if(pDirName[0] != '.')
          {
-            #ifdef WIN32
+            #ifdef _WIN32
                sprintf(tmp2, "xcopy /S /E /I %s %s\\%s", tmp1, pDirName, tmp1);
             #else
                sprintf(tmp2, "cp -R %s %s", tmp1, pDirName);
@@ -570,7 +576,7 @@ Model::Model(void)
 
       if(pDirName[0] != '.')
       {
-         #ifdef WIN32
+         #ifdef _WIN32
             sprintf(tmp2, "copy %s %s", tmp1, pDirName);
          #else
             sprintf(tmp2, "cp %s %s", tmp1, pDirName);
@@ -594,7 +600,7 @@ Model::Model(void)
          ExitProgram(1);
       }
 
-      #ifdef WIN32 //windows version
+      #ifdef _WIN32 //windows version
          strcat(tmp1, " > OstSaveOut.txt");
       #else //Linux (bash, dash, and csh)
          strcpy(tmp2, tmp1);
@@ -722,7 +728,7 @@ Model::Model(void)
          //stage to workdir if needed
          if(pDirName[0] != '.')
          {
-            #ifdef WIN32
+            #ifdef _WIN32
                sprintf(tmp2, "copy %s %s", tmp1, pDirName);
             #else
                sprintf(tmp2, "cp %s %s", tmp1, pDirName);
@@ -1037,7 +1043,7 @@ void Model::Destroy(void)
       IroncladString dirName = GetExeDirName(); 
       if(dirName[0] != '.')
       {
-         m_pFileCleanupList->Cleanup(dirName);         
+         m_pFileCleanupList->Cleanup(dirName, m_DirPrefix, 0);         
       }
       delete m_pFileCleanupList;
    }

@@ -12,7 +12,6 @@ Version History
 07-05-08    lsm   created
 ******************************************************************************/
 #include <string.h>
-#include <stdlib.h>
 
 #include "FileList.h"
 
@@ -64,9 +63,9 @@ Cleanup()
 
 Delete the files in the list.
 ******************************************************************************/
-void FileList::Cleanup(IroncladString dir)
+void FileList::Cleanup(IroncladString dir, const char* dirName, int rank)
 {
-   static bool bLogged = false;  //only log once to reduce output file size
+   //static bool bLogged = false;  //only log once to reduce output file size
    char tmp[DEF_STR_SZ];
    FileList * pCur;
    MY_CHDIR(dir);
@@ -81,19 +80,22 @@ void FileList::Cleanup(IroncladString dir)
       }
       if(MY_ACCESS(tmp, 0) != -1)
       {
-         #ifdef WIN32
+         #ifdef _WIN32
             sprintf(tmp, "del %s 1>> %s 2>>&1", pCur->GetName(), GetOstExeOut());
          #else
             sprintf(tmp, "rm %s 2>&1 | >> %s", pCur->GetName(), GetOstExeOut());
          #endif
          system(tmp);
-         if(bLogged == false)
-         {         
-            sprintf(tmp, "Ostrich deleted %s/%s", dir, pCur->GetName());
-            LogError(ERR_CLEANUP, tmp);
-         }/* end if(logged) */
+                 
+        sprintf(tmp, "Ostrich deleted %s/%s", dir, pCur->GetName());
+        LogError(ERR_CLEANUP, tmp);
       }/* end if(file exists) */
    }/* end for(each file) */
-   bLogged = true;
-   MY_CHDIR("..");
+    #ifdef _WIN32
+        sprintf(tmp, "..\\..\\..\\%s%d", dirName, rank);
+    #else
+        sprintf(tmp, "../../../%s%d", dirName, rank);
+        std::cout << tmp << std::endl;
+    #endif
+   MY_CHDIR(tmp);
 }/* end Cleanup() */

@@ -110,7 +110,7 @@ ParameterCorrection::ParameterCorrection(ParameterGroup * pGroup)
             ExitProgram(1);
          }
 
-         #ifdef WIN32 //windows version
+         #ifdef _WIN32 //windows version
             strcat(tmp1, " > OstParameterCorrectionOut.txt");
          #else //Linux (bash, dash, csh)
             strcpy(tmp2, tmp1);
