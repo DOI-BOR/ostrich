@@ -4,7 +4,7 @@ Author   : L. Shawn Matott
 Copyright: 2008, L. Shawn Matott
 
 FileList classes are used to store a collection of files that Ostrich needs to
-delete when its done running. These files are executables and and extra input 
+delete when its done running. These files are executables and and extra input
 files.  Files are deleted to conserve disk space, which is required for large
 parallel runs.
 
@@ -15,6 +15,7 @@ Version History
 #define FILE_LIST_H
 
 #include "MyHeaderInc.h"
+#include <iostream>
 
 /******************************************************************************
 class FileList
@@ -34,10 +35,7 @@ class FileList
 
    private:
       char m_Name[DEF_STR_SZ];
-      FileList * m_pNxt;      
+      FileList * m_pNxt;
 }; /* end class FileList */
 
 #endif /* FILE_LIST_H */
-
-
-
