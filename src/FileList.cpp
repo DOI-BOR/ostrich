@@ -4,7 +4,7 @@ Author   : L. Shawn Matott
 Copyright: 2008, L. Shawn Matott
 
 FileList classes are used to store a collection of files that Ostrich needs to
-delete when its done running. These files are executables and and extra input 
+delete when its done running. These files are executables and and extra input
 files.  Files are deleted to conserve disk space, which is required for large
 parallel runs.
 
@@ -25,8 +25,8 @@ Creates a file list.
 ******************************************************************************/
 FileList::FileList(IroncladString name)
 {
-   strcpy(m_Name, name); 
-   m_pNxt = NULL; 
+   strcpy(m_Name, name);
+   m_pNxt = NULL;
    IncCtorCount();
 } /* end CTOR */
 
@@ -36,7 +36,7 @@ Destroy()
 Frees up the file list.
 ******************************************************************************/
 void FileList::Destroy(void)
-{   
+{
    delete m_pNxt;
    IncDtorCount();
 }/* end Destroy() */
@@ -86,7 +86,7 @@ void FileList::Cleanup(IroncladString dir, const char* dirName, int rank)
             sprintf(tmp, "rm %s 2>&1 | >> %s", pCur->GetName(), GetOstExeOut());
          #endif
          system(tmp);
-                 
+
         sprintf(tmp, "Ostrich deleted %s/%s", dir, pCur->GetName());
         LogError(ERR_CLEANUP, tmp);
       }/* end if(file exists) */
@@ -95,7 +95,6 @@ void FileList::Cleanup(IroncladString dir, const char* dirName, int rank)
         sprintf(tmp, "..\\..\\..\\%s%d", dirName, rank);
     #else
         sprintf(tmp, "../../../%s%d", dirName, rank);
-        std::cout << tmp << std::endl;
     #endif
    MY_CHDIR(tmp);
 }/* end Cleanup() */
