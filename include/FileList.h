@@ -15,7 +15,6 @@ Version History
 #define FILE_LIST_H
 
 #include "MyHeaderInc.h"
-#include <iostream>
 
 /******************************************************************************
 class FileList

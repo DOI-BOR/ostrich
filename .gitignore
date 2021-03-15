@@ -31,3 +31,6 @@
 *.out
 *.app
 make/Ostrich
+
+# MacOS files
+**.DS_Store
