@@ -17,6 +17,7 @@ Version History
 #include "MyHeaderInc.h"
 #include <filesystem>
 #include <string>
+#include <vector>
 
 /******************************************************************************
 class FileList

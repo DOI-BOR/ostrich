@@ -53,6 +53,7 @@ Version History
 ******************************************************************************/
 #include <mpi.h>
 #include <math.h>
+#include <string.h>
 #include <string>
 #include <filesystem>
 
