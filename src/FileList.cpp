@@ -63,38 +63,44 @@ Cleanup()
 
 Delete the files in the list.
 ******************************************************************************/
-void FileList::Cleanup(IroncladString dir, const char* dirName, int rank)
+void FileList::Cleanup(std::filesystem::path dir)
 {
-   //static bool bLogged = false;  //only log once to reduce output file size
-   char tmp[DEF_STR_SZ];
-   FileList * pCur;
-   MY_CHDIR(dir);
-   for(pCur = this; pCur != NULL; pCur = pCur->GetNext())
-   {
-      strcpy(tmp, pCur->GetName());
-      if(tmp[0] == '"')
-      {
-         tmp[0] = ' ';
-         tmp[strlen(tmp)-1] = ' ';
-         MyTrim(tmp);
-      }
-      if(MY_ACCESS(tmp, 0) != -1)
-      {
-         #ifdef _WIN32
-            sprintf(tmp, "del %s 1>> %s 2>>&1", pCur->GetName(), GetOstExeOut());
-         #else
-            sprintf(tmp, "rm %s 2>&1 | >> %s", pCur->GetName(), GetOstExeOut());
-         #endif
-         system(tmp);
 
-        sprintf(tmp, "Ostrich deleted %s/%s", dir, pCur->GetName());
-        LogError(ERR_CLEANUP, tmp);
-      }/* end if(file exists) */
-   }/* end for(each file) */
-    #ifdef _WIN32
-        sprintf(tmp, "..\\..\\..\\%s%d", dirName, rank);
-    #else
-        sprintf(tmp, "../../../%s%d", dirName, rank);
-    #endif
-   MY_CHDIR(tmp);
+    // Cleanup the files
+    FileList* pCur;
+    for (pCur = this; pCur != NULL; pCur = pCur->GetNext())
+    {
+        // Get the filename to be checked
+        std::string file = pCur->GetName();
+
+        // Construct the path to the file
+        std::filesystem::path filepath = dir;
+        filepath /= file;
+
+        // If the file is in the archive directory, delete it
+        if (std::filesystem::exists(filepath)) {
+            // Delete the file
+            std::filesystem::remove(filepath);
+
+            // Log any removal error
+            IroncladString filepathString = &filepath.string()[0];
+            LogError(ERR_CLEANUP, filepathString);
+        }
+    }
+
+    // Remove any empty directories in the archived run folder
+    // Create a list of entries in the archive folder
+    std::vector<std::filesystem::path> archivePaths;
+    for (auto& p : std::filesystem::recursive_directory_iterator(dir)) {
+        archivePaths.push_back(p);
+    }
+
+    // Loop over the files backward, deleting if empty. The reverse loop is necessary to prevent deleting folders that are subsequently checked.
+    for (std::vector<std::filesystem::path>::reverse_iterator rit = archivePaths.rbegin(); rit != archivePaths.rend(); ++rit) {
+        if (std::filesystem::is_empty(*rit)) {
+            std::filesystem::remove(*rit);
+        }
+    }
+
+
 }/* end Cleanup() */

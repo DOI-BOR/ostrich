@@ -15,6 +15,8 @@ Version History
 #define FILE_LIST_H
 
 #include "MyHeaderInc.h"
+#include <filesystem>
+#include <string>
 
 /******************************************************************************
 class FileList
@@ -28,7 +30,7 @@ class FileList
       ~FileList(void){ DBG_PRINT("FileList::DTOR"); Destroy(); }
       void Destroy(void);
       void Insert(IroncladString name);
-      void Cleanup(IroncladString dir, const char* dirName, int rank);
+      void Cleanup(std::filesystem::path dir);
       FileList * GetNext(void){ return m_pNxt;}
       IroncladString GetName(void){ return m_Name;}
 
