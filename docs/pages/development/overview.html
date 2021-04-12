@@ -1,0 +1,218 @@
+<!DOCTYPE HTML>
+<!--
+	Future Imperfect by HTML5 UP
+	html5up.net | @ajlkn
+	Free for personal and commercial use under the CCA 3.0 license (html5up.net/license)
+-->
+<html>
+	<head>
+		<title>OSTRICH - Overview</title>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+		<link rel="stylesheet" href="../../assets/css/main.css" />
+	</head>
+	<body class="single is-preload">
+
+		<!-- Wrapper -->
+			<div id="wrapper">
+
+				<!-- Header -->
+					<header id="header">
+						<h1 class="bannerheading"><a href="../../index.html">OSTRICH</a></h1>
+						<nav class="links">
+							<ul>
+								<li><a href="overview.html">Overview</a></li>
+								<li><a href="algorithms/algorithms.html">Algorithms</a></li>
+								<li><a href="setup/setup.html">Setup</a></li>							
+								<li>
+									<div class="dropdown">
+										<a href="solution/solution.html"<button class="dropbtn">
+											Solution
+											<i class="fa fa-caret-down"></i></a>
+										</button>
+										<div class="dropdown-content">
+											<a href="solution/running.html">Running OSTRICH</a>
+											<a href="solution/building.html">Building OSTRICH</a>
+										</div>
+									</div>
+								</li>
+								<li><a href="output/output.html">Output</a></li>
+								<li><a href="examples/examples.html">Examples</a></li>
+								<li><a href="../releases.html">Releases</a></li>
+							</ul>
+						</nav>
+						<nav class="main">
+							<ul>
+								<li class="menu">
+									<a class="fa-bars" href="#menu">Menu</a>
+								</li>
+							</ul>
+						</nav>
+					</header>
+
+				<!-- Menu -->
+				<section id="menu">
+
+					<!-- Links -->
+					<section>
+						<ul class="links">
+							<li>
+								<a href="overview.html">
+									<h3>Overview</h3>
+									<p>The basics of OSTRICH</p>
+								</a>
+							</li>
+							<li>
+								<a href="algorithms/algorithms.html">
+									<h3>Algorithms</h3>
+									<p>Algorithms available within OSTRICH</p>
+								</a>
+							</li>
+							<li>
+								<a href="setup/setup.html">
+									<h3>Setup</h3>
+									<p>Organzing an OSTRICH analysis</p>
+								</a>
+							</li>
+							<li>
+								<a href="solution/solution.html">
+									<h3>Solution</h3>
+									<p>Running an OSTRICH analysis</p>
+								</a>
+							</li>
+							<li>
+								<a href="output/output.html">
+									<h3>Output</h3>
+									<p>Output of an OSTRICH analysis</p>
+								</a>
+							</li>
+							<li>
+								<a href="examples/examples.html">
+									<h3>Examples</h3>
+									<p>Examples using OSTRICH</p>
+								</a>
+							</li>
+							<li>
+								<a href="../contributing.html">
+									<h3>Contributing</h3>
+									<p>Contribute to OSTRICH</p>
+								</a>
+							</li>
+						</ul>
+					</section>
+
+				</section>
+
+				<!-- Main -->
+				<div id="main">
+
+					<!-- Post -->
+					<article class="post">
+						<header>
+							<div class="title">
+								<h2><a href="#">Overview</a></h2>
+								<p>Basics of OSTRICH Development</p>
+							</div>
+							<div class="meta">
+								<p align="left">Initial Publication:</p>
+								<time class="time" datetime="2015-11-01">April 11, 2021</time>
+								<p align="left">Modified:</p>
+								<time class="time" datetime="2015-11-01">April 11, 2021</time>
+							</div>
+						</header>
+						<p align="justify">
+							OSTRICH implements numerous algorithms. Some of these algorithms are deterministic local search methods, others are heuristic global search methods 
+							that incorporate elements of structured randomness, and others act as samplers that seek to delineate parameter probability distributions rather than 
+							just identifying a single optimal parameter set. While most of these algorithms are suitable for both calibration and optimization problems, one 
+							deterministic algorithm (i.e. Levenberg-Marquardt) is tailored to non-linear least-squares calibration problems. Additionally, two algorithms (i.e. 
+							Pareto Archive Dynamically Dimensioned Search and the Simple Multi-Objective Optimization Test Heuristic) are suitable for multi-objective optimization 
+							or multi-criteria calibration. Finally, several sampling-based algorithms (i.e. Generalized Likelihood Uncertainty Estimation, Rejection Sampling, and 
+							Metropolis-Hastings Markov Chain Monte Carlo) are suitable for uncertainty-based calibration. Overall, these algorithms provide the user with a fair 
+							degree of flexibility and enable OSTRICH to tackle a variety of linear and non-linear problems. Furthermore, these problems can have continuously varying 
+							(i.e. real-valued) parameters, combinatorial parameters, integer parameters, or a mixture of continuous, combinatorial and integer parameters.
+						</p>
+						<h1> Algorithms </h1>
+						<p align="center"> 
+							<p align="center">
+								<strong>Table 1: Local search algorithms implemented within OSTRICH</strong>
+							</p>
+							<p align="center">
+								<img src="../../images/development/overview/table_1.png" alt="Local search algorithms">
+							</p>
+						</p>
+						<p align="center">
+							<p align="center">
+								<strong>Table 2: Global search algorithms implemented within OSTRICH</strong>
+							</p>
+							<p align="center">
+								<img src="../../images/development/overview/table_2.png" alt="Global search algorithms">
+							</p>
+						</p>
+						<p align="center">
+							<p align="center">
+								<strong>Table 3: Other optimization algorithms implemented within OSTRICH</strong>
+							</p>
+							<p align="center">
+								<img src="../../images/development/overview/table_3.png" alt="Other algorithms">
+							</p>
+						</p>
+
+						<p align="justify">
+							Tables 1 to 3 summarize each algorithm implemented in OSTRICH along with appropriate references for detailed descriptions. Algorithms where only contact 
+							information is provided are unpublished experimental algorithms and should be used with caution. Some algorithms have been validated against reference 
+							implementations. These algorithms include: DDS, PADDS, PSO, GML, BGA, RGA, SA, FLRV, POWL, STPDSC, and SCE. 
+						</p>
+						<p align="justify">
+							C/C++ programmers will find it straightforward to extend OSTRICH to include additional search algorithms. Doing so involves extension of an abstract base 
+							class (AlgorithmABC) that defines a minimum set of required search algorithm functions, including: Calbrate(), Optimize(), WriteMetrics(), WarmStart(), 
+							and Destroy(). These functions typically utilize additional classes that encapsulate parameters (i.e. ParameterGroup), models (i.e. ModelABC), and objective 
+							functions (i.e. ObjectiveFunction) which are dynamically instantiated based on a user-supplied configuration file. 
+						</p>
+						<p align="justify">
+							OSTRICH also supports a special ProgramType named “ModelEvaluation”. OSTRICH will process the parameter sets listed in the “InitParams” groups when 
+							this program type is selected. In this way, users may request evaluation of a specific set of parameters independent of any search algorithm embedded within 
+							OSTRICH. For example, such parameter sets could be generated as part of a sensitivity or uncertainty analysis procedure that is run using an external spreadsheet 
+							or statistical program. Alternatively, these parameter sets could be generated by an external optimization algorithm. For example, the PIGEON (Program for 
+							Interfacing Geoscience models with External Optimization routInes) software package exploits this functionality to link optimizers written in MatLab and Python 
+							with “back-box” geoscience models (Matott et al., 2011). 
+						</p>
+
+						<h1> Regression Statistics and Diagnostics </h1>
+						<p align="justify">
+							When used for model calibration via a weighted sum of squared errors approach, OSTRICH can compute an extensive suite of post-calibration statistics. OSTRICH can 
+							also compute a variety of diagnostic measures that test the validity of the underlying assumptions of the aforementioned statistical measures. Table 4 summarizes 
+							the regression statistics and diagnostics implemented in OSTRICH along with appropriate references containing more detailed descriptions. The OSTRICH manual for 
+							version 1.6 also contains a detailed description of many of the regression statistics and diagnostics listed in Table 4.
+						</p>
+						<p align="center">
+							<p align="center">
+								<strong>Table 4: Regression statistics and diagnostics implemented in OSTRICH</strong>
+							</p>
+							<p align="center">
+								<img src="../../images/development/overview/table_4.png" alt="Regression statistics and diagnostics implemented in OSTRICH">
+							</p>
+						</p>
+						
+						<h1>References</h1>
+						<p align="justify">
+							Matott, L. S., Leung, K.,Sim, J. 2011. Application of MATLAB and Python optimizers to two case studies involving groundwater flow and contaminant transport 
+							modeling. Computers & Geosciences 37, 1894-1899.
+						</p>
+						<p align="justify">
+							Matott, L. S., Tolson, B. A.,Asadzadeh, M. 2012. A benchmarking framework for simulation-based optimization of environmental models. Environmental Modelling 
+							& Software 35, 19-30.
+						</p>
+					</article>
+
+				</div>
+			</div>
+
+		<!-- Scripts -->
+			<script src="../../assets/js/jquery.min.js"></script>
+			<script src="../../assets/js/browser.min.js"></script>
+			<script src="../../assets/js/breakpoints.min.js"></script>
+			<script src="../../assets/js/util.js"></script>
+			<script src="../../assets/js/main.js"></script>
+
+	</body>
+</html>
