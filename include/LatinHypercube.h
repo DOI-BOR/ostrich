@@ -29,6 +29,8 @@ class LatinHypercube
       double SampleRow(int row);
       void ReDim(int cols);
 
+      double** GetSampleMatrix(void) { return m_pVals; };
+
    private:
       double ** m_pVals;
       int    *  m_pCount;

@@ -25,7 +25,6 @@ class ValueExtractor
 {
    public:
       ValueExtractor(IroncladString file, bool bQuitOnErr, double errVal);
-      ValueExtractor(void);
       ~ValueExtractor(void){ DBG_PRINT("ValueExtractor::DTOR"); Destroy();}
       void Destroy(void);
 

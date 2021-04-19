@@ -549,6 +549,18 @@ void WriteOptimalToFile(FILE * pFile, ModelABC * pModel, double fx)
 }/* end WriteOptimalToFile() */
 
 /******************************************************************************
+WriteOptimalToFile()
+
+Write out optimal result
+******************************************************************************/
+void WriteOptimalToFile(FILE* pFile, ParameterGroup* paramGroup, double fx)
+{
+    fprintf(pFile, "\nOptimal Parameter Set\n");
+    fprintf(pFile, "Objective Function : %E\n", fx);
+    paramGroup->Write(pFile, WRITE_OPT);
+}/* end WriteOptimalToFile() */
+
+/******************************************************************************
 WriteAlgMetrics()
 
 Write out algorithm metrics to stdout and to Ostrich output file.

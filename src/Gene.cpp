@@ -29,9 +29,7 @@ CTOR
 Constructs a Gene using the real number arg. and its upper and lower bounds 
 and the mutation rate.
 ******************************************************************************/
-RealEncodedGene::RealEncodedGene(double val, double lwr, double upr, 
-                                 double rate, double xover)
-{
+RealEncodedGene::RealEncodedGene(double val, double lwr, double upr,  double rate, double xover){
    m_Value        = val;
    m_LowerBound   = lwr;
    m_UpperBound   = upr;
@@ -39,6 +37,22 @@ RealEncodedGene::RealEncodedGene(double val, double lwr, double upr,
    m_CrossoverRate = xover;
 
    IncCtorCount();
+} /* end RealEncodedGene::CTOR */
+
+
+/******************************************************************************
+CTOR
+
+Constructs an empty Gene
+******************************************************************************/
+RealEncodedGene::RealEncodedGene(void) {
+    m_Value = NULL;
+    m_LowerBound = NULL;
+    m_UpperBound = NULL;
+    m_MutationRate = NULL;
+    m_CrossoverRate = NULL;
+
+    IncCtorCount();
 } /* end RealEncodedGene::CTOR */
 
 /******************************************************************************
@@ -49,12 +63,11 @@ is a weigthed average of the parents, such that the child value always lies
 between those of its parents. The weights used are based on the fitness values of
 the parents. A random epsilon value between +/- 10% is also added.
 ******************************************************************************/
-void RealEncodedGene::Crossover(Gene * pMate, double F1, double F2, int np)
+double RealEncodedGene::Crossover(RealEncodedGene* pMate, double selfValue, double mateVal, double F1, double F2, int np)
 {
    double r, w1, w2, p, s;
    double range, lwr, upr;
    double childVal;
-   double mateVal;
 
    //determine range of gene
    lwr = this->GetLwr(); upr = this->GetUpr(); range = upr -lwr;
@@ -63,23 +76,19 @@ void RealEncodedGene::Crossover(Gene * pMate, double F1, double F2, int np)
    p = 1.00-(MyMin(fabs(F1),fabs(F2))/MyMax(fabs(F1),fabs(F2)));
    if(CheckOverflow(p)) p = 0.00;
 
-   if(F1 > F2)
-   {
+   if(F1 > F2) {
       w1=MyMin(0.5+0.5*p,1.00);
       w2=1.00-w1;
    }
-   else
-   {
+   else {
       w2=MyMin(0.5+0.5*p,1.00);
       w1=1.00-w2;
    }
 
    r = (double)MyRand() / (double)MY_RAND_MAX;
 
-   if(r < m_CrossoverRate)
-   {      
-      mateVal = pMate->GetValue();    
-      childVal = (m_Value * w1) + (mateVal * w2);
+   if (r < m_CrossoverRate) {      
+      childVal = (selfValue * w1) + (mateVal * w2);
 
       r = (double)MyRand() / (double)MY_RAND_MAX; //0 to 1
       s = (double)MyRand() / (double)MY_RAND_MAX; //0 to 1
@@ -104,10 +113,13 @@ void RealEncodedGene::Crossover(Gene * pMate, double F1, double F2, int np)
 */
 
       //enforce parameter limits
-      if(childVal > upr) childVal = m_Value + (upr-m_Value)*s;
-      if(childVal < lwr) childVal = m_Value - (m_Value-lwr)*s;
-
-      m_Value = childVal;
+      if(childVal > upr) childVal = selfValue + (upr - selfValue)*s;
+      if(childVal < lwr) childVal = selfValue - (selfValue - lwr)*s;
+        
+      return childVal;
+   } 
+   else {
+       return selfValue;
    }
 }/* end RealEncodedGene::Crossover() */
 
@@ -119,7 +131,7 @@ value between the upper and lower bound.
 
 Returns 0 if no mutation occurs, a 1 if a mutation did occur.
 ******************************************************************************/
-int RealEncodedGene::Mutate(void)
+double RealEncodedGene::Mutate(double inputValue)
 {
    double r;
    double range;
@@ -132,10 +144,30 @@ int RealEncodedGene::Mutate(void)
    {      
       r = (double)MyRand() / (double)MY_RAND_MAX;
       m_Value = (r * range) + m_LowerBound;
-      return 1;
-   }/* end if() */
-   return 0;
-} /* end RealEncodedGene::Mutate() */
+      return m_Value;
+   }
+   else {
+       return inputValue;
+   }
+   
+} 
+
+
+/******************************************************************************
+GetRandomValue()
+
+Generates a random value between lower and upper bound of the gene
+******************************************************************************/
+double RealEncodedGene::GetRandomValue(void) {
+    //generate a random between lower and upper bound
+    double r, val, range;
+    range = m_UpperBound - m_LowerBound;
+    r = (double)MyRand() / (double)MY_RAND_MAX;
+    val = (r * range) + m_LowerBound;
+
+    return val;
+} 
+
 
 /******************************************************************************
 Copy()
@@ -167,7 +199,6 @@ Gene * RealEncodedGene::CreateRandomGene(void)
    r = (double)MyRand() / (double)MY_RAND_MAX;
    val = (r * range) + m_LowerBound;
 
-   NEW_PRINT("RealEncodedGene", 1);
    pGene = new RealEncodedGene(val, m_LowerBound, m_UpperBound, m_MutationRate, m_CrossoverRate);   
    MEM_CHECK(pGene);
 

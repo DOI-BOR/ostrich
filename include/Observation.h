@@ -44,13 +44,17 @@ class Observation
 
       void Write(FILE * pFile, int type);
       void WriteSim(FILE * pFile, int type);            
-      bool IsAugmented(void) { return m_bAug;}
+      bool IsAugmented(void) { return m_bAug; }
       UnchangeableString GetKeyword(void);
+      
       int GetLine(void);
-      int GetColumn(void);     
+      int GetColumn(void);
+      double GetWeightFactor(void);
+      double GetMeasuredValueUntransformed(void) { return m_MeasuredVal; };
       UnchangeableString GetFileName(void);
       UnchangeableString GetName(void);
       UnchangeableString GetGroup(void);
+
       void SetComputedVal(double computedVal);
       char GetToken(void){return m_Tok;}
 

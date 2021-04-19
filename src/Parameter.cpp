@@ -210,6 +210,14 @@ RealParam::RealParam(IroncladString name, double initialValue,
    m_UprBnd = ConvertInVal(upperBound);
    m_EstVal = ConvertInVal(initialValue);
 
+   initialValueUntransformed = initialValue;
+   lowerBoundUntransformed = lowerBound;
+   upperBoundUntransformed = upperBound;
+   txInUntransformed = txIn;
+   txOstUntransformed = txOst;
+   txOutUntransformed = txOut;
+   fixFmtUntransformed = fixFmt;
+
    len = (int)strlen(fixFmt) + 10;  
    NEW_PRINT("char", len);
    m_pFixFmt = new char[len];
@@ -385,6 +393,10 @@ IntParam::IntParam(IroncladString name, int initialValue, int lowerBound,
    m_ThreshLwr = m_ThreshUpr = m_ThreshOff = m_LwrBnd = lowerBound;
    m_UprBnd = upperBound;
    m_EstVal = initialValue;
+
+   initialValueUntransformed = initialValue;
+   lowerBoundUntransformed = lowerBound;
+   upperBoundUntransformed = upperBound;
       
    IncCtorCount();
 } /* end CTOR (IntParam) */

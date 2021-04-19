@@ -119,6 +119,17 @@ UnchangeableString Observation::GetFileName(void)
 } /* end GetFileName() */
 
 /******************************************************************************
+GetWeightFactor()
+
+Returns the weight associated with the observation. 
+******************************************************************************/
+double Observation::GetWeightFactor(void)
+{
+    return m_Weight;
+} /* end GetKeyword() */
+
+
+/******************************************************************************
 GetKeyword()
 
 Returns the key word associated with the observation. The extraction of the 
@@ -212,20 +223,9 @@ CTOR
 
 Constructor for the class
 ******************************************************************************/
-Observation::Observation
-(
-   IroncladString name,
-   double measuredVal,
-   double weight, 
-	IroncladString fileName, 
-   IroncladString keyword, 
-   int line,
-	int column,
-   char tok,
-   bool bAug,
-   IroncladString group
-)
-{   
+Observation::Observation (IroncladString name, double measuredVal, double weight, 
+	                      IroncladString fileName,  IroncladString keyword, 
+                          int line, int column, char tok, bool bAug, IroncladString group) {   
    int len;
 
    len = (int)strlen(name) + 1;

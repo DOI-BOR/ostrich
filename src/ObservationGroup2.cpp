@@ -21,7 +21,7 @@ Version History
 #include <stdlib.h>
 #include <math.h>
 
-#include "ObservationGroup.h"
+#include "ObservationGroup2.h"
 #include "Observation.h"
 #include "ValueExtractor.h"
 
@@ -251,21 +251,6 @@ ObservationGroup::ObservationGroup(void)
 
    IncCtorCount();
 }/* end CTOR */
-
-/******************************************************************************
-CTOR
-
-Associates the object with an input file containing the details of each
-observation for the secondary worker
-******************************************************************************/
-ObservationGroup::ObservationGroup(Observation** m_pObsListInput, ValueExtractor* m_pObsFilesInput, int m_NumObsInput, int m_NumGroupsInput) {
-
-    m_pObsList = m_pObsListInput;
-    m_pObsFiles =  m_pObsFilesInput;
-    m_NumObs = m_NumObsInput;
-    m_NumGroups = m_NumGroupsInput;
-
-}
 
 /******************************************************************************
 Copy CTOR

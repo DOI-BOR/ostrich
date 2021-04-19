@@ -18,7 +18,7 @@ Version History
 #include <string.h>
 #include <stdlib.h>
 
-#include "ValueExtractor.h"
+#include "ValueExtractor2.h"
 
 #include "Exception.h"
 #include "Utility.h"
@@ -28,7 +28,8 @@ CTOR
 
 Reads model output file into a string.
 ******************************************************************************/
-ValueExtractor::ValueExtractor(IroncladString file, bool bQuitOnErr, double errVal){     
+ValueExtractor::ValueExtractor(IroncladString file, bool bQuitOnErr, double errVal)
+{     
    int len;
 
    len = (int)strlen(file) + 1;
@@ -45,24 +46,7 @@ ValueExtractor::ValueExtractor(IroncladString file, bool bQuitOnErr, double errV
    m_pNxt = NULL;
 
    IncCtorCount();
-} 
-
-/******************************************************************************
-CTOR
-
-Default constructor
-******************************************************************************/
-ValueExtractor::ValueExtractor(void) {
-
-    m_DataStr = NULL;
-    m_DataSize = 0;
-    m_bQuitOnError = NULL;
-    m_ErrorVal = NULL;
-
-    m_pNxt = NULL;
-
-    IncCtorCount();
-}
+} /* end CTOR */
 
 /******************************************************************************
 Destroy()

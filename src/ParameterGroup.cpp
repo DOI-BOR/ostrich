@@ -340,7 +340,7 @@ CTOR
 
 Initializes parameter group from user-specified input file.
 ******************************************************************************/
-ParameterGroup::ParameterGroup(void)
+ParameterGroup::ParameterGroup(bool initialize)
 {
    m_pList = NULL;
    m_pExcl = NULL;
@@ -353,7 +353,11 @@ ParameterGroup::ParameterGroup(void)
    m_NumTied = 0;
    m_NumGeom = 0;
    m_NumSpecial = 0;
-   InitFromFile(GetInFileName());
+
+   // Initialize the 
+   if (initialize) {
+       InitFromFile(GetInFileName());
+   }
    IncCtorCount();
 } /* end CTOR */
 
@@ -640,6 +644,9 @@ int ParameterGroup::CountParams(IroncladString pFileName)
    char * line;
    int count = 0;
 
+   int realParams = 0;
+   int intParams = 0;
+
    pFile = fopen(pFileName, "r");
 
    //check that file could be opened
@@ -655,7 +662,8 @@ int ParameterGroup::CountParams(IroncladString pFileName)
       line = GetNxtDataLine(pFile, pFileName);   
       while(strstr(line, "EndParams") == NULL)
       {            
-         count++;      
+         count++;
+         realParams++;
          line = GetNxtDataLine(pFile, pFileName);
       }/* end while() */
       rewind(pFile);
@@ -671,7 +679,8 @@ int ParameterGroup::CountParams(IroncladString pFileName)
       line = GetNxtDataLine(pFile, pFileName);   
       while(strstr(line, "EndIntegerParams") == NULL)
       {            
-         count++;      
+         count++;
+         intParams++;
          line = GetNxtDataLine(pFile, pFileName);
       }/* end while() */
       rewind(pFile);
@@ -694,6 +703,10 @@ int ParameterGroup::CountParams(IroncladString pFileName)
    }
 
    fclose(pFile);
+
+   // Set the values
+   m_NumRealParams = realParams;
+   m_NumIntParams = intParams;
 
    return count;   
 } /* end CountParams() */
@@ -1393,6 +1406,32 @@ void ParameterGroup::InitGeomParams(IroncladString pFileName)
    } /* end while() */
    fclose(pFile);
 } /* end InitGeomParams() */
+
+/******************************************************************************
+SetGroupValues()
+
+Allows ability to set values into a parameter group
+******************************************************************************/
+void ParameterGroup::SetGroupValues(ParameterABC** m_pListInput, ParameterABC** m_pExclInput, TiedParamABC** m_pTiedInput,
+                                    GeomParamABC** m_pGeomInput, SpecialParam** m_pSpecialInput, char** m_ParamNameListInput,
+                                    int numberOfParameters, int numberOfTiedParameters, int numberOfGeomParameters, 
+                                    int numberOfSpecialParameters,  int numberOfExcluded) {
+
+    // Set the group values from the input arrays
+    m_pList = m_pListInput;
+    m_pExcl = m_pExclInput;
+    m_pTied = m_pTiedInput;
+    m_pGeom = m_pGeomInput;
+    m_pSpecial = m_pSpecialInput;
+    m_ParamNameList = m_ParamNameListInput;
+
+    // Set the size values from the input arrays
+    m_NumParams = numberOfParameters;
+    m_NumTied = numberOfTiedParameters;
+    m_NumGeom = numberOfGeomParameters;
+    m_NumSpecial = numberOfSpecialParameters;
+    m_NumExcl = numberOfExcluded;
+}
 
 /******************************************************************************
 Write()

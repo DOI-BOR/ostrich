@@ -18,6 +18,7 @@ Version History
 #define PARAMETER_ABC_H
 
 #include "MyHeaderInc.h"
+#include "string"
 
 // forward decs
 class ConstraintABC;
@@ -55,6 +56,7 @@ class ParameterABC
       virtual void Destroy(void) = 0;
       virtual void   GetValAsStr(UnmoveableString valStr) = 0;
       virtual void   Write(FILE * pFile, int type) = 0;
+      virtual double GetInitVal(void) = 0;
       virtual double GetLwrBnd(void) = 0;
       virtual double GetUprBnd(void) = 0;
       virtual void SetLwrBnd(double val) = 0;
@@ -89,6 +91,7 @@ class RealParam : public ParameterABC
 
       void   GetValAsStr(UnmoveableString valStr);
       void   Write(FILE * pFile, int type);
+      double GetInitVal(void) { return m_InitVal; };
       double GetLwrBnd(void){ return m_LwrBnd;}
       double GetUprBnd(void){ return m_UprBnd;}
       void SetLwrBnd(double val){ m_LwrBnd = val;}
@@ -102,7 +105,15 @@ class RealParam : public ParameterABC
       double ConvertInVal(double val);
       //threshold values (allow for implicit on/off of parameters)
       void SetThreshVal(double lwr, double upr, double off){ m_ThreshLwr = lwr; m_ThreshUpr = upr; m_ThreshOff = off;}
-      const char * GetType(void) {return "real";}
+      const char* GetType(void) { return "real"; };
+
+      double GetInitialValueUntransformed(void){ return initialValueUntransformed; };
+      double GetLowerBoundUntransformed(void){ return lowerBoundUntransformed; };
+      double GetUpperBoundUntransformed(void) { return upperBoundUntransformed; };
+      std::string GetTxInUntransformed(void) { return txInUntransformed; };
+      std::string  GetTxOutUntransformed(void) { return txOutUntransformed; };
+      std::string  GetFixFmtUntransformed(void) { return fixFmtUntransformed; };
+
             
    private:
       StringType m_pName;
@@ -112,6 +123,9 @@ class RealParam : public ParameterABC
       double m_UprBnd;
       double m_EstVal;      
       double m_ThreshLwr, m_ThreshUpr, m_ThreshOff;
+
+      double initialValueUntransformed, lowerBoundUntransformed, upperBoundUntransformed;
+      std::string  txInUntransformed, txOstUntransformed, txOutUntransformed, fixFmtUntransformed;
 
       TransformTypeEnum m_TransID[NUM_STAGES];      
       void SetTransformation(TransformStageEnum which, IroncladString tx);
@@ -134,6 +148,7 @@ class IntParam : public ParameterABC
       void   GetValAsStr(UnmoveableString valStr){sprintf(valStr, "%d", m_EstVal);}
       double GetEstVal(void){ return (double)m_EstVal;}
       double SetEstVal(double estVal);
+      double GetInitVal(void) { return m_InitVal; };
       double GetLwrBnd(void){ return (double)m_LwrBnd;}
       double GetUprBnd(void){ return (double)m_UprBnd;}
       void SetLwrBnd(double val){ m_LwrBnd = (int)val;}
@@ -146,6 +161,10 @@ class IntParam : public ParameterABC
       void SetThreshVal(double lwr, double upr, double off){ m_ThreshLwr = (int)lwr; m_ThreshUpr = (int)upr; m_ThreshOff = (int)off;}
       const char * GetType(void) {return "integer";}
 
+      int GetInitialValueUntransformed(void) { return initialValueUntransformed; };
+      int GetLowerBoundUntransformed(void) { return lowerBoundUntransformed; };
+      int GetUpperBoundUntransformed(void) { return upperBoundUntransformed; };
+
    private:
       StringType m_pName;
       int m_InitVal;
@@ -153,6 +172,8 @@ class IntParam : public ParameterABC
       int m_UprBnd;
       int m_EstVal;            
       int m_ThreshLwr, m_ThreshUpr, m_ThreshOff;
+
+      int initialValueUntransformed, lowerBoundUntransformed, upperBoundUntransformed;
 }; /* end class IntParam */
 
 /******************************************************************************
@@ -315,4 +336,4 @@ class SpecialParam
 }; /* end class SpecialParam */
 
 
-#endif /* PARAMETER_H */
+#endif /* PARAMETER_ABC_H */

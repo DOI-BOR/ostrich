@@ -44,7 +44,7 @@ class ParameterGroup
 class ParameterGroup
 {
    public:
-     ParameterGroup(void);
+     ParameterGroup(bool initialize);
      ~ParameterGroup(void){ DBG_PRINT("ParameterGroup::DTOR"); Destroy();}
       void Destroy(void);
 
@@ -75,6 +75,16 @@ class ParameterGroup
      MetaParameter GetMetaParam(IroncladString name);
      bool CheckExtraction(void){ return m_bExtracted;}
 
+     
+     void SetGroupValues(ParameterABC** m_pList, ParameterABC** m_pExcl, TiedParamABC** m_pTied, 
+                         GeomParamABC** m_pGeom, SpecialParam** m_pSpecial, char** m_ParamNameList,
+                         int numberOfParameters, int numberOfTiedParameters, int numberOfGeomParameters,
+                         int numberOfSpecialParameters, int numberOfExcluded);    
+
+     int GetNumRealParams(void) { return m_NumRealParams; };
+     int GetNumIntParams(void) { return m_NumIntParams; };
+
+
    private:      
       ParameterABC ** m_pList;
       ParameterABC ** m_pExcl;
@@ -83,6 +93,8 @@ class ParameterGroup
 	  SpecialParam ** m_pSpecial;
 
       int m_NumParams;
+      int m_NumRealParams;
+      int m_NumIntParams;
       char ** m_ParamNameList; //list of parameter names
       int m_NumTied;
       int m_NumGeom;
