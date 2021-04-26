@@ -34,11 +34,14 @@ class ValueExtractor
       bool ExtractValue(IroncladString name, IroncladString search, int line, 
                           int col, char tok, double * val);
 
+      StringType GetFilename(void) { return m_FileName; };
+      ValueExtractor* GetNext(void) { return m_pNxt; }
+
    private:
       void FileToString(void);
       bool ExtractValue(IroncladString search, int line, int col, char tok, double * val);
       ValueExtractor * GetByName(IroncladString name);
-      ValueExtractor * GetNext(void)     { return m_pNxt;}            
+              
       IroncladString   GetName(void)     { return m_FileName;}
       void SetNext(ValueExtractor * pNxt){ delete m_pNxt; m_pNxt = pNxt;}
 

@@ -20,6 +20,7 @@ Version History
 #include <string.h>
 #include <stdlib.h>
 #include <math.h>
+#include <iostream>
 
 #include "ObservationGroup.h"
 #include "Observation.h"
@@ -205,8 +206,7 @@ void ObservationGroup::ExtractVals(void)
    //read output files into memory
    m_pObsFiles->ReadOutputFiles();
    
-   for(i = 0; i < m_NumObs; i++)
-   {     
+   for(i = 0; i < m_NumObs; i++) { 
       name = m_pObsList[i]->GetFileName();
       line = m_pObsList[i]->GetLine();
       col = m_pObsList[i]->GetColumn();

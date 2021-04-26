@@ -1,7 +1,9 @@
 // TODO: doc string
 
 #include "ModelWorker.h"
+#include "Exception.h"
 
+#include <iostream>
 
 
 /*
@@ -16,7 +18,6 @@ ModelWorker::ModelWorker(void) {
 
     // Get the information through MPI from the primary worker
     SetupFromPrimary();  
-
 }
 
 void ModelWorker::Work(void) {
@@ -40,11 +41,13 @@ void ModelWorker::Destroy(void) {
     IncDtorCount();
 };
 
-void ModelWorker::SetupFromPrimary() {
-    
+void ModelWorker::SetupFromPrimary() {  
 
     // Get the secondary worker directory tag from the primary worker
     ReceiveWorkerDirectory();
+
+    // Get the solve command
+    ReceiveWorkerSolveCommand();
 
     // Get the extra files from the directory
     ReceiveWorkerExtraFiles();
@@ -57,18 +60,31 @@ void ModelWorker::SetupFromPrimary() {
 
     // Get the parameters for the analysis
     ReceiveWorkerParameters();
-
 }
 
 
 void ModelWorker::ReceiveWorkerDirectory(void) {
     // TODO: Doc string
-    
+
     // Request the directory from the primary worker
     workerDirectory = ReceiveString(tag_directory);
 
+    // Remove the last character. This is necessary for the numbers to append correctly.
+    workerDirectory.pop_back();
+
     // Append the worker number onto the tag
-    workerDirectory.append(std::to_string(rank));
+    workerDirectory += std::to_string(rank);
+
+}
+
+void ModelWorker::ReceiveWorkerSolveCommand(void) {
+    // TODO: Doc string
+
+    // Request the directory from the primary worker
+    solveCommand = ReceiveString(tag_solve);
+
+    // Remove the last character.
+    solveCommand.pop_back();
 
 }
 
@@ -84,7 +100,6 @@ void  ModelWorker::ReceiveWorkerExtraFiles(void) {
         // Receive and append into the holding vector
         fileCleanupList.push_back(ReceiveString(tag_textFile));
     }
-
 }
 
 
@@ -130,14 +145,18 @@ void ModelWorker::ReceiveWorkerObservations(void) {
     int numberOfGroups = ReceiveInteger(tag_obsLengthGroup);
 
     // Create an array of observations
-    Observation *observationArray = new Observation[numberOfObservations];
+    Observation** observationArray = new Observation*[numberOfObservations];
+
+    // Create a vector containing the unique files
+    std::vector<std::string> uniqueFiles;
 
     // Loop and request each observation from the primary worker. This will loop through all obsevations, transmitting all the 
     // information for each observation before moving onto the next
     for (int entryFile = 0; entryFile < numberOfObservations; entryFile++) {
 
         // Receive the observation name
-        IroncladString obsName = &ReceiveString(tag_obsName)[0];
+        std::string tempName = ReceiveString(tag_obsName);
+        IroncladString obsName = &tempName[0];
 
         // Receive the observation value
         double obsValue = ReceiveDouble(tag_obsValue);
@@ -146,10 +165,18 @@ void ModelWorker::ReceiveWorkerObservations(void) {
         double obsWeight = ReceiveDouble(tag_obsWeight);
 
         // Receive the observation file
-        IroncladString obsFile = &ReceiveString(tag_obsFile)[0];
+        std::string tempFile = ReceiveString(tag_obsFile);
+        IroncladString obsFile = &tempFile[0];
+
+        // Check if the observation file is already in use
+        if (std::find(uniqueFiles.begin(), uniqueFiles.end(), tempFile) == uniqueFiles.end()) {
+            // File is not in the list of files. Add to the vector.
+            uniqueFiles.push_back(tempFile);
+        }
 
         // Receive the observation keyword
-        IroncladString obsKeyword = &ReceiveString(tag_obsKeyword)[0];
+        std::string tempKeyword = ReceiveString(tag_obsKeyword);
+        IroncladString obsKeyword = &tempKeyword[0];
 
         // Recieve the observation line
         int obsLine = ReceiveInteger(tag_obsLine);
@@ -169,44 +196,39 @@ void ModelWorker::ReceiveWorkerObservations(void) {
         }
 
         // Receive the observation group
-        IroncladString obsGroup = &ReceiveString(tag_obsGroup)[0];
+        std::string tempGroup = ReceiveString(tag_obsGroup);
+        IroncladString obsGroup = &tempGroup[0];
 
         // Create an observation object from the transferred data
-        Observation obs = Observation(obsName, obsValue, obsWeight, obsFile, obsKeyword, obsLine, obsColumn, obsToken, 
-                                      obsAugmented, obsGroup);
+        observationArray[entryFile] = new Observation(obsName, obsValue, obsWeight, obsFile, obsKeyword, obsLine, obsColumn, obsToken,
+                                                      obsAugmented, obsGroup);
 
-        // Push the observation to the storage vector
-        observationArray[entryFile] = obs;
     }
 
     // Construct the value extractors
-    // Get the unitue files from the observations
-    std::vector<IroncladString> files;
+    // Create the value extractors for the observation group
+    std::string temp = uniqueFiles[0];
+    IroncladString temp2 = &temp[0];
 
-    // Loop on the observations, checking for unique file names
-    for (int entryObservation = 0; entryObservation < numberOfObservations; entryObservation++) {
-        if (std::find(files.begin(), files.end(), observationArray[entryObservation].GetFileName()) == files.end()) {
-            // File is not in the list of files. Add to the vector.
-            files.push_back(observationArray[entryObservation].GetFileName());
-        }
+    ValueExtractor *observationExtractors = new ValueExtractor(temp2, false, 1e6);
+    for (int entryExtractor = 1; entryExtractor < uniqueFiles.size(); entryExtractor++) {
+        // TODO: Update thse with nondefault values
+        std::string tempExtractor = uniqueFiles[entryExtractor];
+        observationExtractors->Insert(&tempExtractor[0]);
     }
 
-    // Create the value extractors for the observation group
-    ValueExtractor *observationExtractors = new ValueExtractor(files[0], false, 1e6);
-
-    for (int entryExtractor = 1; entryExtractor < files.size(); entryExtractor++) {
-        // TODO: Update thse with nondefault values
-        observationExtractors->Insert(files[entryExtractor]);
+    for (int i = 0; i < uniqueFiles.size(); i++) {
+        observationExtractors->GetNext();
     }
 
     // Construct the group
-    observationGroup = new ObservationGroup(&observationArray, observationExtractors, numberOfObservations, numberOfGroups);
+    observationGroup = new ObservationGroup(observationArray, observationExtractors, numberOfObservations, numberOfGroups);
+
 }
 
 
 void ModelWorker::ReceiveWorkerParameters(void) {
     // TODO: Doc string
-
 
     // Get the total number of paramters
     int numberOfTotalParameters = ReceiveInteger(tag_paramTotalNum);
@@ -217,7 +239,6 @@ void ModelWorker::ReceiveWorkerParameters(void) {
     // Create a parameter group object to store everything in
     ParameterABC** m_pList = new ParameterABC *[numberOfTotalParameters];
     char** m_ParamNameList = new char* [numberOfTotalParameters];
-
     ParameterABC** m_pExcl = new ParameterABC *[numberOfTotalParameters];
     int positionCounter = 0;
 
@@ -229,15 +250,26 @@ void ModelWorker::ReceiveWorkerParameters(void) {
     for (int entryReal = 0; entryReal < numberOfRealParameters; entryReal++) {
 
         // Receive the values from the primary worker
-        IroncladString paramName = &ReceiveString(tag_paramRealName)[0];
+        std::string tempName = ReceiveString(tag_paramRealName);
+        IroncladString paramName = &tempName[0];
+
         double paramInitial = ReceiveDouble(tag_paramRealInit);
         double paramLowerBound = ReceiveDouble(tag_paramRealLower);
         double paramUpperBound = ReceiveDouble(tag_paramRealUpper);
-        IroncladString paramTxIn = &ReceiveString(tag_paramRealIn)[0];
-        IroncladString paramTxOst = &ReceiveString(tag_paramRealOst)[0];
-        IroncladString paramFmt = &ReceiveString(tag_paramRealFmt)[0];
+        
+        std::string tempIn = ReceiveString(tag_paramRealIn);
+        IroncladString paramTxIn = &tempIn[0];
 
-        m_pList[positionCounter] = new RealParam(paramName, paramInitial, paramLowerBound, paramUpperBound, paramTxIn, paramTxIn, paramFmt, "free");
+        std::string tempOst = ReceiveString(tag_paramRealOst);
+        IroncladString paramTxOst = &tempOst[0];
+
+        std::string tempOut = ReceiveString(tag_paramRealOut);
+        IroncladString paramTxOut = &tempOut[0];
+
+        std::string tempFmt = ReceiveString(tag_paramRealFmt);
+        IroncladString paramFmt = &tempFmt[0];
+
+        m_pList[positionCounter] = new RealParam(paramName, paramInitial, paramLowerBound, paramUpperBound, paramTxIn, paramTxOst, paramTxOut, paramFmt);
         
         m_ParamNameList[positionCounter] = new char[strlen(paramName) + 1];
         strcpy(m_ParamNameList[positionCounter], paramName);
@@ -253,10 +285,12 @@ void ModelWorker::ReceiveWorkerParameters(void) {
     int numberOfIntegerParameters = ReceiveInteger(tag_paramTotalInt);
 
     // Request the values from the primary worker
-    for (int entryReal = 0; entryReal < numberOfRealParameters; entryReal++) {
+    for (int entryInt = 0; entryInt < numberOfIntegerParameters; entryInt++) {
 
-        // Receive the values from the primary worker
-        IroncladString paramName = &ReceiveString(tag_paramInitName)[0];
+        // Receive the values tag_paramInitName the primary worker
+        std::string tempIn = ReceiveString(tag_paramInitName);
+        IroncladString paramName = &tempIn[0];
+
         int paramInitial = ReceiveInteger(tag_paramIntInit);
         int paramLowerBound = ReceiveInteger(tag_paramIntLower);
         int paramUpperBound = ReceiveInteger(tag_paramIntUpper);
@@ -287,11 +321,10 @@ void ModelWorker::ReceiveWorkerParameters(void) {
     
     // Set the parameter values into the group
     paramGroup->SetGroupValues(m_pList, m_pExcl, m_pTied, m_pGeom, m_pSpecial, m_ParamNameList, numberOfTotalParameters,  0,  0, 0,  numberOfExcluded);
-
 }
 
 
-std::string ReceiveString(int tag_number) {
+std::string  ModelWorker::ReceiveString(int tag_number) {
     // TODO: Doc string
 
     // Initialize the variables required for the probe
@@ -300,23 +333,24 @@ std::string ReceiveString(int tag_number) {
 
     // Conduct the probe on the request
     MPI_Probe(0, tag_number, MPI_COMM_WORLD, &status);
-    MPI_Get_count(&status, MPI_INT, &characterLength);
+    MPI_Get_count(&status, MPI_CHAR, &characterLength);
 
     // Allocate the character array dynamically
     char* directoryFromPrimary = new char[characterLength];
 
     // Request the directory from the primary worker
-    MPI_Recv(&directoryFromPrimary, characterLength, MPI_CHAR, 0, tag_number, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
+    MPI_Recv(directoryFromPrimary, characterLength, MPI_CHAR, 0, tag_number, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
 
     // Convert to a string and return to the calling function
-    std::string convertedArray = std::string(directoryFromPrimary);
+    std::string convertedArray = std::string(directoryFromPrimary, characterLength);
     delete directoryFromPrimary;
-    
+
+    // Return the array to the calling function
     return convertedArray;
 }
 
 
-int ReceiveInteger(int tag_number) {
+int  ModelWorker::ReceiveInteger(int tag_number) {
     // TODO: Doc string
 
     // Initialize the variable to fill
@@ -329,7 +363,7 @@ int ReceiveInteger(int tag_number) {
 }
 
 
-double ReceiveDouble(int tag_number) {
+double  ModelWorker::ReceiveDouble(int tag_number) {
     // TODO: Doc string
 
     // Initialize the variable to fill
@@ -342,7 +376,7 @@ double ReceiveDouble(int tag_number) {
 }
 
 
-char ReceiveChar(int tag_number) {
+char  ModelWorker::ReceiveChar(int tag_number) {
     // TODO: Doc string
 
     // Initialize the variable to fill
@@ -355,7 +389,7 @@ char ReceiveChar(int tag_number) {
 }
 
 
-void SendDouble(int tag_number, double value) {
+void  ModelWorker::SendDouble(int tag_number, double value) {
     // TODO: Doc string
 
     // Send the value
@@ -363,7 +397,7 @@ void SendDouble(int tag_number, double value) {
 
 }
 
-void SendInt(int tag_number, int value) {
+void  ModelWorker::SendInt(int tag_number, int value) {
     // TODO: Doc string
 
     // Send the value
@@ -381,11 +415,18 @@ void ModelWorker::SetupWork(void) {
     }
 
     // Copy all the files to it from the source directory
-    std::filesystem::path workerDirectoryPath = workerDirectory;
     for (int entryFile = 0; entryFile < fileCleanupList.size(); entryFile++) {
 
-        // Create the filepath
-        std::filesystem::path filePath = workerDirectoryPath /= fileCleanupList[entryFile];
+        // GEt the current working directory
+        std::filesystem::path workerDirectoryPath = workerDirectory;
+        
+        // Remove the last character which causes issues.
+        // TODO: remove this during the read of the control file
+        std::string temp = fileCleanupList[entryFile];
+        temp.pop_back();
+
+        // Create the filespath
+        std::filesystem::path filePath = workerDirectoryPath /= temp;
         std::filesystem::path testPath = filePath.remove_filename();
 
         // If the directory structure does not exist, create it
@@ -394,10 +435,17 @@ void ModelWorker::SetupWork(void) {
         }
         
         // Create the source path
-        std::filesystem::path sourcePath = workerDirectoryPath.parent_path() /= fileCleanupList[entryFile];
+        std::filesystem::path sourcePath = fileCleanupList[entryFile];
 
         // Copy from the source path to the worker path
-        std::filesystem::copy_file(sourcePath, filePath);
+        std::error_code code;
+        std::filesystem::copy(sourcePath, filePath, code);
+
+        // Handle any errors in a user friendly mannter.
+        if (code.value() == 2){
+            std::cout << "Extra file " << fileCleanupList[entryFile] << " is not found." << std::endl;
+            LogError(ERR_FILE_IO, "Using default algorithm setup.");
+        }
     }
 
     // Perform any checks on the model setup  
@@ -429,9 +477,8 @@ void  ModelWorker::CommenceWork() {
                 // Stack the alternative and the objective into a single array to transimit 
                 double returnArray[2]{ (double)alternativeIndex, objective };
                 
-
                 // Send to the primary worker
-                MPI_Send(&returnArray, 1, MPI_DOUBLE, 0, MPI_RESULTS_TAG, MPI_COMM_WORLD);
+                MPI_Send(returnArray, 2, MPI_DOUBLE, 0, tag_data, MPI_COMM_WORLD);
 
             }
             else {
@@ -445,18 +492,23 @@ void  ModelWorker::CommenceWork() {
     }
 }
 
+void  ModelWorker::TerminateWork(void) {
+    // Todo: update when additional operations are required at work termination
+
+}
+
 int ModelWorker::RequestParameters(void) {
 
     // Create holder for the parameters. This is one larger than the number of parameters to allow the alternative index to be transferred
     // with the alternatives
     int numberOfParameters = paramGroup->GetNumParams();
-    double* parametersTemp = new double[numberOfParameters + 1];
+    double *parametersTemp = new double[numberOfParameters + 1];
 
     // Receive the parameters
-    MPI_Recv(&(parametersTemp[0]), numberOfParameters, MPI_DOUBLE, 0, tag_data, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
+    MPI_Recv(parametersTemp, numberOfParameters+1, MPI_DOUBLE, 0, tag_data, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
 
     // Separate out the alternative index from the parameters
-    int alternativeIndex = parametersTemp[0];
+    int alternativeIndex = (int)parametersTemp[0];
 
     double *parameters = new double[numberOfParameters];
     for (int entryParameter = 0; entryParameter < numberOfParameters; entryParameter++) {
@@ -482,6 +534,7 @@ bool ModelWorker::RequestContinue(void) {
     // Request the continue flag back
     int continueValue = ReceiveInteger(tag_continue);
 
+    // Convert the int to a bool
     if (continueValue == 0) {
         return false;
     }
@@ -557,13 +610,15 @@ double ModelWorker::ExecuteSingle(void) {
     
     // Define the objective value
     double objective;
+    objective = StdExecute(0.00);
 
-    if (disklessModel == true && internalModel == true) {
+    // TODO: reenable other execute methods
+    /*if (disklessModel == true && internalModel == true) {
         objective = DisklessExecute();
     }
     else {
         objective = StdExecute(0.00);
-    }/*
+    }
     else {
         objective = Execute();
     }*/
@@ -571,6 +626,7 @@ double ModelWorker::ExecuteSingle(void) {
     //if desired update log of residuals
     WriteIterationResiduals();
 
+    // Return to the calling function
     return objective;
 }
 
@@ -679,8 +735,6 @@ StdExecute()
 double ModelWorker::StdExecute(double viol) {
     //IroncladString dirName = &workerDirectory[0];
 
-    FilePipe* pPipe;
-    int rank;
     bool isGoodTopo;
 
     //inc. number of times model has been executed
@@ -694,11 +748,20 @@ double ModelWorker::StdExecute(double viol) {
         LogError(ERR_MODL_EXE, "Could not correct model topology");
     }
 
-    //make substitution of parameters into model input files
+    // Make substitution of parameters into model input files
     for (int entryPair = 0; entryPair < filePairs.size(); entryPair++) {
-        // Convert the strings
-        IroncladString inFile = &filePairs[entryPair][0][0];
-        IroncladString outFile = &filePairs[entryPair][1][0];
+        // Setup the input file and path
+        std::string inTemp = filePairs[entryPair][0];
+        IroncladString inFile = &inTemp[0];
+
+        // Setup the output file and path
+        std::string outFileString = filePairs[entryPair][1];
+        outFileString.pop_back();
+        std::filesystem::path outTemp = workerDirectory;
+        outTemp = outTemp /= outFileString;
+
+        outFileString = outTemp.string();
+        IroncladString outFile = &outFileString[0];
 
         // Define a pair and pipe to allow substitution
         FilePair *filePair = new FilePair(inFile, outFile);
@@ -713,9 +776,9 @@ double ModelWorker::StdExecute(double viol) {
     } 
 
     // Move to model subdirectory, if needed
-    if (!workerDirectory.compare(".")) { 
-        MY_CHDIR(&workerDirectory[0]); 
-    }
+    std::filesystem::path parentPath = std::filesystem::current_path();
+    std::filesystem::current_path(workerDirectory);
+
 
     //make substitution of parameters into model input databases
     /*if (m_DbaseList != NULL)
@@ -755,6 +818,7 @@ double ModelWorker::StdExecute(double viol) {
         system(m_ExecCmd);
     }*/
     
+    // Solve the model
     system(&solveCommand[0]);
 
     //extract computed reponses from model output database(s)
@@ -775,7 +839,7 @@ double ModelWorker::StdExecute(double viol) {
     }*/
 
     //extract computed observations from model output file(s)
-    if (paramGroup != NULL) { observationGroup->ExtractVals(); }
+    observationGroup->ExtractVals(); 
 
     //compute obj. func.
     // TODO: add other objective types
@@ -787,15 +851,19 @@ double ModelWorker::StdExecute(double viol) {
     objValue += viol * MyMax(1.00, objValue);
 
     //categorize the obj. func.
-    IroncladString pCatStr = GetObjFuncCategory(&objValue, 1);
+    //IroncladString pCatStr = GetObjFuncCategory(&objValue, 1);
 
     //preserve model output, if desired
     if (preserveModelOutput) {
-        PreserveModel(rank, GetTrialNumber(), solveCounter, pCatStr);
+        // TODOL Reenable preservation with a user command 
+        //PreserveModel(rank, GetTrialNumber(), solveCounter, NULL);
     }
 
     // Output results
     Write(objValue);
+
+    // Change back to the parent path for the next iterator
+    std::filesystem::current_path(parentPath);
 
     // Return to the calling function
     return objValue;
@@ -937,7 +1005,6 @@ void ModelWorker::Write(double objFuncVal)
     //ResponseVarGroup* pRespVarGroup;
     FILE* pFile;
     char name[DEF_STR_SZ];
-    int id;
 
     /*pRespVarGroup = NULL;
     if (m_pObjFunc != NULL)
@@ -946,7 +1013,7 @@ void ModelWorker::Write(double objFuncVal)
     }*/
 
     // Create the name of the log file for the secondary worker
-    sprintf(name, "OstModel%d.txt", id);
+    sprintf(name, "OstModel%d.txt", rank);
 
     // Log the solve
     pFile = fopen(name, "a+");
@@ -955,25 +1022,26 @@ void ModelWorker::Write(double objFuncVal)
         ExitProgram(1);
     }
     
-    if (objectiveType == single) {
-        fprintf(pFile, "Run   obj.function   ");
-    }
-    else {
-        fprintf(pFile, "Run   ");
+    // Setup the header on the first iteration
+    if (solveCounter == 1) {
+        if (objectiveType == single) {
+            fprintf(pFile, "Run   obj.function   ");
+        }
+        else {
+            fprintf(pFile, "Run   ");
+        }
+
+        paramGroup->Write(pFile, WRITE_BNR);
+        fprintf(pFile, "\n");
+        fclose(pFile);
     }
 
-    // Write the observation group
-    if (observationGroup != NULL) observationGroup->Write(pFile, WRITE_BNR, NULL);
-    //if (pRespVarGroup != NULL) pRespVarGroup->Write(pFile, WRITE_BNR);
-    paramGroup->Write(pFile, WRITE_BNR);
-    fprintf(pFile, "\n");
-    fclose(pFile);
     
     pFile = fopen(name, "a+");
     fprintf(pFile, "%-4d  ", solveCounter);
 
     if (objectiveType == single) {
-        WritePreciseNumber(pFile, objFuncVal);
+        WritePreciseNumber2(pFile, objFuncVal);
         fprintf(pFile, "  ");
     }
 

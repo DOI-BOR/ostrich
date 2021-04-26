@@ -892,7 +892,7 @@ Model::Model(void)
 	}
 
    NEW_PRINT("ParameterGroup", 1);
-   m_pParamGroup = new ParameterGroup();
+   m_pParamGroup = new ParameterGroup(true);
    MEM_CHECK(m_pParamGroup);
 
    //check bounds on parameter group
@@ -979,46 +979,6 @@ Model::Model(void)
 
    IncCtorCount();
 } /* end default CTOR */
-
-/******************************************************************************
-ExtractBoxCoxValue()
-
-Retrieve optimal BoxCox transformation from previous OstOutput0.txt file.
-******************************************************************************/
-double ExtractBoxCoxValue(void)
-{
-   FILE * pOut;
-   char * line;
-   int max_line_size;
-   const char * pTok = "Estimated Optimal Box-Cox Transformation";
-   double b;
-
-   max_line_size = GetMaxLineSizeInFile((char *)"OstOutput0.txt");
-   line = new char[max_line_size + 1];
-   pOut = fopen("OstOutput0.txt", "r");
-   if(pOut == NULL)
-   {
-      LogError(ERR_FILE_IO, "Unable to extract Box-Cox transformation value. Defaulting to 1.00.");
-      delete [] line;
-      return 1.00;
-   }
-   while(!feof(pOut))
-   {
-      fgets(line, max_line_size, pOut);
-      if(strncmp(line, pTok, strlen(pTok)) == 0)
-      {
-         fgets(line, max_line_size, pOut);
-         sscanf(line, "Lambda : %lf\n", &b);
-         fclose(pOut);
-         delete [] line;
-         return b;
-      }
-   }/* end while() */
-   fclose(pOut);
-   LogError(ERR_FILE_IO, "Unable to extract Box-Cox transformation value. Defaulting to 1.00.");
-   delete [] line;
-   return 1.00;   
-}/* end ExtractBoxCoxValue() */
 
 /******************************************************************************
 Free up memory.

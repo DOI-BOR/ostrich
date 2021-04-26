@@ -301,7 +301,7 @@ RealParam::GetValAsStr()
 void RealParam::GetValAsStr(UnmoveableString valStr)
 {
    bool bOk;
-   double val = GetTransformedVal();
+   double val = GetEstVal();
    char * fmt = m_pFixFmt;
    if(strcmp(fmt, "free") == 0)
    {

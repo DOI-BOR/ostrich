@@ -19,8 +19,7 @@ Version History
 #include <mpi.h>
 #include <string.h>
 
-#include "ModelABC.h"
-#include "AlgorithmABC.h"
+#include "Algorithm.h"
 #include "ParameterABC.h"
 #include "PumpAndTreat.h"
 #include "ResponseVarGroup.h"
@@ -34,16 +33,16 @@ Version History
 #include "Exception.h"
 
 //PATO output routines
-void WriteCostToFile(FILE * pFile, ModelABC * pModel);
-void WriteConstraintsToFile(FILE * pFile, ModelABC * pModel);
-void WriteWellsToFile(FILE * pFile, ModelABC * pModel);
+void WriteCostToFile2(FILE * pFile, Algorithm *algo);
+void WriteConstraintsToFile2(FILE * pFile, Algorithm *algo);
+void WriteWellsToFile2(FILE * pFile, Algorithm *algo);
 
 /******************************************************************************
 WriteDisclaimer()
 
 Write standard GPL/FSF disclaimer.
 ******************************************************************************/
-void WriteDisclaimer(FILE * pFile)
+void WriteDisclaimer2(FILE * pFile)
 {
    int day = 0, month = 0, year = 0;
    char monthStr[10];
@@ -117,28 +116,22 @@ WriteSetup()
 
 Write out Ostrich Setup
 ******************************************************************************/
-void WriteSetup(ModelABC * pModel, const char * algStr)
-{
+void WriteSetup2(Algorithm *algo, const char * algStr) {
    FILE * pFile;
    char fileName[DEF_STR_SZ];
-   int num_procs;
-   int id;
 
-   MPI_Comm_size(MPI_COMM_WORLD, &num_procs);
-   MPI_Comm_rank(MPI_COMM_WORLD, &id);
-
-   sprintf(fileName, "OstOutput%d.txt", id);
+   sprintf(fileName, "OstOutput%d.txt", 0);
    remove(fileName);
 
    //write out disclaimers
    pFile = fopen(fileName, "a");
-   WriteDisclaimer(pFile);
-   WriteSetupToFile(pFile, pModel, algStr);
+   WriteDisclaimer2(pFile);
+   WriteSetupToFile2(pFile, algo, algStr);
    WriteSuperMuseSetupToFile(pFile);
    fclose(pFile);
 
-   WriteDisclaimer(stdout);
-   WriteSetupToFile(stdout, pModel, algStr);
+   WriteDisclaimer2(stdout);
+   WriteSetupToFile2(stdout, algo, algStr);
    WriteSuperMuseSetupToFile(stdout);
 }/* end WriteSetup() */
 
@@ -147,24 +140,18 @@ WriteSetupNoDisclaimer()
 
 Write out Ostrich Setup without disclaimer.
 ******************************************************************************/
-void WriteSetupNoDisclaimer(ModelABC * pModel, const char * algStr)
-{
+void WriteSetupNoDisclaimer2(Algorithm *algo, const char * algStr) {
    FILE * pFile;
    char fileName[DEF_STR_SZ];
-   int num_procs;
-   int id;
 
-   MPI_Comm_size(MPI_COMM_WORLD, &num_procs);
-   MPI_Comm_rank(MPI_COMM_WORLD, &id);
-
-   sprintf(fileName, "OstOutput%d.txt", id);
+   sprintf(fileName, "OstOutput%d.txt", 0);
 
    //write out disclaimers
    pFile = fopen(fileName, "a");
-   WriteSetupToFile(pFile, pModel, algStr);
+   WriteSetupToFile2(stdout, algo, algStr);
    fclose(pFile);
 
-   WriteSetupToFile(stdout, pModel, algStr);
+   //WriteSetupToFile(stdout, algo, algStr);
 }/* end WriteSetupNoDisclaimer() */
 
 /******************************************************************************
@@ -172,19 +159,19 @@ WriteSetupToFile()
 
 Write out Ostrich Setup
 ******************************************************************************/
-void WriteSetupToFile(FILE * pFile, ModelABC * pModel, const char * algStr)
+void WriteSetupToFile2(FILE * pFile, Algorithm *algo, const char * algStr)
 {
       fprintf(pFile, "Ostrich Setup\n");
-      fprintf(pFile, "Model                  : %s\n", pModel->GetModelStr());
+      fprintf(pFile, "Model                  : %s\n", algo->GetModelStr());
       fprintf(pFile, "Algorithm              : %s\n", algStr);	  
-      fprintf(pFile, "Objective Function     : %s\n", pModel->GetObjFuncStr());
-      fprintf(pFile, "Number of Parameters   : %d\n", pModel->GetParamGroupPtr()->GetNumParams());
-      fprintf(pFile, "Number of Tied Params  : %d\n", pModel->GetParamGroupPtr()->GetNumTiedParams());
+      fprintf(pFile, "Objective Function     : %s\n", algo->GetObjFuncStr());
+      fprintf(pFile, "Number of Parameters   : %d\n", algo->GetParamGroupPtr()->GetNumParams());
+      fprintf(pFile, "Number of Tied Params  : %d\n", algo->GetParamGroupPtr()->GetNumTiedParams());
       fprintf(pFile, "Number of Observations : ");
-      if(pModel->GetObsGroupPtr() == NULL){fprintf(pFile, "0\n");}
-      else {fprintf(pFile, "%d\n", pModel->GetObsGroupPtr()->GetNumObs());}
+      if(algo->GetObsGroupPtr() == NULL){fprintf(pFile, "0\n");}
+      else {fprintf(pFile, "%d\n", algo->GetObsGroupPtr()->GetNumObs());}
 	   fprintf(pFile, "Seed for Random Nums.  : %u\n", GetRandomSeed());
-      pModel->GetObjFuncPtr()->WriteSetupToFile(pFile);
+       algo->GetObjFuncPtr()->WriteSetupToFile(pFile);
       fprintf(pFile, "\n");
 }/* end WriteSetupToFile() */
 
@@ -193,23 +180,18 @@ WriteBanner()
 
 Write out iteration banner
 ******************************************************************************/
-void WriteBanner(ModelABC * pModel, const char * pBef, const char * pAft)
+void WriteBanner2(Algorithm *algo, const char * pBef, const char * pAft)
 {
    FILE * pFile;
    char fileName[DEF_STR_SZ];
-   int num_procs;
-   int id;
 
-   MPI_Comm_size(MPI_COMM_WORLD, &num_procs);
-   MPI_Comm_rank(MPI_COMM_WORLD, &id);
-
-   sprintf(fileName, "OstOutput%d.txt", id);
+   sprintf(fileName, "OstOutput%d.txt", 0);
 
    pFile = fopen(fileName, "a");
-   WriteBannerToFile(pFile, pModel, pBef, pAft);
+   WriteBannerToFile2(pFile, algo, pBef, pAft);
    fclose(pFile);
 
-   WriteBannerToFile(stdout, pModel, pBef, pAft);
+   WriteBannerToFile2(stdout, algo, pBef, pAft);
 }/* end WriteBanner() */
 
 /******************************************************************************
@@ -217,14 +199,14 @@ WriteBannerToFile()
 
 Write out iteration banner
 ******************************************************************************/
-void WriteBannerToFile(FILE * pFile, ModelABC * pModel, const char * pBef, const char * pAft)
+void WriteBannerToFile2(FILE * pFile, Algorithm *algo, const char * pBef, const char * pAft)
 {
    ObservationGroup * pObsGroup;
    ResponseVarGroup * pRespVarGroup;
    ObjectiveFunction * pObjFunc;
 
-   pObjFunc = pModel->GetObjFuncPtr();
-   pObsGroup = pModel->GetObsGroupPtr();
+   pObjFunc = algo->GetObjFuncPtr();
+   pObsGroup = algo->GetObsGroupPtr();
    pRespVarGroup = NULL;
    if(pObjFunc != NULL)
       pRespVarGroup = (ResponseVarGroup *)(pObjFunc->GetResponseVarGroup());
@@ -234,88 +216,32 @@ void WriteBannerToFile(FILE * pFile, ModelABC * pModel, const char * pBef, const
    fprintf(pFile, "%s", pBef);
    if(pObsGroup != NULL) pObsGroup->Write(pFile, WRITE_BNR, NULL);
    if(pRespVarGroup != NULL) pRespVarGroup->Write(pFile, WRITE_BNR);
-   pModel->GetParamGroupPtr()->Write(pFile, WRITE_BNR);   
+   algo->GetParamGroupPtr()->Write(pFile, WRITE_BNR);
    fprintf(pFile, "%s\n", pAft);
 }/* end WriteBannerToFile() */
-
-/******************************************************************************
-WriteStatus()
-
-Write out iteration status detail
-******************************************************************************/
-void WriteStatus(StatusStruct * pStatus)
-{
-   FILE * pFile;
-   char fileName[DEF_STR_SZ];
-   int id;
-
-   MPI_Comm_rank(MPI_COMM_WORLD, &id);
-
-   if(id == 0)
-   {
-     //
-     // status output in regular text format
-     //
-     sprintf(fileName, "OstStatus%d.txt", id);
-     remove(fileName);
-     pFile = fopen(fileName, "w");
-     if(pFile != NULL) {
-       fprintf(pFile, "CurrentIteration : %d\n", pStatus->curIter);
-       fprintf(pFile, "MaximumIterations : %d\n",pStatus->maxIter);
-       fprintf(pFile, "PercentComplete : %lf\n", pStatus->pct); 
-       fprintf(pFile, "ElapsedTime : %d\n", GetElapsedTime()); 
-       fprintf(pFile, "ModelRuns : %d\n", pStatus->numRuns);    
-       fclose(pFile);
-     }
-     
-     //
-     // status output in JSON format, e.g.:
-     //    {
-     //      	"% progress":        65,
-     //      	"seconds remaining": 123
-     //    }
-     //    
-     sprintf(fileName, "OstProgress%d.txt", id);
-     remove(fileName);
-     pFile = fopen(fileName, "w");
-     if (pFile != NULL) {
-       double time_left = (1.00 - (pStatus->pct/100.0)) * ((double)GetElapsedTime() / (pStatus->pct/100));
-       fprintf(pFile, "{\n");
-       fprintf(pFile, "       \"%% progress\": %lf \n",       pStatus->pct);
-       fprintf(pFile, "       \"seconds remaining\": %lf \n",time_left);
-       fprintf(pFile, "}\n");
-       fclose(pFile);
-     }
-   }
-}/* end WriteStatus() */
 
 /******************************************************************************
 WriteMultiObjRecord()
 
 Write out multi-objective iteration result
 ******************************************************************************/
-void WriteMultiObjRecord(ModelABC * pModel, int iter, ArchiveStruct * pArch, double dx)
+void WriteMultiObjRecord2(Algorithm *algo, int iter, ArchiveStruct * pArch, double dx)
 {
    FILE * pFile;
    char fileName[DEF_STR_SZ];
-   int num_procs;
-   int id;
 
-   MPI_Comm_size(MPI_COMM_WORLD, &num_procs);
-   MPI_Comm_rank(MPI_COMM_WORLD, &id);
-
-   sprintf(fileName, "OstOutput%d.txt", id);
+   sprintf(fileName, "OstOutput%d.txt", 0);
    pFile = fopen(fileName, "a");
-   WriteMultiObjRecordToFile(pFile, pModel, iter, pArch, dx);
+   WriteMultiObjRecordToFile2(pFile, algo, iter, pArch, dx);
    fclose(pFile);
 
-   sprintf(fileName, "OstNonDomSolutions%d.txt", id);
+   sprintf(fileName, "OstNonDomSolutions%d.txt", 0);
    pFile = fopen(fileName, "w");
-   WriteBannerToFile(pFile, pModel, "gen   ", "alg_conv_code");
-   WriteMultiObjRecordToFile(pFile, pModel, iter, pArch, dx);
+   WriteBannerToFile2(pFile, algo, "gen   ", "alg_conv_code");
+   WriteMultiObjRecordToFile2(pFile, algo, iter, pArch, dx);
    fclose(pFile);
 
-   WriteMultiObjRecordToFile(stdout, pModel, iter, pArch, dx);
+   WriteMultiObjRecordToFile2(stdout, algo, iter, pArch, dx);
 }/* end WriteMultiObjRecord() */
 
 /******************************************************************************
@@ -323,12 +249,12 @@ WriteMultiObjRecordToFile()
 
 Write out multi-objective iteration result
 ******************************************************************************/
-void WriteMultiObjRecordToFile(FILE * pFile, ModelABC * pModel, int iter, ArchiveStruct * pArch, double dx)
+void WriteMultiObjRecordToFile2(FILE * pFile, Algorithm *algo, int iter, ArchiveStruct * pArch, double dx)
 {
    ParameterGroup * pGroup;
    ParameterABC * pParam;
 
-   pGroup = pModel->GetParamGroupPtr();
+   pGroup = algo->GetParamGroupPtr();
 
    fprintf(pFile, "\n");
    for(ArchiveStruct * pCur = pArch; pCur != NULL; pCur = pCur->pNext)
@@ -352,23 +278,18 @@ WriteRecord()
 
 Write out iteration result
 ******************************************************************************/
-void WriteRecord(ModelABC * pModel, int iter, double fx, double dx)
+void WriteRecord2(Algorithm *algo, int iter, double fx, double dx)
 {
    FILE * pFile;
    char fileName[DEF_STR_SZ];
-   int num_procs;
-   int id;
 
-   MPI_Comm_size(MPI_COMM_WORLD, &num_procs);
-   MPI_Comm_rank(MPI_COMM_WORLD, &id);
-
-   sprintf(fileName, "OstOutput%d.txt", id);
+   sprintf(fileName, "OstOutput%d.txt", 0);
 
    pFile = fopen(fileName, "a");
-   WriteRecordToFile(pFile, pModel, iter, fx, dx);
+   WriteRecordToFile2(pFile, algo, iter, fx, dx);
    fclose(pFile);
 
-   WriteRecordToFile(stdout, pModel, iter, fx, dx);
+   WriteRecordToFile2(stdout, algo, iter, fx, dx);
 }/* end WriteRecord() */
 
 /******************************************************************************
@@ -376,14 +297,14 @@ WriteRecordToFile()
 
 Write out iteration result
 ******************************************************************************/
-void WriteRecordToFile(FILE * pFile, ModelABC * pModel, int iter, double fx, double dx)
+void WriteRecordToFile2(FILE * pFile, Algorithm *algo, int iter, double fx, double dx)
 {
    ObservationGroup * pObsGroup;
    ResponseVarGroup * pRespVarGroup;
    ObjectiveFunction * pObjFunc;
 
-   pObjFunc = pModel->GetObjFuncPtr();
-   pObsGroup = pModel->GetObsGroupPtr();
+   pObjFunc = algo->GetObjFuncPtr();
+   pObsGroup = algo->GetObsGroupPtr();
    pRespVarGroup = NULL;
    if(pObjFunc != NULL)
       pRespVarGroup = (ResponseVarGroup *)(pObjFunc->GetResponseVarGroup());
@@ -391,7 +312,7 @@ void WriteRecordToFile(FILE * pFile, ModelABC * pModel, int iter, double fx, dou
    fprintf(pFile, "%-4d  %E  ", iter, fx);
    if(pObsGroup != NULL) pObsGroup->Write(pFile, WRITE_SCI, NULL);
    if(pRespVarGroup != NULL) pRespVarGroup->Write(pFile, WRITE_SCI);
-   pModel->GetParamGroupPtr()->Write(pFile, WRITE_SCI);   
+   algo->GetParamGroupPtr()->Write(pFile, WRITE_SCI);   
    fprintf(pFile, "%E\n", dx);
 }/* end WriteRecordToFile() */
 
@@ -401,32 +322,27 @@ WriteMultiObjOptimal()
 Write out final set of dominated and non-dominated solutions for a multi-
 objective application.
 ******************************************************************************/
-void WriteMultiObjOptimal(ModelABC * pModel, ArchiveStruct * pNonDom, ArchiveStruct * pDom)
+void WriteMultiObjOptimal2(Algorithm *algo, ArchiveStruct * pNonDom, ArchiveStruct * pDom)
 {
    FILE * pFile;
    char fileName[DEF_STR_SZ];
-   int num_procs;
-   int id;
 
-   MPI_Comm_size(MPI_COMM_WORLD, &num_procs);
-   MPI_Comm_rank(MPI_COMM_WORLD, &id);
-
-   sprintf(fileName, "OstOutput%d.txt", id);
+   sprintf(fileName, "OstOutput%d.txt", 0);
 
    pFile = fopen(fileName, "a");
-   WriteMultiObjOptimalToFile(pFile, pModel, pNonDom, pDom);
+   WriteMultiObjOptimalToFile2(pFile, algo, pNonDom, pDom);
    //additional PATO output
-   WriteCostToFile(pFile, pModel);
-   WriteConstraintsToFile(pFile, pModel);
-   WriteWellsToFile(pFile, pModel);   
+   WriteCostToFile2(pFile, algo);
+   WriteConstraintsToFile2(pFile, algo);
+   WriteWellsToFile2(pFile, algo);   
    fclose(pFile);
 
-   WriteMultiObjOptimalToFile(stdout, pModel, pNonDom, pDom);
+   WriteMultiObjOptimalToFile2(stdout, algo, pNonDom, pDom);
 
    //additional PATO output
-   WriteCostToFile(stdout, pModel);
-   WriteConstraintsToFile(stdout, pModel);
-   WriteWellsToFile(stdout, pModel);   
+   WriteCostToFile2(stdout, algo);
+   WriteConstraintsToFile2(stdout, algo);
+   WriteWellsToFile2(stdout, algo);   
 }/* end WriteMultiObjOptimal() */
 
 /******************************************************************************
@@ -435,7 +351,7 @@ WriteMultiObjOptimalToFile()
 Write out final set of dominated and non-dominated solutions for a multi-
 objective application.
 ******************************************************************************/
-void WriteMultiObjOptimalToFile(FILE * pFile, ModelABC * pModel, ArchiveStruct * pNonDom, ArchiveStruct * pDom)
+void WriteMultiObjOptimalToFile2(FILE * pFile, Algorithm *algo, ArchiveStruct * pNonDom, ArchiveStruct * pDom)
 {
    int nonDomCount = 0;
    int domCount = 0;
@@ -446,9 +362,9 @@ void WriteMultiObjOptimalToFile(FILE * pFile, ModelABC * pModel, ArchiveStruct *
    ParameterGroup * pGroup;
    ParameterABC * pParam;
 
-   pObjFunc = pModel->GetObjFuncPtr();
-   pObsGroup = pModel->GetObsGroupPtr();
-   pGroup = pModel->GetParamGroupPtr();
+   pObjFunc = algo->GetObjFuncPtr();
+   pObsGroup = algo->GetObsGroupPtr();
+   pGroup = algo->GetParamGroupPtr();
    pRespVarGroup = NULL;
    if(pObjFunc != NULL)
       pRespVarGroup = (ResponseVarGroup *)(pObjFunc->GetResponseVarGroup());
@@ -458,7 +374,7 @@ void WriteMultiObjOptimalToFile(FILE * pFile, ModelABC * pModel, ArchiveStruct *
    //banner text
    if(pObsGroup != NULL) pObsGroup->Write(pFile, WRITE_BNR, NULL);
    if(pRespVarGroup != NULL) pRespVarGroup->Write(pFile, WRITE_BNR);
-   pModel->GetParamGroupPtr()->Write(pFile, WRITE_BNR);   
+   algo->GetParamGroupPtr()->Write(pFile, WRITE_BNR);   
    fprintf(pFile, "\n");
 
    //list of solutions
@@ -481,7 +397,7 @@ void WriteMultiObjOptimalToFile(FILE * pFile, ModelABC * pModel, ArchiveStruct *
    //banner text
    if(pObsGroup != NULL) pObsGroup->Write(pFile, WRITE_BNR, NULL);
    if(pRespVarGroup != NULL) pRespVarGroup->Write(pFile, WRITE_BNR);
-   pModel->GetParamGroupPtr()->Write(pFile, WRITE_BNR);   
+   algo->GetParamGroupPtr()->Write(pFile, WRITE_BNR);   
    fprintf(pFile, "\n");
 
    //list of solutions
@@ -509,31 +425,26 @@ WriteOptimal()
 
 Write out optimal result
 ******************************************************************************/
-void WriteOptimal(ModelABC * pModel, double fx)
+void WriteOptimal2(Algorithm *algo, double fx)
 {
    FILE * pFile;
    char fileName[DEF_STR_SZ];
-   int num_procs;
-   int id;
 
-   MPI_Comm_size(MPI_COMM_WORLD, &num_procs);
-   MPI_Comm_rank(MPI_COMM_WORLD, &id);
-
-   sprintf(fileName, "OstOutput%d.txt", id);
+   sprintf(fileName, "OstOutput%d.txt", 0);
 
    pFile = fopen(fileName, "a");
-   WriteOptimalToFile(pFile, pModel, fx);
+   WriteOptimalToFile2(pFile, algo, fx);
    //additional PATO output
-   WriteCostToFile(pFile, pModel);
-   WriteConstraintsToFile(pFile, pModel);
-   WriteWellsToFile(pFile, pModel);   
+   WriteCostToFile2(pFile, algo);
+   WriteConstraintsToFile2(pFile, algo);
+   WriteWellsToFile2(pFile, algo);   
    fclose(pFile);
 
-   WriteOptimalToFile(stdout, pModel, fx);
+   WriteOptimalToFile2(stdout, algo, fx);
    //additional PATO output
-   WriteCostToFile(stdout, pModel);
-   WriteConstraintsToFile(stdout, pModel);
-   WriteWellsToFile(stdout, pModel);   
+   WriteCostToFile2(stdout, algo);
+   WriteConstraintsToFile2(stdout, algo);
+   WriteWellsToFile2(stdout, algo);   
 }/* end WriteOptimal() */
 
 /******************************************************************************
@@ -541,10 +452,10 @@ WriteOptimalToFile()
 
 Write out optimal result
 ******************************************************************************/
-void WriteOptimalToFile(FILE * pFile, ModelABC * pModel, double fx) {
+void WriteOptimalToFile2(FILE * pFile, Algorithm *algo, double fx) {
    fprintf(pFile, "\nOptimal Parameter Set\n");
    fprintf(pFile, "Objective Function : %E\n", fx);
-   pModel->GetParamGroupPtr()->Write(pFile, WRITE_OPT);
+   algo->GetParamGroupPtr()->Write(pFile, WRITE_OPT);
 }/* end WriteOptimalToFile() */
 
 /******************************************************************************
@@ -552,7 +463,7 @@ WriteOptimalToFileWithGroup()
 
 Write out optimal result
 ******************************************************************************/
-void WriteOptimalToFileWithGroup(FILE* pFile, ParameterGroup* paramGroup, double fx) {
+void WriteOptimalToFileWithGroup2(FILE* pFile, ParameterGroup* paramGroup, double fx) {
 
     fprintf(pFile, "\nOptimal Parameter Set\n");
     fprintf(pFile, "Objective Function : %E\n", fx);
@@ -565,36 +476,36 @@ WriteAlgMetrics()
 
 Write out algorithm metrics to stdout and to Ostrich output file.
 ******************************************************************************/
-void WriteAlgMetrics(AlgorithmABC * pAlg)
-{
-   FILE * pFile;
-   char fileName[DEF_STR_SZ];
-   int num_procs;
-   int id;
-
-   MPI_Comm_size(MPI_COMM_WORLD, &num_procs);
-   MPI_Comm_rank(MPI_COMM_WORLD, &id);
-
-   sprintf(fileName, "OstOutput%d.txt", id);
-
-   pFile = fopen(fileName, "a");
-   pAlg->WriteMetrics(pFile);
-   fclose(pFile);
-
-   pAlg->WriteMetrics(stdout);
-}/* end WriteMetrics() */
+//void WriteAlgMetrics(AlgorithmABC * pAlg)
+//{
+//   FILE * pFile;
+//   char fileName[DEF_STR_SZ];
+//   int num_procs;
+//   int id;
+//
+//   MPI_Comm_size(MPI_COMM_WORLD, &num_procs);
+//   MPI_Comm_rank(MPI_COMM_WORLD, &id);
+//
+//   sprintf(fileName, "OstOutput%d.txt", id);
+//
+//   pFile = fopen(fileName, "a");
+//   pAlg->WriteMetrics(pFile);
+//   fclose(pFile);
+//
+//   pAlg->WriteMetrics(stdout);
+//}/* end WriteMetrics() */
 
 /******************************************************************************
 WriteCostToFile()
 
 Write out PATO cost breakdown.
 ******************************************************************************/
-void WriteCostToFile(FILE * pFile, ModelABC * pModel)
+void WriteCostToFile2(FILE * pFile, Algorithm *algo)
 {
    PATO * pPATO;
-   if(pModel->GetObjFuncId() != OBJ_FUNC_PATO){ return;}
+   if(algo->GetObjFuncId() != OBJ_FUNC_PATO){ return;}
    fprintf(pFile, "\nCost Breakdown\n");
-   pPATO = (PATO *)(pModel->GetObjFuncPtr());
+   pPATO = (PATO *)(algo->GetObjFuncPtr());
    pPATO->WriteCost(pFile, WRITE_DEC);
 }/* end WriteCostToFile() */
 
@@ -603,21 +514,21 @@ WriteConstraintsToFile()
 
 Write out PATO constraint information.
 ******************************************************************************/
-void WriteConstraintsToFile(FILE * pFile, ModelABC * pModel)
+void WriteConstraintsToFile2(FILE * pFile, Algorithm *algo)
 {
    PATO * pPATO;
    GCOP * pGCOP;
-   if(pModel->GetObjFuncId() == OBJ_FUNC_PATO)
+   if(algo->GetObjFuncId() == OBJ_FUNC_PATO)
    { 
       fprintf(pFile, "\nSummary of Constraints\n");
-      pPATO = (PATO *)(pModel->GetObjFuncPtr());
+      pPATO = (PATO *)(algo->GetObjFuncPtr());
       pPATO->WriteConstraints(pFile, WRITE_BNR);
       pPATO->WriteConstraints(pFile, WRITE_SCI);
    }
-   else if (pModel->GetObjFuncId() == OBJ_FUNC_GCOP)
+   else if (algo->GetObjFuncId() == OBJ_FUNC_GCOP)
    { 
       fprintf(pFile, "\nSummary of Constraints\n");
-      pGCOP = (GCOP *)(pModel->GetObjFuncPtr());
+      pGCOP = (GCOP *)(algo->GetObjFuncPtr());
       pGCOP->WriteConstraints(pFile, WRITE_BNR);
       pGCOP->WriteConstraints(pFile, WRITE_SCI);
    }
@@ -629,12 +540,12 @@ WriteWellsToFile()
 
 Write out PATO well information.
 ******************************************************************************/
-void WriteWellsToFile(FILE * pFile, ModelABC * pModel)
+void WriteWellsToFile2(FILE * pFile, Algorithm *algo)
 {
    PATO * pPATO;
-   if(pModel->GetObjFuncId() != OBJ_FUNC_PATO){ return;}
+   if(algo->GetObjFuncId() != OBJ_FUNC_PATO){ return;}
    fprintf(pFile, "\nSummary of Optimal Wells\n");
-   pPATO = (PATO *)(pModel->GetObjFuncPtr());
+   pPATO = (PATO *)(algo->GetObjFuncPtr());
    pPATO->WriteWells(pFile, WRITE_BNR);
    pPATO->WriteWells(pFile, WRITE_DEC);
 }/* WriteWellsToFile() */
@@ -647,7 +558,7 @@ banner is output, else the argument is treated as the melting count. The 'c'
 arg is used as an indicator of whether the melting operation increased or 
 decreased the objective.
 ******************************************************************************/
-void WriteMelt(int count, int max, char c)
+void WriteMelt2(int count, int max, char c)
 {
    FILE * pFile;
    char fileName[DEF_STR_SZ];
@@ -704,7 +615,7 @@ Write out one-dimensional search information (to stdout only). If 'count' is:
    WRITE_ENDED : end of 1d search
    >0          : treated as the search count.
 ******************************************************************************/
-void Write1dSearch(int count, int max)
+void Write1dSearch2(int count, int max)
 {
    static bool NL = false;
 
@@ -760,7 +671,7 @@ Write out inner loop information (to stdout only). If 'count' is:
    WRITE_SCE   : the Shuffled Complex Evolution banner is output
    >0          : treated as the eval count.
 ******************************************************************************/
-void WriteInnerEval(int count, int max, char c)
+void WriteInnerEval2(int count, int max, char c)
 {
    static bool LF = false;
    static int lfcount = 0;
@@ -869,7 +780,7 @@ WriteGrid()
 
 Store parameter and objective function values to grid output file.
 ******************************************************************************/
-void WriteGrid(GridStruct * pGrid, int size)
+void WriteGrid2(GridStruct * pGrid, int size)
 {
    static int idx = 0;
    FILE * pFile;
@@ -914,7 +825,7 @@ WritePreciseNumber()
 Write a number (x) to the specified file (pFile) using the requested number
 of digits of precision.
 ******************************************************************************/
-void WritePreciseNumber(FILE * pOut, double x)
+void WritePreciseNumber2(FILE * pOut, double x)
 {
    int precision = GetNumDigitsOfPrecision();
    switch(precision)

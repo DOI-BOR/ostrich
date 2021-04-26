@@ -412,30 +412,25 @@ GenerateInitialSamples()
 
 Create a set of LHS samples.
 ******************************************************************************/
-void SamplingAlgorithm::GenerateInitialSamples(int num)
-{
-   int i, k;
+void SamplingAlgorithm::GenerateInitialSamples(int num) {
+    double** samples;
    LatinHypercube * pLHS;
-   pLHS = new LatinHypercube(m_NumParams, num);
+   pLHS = new LatinHypercube(num, m_NumParams, num);
 
-   //prepare LHS sampler
-   for(k = 0; k < m_NumParams; k++)
-   { 
-      pLHS->InitRow(k, m_pLwr[k], m_pUpr[k]);
-   }/* end for() */
+   // Create the uniform sample matrix
+   pLHS->CreateUniformSample(m_pLwr, m_pUpr);
 
-   //generate LHS samples
-   for(i = 0; i < num; i++)
-   {
-      for(k = 0; k < m_NumParams; k++)
-      {
-         m_pSamples[i].v[k] = pLHS->SampleRow(k);
-      }
+   // Get the sample matrix from the LHS object
+   samples = pLHS->GetSampleMatrix();
+
+   // Fill back into the sampling objects
+   for(int i = 0; i < num; i++) {
+       m_pSamples[i].v = samples[i];
    }
 
    //free up sampler
    delete pLHS;
-}/* end GenerateInitialSamples() */
+}
 
 /******************************************************************************
 WriteMetrics()

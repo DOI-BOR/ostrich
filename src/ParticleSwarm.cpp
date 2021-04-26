@@ -260,19 +260,19 @@ void ParticleSwarm::Optimize(void)
    MEM_CHECK(m_pSwarm[i-1].b);
 
    //initialize swarm
-   if(m_InitType == LHS_INIT)
-   {
-      NEW_PRINT("LatinHypercube", 1);
-      pLHS = new LatinHypercube(num, m_SwarmSize);
-      MEM_CHECK(pLHS);
+   //if(m_InitType == LHS_INIT)
+   //{
+   //   NEW_PRINT("LatinHypercube", 1);
+   //   pLHS = new LatinHypercube(num, m_SwarmSize);
+   //   MEM_CHECK(pLHS);
 
-      for(j = 0; j < num; j++)
-      { 
-         lwr = pGroup->GetParamPtr(j)->GetLwrBnd();
-         upr = pGroup->GetParamPtr(j)->GetUprBnd();
-         pLHS->InitRow(j, lwr, upr);
-      }/* end for() */
-   }/* end if() */
+   //   for(j = 0; j < num; j++)
+   //   { 
+   //      lwr = pGroup->GetParamPtr(j)->GetLwrBnd();
+   //      upr = pGroup->GetParamPtr(j)->GetUprBnd();
+   //      pLHS->InitRow(j, lwr, upr);
+   //   }/* end for() */
+   //}/* end if() */
  
    lvl = idx = 0;
    for(i = 0; i < m_SwarmSize; i++) //for each particle
@@ -329,12 +329,12 @@ void ParticleSwarm::Optimize(void)
       }/* end else if(QUAD_TREE_INIT) */
       else //LHS_INIT
       {
-         for(j = 0; j < num; j++)
-         { 
-            rval = pLHS->SampleRow(j);
-            m_pSwarm[i].x[j] = rval;
-            m_pSwarm[i].b[j] = rval;
-         }/* end for() */
+         //for(j = 0; j < num; j++)
+         //{ 
+         //   rval = pLHS->SampleRow(j);
+         //   m_pSwarm[i].x[j] = rval;
+         //   m_pSwarm[i].b[j] = rval;
+         //}/* end for() */
       }/* end else() */
    }/* end for() */
 

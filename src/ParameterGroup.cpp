@@ -26,6 +26,7 @@ Version History
 #include <string.h>
 #include <time.h>
 #include <stdlib.h>
+#include <iostream>
 
 #include "ParameterGroup.h"
 #include "ParameterABC.h"
@@ -1007,47 +1008,49 @@ void ParameterGroup::InitComboParams(IroncladString pFileName)
    FindToken(pFile, "EndCombinatorialParams",   pFileName);
    rewind(pFile);
    
-   FindToken(pFile, "BeginCombinatorialParams", pFileName);
-   lineStr = GetNxtDataLine(pFile, pFileName);
-   while(strstr(lineStr, "EndCombinatorialParams") == NULL)
-   {      
-      pTok = lineStr;
-      //extract name of parameter (no spaces allowed)
-      j = ExtractString(pTok, nameStr);
-      j = ValidateExtraction(j, 1, 1, "InitComboParams()");
-      pTok += j;
-      //extract type      
-      j = ExtractString(pTok, typeStr);
-      j = ValidateExtraction(j, 1, 1, "InitComboParams()");
-      pTok += j;
-            
-      i = GetNextEmptyParamIdx();      
-      //pass the entire parameter line to the appropriate CTOR
-      if(strcmp(typeStr, "real") == 0)
-      { 
-         NEW_PRINT("ComboDblParam", 1);
-         m_pList[i] = new ComboDblParam(nameStr, pTok);
-      }
-      else if(strcmp(typeStr, "integer") == 0)
-      { 
-         NEW_PRINT("ComboIntParam", 1);
-         m_pList[i] = new ComboIntParam(nameStr, pTok);
-      }
-      else if(strcmp(typeStr, "string") == 0)
-      { 
-         NEW_PRINT("ComboStrParam", 1);
-         m_pList[i] = new ComboStrParam(nameStr, pTok);
-      }
-      else
-      {
-         sprintf(lineStr, "InitComboParams(): unknown combinatorial type |%s|", typeStr);
-         LogError(ERR_FILE_IO, lineStr);
-         ExitProgram(1);
-      }
-      MEM_CHECK(m_pList[i]);
+   // TODO: Reimplement these capabilities
+   //FindToken(pFile, "BeginCombinatorialParams", pFileName);
+   //lineStr = GetNxtDataLine(pFile, pFileName);
+   //while(strstr(lineStr, "EndCombinatorialParams") == NULL)
+   //{      
+   //   pTok = lineStr;
+   //   //extract name of parameter (no spaces allowed)
+   //   j = ExtractString(pTok, nameStr);
+   //   j = ValidateExtraction(j, 1, 1, "InitComboParams()");
+   //   pTok += j;
+   //   //extract type      
+   //   j = ExtractString(pTok, typeStr);
+   //   j = ValidateExtraction(j, 1, 1, "InitComboParams()");
+   //   pTok += j;
+   //         
+   //   i = GetNextEmptyParamIdx();      
+   //   //pass the entire parameter line to the appropriate CTOR
 
-      lineStr = GetNxtDataLine(pFile, pFileName);
-   }/* end while() */
+   //   if(strcmp(typeStr, "real") == 0)
+   //   { 
+   //      NEW_PRINT("ComboDblParam", 1);
+   //      m_pList[i] = new ComboDblParam(nameStr, pTok);
+   //   }
+   //   else if(strcmp(typeStr, "integer") == 0)
+   //   { 
+   //      NEW_PRINT("ComboIntParam", 1);
+   //      m_pList[i] = new ComboIntParam(nameStr, pTok);
+   //   }
+   //   else if(strcmp(typeStr, "string") == 0)
+   //   { 
+   //      NEW_PRINT("ComboStrParam", 1);
+   //      m_pList[i] = new ComboStrParam(nameStr, pTok);
+   //   }
+   //   else
+   //   {
+   //      sprintf(lineStr, "InitComboParams(): unknown combinatorial type |%s|", typeStr);
+   //      LogError(ERR_FILE_IO, lineStr);
+   //      ExitProgram(1);
+   //   }
+   //   MEM_CHECK(m_pList[i]);
+
+   //   lineStr = GetNxtDataLine(pFile, pFileName);
+   //}/* end while() */
 
    fclose(pFile);
 } /* end InitComboParams() */

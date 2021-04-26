@@ -10,6 +10,11 @@ Version History
 ******************************************************************************/
 #include <stdio.h>
 #include <math.h>
+#include <vector>
+#include <algorithm>
+#include <random>
+#include <chrono>
+#include <iostream>
 
 #include "LatinHypercube.h"
 
@@ -24,7 +29,6 @@ void LatinHypercube::Destroy(void)
 {
    int i;
 
-   delete [] m_pCount;
    for(i = 0; i < m_Rows; i++){ delete [] m_pVals[i];}
    delete [] m_pVals;
 
@@ -34,37 +38,35 @@ void LatinHypercube::Destroy(void)
 /******************************************************************************
 CTOR
 ******************************************************************************/
-LatinHypercube::LatinHypercube(int rows, int cols)
+LatinHypercube::LatinHypercube(int numberOfSamples, int numberOfParameters, int numberOfBins)
 {
    int i, j;
 
-   NEW_PRINT("double *", rows);
-   m_pVals = new double *[rows];
-   MEM_CHECK(m_pVals);
+   // Set the values to hold for future analyses
+   m_Rows = numberOfSamples;
+   m_Cols = numberOfParameters;
+   m_MaxCols = numberOfBins;
 
-   NEW_PRINT("int", rows);
-   m_pCount = new int [rows];
-   MEM_CHECK(m_pCount);
-
-   for(i = 0; i < rows; i++)
-   {
-      NEW_PRINT("double", cols);
-      m_pVals[i] = new double[cols];
-      MEM_CHECK(m_pVals[i]);
-
-      m_pCount[i] = cols;
-   }/* end for() */
-
-   for(i = 0; i < rows; i++)
-   {
-      for(j = 0; j < cols; j++)
-      {
-         m_pVals[i][j]  = 0.00;
-      }
+   // Adjust the to make sure the sample has sufficient combinations when sampleing
+   while (m_MaxCols < m_Rows) {
+       m_MaxCols *= 2;
    }
 
-   m_Rows = rows;
-   m_MaxCols = m_Cols = cols;
+   // Create the sample initial array
+   m_pVals = new double *[m_Rows];
+   MEM_CHECK(m_pVals);
+
+   // Create the sample subarrays
+   for(i = 0; i < m_Rows; i++) {
+      // Initialize the array
+      m_pVals[i] = new double[m_Cols];
+      MEM_CHECK(m_pVals[i]);
+
+      // Set the value to zero
+      for (j = 0; j < m_Cols; j++) {
+          m_pVals[i][j] = 0.00;
+      }
+   }
 
    IncCtorCount();
 } /* end default CTOR */
@@ -84,25 +86,57 @@ void LatinHypercube::ReDim(int cols)
    m_Cols = cols;
 } /* end default ReDim() */
 
+
 /******************************************************************************
-InitRow()
+CreateUniformSample()
 
-Initialize a row of the hypercube sampling matrix using a uniform distribtion.
+Initializes the hypercube sampling matrix using a uniform distribtion.
 ******************************************************************************/
-void LatinHypercube::InitRow(int row, double min, double max)
-{
-   int i;
-   double step, lwr;
+void LatinHypercube::CreateUniformSample(double* lowerBounds, double *upperBounds) {
 
-   step = (max - min)/m_Cols;
-   lwr = min;
-   for(i = 0; i < m_Cols; i++)
-   {
-      m_pVals[row][i] = lwr + step*((double)MyRand()/(double)MY_RAND_MAX);      
-      lwr += step;
-   }
-   m_pCount[row] = m_Cols; //reset sample count
-} /* end uniform InitRow() */
+    // Divide the sample space into bins
+    double* binWidth = new double[m_Cols];
+
+    for (int i = 0; i < m_Cols; i++) {
+        binWidth[i] = (upperBounds[i] - lowerBounds[i]) / (double)(m_MaxCols-1);
+    }
+
+    // Create a vector containing the bin numbers for all the inputs for sampling.
+    // This is more efficient that randomly sampling and checking against the counter
+    // Obtain a time-based seed
+    unsigned seed = std::chrono::system_clock::now().time_since_epoch().count();
+
+    // Create the parent vector
+    std::vector<std::vector<double>> availableIndices;
+
+    // Fill the vector
+    for (int i = 0; i < m_Cols; i++) {
+        // Create the temporary vector
+        std::vector<double> temp;
+
+        // Fill it with values
+        for (int j = 0; j < m_MaxCols; j++) {
+            temp.push_back((double)j);
+        }
+
+        // Shuffle the indices to simplify later indexing
+        std::shuffle(temp.begin(), temp.end(), std::default_random_engine(seed));
+
+        // Push the temporary vector to the parent vector
+        availableIndices.push_back(temp);
+    }
+
+    // Begin selecting the bins and filling the rows
+    for (int i = 0; i < m_Rows; i++) {
+        for (int j = 0; j < m_Cols; j++) {
+            // Set the value into the function
+            m_pVals[i][j] = availableIndices[j].back() * binWidth[j] + lowerBounds[j];
+
+            // Remove the last index of the bin
+            availableIndices[j].pop_back();
+        }
+    }
+} 
 
 /******************************************************************************
 InitRow()
@@ -112,57 +146,34 @@ distribution. The distribution is truncated so that samples lie between min
 and max. The truncated distribution is split into m_Cols intervals of equal
 probability. Each interval is then randomly sampled.
 ******************************************************************************/
-void LatinHypercube::InitRow(int row, double min, double max, double sd)
-{
-   int i;
-   double z_min, z_max; //std. normal min and max
-   double p_min, p_max; //cumulative probabilities
-   double p_step; //step size in probability units
-   double z_step; //step size in std. normal units
-   double z_rand; 
-   double avg;
+//void LatinHypercube::InitRow(int row, double min, double max, double sd)
+//{
+//   int i;
+//   double z_min, z_max; //std. normal min and max
+//   double p_min, p_max; //cumulative probabilities
+//   double p_step; //step size in probability units
+//   double z_step; //step size in std. normal units
+//   double z_rand; 
+//   double avg;
+//
+//   avg = 0.5*(max+min);
+//   z_max = (max - avg)/sd;
+//   z_min = (min - avg)/sd;
+//   p_max = StdNormCDF(z_max);
+//   p_min = StdNormCDF(z_min);
+//   p_step = (p_max - p_min)/ m_Cols;
+//   
+//   for(i = 0; i < m_Cols; i++)
+//   {
+//      z_max = StdNormInvCDF(p_min + p_step);
+//      z_step = z_max - z_min;
+//      z_rand = z_min + z_step*((double)MyRand()/(double)MY_RAND_MAX);
+//
+//      m_pVals[row][i] = avg + sd*z_rand;
+//      p_min += p_step;
+//      z_min = z_max;
+//   }
+//   m_pCount[row] = m_Cols; //reset sample count
+//} /* end default InitRow() */
 
-   avg = 0.5*(max+min);
-   z_max = (max - avg)/sd;
-   z_min = (min - avg)/sd;
-   p_max = StdNormCDF(z_max);
-   p_min = StdNormCDF(z_min);
-   p_step = (p_max - p_min)/ m_Cols;
-   
-   for(i = 0; i < m_Cols; i++)
-   {
-      z_max = StdNormInvCDF(p_min + p_step);
-      z_step = z_max - z_min;
-      z_rand = z_min + z_step*((double)MyRand()/(double)MY_RAND_MAX);
-
-      m_pVals[row][i] = avg + sd*z_rand;
-      p_min += p_step;
-      z_min = z_max;
-   }
-   m_pCount[row] = m_Cols; //reset sample count
-} /* end default InitRow() */
-
-/******************************************************************************
-SampleRow()
-
-Sample from the hypercube matrix.
-******************************************************************************/
-double LatinHypercube::SampleRow(int row)
-{
-   double sample;
-   int i;
-
-   i = (MyRand() % m_pCount[row]);
-   sample = m_pVals[row][i];
-   
-   //reorder list
-   for(i = i; i < (m_Cols-1); i++)
-   {
-      m_pVals[row][i]  = m_pVals[row][i+1];
-   }
-   m_pVals[row][m_Cols-1] = sample;
-   m_pCount[row]--;
-
-   return sample;
-} /* end Sample() */
 

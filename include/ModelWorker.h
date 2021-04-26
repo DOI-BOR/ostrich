@@ -4,6 +4,7 @@
 #define MODEL_WORKER_H
 
 #include "MyHeaderInc.h"
+#include "MyTypes.h"
 #include <mpi.h>
 #include <string>
 #include <vector>
@@ -19,18 +20,8 @@
 #include "ValueExtractor.h"
 #include "ObservationGroup.h"
 #include "ObjectiveFunction.h"
-#include "WriteUtility.h"
+#include "WriteUtility2.h"
 
-
-
-enum MPI_TAGS {
-	tag_directory, tag_textLength, tag_textFile, tag_fileLength, tag_filePairs, tag_obsLengthNum, tag_obsLengthGroup,
-	tag_obsName, tag_obsValue, tag_obsWeight, tag_obsFile, tag_obsKeyword, tag_obsLine, tag_obsColumn,
-	tag_obsToken, tag_obsAugmented, tag_obsGroup, tag_paramTotalNum, tag_paramTotalReal,
-	tag_paramRealName, tag_paramRealInit, tag_paramRealLower, tag_paramRealUpper, tag_paramRealIn,
-	tag_paramRealOst, tag_paramRealFmt, tag_paramTotalInt, tag_paramInitName, tag_paramIntInit,
-	tag_paramIntLower, tag_paramIntUpper, tag_data, tag_continue
-};
 
 enum OBJECTIVE_TYPE { single, multi };
 
@@ -50,6 +41,7 @@ public:
 
 	//bool CheckCache(double* val);
 
+	void Work(void);
 
 
 private:
@@ -58,10 +50,10 @@ private:
 
 	// Preservation variables
 	bool preserveModelOutput = false;
-	std::string preserveCommand = NULL;
+	std::string preserveCommand;
 
 	// Configuration variables
-	std::string workerDirectory = NULL;
+	std::string workerDirectory;
 	std::vector<std::string> fileCleanupList;
 	std::vector<std::vector<std::string>> filePairs;
 	ObservationGroup *observationGroup;
@@ -77,17 +69,28 @@ private:
 
 	// Workflow functions
 	void SetupFromPrimary(void);
-	void Work(void);
 	void SetupWork(void);
 	void CommenceWork(void);
 	void TerminateWork(void);
-	
+
 	void ReadObservations(void);
+	double StdExecute(double viol);
 
 
 	// MPI communication functions
 	int rank;
+
+	std::string ReceiveString(int tag_number);
+	int ReceiveInteger(int tag_number);
+	double ReceiveDouble(int tag_number);
+	char ReceiveChar(int tag_number);
+
+	void SendDouble(int tag_number, double value);
+	void SendInt(int tag_number, int value);
+
+	// Setup functions 
 	void ReceiveWorkerDirectory(void);
+	void ReceiveWorkerSolveCommand(void);
 	void ReceiveWorkerExtraFiles(void);
 	void ReceiveWorkerFilePairs(void);
 	void ReceiveWorkerObservations(void);
@@ -96,13 +99,6 @@ private:
 	int RequestParameters(void);
 	bool RequestContinue(void);
 
-	void SendDouble(int tag_number, double value);
-
-
-
-
-protected: //can be called by DecisionModule
-    double StdExecute(double viol);
 
 };
 

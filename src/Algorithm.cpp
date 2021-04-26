@@ -12,6 +12,7 @@ these groups.
 #include <mpi.h>
 #include <math.h>
 #include <string>
+#include <iostream>
 
 #include "Algorithm.h"
 #include "ObservationGroup.h"
@@ -33,7 +34,6 @@ these groups.
 #include "IsoParse.h"
 #include "BoxCoxModel.h"
 #include "Utility.h"
-#include "WriteUtility.h"
 #include "Exception.h"
 #include "SuperMuseUtility.h"
 
@@ -126,6 +126,7 @@ Algorithm::Algorithm(void) {
     FindToken(pInFile, "ModelExecutable", inFileName);
     line = GetCurDataLine();
 
+
     /*
     --------------------------------------------------------------------------------------------------------------------------
     Read in executable, taking care to preserve full path, even in the presence of long and space-separated filenames.
@@ -136,17 +137,17 @@ Algorithm::Algorithm(void) {
     i = ExtractFileName(&(line[i]), tmp1);
 
     //must wrap in quotes if there is whitespace in the execuable path
-    quoteWrap = false;
-    j = (int)strlen(tmp1);
-    for (i = 0; i < j; i++) { if (tmp1[i] == ' ') { quoteWrap = true; } }
-    if (quoteWrap == true) { tmp1[j++] = '"'; }
-    tmp1[j] = (char)NULL;
-    if (quoteWrap == true) {
-        MyStrRev(tmp1);
-        tmp1[j++] = '"';
-        tmp1[j] = (char)NULL;
-        MyStrRev(tmp1);
-    }
+    //quoteWrap = false;
+    //j = (int)strlen(tmp1);
+    //for (i = 0; i < j; i++) { if (tmp1[i] == ' ') { quoteWrap = true; } }
+    //if (quoteWrap == true) { tmp1[j++] = '"'; }
+    //tmp1[j] = (char)NULL;
+    //if (quoteWrap == true) {
+    //    MyStrRev(tmp1);
+    //    tmp1[j++] = '"';
+    //    tmp1[j] = (char)NULL;
+    //    MyStrRev(tmp1);
+    //}
 
     /*
     --------------------------------------------------------------------------------------------------------------------------
@@ -155,11 +156,11 @@ Algorithm::Algorithm(void) {
     --------------------------------------------------------------------------------------------------------------------------
     */
     // TODO: make this process more robust
-    #ifdef _WIN32
-        m_pFileCleanupList = new FileList("Ostrich.exe");
+    /*#ifdef _WIN32
+        m_pFileCleanupList = new FileList("ostrich.exe");
     #else
         m_pFileCleanupList = new FileList("Ostrich");
-    #endif
+    #endif*/
 
     /*
     --------------------------------------------------------------------------------------------------------------------------
@@ -167,7 +168,7 @@ Algorithm::Algorithm(void) {
     files around.
     --------------------------------------------------------------------------------------------------------------------------
     */
-    if (m_InternalModel == false) {
+   /* if (m_InternalModel == false) {
         j = 0;
         for (i = (int)(strlen(tmp1)) - 1; i > 0; i--) {
             if ((tmp1[i] != '\\') && (tmp1[i] != '/')) {
@@ -185,7 +186,7 @@ Algorithm::Algorithm(void) {
                 break;
             }
         }
-    }
+    }*/
 
     /*
     --------------------------------------------------------------------------------------------------------------------------
@@ -203,34 +204,14 @@ Algorithm::Algorithm(void) {
     --------------------------------------------------------------------------------------------------------------------------
     */
     if (m_InternalModel == false) {
-        //make sure the executable exists
-        strcpy(tmp2, tmp1);
+        // Store the run command
+        MyTrim(tmp1);
+        int len = (int)strlen(tmp1) + 1;
 
-        if (tmp2[0] == '"') {
-            tmp2[0] = ' ';
-            tmp2[strlen(tmp2) - 1] = ' ';
-            MyTrim(tmp2);
-        }
-        if (MY_ACCESS(tmp2, 0) == -1) {
-            LogError(ERR_FILE_IO, tmp1);
-            ExitProgram(1);
-        }
-
-        #ifdef _WIN32 //windows version
-            strcat(tmp1, " > ");
-            strcat(tmp1, GetOstExeOut());
-        #else //Linux (bash, dash, csh)
-            strcpy(tmp2, tmp1);
-            // '>&' redircts both output and error
-            strcat(tmp2, " > ");
-            strcat(tmp2, GetOstExeOut());
-            strcat(tmp2, " 2>&1");
-            strcpy(tmp1, tmp2);
-        #endif
+        m_ExecCmd = new char[len];
+        strcpy(m_ExecCmd, tmp1);
     }
 
-    // Store the run command
-    m_ExecCmd = tmp1;
 
     /*
     --------------------------------------------------------------------------------------------------------------------------
@@ -255,18 +236,6 @@ Algorithm::Algorithm(void) {
         i = ExtractFileName(line, tmp1);
         i = ExtractFileName(&(line[i]), tmp2);
 
-        if (pDirName[0] != '.')
-        {
-            strcpy(tmp3, pDirName);
-            #ifdef _WIN32
-                strcat(tmp3, "\\");
-            #else
-                strcat(tmp3, "/");
-            #endif
-            strcat(tmp3, tmp2);
-            strcpy(tmp2, tmp3);
-        }
-
         // Push back into the vector of file pairs
         std::vector<std::string> filePair{ tmp1, tmp2 };
         fileListPairs.push_back(filePair);
@@ -280,7 +249,7 @@ Algorithm::Algorithm(void) {
     Read in any extra model files, these will need to be copied to the model subdirectory.
     --------------------------------------------------------------------------------------------------------------------------
     */
-    // TODO: Update with the new filesystem approach
+    
     rewind(pInFile);
     if (CheckToken(pInFile, "BeginExtraFiles", inFileName) == true) {
         //make sure end token exists
@@ -294,7 +263,13 @@ Algorithm::Algorithm(void) {
             ExtractFileName(line, tmp1);
 
             // add to cleanup list
-            m_pFileCleanupList->Insert(tmp1);
+            if (m_pFileCleanupList == NULL) {
+                m_pFileCleanupList = new FileList(tmp1);
+            }
+            else {
+                m_pFileCleanupList->Insert(tmp1);
+            }
+            
 
             // Get the next data line
             line = GetNxtDataLine(pInFile, inFileName);
@@ -335,7 +310,13 @@ Algorithm::Algorithm(void) {
 
                 // Add files within the directory to the cleanup list
                 for (int entry = 0; entry < sourceFiles.size(); entry++) {
-                    m_pFileCleanupList->Insert(&sourceFiles[entry][0]);
+                    // add to cleanup list
+                    if (m_pFileCleanupList == NULL) {
+                        m_pFileCleanupList = new FileList(&sourceFiles[entry][0]);
+                    }
+                    else {
+                        m_pFileCleanupList->Insert(&sourceFiles[entry][0]);
+                    }
                 }
             }
 
@@ -485,13 +466,14 @@ Algorithm::Algorithm(void) {
             InitSuperMUSE(pInFile, (ModelABC*)this);
             bSMUSE = true;
         }
-    }/* end if() */
+    }
 
     /*
     --------------------------------------------------------------------------------------------------------------------------
     Read in flag to preserve model output files. This only applies if a model subdirectory is used.
     --------------------------------------------------------------------------------------------------------------------------
     */
+    // TODO: rework this process
     rewind(pInFile);
     if (CheckToken(pInFile, "PreserveModelOutput", inFileName) == true) {
         line = GetCurDataLine();
@@ -799,7 +781,7 @@ void Algorithm::Destroy(void) {
     if (m_pFileCleanupList != NULL) {
         IroncladString dirName = GetExeDirName();
         if (dirName[0] != '.') {
-            m_pFileCleanupList->Cleanup(dirName, m_DirPrefix, 0);
+            //m_pFileCleanupList->Cleanup(dirName, m_DirPrefix, 0);
         }
         delete m_pFileCleanupList;
     }
@@ -811,16 +793,6 @@ void Algorithm::Destroy(void) {
     IncDtorCount();
 }
 
-
-
-/*
-------------------------------------------------------------------------------------------------------------------------------
-GetObjFuncStr()
-------------------------------------------------------------------------------------------------------------------------------
-*/
-/*UnchangeableString Algorithm::GetObjFuncStr(void) {
-    return m_pObjFunc->GetObjFuncStr();
-}*/
 
 /*
 ------------------------------------------------------------------------------------------------------------------------------
@@ -854,12 +826,23 @@ void Algorithm::SaveBest(int id) {
     }
 }/* end SaveBest() */
 
-/******************************************************************************
+
+/*
+------------------------------------------------------------------------------------------------------------------------------
+GetObjFuncStr()
+------------------------------------------------------------------------------------------------------------------------------
+*/
+UnchangeableString Algorithm::GetObjFuncStr(void) {
+    return m_pObjFunc->GetObjFuncStr();
+}
+
+/*
+------------------------------------------------------------------------------------------------------------------------------
 GetObjFuncPtr()
    Returns a pointer to the objective function.
-******************************************************************************/
-/*ObjectiveFunction* Algorithm::GetObjFuncPtr(void)
-{
+------------------------------------------------------------------------------------------------------------------------------
+*/
+ObjectiveFunction* Algorithm::GetObjFuncPtr(void) {
     return m_pObjFunc;
 } /* end GetObjFuncPtr() */
 
@@ -900,9 +883,9 @@ GetObsGroupPtr()
    Returns the observation group pointer
 ------------------------------------------------------------------------------------------------------------------------------
 */
-/*ObservationGroup* Algorithm::GetObsGroupPtr(void) {
+ObservationGroup* Algorithm::GetObsGroupPtr(void) {
     return m_pObsGroup;
-}*/
+}
 
 /*
 ------------------------------------------------------------------------------------------------------------------------------
@@ -910,9 +893,9 @@ GetParamGroupPtr()
    Returns the parameter group pointer.
 ------------------------------------------------------------------------------------------------------------------------------
 */
-/*ParameterGroup* Algorithm::GetParamGroupPtr(void) {
+ParameterGroup* Algorithm::GetParamGroupPtr(void) {
     return m_pParamGroup;
-} */
+}
 
 
 
@@ -925,8 +908,20 @@ MPI Communication - ConfigureWorkerDirectory()
 void Algorithm::ConfigureWorkerDirectory(int workerRank) {
     
     // Send the worker file stem to the secondary worker
-    MPI_Send(&pDirName, strlen(pDirName) + 1, MPI_CHAR, workerRank, tag_directory, MPI_COMM_WORLD); 
-};
+    MPI_Send(m_DirPrefix, strlen(m_DirPrefix) + 1, MPI_CHAR, workerRank, tag_directory, MPI_COMM_WORLD);
+}
+
+/*
+------------------------------------------------------------------------------------------------------------------------------
+MPI Communication - ConfigureWorkerSolveCommand()
+   Transfers the worker solve command from the primary to the secondary worker
+------------------------------------------------------------------------------------------------------------------------------
+*/
+void Algorithm::ConfigureWorkerSolveCommand(int workerRank) {
+
+    // Send the worker file stem to the secondary worker
+    MPI_Send(m_ExecCmd, strlen(m_ExecCmd) + 1, MPI_CHAR, workerRank, tag_solve, MPI_COMM_WORLD);
+}
 
 /*
 ------------------------------------------------------------------------------------------------------------------------------
@@ -955,9 +950,9 @@ void  Algorithm::ConfigureWorkerExtraFiles(int workerRank) {
         std::string fileName = pCur->GetName();
 
         // Send it to the secondary worker
-        MPI_Send(&fileName, fileName.length() + 1, MPI_CHAR, workerRank, tag_textFile, MPI_COMM_WORLD);
+        MPI_Send(&fileName[0], fileName.length() + 1, MPI_CHAR, workerRank, tag_textFile, MPI_COMM_WORLD);
     }
-};
+}
 
 
 /*
@@ -976,14 +971,14 @@ void Algorithm::ConfigureWorkerFilePairs(int workerRank) {
     MPI_Send(&numberOfFiles, 1, MPI_INT, workerRank, tag_fileLength, MPI_COMM_WORLD);
 
     // Send each file to the worker
-    for (int entryPair; entryPair < numberOfFiles; entryPair++) {
+    for (int entryPair = 0; entryPair < numberOfFiles; entryPair++) {
         // Get the filename from the file list
         std::string templateName = fileListPairs[entryPair][0];
         std::string destinationName = fileListPairs[entryPair][1];
         
         // Send it to the secondary worker
-        MPI_Send(&templateName, templateName.length() + 1, MPI_CHAR, workerRank, tag_filePairs, MPI_COMM_WORLD);
-        MPI_Send(&destinationName, destinationName.length() + 1, MPI_CHAR, workerRank, tag_filePairs, MPI_COMM_WORLD);
+        MPI_Send(&templateName[0], templateName.length() + 1, MPI_CHAR, workerRank, tag_filePairs, MPI_COMM_WORLD);
+        MPI_Send(&destinationName[0], destinationName.length() + 1, MPI_CHAR, workerRank, tag_filePairs, MPI_COMM_WORLD);
     }
 };
 
@@ -1003,40 +998,39 @@ void Algorithm::ConfigureWorkerObservations(int workerRank) {
     MPI_Send(&numberOfObservations, 1, MPI_INT, workerRank, tag_obsLengthNum, MPI_COMM_WORLD);
     MPI_Send(&numberOfGroups, 1, MPI_INT, workerRank, tag_obsLengthGroup, MPI_COMM_WORLD);
 
-
     // Loop over the observations
     for (int entryObservation = 0; entryObservation < numberOfObservations; entryObservation++) {
         // Get the observations from the list
-        Observation obs = m_pObsGroup->GetObsPtr(entryObservation);
+        Observation *obs = m_pObsGroup->GetObsPtr(entryObservation);
 
         // Get the values from the observation
-        std::string obsName = obs.GetName();
-        double obsValue = obs.GetMeasuredValueUntransformed();
-        double obsWeight = obs.GetWeightFactor();
-        std::string obsFile = obs.GetFileName();
-        std::string obsKeyword = obs.GetKeyword();
-        int obsLine = obs.GetLine();
-        int obsColumn = obs.GetColumn();
-        char obsToken = obs.GetToken();
+        std::string obsName = obs->GetName();
+        double obsValue = obs->GetMeasuredValueUntransformed();
+        double obsWeight = obs->GetWeightFactor();
+        std::string obsFile = obs->GetFileName();
+        std::string obsKeyword = obs->GetKeyword();
+        int obsLine = obs->GetLine();
+        int obsColumn = obs->GetColumn();
+        char obsToken = obs->GetToken();
         
-        bool obsAug = obs.IsAugmented();
+        bool obsAug = obs->IsAugmented();
         int obsAugValue = 0;
         if (obsAug) {
             obsAugValue = 1;
         }
-        std::string obsGroup = obs.GetGroup();
+        std::string obsGroup = obs->GetGroup();
 
         // Send each observation component to the secondary worker
-        MPI_Send(&obsName, obsName.length() + 1, MPI_CHAR, workerRank, tag_obsName, MPI_COMM_WORLD);
+        MPI_Send(&obsName[0], obsName.length() + 1, MPI_CHAR, workerRank, tag_obsName, MPI_COMM_WORLD);
         MPI_Send(&obsValue, 1, MPI_DOUBLE, workerRank, tag_obsValue, MPI_COMM_WORLD);
         MPI_Send(&obsWeight, 1, MPI_DOUBLE, workerRank, tag_obsWeight, MPI_COMM_WORLD);
-        MPI_Send(&obsFile, obsFile.length() + 1, MPI_CHAR, workerRank, tag_obsFile, MPI_COMM_WORLD);
-        MPI_Send(&obsKeyword, obsKeyword.length() + 1, MPI_CHAR, workerRank, tag_obsKeyword, MPI_COMM_WORLD);
+        MPI_Send(&obsFile[0], obsFile.length() + 1, MPI_CHAR, workerRank, tag_obsFile, MPI_COMM_WORLD);
+        MPI_Send(&obsKeyword[0], obsKeyword.length() + 1, MPI_CHAR, workerRank, tag_obsKeyword, MPI_COMM_WORLD);
         MPI_Send(&obsLine, 1, MPI_INT, workerRank, tag_obsLine, MPI_COMM_WORLD);
         MPI_Send(&obsColumn, 1, MPI_INT, workerRank, tag_obsColumn, MPI_COMM_WORLD);
         MPI_Send(&obsToken, 1, MPI_CHAR, workerRank, tag_obsToken, MPI_COMM_WORLD);
         MPI_Send(&obsAugValue, 1, MPI_INT, workerRank, tag_obsAugmented, MPI_COMM_WORLD);
-        MPI_Send(&obsGroup, obsGroup.length() + 1, MPI_CHAR, workerRank, tag_obsGroup, MPI_COMM_WORLD);
+        MPI_Send(&obsGroup[0], obsGroup.length() + 1, MPI_CHAR, workerRank, tag_obsGroup, MPI_COMM_WORLD);
         
     }
 }
@@ -1048,13 +1042,16 @@ MPI Communication - ConfigureWorkerParameterGroups()
 ------------------------------------------------------------------------------------------------------------------------------
 */
 void Algorithm::ConfigureWorkerParameterGroups(int workerRank) {
+
     
     // Send the total number of parameters
     int numberOfTotalParameters = m_pParamGroup->GetNumParams();
-    MPI_Send(&numberOfTotalParameters, 1, MPI_INT, workerRank, tag_obsLine, MPI_COMM_WORLD);
+    MPI_Send(&numberOfTotalParameters, 1, MPI_INT, workerRank, tag_paramTotalNum, MPI_COMM_WORLD);
 
     // Real parameters
     int numberOfRealParameters = m_pParamGroup->GetNumRealParams();
+    MPI_Send(&numberOfRealParameters, 1, MPI_INT, workerRank, tag_paramTotalReal, MPI_COMM_WORLD);
+
     for (int entryParameter = 0; entryParameter < numberOfRealParameters; entryParameter++) {
         // Get the parameter from the group, casing to the correct type
         RealParam*param = (RealParam*) m_pParamGroup->GetParamPtr(entryParameter);
@@ -1065,22 +1062,27 @@ void Algorithm::ConfigureWorkerParameterGroups(int workerRank) {
         double lowerBound = param->GetLowerBoundUntransformed();
         double upperBound = param->GetUpperBoundUntransformed();
         std::string txIn = param->GetTxInUntransformed();
+        std::string txOst = param->GetOstUntransformed();
         std::string txOut = param->GetTxOutUntransformed();
         std::string fixFmt = param->GetFixFmtUntransformed();
 
         // Send the values to the worker
-        MPI_Send(&name, name.length() + 1, MPI_CHAR, workerRank, tag_paramRealName, MPI_COMM_WORLD);
+        MPI_Send(&name[0], name.length() + 1, MPI_CHAR, workerRank, tag_paramRealName, MPI_COMM_WORLD);
         MPI_Send(&intialValue, 1, MPI_DOUBLE, workerRank, tag_paramRealInit, MPI_COMM_WORLD);
         MPI_Send(&lowerBound, 1, MPI_DOUBLE, workerRank, tag_paramRealLower, MPI_COMM_WORLD);
         MPI_Send(&upperBound, 1, MPI_DOUBLE, workerRank, tag_paramRealUpper, MPI_COMM_WORLD);
-        MPI_Send(&txIn, txIn.length() + 1, MPI_CHAR, workerRank, tag_paramRealIn, MPI_COMM_WORLD);
-        MPI_Send(&txOut, 1, txOut.length() + 1, workerRank, tag_paramRealOst, MPI_COMM_WORLD);
-        MPI_Send(&fixFmt, 1, fixFmt.length() + 1, workerRank, tag_paramRealFmt, MPI_COMM_WORLD);
+        MPI_Send(&txIn[0], txIn.length() + 1, MPI_CHAR, workerRank, tag_paramRealIn, MPI_COMM_WORLD);
+        MPI_Send(&txOst[0], txOst.length() + 1, MPI_CHAR, workerRank, tag_paramRealOst, MPI_COMM_WORLD);
+        MPI_Send(&txOut[0], txOut.length() + 1, MPI_CHAR, workerRank, tag_paramRealOut, MPI_COMM_WORLD);
+        MPI_Send(&fixFmt[0], fixFmt.length() + 1, MPI_CHAR, workerRank, tag_paramRealFmt, MPI_COMM_WORLD);
     }
 
     // Integer parameters
+    // Value is offset by the number of real parameters to start indexing the pList correctly
     int numberOfIntegerParameters = m_pParamGroup->GetNumIntParams();
-    for (int entryParameter = 0; entryParameter < numberOfRealParameters; entryParameter++) {
+    MPI_Send(&numberOfIntegerParameters, 1, MPI_INT, workerRank, tag_paramTotalInt, MPI_COMM_WORLD);
+
+    for (int entryParameter = numberOfRealParameters; entryParameter < numberOfRealParameters + numberOfIntegerParameters; entryParameter++) {
         // Get the parameter from the group, casing to the correct type
         IntParam* param = (IntParam*)m_pParamGroup->GetParamPtr(entryParameter);
 
@@ -1091,7 +1093,7 @@ void Algorithm::ConfigureWorkerParameterGroups(int workerRank) {
         int upperBound = param->GetUpperBoundUntransformed();
 
         // Send the values to the worker
-        MPI_Send(&name, name.length() + 1, MPI_CHAR, workerRank, tag_paramInitName, MPI_COMM_WORLD);
+        MPI_Send(&name[0], name.length() + 1, MPI_CHAR, workerRank, tag_paramInitName, MPI_COMM_WORLD);
         MPI_Send(&intialValue, 1, MPI_INT, workerRank, tag_paramIntInit, MPI_COMM_WORLD);
         MPI_Send(&lowerBound, 1, MPI_INT, workerRank, tag_paramIntLower, MPI_COMM_WORLD);
         MPI_Send(&upperBound, 1, MPI_INT, workerRank, tag_paramIntUpper, MPI_COMM_WORLD);
@@ -1128,6 +1130,9 @@ void Algorithm::ConfigureWorkers() {
         // Configure the worker directory
         ConfigureWorkerDirectory(entryWorker);
 
+        // Configure the worker solve command
+        ConfigureWorkerSolveCommand(entryWorker);
+
         // Get the extra files from the directory
         ConfigureWorkerExtraFiles(entryWorker);
 
@@ -1152,19 +1157,19 @@ MPI Communication - SendWorkerParameters()
    Transfers parameters from the primary to the secondary workers
 ------------------------------------------------------------------------------------------------------------------------------
 */
-void Algorithm::SendWorkerParameters(int workerRank, int alternativeIndex, double *parameters[], int parameterSize) {
+void Algorithm::SendWorkerParameters(int workerRank, int alternativeIndex, double parameters[], int parameterSize) {
 
     // Create a copy of the vectory to add the alternative number as the lead value
     double *parametersTemp = new double[parameterSize + 1];
     
     // Fill the array
     parametersTemp[0] = (double)alternativeIndex;
-    for (int entryParameter = 0; entryParameter < parameterSize + 1; entryParameter++) {
-        parametersTemp[entryParameter + 1] = *parameters[entryParameter];
+    for (int entryParameter = 0; entryParameter < parameterSize; entryParameter++) {
+        parametersTemp[entryParameter + 1] = parameters[entryParameter];
     }
 
     // Send the array to the secondary worker
-    MPI_Send(&parametersTemp, parameterSize + 1, MPI_DOUBLE, workerRank, tag_data, MPI_COMM_WORLD);
+    MPI_Send(&parametersTemp[0], parameterSize + 1, MPI_DOUBLE, workerRank, tag_data, MPI_COMM_WORLD);
 }
 
 /*
@@ -1199,9 +1204,6 @@ void Algorithm::ManageSingleObjectiveIterations(double **parameters, int numberO
     int numberOfMpiProcesses;
     MPI_Comm_size(MPI_COMM_WORLD, &numberOfMpiProcesses);
 
-    // Setup the objective array
-    double *objectives = new double[numberOfAlternatives];
-
     // Begin solving the alternatives
     if (m_bSolveOnPrimary) {
         // Include the primary worker as a solution
@@ -1232,7 +1234,7 @@ void Algorithm::ManageSingleObjectiveIterations(double **parameters, int numberO
             MPI_Improbe(MPI_ANY_SOURCE, tag_continue, MPI_COMM_WORLD, &sourceFlag, &message, &mpiStatus);
             if (sourceFlag) {
                 // Worker is available to accept work. Go through the steps to send work to it.
-                // Receive teh continue flag from the worker
+                // Receive the continue flag from the worker
                 MPI_Mrecv(&workerValue, 1, MPI_INT, &message, &mpiStatus);
 
                 // Extract the worker rank from the status request
@@ -1242,7 +1244,7 @@ void Algorithm::ManageSingleObjectiveIterations(double **parameters, int numberO
                 SendWorkerContinue(workerRank, true);
 
                 // Transmit the parameteres to the worker to solve
-                SendWorkerParameters(workerRank, sendCounter, &parameters[sendCounter], numberOfParameters);
+                SendWorkerParameters(workerRank, sendCounter, parameters[sendCounter], numberOfParameters);
 
                 // Increment the send counter
                 sendCounter++;
@@ -1253,14 +1255,13 @@ void Algorithm::ManageSingleObjectiveIterations(double **parameters, int numberO
             if (requestFlag) {
                 // Get the alternative index and objective function from the secondary worker
                 double data[2];
-                MPI_Mrecv(&data, 1, MPI_INT, &message, &mpiStatus);
+                MPI_Mrecv(&data, 2, MPI_DOUBLE, &message, &mpiStatus);
 
                 // Set the objective value into the objective array
-                objectives[(int)data[0]] = data[1];
+                returnArray[(int)data[0]] = data[1];
 
                 // Increment the solution counter
                 receiveCounter++;
-
             }
         }
 
@@ -1271,17 +1272,17 @@ void Algorithm::ManageSingleObjectiveIterations(double **parameters, int numberO
             if (requestFlag) {
                 // Get the alternative index and objective function from the secondary worker
                 double data[2];
-                MPI_Mrecv(&data, 1, MPI_INT, &message, &mpiStatus);
+                MPI_Mrecv(&data, 2, MPI_DOUBLE, &message, &mpiStatus);
 
                 // Set the objective value into the objective array
-                objectives[(int)data[0]] = data[1];
+                returnArray[(int)data[0]] = data[1];
 
                 // Increment the solution counter
                 receiveCounter++;
 
             }
         }    
-    }    
+    }
 }
 
 
@@ -1515,42 +1516,3 @@ be reported and the parameter will be ignored in the calibration.
     delete[] obs_names;
 } /* end CheckGlobalSensitivity() */
 
-/******************************************************************************
-ExtractBoxCoxValue()
-
-Retrieve optimal BoxCox transformation from previous OstOutput0.txt file.
-******************************************************************************/
-double ExtractBoxCoxValue(void)
-{
-    FILE* pOut;
-    char* line;
-    int max_line_size;
-    const char* pTok = "Estimated Optimal Box-Cox Transformation";
-    double b;
-
-    max_line_size = GetMaxLineSizeInFile((char*)"OstOutput0.txt");
-    line = new char[max_line_size + 1];
-    pOut = fopen("OstOutput0.txt", "r");
-    if (pOut == NULL)
-    {
-        LogError(ERR_FILE_IO, "Unable to extract Box-Cox transformation value. Defaulting to 1.00.");
-        delete[] line;
-        return 1.00;
-    }
-    while (!feof(pOut))
-    {
-        fgets(line, max_line_size, pOut);
-        if (strncmp(line, pTok, strlen(pTok)) == 0)
-        {
-            fgets(line, max_line_size, pOut);
-            sscanf(line, "Lambda : %lf\n", &b);
-            fclose(pOut);
-            delete[] line;
-            return b;
-        }
-    }/* end while() */
-    fclose(pOut);
-    LogError(ERR_FILE_IO, "Unable to extract Box-Cox transformation value. Defaulting to 1.00.");
-    delete[] line;
-    return 1.00;
-}/* end ExtractBoxCoxValue() */

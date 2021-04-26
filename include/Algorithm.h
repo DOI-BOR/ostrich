@@ -9,16 +9,16 @@ these groups.
 
 ******************************************************************************/
 // TODO: Doc string
+
 #ifndef ALGORITHM_H
 #define ALGORITHM_H
 
 #include "MyHeaderInc.h"
+#include "MyTypes.h"
 #include <mpi.h>
 #include <filesystem>
-#include "WriteUtility.h"
+#include "WriteUtility2.h"
 
-//parent class
-#include "AlgorithmABC2.h"
 
 //forward decs
 class ObservationGroup;
@@ -32,27 +32,13 @@ class DatabaseABC;
 class SurrogateParameterGroup;
 class ParameterCorrection;
 
-extern "C" {
-    double ExtractBoxCoxValue(void);
-}
-
-enum MPI_TAGS {
-    tag_directory, tag_textLength, tag_textFile, tag_fileLength, tag_filePairs, tag_obsLengthNum, tag_obsLengthGroup,
-    tag_obsName, tag_obsValue, tag_obsWeight, tag_obsFile, tag_obsKeyword, tag_obsLine, tag_obsColumn,
-    tag_obsToken, tag_obsAugmented, tag_obsGroup, tag_paramTotalNum, tag_paramTotalReal,
-    tag_paramRealName, tag_paramRealInit, tag_paramRealLower, tag_paramRealUpper, tag_paramRealIn,
-    tag_paramRealOst, tag_paramRealFmt, tag_paramTotalInt, tag_paramInitName, tag_paramIntInit,
-    tag_paramIntLower, tag_paramIntUpper, tag_data, tag_continue
-};
-
 
 
 /******************************************************************************
 class Algorthm
 
 ******************************************************************************/
-class Algorithm : public AlgorithmABC2
-{
+class Algorithm {
 public:
     Algorithm(void);
     ~Algorithm(void) { DBG_PRINT("AlgorithmABC2::DTOR"); Destroy(); }
@@ -61,17 +47,16 @@ public:
     //retrieve member variables
     ObservationGroup* GetObsGroupPtr(void);
     ParameterGroup* GetParamGroupPtr(void);
-    //ObjectiveFunction* GetObjFuncPtr(void);
+    ObjectiveFunction* GetObjFuncPtr(void);
     //double GetObjFuncVal(void) { return m_CurObjFuncVal; }
     //void SetObjFuncVal(double curVal) { m_CurObjFuncVal = curVal; }
     int GetCounter(void);
     void SetCounter(int count);
-    //ObjFuncType GetObjFuncId(void) { return m_ObjFuncId; }
-    //UnchangeableString GetObjFuncStr(void);
-    //UnchangeableString GetModelStr(void) { return m_ExecCmd; }
+    ObjFuncType GetObjFuncId(void) { return m_ObjFuncId; }
+    UnchangeableString GetObjFuncStr(void);
+    UnchangeableString GetModelStr(void) { return m_ExecCmd; }
     void PerformParameterCorrections(void);
     //misc. member functions     
-
     void   CheckGlobalSensitivity(void);
     
     //void   WriteMetrics(FILE* pFile);
@@ -83,10 +68,10 @@ public:
     void SaveBest(int id);
     //TelescopeType GetTelescopingStrategy(void) { return m_Telescope; }
 
-    double m_BestObjective = NAN;                 // Best objective
-    double* m_BestAlternative;                    // Best alternative
-
-
+    double m_BestObjective = 1e12;                 // Best objective
+    double *m_BestAlternative;                    // Best alternative
+    
+    void ConfigureWorkers(void);
     void ManageSingleObjectiveIterations(double** parameters, int numberOfParameters, int numberOfAlternatives, double* returnArray);
     void TerminateWorkers();
 
@@ -113,23 +98,29 @@ private:
     bool m_bSave = false;
     bool m_bDiskless = false;
     bool m_bMultiObjProblem = false;
-    double m_CurObjFuncVal = 0.00;
     double* m_CurMultiObjF = NULL;
-    
-    
+
+    // Solution functions
+    double** CreateInitialSample(int sampleSize);
+    double** CreateSample(int sampleSize);
+    void Optimize(void);
+    void Calibrate(void);
+    void WriteMetrics(FILE* pFile);
+    void WarmStart(void);
+    int  GetCurrentIteration(void);   
     
     void AddDatabase(DatabaseABC* pDbase);
 
     // MPI communication functions
-    void ConfigureWorkers(void);
     void ConfigureWorkerDirectory(int workerRank);
+    void ConfigureWorkerSolveCommand(int workerRank);
     void ConfigureWorkerExtraFiles(int workerRank);
     void ConfigureWorkerFilePairs(int workerRank);
     void ConfigureWorkerObservations(int workerRank);
     void ConfigureWorkerParameterGroups(int workerRank);
 
     void SendWorkerContinue(int workerRank, bool workerContinue);
-    void SendWorkerParameters(int workerRank, int alternativeIndex, double *parameters[], int parameterSize);
+    void SendWorkerParameters(int workerRank, int alternativeIndex, double parameters[], int parameterSize);
 
     
 

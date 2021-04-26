@@ -17,6 +17,7 @@ Version History
 ******************************************************************************/
 #include <string.h>
 #include <stdlib.h>
+#include <iostream>
 
 #include "ValueExtractor.h"
 

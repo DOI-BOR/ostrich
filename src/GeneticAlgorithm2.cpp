@@ -15,16 +15,15 @@ Mutation such that each successive genration of solutions is an improvement
 
 #include "GeneticAlgorithm2.h"
 #include "LatinHypercube.h"
-//#include "Model.h"
 #include "ParameterGroup.h"
-#include <ParameterABC.h>
-//#include "Chromosome.h"
-//#include "ChromosomePool.h"
-#include "StatsClass.h"
+//#include <ParameterABC.h>
+//#include "StatsClass.h"
 
 #include "Exception.h"
 #include "Utility.h"
-#include "WriteUtility.h"
+
+#include <iostream>
+
 
 /******************************************************************************
 WarmStart()
@@ -51,8 +50,6 @@ and then the user input file is checked for overriding values.
 GeneticAlgorithm::GeneticAlgorithm() {
 
     FILE* pFile;
-    int popSize, num;
-    double rate, lwr, upr;
     double* pVals;
     char* pTok;
     LatinHypercube* pLHS = NULL;
@@ -61,8 +58,6 @@ GeneticAlgorithm::GeneticAlgorithm() {
     char tmp2[DEF_STR_SZ];
     int i, j, k, lvl, idx;
     IroncladString name = GetInFileName();
-
-    m_pStats = NULL;
 
     // Read genetic algorithm information from the OSTRICH input file
     pFile = fopen(name, "r");
@@ -90,6 +85,10 @@ GeneticAlgorithm::GeneticAlgorithm() {
                 else if (strstr(line, "Survivors") != NULL) {
                     // Set the number of survivors
                     sscanf(line, "%s %d", tmp, &m_NumSurvivors);
+                }
+                else if (strstr(line, "CrossoverRate") != NULL) {
+                    // Set the number of survivors
+                    sscanf(line, "%s %lf", tmp, &m_CrossoverRate);
                 }
                 else if (strstr(line, "NumGenerations") != NULL) {
                     // Set the number of generations
@@ -174,14 +173,20 @@ GeneticAlgorithm::GeneticAlgorithm() {
     Perform setup checks of the configuration file
     */ 
     // Check that the population size is greater than zero
-    if (popSize <= 0) {
+    if (m_NumPopulation <= 0) {
         LogError(ERR_FILE_IO, "Invalid population size");
         ExitProgram(1);
     }
     
     // Check that the mutation rate is valid
-    if ((rate < 0.00) || (rate > 1.00)) {
+    if ((m_MutationRate < 0.00) || (m_MutationRate > 1.00)) {
         LogError(ERR_FILE_IO, "Invalid mutation rate");
+        ExitProgram(1);
+    }
+
+    // Check that the crossover rate is valid
+    if ((m_CrossoverRate < 0.00) || (m_CrossoverRate > 1.00)) {
+        LogError(ERR_FILE_IO, "Invalid crossover rate");
         ExitProgram(1);
     }
 
@@ -215,7 +220,6 @@ GeneticAlgorithm::GeneticAlgorithm() {
     }
 
    
-   
    IncCtorCount();
 }/* end CTOR() */
 
@@ -242,28 +246,33 @@ Initialize()
 double** GeneticAlgorithm::CreateInitialSample(int sampleSize) {
 
     // Create the holder for the samples
-    int parameters = m_pParamGroup->GetNumParams();
+    int numberOfParameters = m_pParamGroup->GetNumParams();
     double** samples;
     
     // Generate the set of initial parameters
     if (m_InitType == LHS_INIT) {
         // Use Latin Hypercube to initalize the space
         // Create a new LHS object
-        LatinHypercube *pLHS = new LatinHypercube(parameters, sampleSize);
+        LatinHypercube *pLHS = new LatinHypercube(sampleSize, numberOfParameters, numberOfParameters);
         MEM_CHECK(pLHS);
 
-        // Create each sample within the Latin Hypercube object
-        for (int j = 0; j < parameters; j++) {
-            double lwr = m_pGenes[j].GetLwr();
-            double upr = m_pGenes[j].GetUpr();
-            pLHS->InitRow(j, lwr, upr);
+        // Extract the bounds needed to create the LHS matrix
+        double* lowerBounds = new double[numberOfParameters];
+        double* upperBounds = new double[numberOfParameters];
+        
+        for (int i = 0; i < numberOfParameters; i++) {
+            lowerBounds[i] = m_pGenes[i].GetLwr();
+            upperBounds[i] = m_pGenes[i].GetUpr();
         }
 
         // Fill the array from the LHS object
+        pLHS->CreateUniformSample(lowerBounds, upperBounds);
         samples = pLHS->GetSampleMatrix();
         
         // Cleanup the memory
-        delete pLHS;
+        //delete pLHS;
+        delete[] lowerBounds;
+        delete[] upperBounds;
 
     }
     else if (m_InitType == RANDOM_INIT){
@@ -274,57 +283,58 @@ double** GeneticAlgorithm::CreateInitialSample(int sampleSize) {
         // Loop on each chromosome/gene and draw a random value for each.
         for (int entryChromosome = 0; entryChromosome < sampleSize; entryChromosome++) {
             // Create the holder for this chromosome of samples
-            samples[entryChromosome] = new double[parameters];
+            samples[entryChromosome] = new double[numberOfParameters];
 
-            for (int entryParameter = 0; entryParameter < parameters; entryParameter++) {
+            for (int entryParameter = 0; entryParameter < numberOfParameters; entryParameter++) {
                 samples[entryChromosome][entryParameter] = m_pGenes[entryParameter].GetRandomValue();
             }
         }
     }
-    else if (m_InitType == QUAD_TREE_INIT) {
-        // Use quad trees to initialize the space
-        // Create the sample holder
-        samples = new double* [sampleSize];
+    //else if (m_InitType == QUAD_TREE_INIT) {
+    //    // Use quad trees to initialize the space
+    //    // Create the sample holder
+    //    samples = new double* [sampleSize];
 
-        // Create the new QuadTree object
-        QuadTree *m_pTrees = new QuadTree[parameters];
+    //    // Create the new QuadTree object
+    //    QuadTree *m_pTrees = new QuadTree[numberOfParameters];
 
-        // Set the tree values
-        int lvl = 0;
-        int idx = 0;
+    //    // Set the tree values
+    //    int lvl = 0;
+    //    int idx = 0;
 
-        // Loop over the tree and generate values
-        for (int entryChromosome = 0; entryChromosome < sampleSize; entryChromosome++) {
-            // Create the holder for this chromosome of samples
-            samples[entryChromosome] = new double[parameters];
+    //    // Loop over the tree and generate values
+    //    for (int entryChromosome = 0; entryChromosome < sampleSize; entryChromosome++) {
+    //        // Create the holder for this chromosome of samples
+    //        samples[entryChromosome] = new double[numberOfParameters];
 
-            // Fill the data into the trees
-            for (int j = 0; j < parameters; j++) {
-                double lwr = m_pGenes[j].GetLwr();
-                double upr = m_pGenes[j].GetUpr();
-                m_pTrees[j].Init(lwr, upr);
-            }
+    //        // Fill the data into the trees
+    //        for (int j = 0; j < numberOfParameters; j++) {
+    //            double lwr = m_pGenes[j].GetLwr();
+    //            double upr = m_pGenes[j].GetUpr();
+    //            m_pTrees[j].Init(lwr, upr);
+    //        }
 
-            // Call the head of the tree
-            double* pVals = GetTreeCombo(lvl, idx, m_pTrees, parameters);
+    //        // Call the head of the tree
+    //        double* pVals = GetTreeCombo(lvl, idx, m_pTrees, numberOfParameters);
 
-            // Contine to loop on the tree structure
-            if (pVals == NULL) {
-                for (int j = 0; j < parameters; j++) { m_pTrees[j].Expand(); }
-                lvl++;
-                idx = 0;
-                pVals = GetTreeCombo(lvl, idx, m_pTrees, parameters);
-            }
+    //        // Contine to loop on the tree structure
+    //        if (pVals == NULL) {
+    //            for (int j = 0; j < numberOfParameters; j++) { m_pTrees[j].Expand(); }
+    //            lvl++;
+    //            idx = 0;
+    //            pVals = GetTreeCombo(lvl, idx, m_pTrees, numberOfParameters);
+    //        }
 
-            idx++;
+    //        idx++;
 
-            samples[entryChromosome] = pVals;
-            delete[] pVals;
-        }
-    }
+    //        samples[entryChromosome] = pVals;
+    //        delete[] pVals;
+    //    }
+    //}
     else {
         // Log an error
-        // TODO: Add this
+         // TODO: Add this
+        samples = NULL;
     }
  
     // Return to the calling function
@@ -416,7 +426,7 @@ population, except those that are in the top <m_NumSurvivors>.
 void GeneticAlgorithm::Crossover(double* objectives, int numberOfObjectives, double** samples, double** scratch) {
 
     // Add the best back to the worker to maintain it in the population
-    scratch[0] = m_BestChromosome;
+    scratch[0] = m_BestAlternative;
 
     // Find the best from the previous generation to maintain in the current generation
     if (m_NumSurvivors > 1) {
@@ -513,7 +523,7 @@ Creates the next generation of the chromosome population using tourney selection
 crossover, and mutation.
 *****************************************************************************
 */
-void GeneticAlgorithm::CreateSample(double* objectives, int numberOfObjectives, double** samples) {
+double** GeneticAlgorithm::CreateSample(double* objectives, int numberOfObjectives, double** samples) {
 
     // Create a scratch array to hold the updated dated
     double** scratch; 
@@ -528,8 +538,7 @@ void GeneticAlgorithm::CreateSample(double* objectives, int numberOfObjectives, 
     Mutate( scratch, numberOfObjectives);
 
     // Swap scratch with the samples
-    samples = scratch;
-    delete scratch;
+    return scratch;
 }
 
 
@@ -601,19 +610,19 @@ Retrieves the chromosome value and index that has the best fitness value.
 */
 void GeneticAlgorithm::GetBestObjective(double* objectives, int numberOfObjectives) {
     
-    double bestFitVal = objectives[0];
-    int bestFitIdx = 0;
+    double iterationMinimum = objectives[0];
+    int iterationIndex = 0;
 
     for (int i = 1; i < numberOfObjectives; i++) {
-
-        if (objectives[i] < bestFitVal) {
-            bestFitVal = objectives[i];
-            bestFitIdx = i;
+        if (objectives[i] < iterationMinimum) {
+            iterationMinimum = objectives[i];
+            iterationIndex = i;
         }
     }
 
-    m_BestObjectiveIteration = bestFitVal;
-    m_BestObjectiveIndexIteration = bestFitIdx;
+    m_BestObjectiveIteration = iterationMinimum;
+    m_BestObjectiveIndexIteration = iterationIndex;
+
 }
 
 
@@ -884,7 +893,7 @@ WriteMetrics()
 
 Write out setup and metrics for the pool.
 ******************************************************************************/
-void GeneticAlgorithm::WriteStartingMetrics() {
+void GeneticAlgorithm::WriteStartingMetrics(void) {
     // TODO: Move to the write utility class
 
     // Open the log file
@@ -893,20 +902,64 @@ void GeneticAlgorithm::WriteStartingMetrics() {
     sprintf(fileName, "OstOutput%d.txt", 0);
     pFile = fopen(fileName, "a");
 
-    // Log the setup information
+    // Log the algorithm setup information
     fprintf(pFile, "Population Size         : %d\n", m_NumPopulation);
+    fprintf(pFile, "Mutation Rate           : %f\n", m_MutationRate);
+    fprintf(pFile, "Crossover Rate          : %f\n", m_CrossoverRate);
     fprintf(pFile, "Number of Elites        : %d\n", m_NumSurvivors);
     fprintf(pFile, "Initialization Method   : ");
     if (m_InitType == RANDOM_INIT) { fprintf(pFile, "Random\n"); }
     else if (m_InitType == QUAD_TREE_INIT) { fprintf(pFile, "Quad-Tree\n"); }
     else if (m_InitType == LHS_INIT) { fprintf(pFile, "Latin Hypercube Sampling\n"); }
-    else { fprintf(pFile, "Unknown\n"); }
+    else { fprintf(pFile, "Unknown\n\n"); }
+
+    // Write the parameter to the file
+    fprintf(pFile, "Run   "); // TODO: align columns 
+    fprintf(pFile, "%-12s  ", "Objective");
+    m_pParamGroup->Write(pFile, WRITE_BNR);
+    fprintf(pFile, "Convergence\n");    
 
     // Close the log file
     fclose(pFile);
 
 
 }/* end WriteMetrics() */
+
+/******************************************************************************
+WriteEndingMetrics()
+
+Write out setup and metrics for the algorithm.
+******************************************************************************/
+void GeneticAlgorithm::WriteEndingMetrics(void) {
+    //TODO: Move htis to the write utility class
+    
+    // Open the log file
+    char fileName[DEF_STR_SZ];
+    FILE* pFile;
+    sprintf(fileName, "OstOutput%d.txt", 0);
+    pFile = fopen(fileName, "a");
+
+    // Write the result information
+    WriteOptimalToFileWithGroup2(pFile, m_pParamGroup, m_BestObjective);
+    
+    // Write the algorithm information
+    fprintf(pFile, "\nAlgorithm Metrics\n");
+    fprintf(pFile, "Algorithm               : GeneticAlgorithm\n");
+    fprintf(pFile, "Desired Convergence Val : %E\n", m_StopVal);
+    fprintf(pFile, "Actual Convergence Val  : %E\n", m_CurStop);
+    fprintf(pFile, "Max Generations         : %d\n", m_NumGenerationsMaximum);
+    fprintf(pFile, "Actual Generations      : %d\n", m_Generation);
+
+    if (m_CurStop <= m_StopVal) {
+        fprintf(pFile, "Algorithm successfully converged on a solution\n");
+    }
+    else {
+        fprintf(pFile, "Algorithm failed to converge on a solution, more generations may be needed\n");
+    }
+
+    // Close the log file
+    fclose(pFile);
+}
 
 
 /******************************************************************************
@@ -951,16 +1004,18 @@ Minimize the objective function using the GA.
 ******************************************************************************/
 void GeneticAlgorithm::Optimize(void) {
 
-    // Write the starting metrics
+    // Write the information to the primary log file
+    WriteSetup2(this, "GeneticAlgorithm");
     WriteStartingMetrics();
+
+    // Initialize the workers
+    ConfigureWorkers();
 
    // Initialize the chromosome for the first solve
    double** samples = CreateInitialSample(m_NumPopulation);
-   //MEM_CHECK(m_pPopulation);
 
-   //bool continueFlag = true;   
-   while (m_NumGenerationsMaximum > m_Generation && m_CurStop <= m_StopVal) {
-       // TODO: Add tolerance here
+    // Enter the solution loop
+   while (m_NumGenerationsMaximum > m_Generation && m_CurStop >= m_StopVal) {
 
        // Evaluate the fitness of the sample set
        double *objectives = new double[m_NumPopulation];
@@ -978,91 +1033,71 @@ void GeneticAlgorithm::Optimize(void) {
            m_BestAlternative = samples[m_BestObjectiveIndexIteration];
        }
        
+       // Log the iteration
+       // Set the values into the pointer groups
+       for (int entryParam = 0; entryParam < m_pParamGroup->GetNumParams(); entryParam++) {
+           ParameterABC* temp = m_pParamGroup->GetParamPtr(entryParam);
+           temp->SetEstVal(m_BestAlternative[entryParam]);
+       }
+
+       // Write iterationr result to the log file
+       WriteRecord2(this, m_Generation, m_BestObjective, m_CurStop);
+
        // Increment the generation variable
        m_Generation++;
 
        // Generate another set of samples if solution will continue
-       if (m_NumGenerationsMaximum > m_Generation && m_CurStop <= m_StopVal) {
-           CreateSample(objectives, m_NumPopulation, samples);
+       if (m_Generation < m_NumGenerationsMaximum && m_CurStop >= m_StopVal) {
+           samples = CreateSample(objectives, m_NumPopulation, samples);
        }
    }
 
+
    // Terminate the secondary workers and let the clean up.
    TerminateWorkers();
-
-   // Set the values into the pointer groups
-   for (int entryParam = 0; entryParam < m_pParamGroup->GetNumParams(); entryParam++) {
-       ParameterABC *temp = m_pParamGroup->GetParamPtr(entryParam);
-       temp->SetEstVal(m_BestAlternative[entryParam]);
-
-   }
 
    //write algorithm metrics
    WriteEndingMetrics();
 
    // Cleanup memory space
    delete samples;
-   delete objectives;
-
 } 
-
-/******************************************************************************
-WriteMetrics()
-
-Write out setup and metrics for the algorithm.
-******************************************************************************/
-void GeneticAlgorithm::WriteEndingMetrics() {
-    //TODO: Move htis to the write utility class
-
-	char fileName[DEF_STR_SZ];
-	FILE* pFile;
-	sprintf(fileName, "OstOutput%d.txt", 0);
-	pFile = fopen(fileName, "a");
-
-    WriteOptimalToFile(pFile, m_pParamGroup, m_BestObjective);
-
-
-
-   fprintf(pFile, "\nAlgorithm Metrics\n");
-   fprintf(pFile, "Algorithm               : Real-coded Genetic Algorithm (RGA)\n");
-   fprintf(pFile, "Desired Convergence Val : %E\n", m_StopVal);
-   fprintf(pFile, "Actual Convergence Val  : %E\n", m_CurStop);
-   fprintf(pFile, "Max Generations         : %d\n", m_NumGenerationsMaximum);
-   fprintf(pFile, "Actual Generations      : %d\n", m_Generation);
-
-
-   //m_pPopulation->WriteMetrics(pFile);
-   //m_pModel->WriteMetrics(pFile);
-   if(m_CurStop <= m_StopVal)
-   {
-	  fprintf(pFile, "Algorithm successfully converged on a solution\n");
-   }
-   else
-   {
-	  fprintf(pFile, "Algorithm failed to converge on a solution, more generations may be needed\n");
-   }   
-}
 
 /******************************************************************************
 GA_Program()
 
 Calibrate the model using the GA.
 ******************************************************************************/
-void GA_Program(int argC, StringType argV[])
-{
-   NEW_PRINT("Model", 1);
-    
+void GA_Program(int argC, StringType argV[]) {
 
-   NEW_PRINT("GeneticAlgorithm", 1);
-   GeneticAlgorithm GA = GeneticAlgorithm();
+   // Get the rank of the process
+   int rank;
+   MPI_Comm_rank(MPI_COMM_WORLD, &rank);
 
-   //MEM_CHECK(GA);
-   
-   if(model->GetObjFuncId() == OBJ_FUNC_WSSE) { GA->Calibrate(); }
-   else { GA->Optimize(); }
+   // Determine behavior based on the rank
+   if (rank == 0) {
+       // This is the primary worker. Setup the algorithm and call the processing routine
+       // Create the genetice agorithm
+       GeneticAlgorithm *GA = new GeneticAlgorithm();
 
-   delete GA;
-   delete model;
-} /* end GA_Program() */
+       // Begin the primary worker operations. This transfers information to the secondary workers
+       // and manages the solution process
+       GA->Optimize();
+
+
+
+   }
+   else {
+       // This is a secondary worker. Create the secondary worker and call the work routine
+       // Create and setup the secondary worker
+       ModelWorker worker = ModelWorker();
+
+       // Start the work in the processor 
+       worker.Work();
+
+       // Tear-down is triggered by the primary worker
+   }
+
+} 
 
 

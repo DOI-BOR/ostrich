@@ -12,32 +12,29 @@ Version History
 #define LATIN_HYPERCUBE_H
 
 #include "MyHeaderInc.h"
+#include <vector>
 
 /******************************************************************************
 class LatinHypercube
 
 Encapsulates a Latin Hypercube Sampling strategy.
 ******************************************************************************/
-class LatinHypercube
-{
-   public:      
-      LatinHypercube(int rows, int cols);
-      ~LatinHypercube(void){ DBG_PRINT("LatinHypercube::DTOR"); Destroy(); }
-      void Destroy(void);   
-      void InitRow(int row, double min, double max); //uniform sampling
-      void InitRow(int row, double min, double max, double sd); //Gaussian sampling
-      double SampleRow(int row);
-      void ReDim(int cols);
+class LatinHypercube {
+public:
+    LatinHypercube(int numberOfSamples, int numberOfParameters, int numberOfBins);
+    ~LatinHypercube(void) { DBG_PRINT("LatinHypercube::DTOR"); Destroy(); };
+    void Destroy(void);
+    void CreateUniformSample(double* lowerBounds, double* upperBounds);
+    //void InitRow(int row, double min, double max, double sd); //Gaussian sampling
+    //double SampleRow(int row);
+    void ReDim(int cols);
 
-      double** GetSampleMatrix(void) { return m_pVals; };
+    double** GetSampleMatrix(void) { return m_pVals; };
 
-   private:
-      double ** m_pVals;
-      int    *  m_pCount;
-      int m_Rows;
-      int m_Cols;
-      int m_MaxCols;
-}; /* end class LatinHypercube */
-
+private:
+    double** m_pVals;
+    int m_Rows;
+    int m_Cols;
+    int m_MaxCols;
+};
 #endif /* LATIN_HYPERCUBE_H */
-

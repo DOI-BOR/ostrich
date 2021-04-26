@@ -21,6 +21,7 @@ Version History
                   Model class and the SurrogateModel class.
 07-16-07    lsm   Added support for the EPA SuperMUSE cluster
 ******************************************************************************/
+
 #ifndef MODEL_H
 #define MODEL_H
 
@@ -40,10 +41,6 @@ class FileList;
 class DatabaseABC;
 class SurrogateParameterGroup;
 class ParameterCorrection;
-
-extern "C" {
-   double ExtractBoxCoxValue(void);
-}
 
 /******************************************************************************
 class Model

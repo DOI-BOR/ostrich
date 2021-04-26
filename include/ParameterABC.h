@@ -111,8 +111,9 @@ class RealParam : public ParameterABC
       double GetLowerBoundUntransformed(void){ return lowerBoundUntransformed; };
       double GetUpperBoundUntransformed(void) { return upperBoundUntransformed; };
       std::string GetTxInUntransformed(void) { return txInUntransformed; };
-      std::string  GetTxOutUntransformed(void) { return txOutUntransformed; };
-      std::string  GetFixFmtUntransformed(void) { return fixFmtUntransformed; };
+      std::string GetTxOutUntransformed(void) { return txOutUntransformed; };
+      std::string GetFixFmtUntransformed(void) { return fixFmtUntransformed; };
+      std::string GetOstUntransformed(void) { return txOstUntransformed; };
 
             
    private:

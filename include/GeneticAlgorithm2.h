@@ -19,28 +19,28 @@ Mutation such that each successive genration of solutions is an improvement
 #include "Gene.h"
 #include "QuadTree.h"
 #include "StatUtility.h"
+#include "ModelWorker.h"
+#include "WriteUtility2.h"
+
 
 //forward declarations
-class StatsClass;
-class ModelABC;
-class ChromosomePool;
+//class StatsClass;
 
 /******************************************************************************
 class GeneticAlgorithm
 
 ******************************************************************************/
-class GeneticAlgorithm : Algorithm
-{
+class GeneticAlgorithm : Algorithm {
    public:
       GeneticAlgorithm();      
       ~GeneticAlgorithm(void){ DBG_PRINT("GeneticAlgorithm::DTOR"); Destroy(); }
       double** CreateInitialSample(int sampleSize);
-      void CreateSample(double* objectives, int numberOfObjectives, double** samples);
+      double** CreateSample(double* objectives, int numberOfObjectives, double** samples);
       void Optimize(void);
       void Calibrate(void);
       void Destroy(void);
-      void WriteStartingMetrics();
-      void WriteEndingMetrics();
+      void WriteStartingMetrics(void);
+      void WriteEndingMetrics(void);
       void WarmStart(void);
 
    private:
@@ -52,15 +52,12 @@ class GeneticAlgorithm : Algorithm
        double m_CrossoverRate = 0.90;               // Crossover rate within the population
        int m_InitType = RANDOM_INIT;                // Initializaiton strategy used to create the initial generation 
        double m_StopVal = 0.0001;                   // Convergence tolerance used to stop the analysis
-       double m_CurStop = 1000; //current convergence val (compared against m_StopVal)
+       double m_CurStop = 1000.0;                   //current convergence val (compared against m_StopVal)
                                                     // Solution variables
        int m_Generation = 0;                        // Counter for the current generation number
        RealEncodedGene *m_pGenes;                   // Genes that represent the parameters
-       
-       double m_BestObjective = NAN;                // Best objective
-       double* m_BestChromosome;                    // Best chromosome
 
-       double m_BestObjectiveIteration = NAN;       // Best objective within the iteration
+       double m_BestObjectiveIteration = INFINITY;       // Best objective within the iteration
        int m_BestObjectiveIndexIteration = -1;      // Best objective index within the iteration
        
        void GetBestObjective(double* objectives, int numberOfObjectives);
@@ -71,10 +68,10 @@ class GeneticAlgorithm : Algorithm
        void Crossover(double* objectives, int numberOfObjectives, double** samples, double** scratch);
        void Mutate(double** scratch, int numberOfSamples);
 
-       StatsClass m_pStats;
+       //StatsClass m_pStats;
 
       
-};
+}; 
 
 extern "C" {
 void GA_Program(int argC, StringType argV[]);

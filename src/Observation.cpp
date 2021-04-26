@@ -15,6 +15,7 @@ Version History
 ******************************************************************************/
 #include <stdio.h>
 #include <string.h>
+#include <iostream>
 
 #include "Observation.h"
 #include "ObjectiveFunction.h"
@@ -298,8 +299,8 @@ Observation::Observation(Observation * pCopy)
    MEM_CHECK(m_FileName);
 
    strcpy(m_Name, pCopy->GetName());
-   strcpy(m_Keyword, pCopy->GetName());
-   strcpy(m_FileName, OST_OBS_FILE);
+   strcpy(m_Keyword, pCopy->GetKeyword());
+   strcpy(m_FileName, pCopy->GetFileName());
    strcpy(m_Group, pCopy->GetGroup());
 
    m_MeasuredVal = pCopy->GetMeasuredVal(false, false);
