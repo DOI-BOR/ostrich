@@ -18,6 +18,7 @@ these groups.
 #include <mpi.h>
 #include <filesystem>
 #include "WriteUtility2.h"
+#include <cstring>
 
 
 //forward decs
