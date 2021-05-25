@@ -1,0 +1,384 @@
+<!DOCTYPE HTML>
+<!--
+	Future Imperfect by HTML5 UP
+	html5up.net | @ajlkn
+	Free for personal and commercial use under the CCA 3.0 license (html5up.net/license)
+-->
+<html>
+	<head>
+		<title>OSTRICH - Solution - Building</title>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+		<link rel="stylesheet" href="../../../assets/css/main.css" />
+	</head>
+	<body class="single is-preload">
+
+		<!-- Wrapper -->
+		<div id="wrapper">
+
+			<!-- Header -->
+			<header id="header">
+				<h1 class="bannerheading"><a href="../../../index.html">OSTRICH</a></h1>
+				<nav class="links">
+					<ul>
+						<li><a href="../overview.html">Overview</a></li>
+						<li><a href="../algorithms/algorithms.html">Algorithms</a></li>
+						<li><a href="../setup/setup.html">Setup</a></li>
+						<li>
+							<div class="dropdown">
+								<a href="solution.html"<button class="dropbtn">
+									Solution
+									<i class="fa fa-caret-down"></i></a>
+								</button>
+								<div class="dropdown-content">
+									<a href="running.html">Running OSTRICH</a>
+									<a href="building.html">Building OSTRICH</a>
+								</div>
+							</div>
+						</li>
+						<li><a href="../output/output.html">Output</a></li>
+						<li><a href="../examples/examples.html">Examples</a></li>
+						<li>
+				</nav>
+				<nav class="main">
+					<ul>
+						<li class="menu">
+							<a class="fa-bars" href="#menu">Menu</a>
+						</li>
+					</ul>
+				</nav>
+			</header>
+
+			<!-- Menu -->
+			<section id="menu">
+
+				<!-- Links -->
+				<section>
+					<ul class="links">
+						<li>
+							<a href="../overview.html">
+								<h3>Overview</h3>
+								<p>The basics of OSTRICH</p>
+							</a>
+						</li>
+						<li>
+							<a href="../algorithms/algorithms.html">
+								<h3>Algorithms</h3>
+								<p>Algorithms available within OSTRICH</p>
+							</a>
+						</li>
+						<li>
+							<a href="../setup/setup.html">
+								<h3>Setup</h3>
+								<p>Organzing an OSTRICH analysis</p>
+							</a>
+						</li>
+						<li>
+							<a href="solution.html">
+								<h3>Solution</h3>
+								<p>Running an OSTRICH analysis</p>
+							</a>
+						</li>
+						<li>
+							<a href="../output/output.html">
+								<h3>Output</h3>
+								<p>Output of an OSTRICH analysis</p>
+							</a>
+						</li>
+						<li>
+							<a href="../examples/examples.html">
+								<h3>Examples</h3>
+								<p>Examples using OSTRICH</p>
+							</a>
+						</li>
+						<li>
+							<a href="../../contributing.html">
+								<h3>Contributing</h3>
+								<p>Contribute to OSTRICH</p>
+							</a>
+						</li>
+					</ul>
+				</section>
+
+			</section>
+
+			<!-- Main -->
+			<div id="main">
+
+				<!-- Post -->
+				<article class="post">
+					<header>
+						<div class="title">
+							<h2><a href="#">Building OSTRICH</a></h2>
+							<p>Instructions for building OSTRICH on various platforms</p>
+						</div>
+						<div class="meta">
+							<p align="left">Initial Publication:</p>
+							<time class="time" datetime="2015-11-01">April 11, 2021</time>
+							<p align="left">Modified:</p>
+							<time class="time" datetime="2015-11-01">April 11, 2021</time>
+						</div>
+					</header>
+					<h1>Contents</h1>
+					<table class="layouttable">
+						<tr>
+							<th><a href="#sec_linux"><p class="tocheading">1 Building on Linux</p></a></th>
+							<th><a href="#sec_win_vs"><p class="tocheading">2.1.2 Visual Studio 2019</p></a></th>
+						</tr>
+						<tr>
+							<th><a href="#sec_linux_mpi"><p class="tocheading">1.1 Parallel Build with MPI</p></a></th>
+							<th><a href="#sec_vs_config"><p class="tocheading">2.2 Importing OSTRICH into Visual Studio</p></a></th>
+						</tr>
+						<tr>
+							<th><a href="#sec_linux_serial"><p class="tocheading">1.2 Serial build</p></a></th>
+							<th><a href="#sec_vs_dependencies"><p class="tocheading">2.3 Adding Dependencies into Visual Studio</p></a></th>
+						</tr>
+						<tr>
+							<th><a href="#sec_linux_database"><p class="tocheading">1.3 Serial Build with Database Output</p></a></th>
+							<th><a href="#sec_vs_depend_mpi"><p class="tocheading">2.3.1 Microsoft MPI</p></a></th>
+						</tr>
+						<tr>
+							<th><a href="#sec_windows"><p class="tocheading">2 Building on Windows</p></a></th>
+							<th><a href="#sec_vs_depend_msado"><p class="tocheading">2.3.2 Microsoft ADO</p></a></th>
+						</tr>
+						<tr>
+							<th><a href="#sec_win_depend"><p class="tocheading">2.1 Dependencies</p></a></th>
+							<th><a href="#sec_vs_compile"><p class="tocheading">2.4 Modifying Compilation Options</p></a></th>
+						</tr>
+						<tr>
+							<th><a href="#sec_win_mpi"><p class="tocheading">2.1.1 Microsoft MPI</p></a></th>
+							<th><a href="#sec_vs_troubleshooting"><p class="tocheading">2.5 Troubleshooting</p></a></th>
+						</tr>						
+					</table>
+					
+					<h1 id="sec_linux">1 Building on Linux</h1>
+					<p align="justify">
+						A user may need to build from source on Linux to ensure that all OSTRICH dependencies are correctly referenced. While OSTRICH is by and large self
+						contained, there are limited external dependencies that will need to be satisfied for the toolkit to operate correctly. If a user makes modifications
+						to the source code, OSTRICH will also need to be recompiled prior to use.
+					</p>
+					<p align="justify">
+						A makefile is included within the source directory to facilitate building on Linux. The makefile includes the three most common OSTRICH use configurations, 
+						and it should be sufficient for the majority of users. Users may need to add directories to the environment path if a non-standard Linux configuration
+						is being utilized.
+					</p>
+					
+					<h2 id="sec_linux_mpi">1.1 Parallel build with MPI</h2>
+					<p align="justify">
+						This should be the default build option a user should follow unless a specific need requires one of the other options. Building OSTRICH with MPI gives
+						a user the option to start OSTRICH in parallel mode. This allows OSTRICH to take advantage of solving multiple models simultanteously, if the selected 
+						algorithm supports parallel solutions. However, the MPI enabled build can also be utilized in a serial configuration by specifying a single process. 
+						This flexibility allows a user to compile OSTRICH once on a given machine and use it across different scenarios.
+					</p>
+					<p align="justify">
+						The MPI build supports both Intel and GCC compilers, if available on a system. To compile MPI enabled OSTRICH using the GCC compiler stack, from within 
+						the make directory issue the following:
+					</p>
+					<p align="center">
+						<code>
+							make GCC_MPI
+						</code>
+					</p>
+					<p align="justify">
+						To compile MPI enabled OSTRICH using the Intel compiler stack, from within the make directory issue the following:
+					</p>
+					<p align="center">
+						<code>
+							make ICC_MPI
+						</code>
+					</p>
+					<p align="justify">
+						Both methods require an MPI installation to be available on the system path. If MPI is not enabled on the machine, OSTRICH will not compile.
+					</p>
+					
+					<h2 id="sec_linux_serial">1.2 Serial build </h2>
+					<p align="justify">
+						OSTRICH can also be built in serial mode. Models, even when a parallel algorithm is selected, will be solved sequentially one after the other.
+						No speedup will therefore be available from using a parallelized algorithm. This can be helpful when trying to debug a model or when a model
+						solves quickly to not require the performance benefits of parallelization.
+					</p>
+					<p align="justify">
+						The OSTRICH source code is configured for MPI and would not build in serial mode without a special provision. To support a serial build process, 
+						the makefile targets MPI stub files within the extern folder of the repository. This provides the required MPI functions to allow the code to 
+						compile which block OSTRICH from parallelizing those operations. The extern folder must therefore be provided along with the src folder for the 
+						build to be successful. 
+					</p>
+					<p align="justify">
+						The serial build supports both Intel and GCC compilers, if available on a system. To compile serial OSTRICH using the GCC compiler stack, from within 
+						the make directory issue the following:
+					</p>
+					<p align="center">
+						<code>
+							make GCC
+						</code>
+					</p>
+					<p align="justify">
+						To compile serial OSTRICH using the Intel compiler stack, from within the make directory issue the following:
+					</p>
+					<p align="center">
+						<code>
+							make ICC
+						</code>
+					</p>
+					
+					<h2 id="sec_linux_database">1.3 Serial build with database output </h2>
+					<p align="justify">
+						The third method for building OSTRICH is database mode. This utilizes file operations to simulate standard MPI operations. Like the serial build process,
+						the makefile targets MPI stup files within the extern folder of the repository. This provides the required MPI functions to allow the code to 
+						compile which block OSTRICH from parallelizing those operations. The extern folder must therefore be provided along with the src folder for the 
+						build to be successful. 
+					</p>
+					<p align="justify">
+						Although the database mode is available, this is by far the least used configuration of OSTRICH. If this mode is utilized, it is strongly suggested that 
+						the user perform a limited run or reduced test case to confirm that OSTRICH behaves as expected for the selected algorithm. 
+					</p>
+					<p align="justify">
+						The database build supports both Intel and GCC compilers, if available on a system. To compile database OSTRICH using the GCC compiler stack, from within 
+						the make directory issue the following:
+					</p>
+					<p align="center">
+						<code>
+							make GCC_DB
+						</code>
+					</p>
+					<p align="justify">
+						To compile database OSTRICH using the Intel compiler stack, from within the make directory issue the following:
+					</p>
+					<p align="center">
+						<code>
+							make ICC_DB
+						</code>
+					</p>
+					
+					<h1 id="sec_win">2 Building on Windows</h1>
+					<p align="justify">
+						Building on Windows can be more challenging than Linux as additional configuration steps are necessary. Unless a custom build of OSTRICH is required, 
+						it is strongly recommended that an existing build of OSTRICH be utilized to save time and effort. With that caveat, it is straightforward to create
+						a custom Windows build once the project is configured correctly. The following sections outline how to build OSTRICH for the Windows platform.
+					</p>
+					
+					<h2 id="sec_win_depend">2.1 Dependencies</h2>
+					<p align="justify">
+						Installation of the necessary components and libraries will require administrative access on the Windows machine. If you do not have administrative
+						authority on the machine, you will not be able to install all the necessary dependencies to build OSTRICH in the default locations. Checking that 
+						you have proper permissions now will reduce subsequent frustration during the build process.
+					</p>
+					<p align="justify">
+						The outlined method uses Microsoft development tools and compiler stack for the build process. There are numerous workflows that could build
+						OSTRICH for the Windows platform. This approach has been found to be the most straightforward and most compatible with subsequent OSTRICH use cases. 
+						If your model intended for use within OSTRICH is built using a stack other than Microsoft (i.e. Cwgwin), be aware of that unexpected compatability 
+						issues may present themselves during the solution process. 
+					</p>
+					
+					<h3 id="sec_win_mpi"> 2.1.1 Microsoft MPI </h3>
+					<p align="justify">
+						An installation of MPI is required to build and run OSTRICH. On Windows, the Microsoft MPI version is recommended. The installation for v10.0 
+						can be found <a href="https://www.microsoft.com/en-us/download/details.aspx?id=57467">here</a>. Make sure to install both components, the library
+						and the SDK, from the download. Both will be required to build and run OSTRICH.
+					</p>
+					
+					<h3 id="sec_win_vs"> 2.1.2 Visual Studio 2019 </h3>
+					<p align="justify">
+						Visual Studio 2019 is utilized to provide both a compiler and IDE in which to structure project dependencies. The free Community version is sufficient,
+						which can be downloaded from <a href="https://visualstudio.microsoft.com/">Microsoft directly</a>.
+					</p>
+					<p align="justify">
+						Visual Studio does not install the C++ components by default. Additional components must be selected during the Visual Studio installation based on
+						how the user will employ Visual Studio. For this case, make sure that the following components are selected:
+					</p>
+					<ul>
+						<li>C++/CLI support v142</li>
+						<li>MSVC v142 - VS 2019 C++ x64/x86 build tools</li>
+						<li>C++ core features</li>
+						<li>C++ ATL v142 (x86 and x64)</li>
+						<li>C++ MFC v142 (x86 and x64)</li>
+						<li>Windows 10 SDK</li>
+						<li>Windows Universal C Runtime</li>
+					</ul>
+					<p align="justify">
+						The download size for these components will be quite large. Make sure that you have a fast, stable internet connection to facilitate the download. 
+					</p>
+					
+					<h2 id="sec_vs_config">2.2 Importing OSTRICH into Visual Studio</h2>
+					<p align="justify">
+						Once Visual Studio is installed on your machine, the next steps are to create a Visual Studio solution for OSTRICH. A solution is how Visual Studio
+						organizes related code. A solution can have multiple projects that are compiled together to create a final product. In this case, a solution with 
+						a single project will be utilized.
+					</p>
+					<p align="justify">
+						Open Visual Studio. The splash page will provide several options. Select "Create a new project". This will bring up an secondary page asking about
+						the type of project. Type "C++" into the search, which will provide the option for an empty project. Select "Empty Project" and click "Next". This 
+						final page will ask for the name of the project and it's location. Put is something memorable that indicates the purpose of the project. The 
+						default is to name the solution the same as the project; however, you can change the solution naming convention at this time as well. Click "Create"
+						to complete the process.
+					</p>
+					<p align="justify">
+						Visual Studio will now open a blank IDE window. The next step is to add the OSTRICH files into the project. This makes Visual Studio aware of the 
+						files and allows us to work with them within the IDE. If the Solution Explorer is not visible, add it from the View menu. Within the Solution Explorer,
+						right click on the Header Files folder and choose "Add->Existing Item". This should open a file browser window. Navigate to the Include folder of 
+						the OSTRICH repository. Select all files in the folder and click "Add". If done correctly, the OSTRICH header files will now appear within the Header
+						Files folder of Visual Studio. To add the source code, right click on the "Source Files" folder of the Solution Explorer and choose "Add->Existing Item".
+						This time navigate to the OSTRICH src folder, select all of its contents, and click "Add". The OSTRICH source files should now appear in the Source 
+						Files folder. 
+					</p>
+					
+					<h2 id="sec_vs_dependencies">2.3 Adding dependencies into Visual Studio</h2>
+					<p align="justify">
+						The external libraries OSTRICH uses also need to be added. These steps will add the libaries into Visual Studio.
+					<p>
+					<h3 id="sec_vs_depend_mpi">2.3.1 Microsoft MPI</h3>
+					<p align="justify">
+						Right click on Resource Files within the Solution Explorer and select "Add->Existing Item". If you've installed the MPI SDK into the default 
+						location, you'll be able to find it within C:\Program Files (x86)\Microsoft SDKs\MPI\Lib\x64 on your machine. Select msmpi.lib and click "Add". 
+						If you installed the MPI SDK to a custom location, browse to that location and select the mpi library.
+					</p>
+					<h3 id="sec_vs_depend_msado">2.3.2 Microsoft ADO</h3>
+					<p align="justify">
+						Right click on Resource Files within the Solution Exporer and select "Add->Existing Item". If ADO is installed into the default location, 
+						you'll be able to find it within C:\Program Files\Common Files\System\ado on your machine. Select msado15.dll and click "Add".
+					</p>
+					
+					<h2 id="sec_vs_compile">2.4 Modifying compliation options</h2>
+					<p align="justify">
+						The next step is to modify the compilation options. Within the Solution Explorer, right click on your project name to bring up the Property Pages.
+						Open the "Configuration Properties->C/C++->General" page. Within the Additional Include Directories box, add the following: 
+						C:\Program Files\Common Files\System\ado;C:\Program Files x86\Microsoft SDKs\MPI\Include;F:\ostrich\ostrich\include; The first two target the ADO 
+						and MPI headers, respectively. The last path points to the folder containing the header files within the OSTRICH repository. You will need to modify 
+						the final path as appropriate to target the directory on your system.
+					</p>
+					
+					<p align="justify">
+						OSTRICH is setup to use the C++ 2017 standard. By default, Visual Studio utilizes an older 2014 C++ standard and must be told to build against the newer
+						standard. Within the "Configuration Properties->General" page, there is the option to set the "C++ Language Standard". Update this to be the "ISO 
+						C++ 17 Standard"
+					</p>
+					
+					<p align="justify">
+						We also need to disable compilation warning flags. The Microsoft compiler stack defaults to different input/output functions compared to Linux 
+						compiler stacks that aren't default in the C++ standards. To force the Microsoft compiler to use the default functions, we need to add a flag into 
+						the preprocessor options. With the Property Pages, open "Configuration Properties->C/C++->Preprocessor". Within the "Preprocessor Definitions" box,
+						add _CRT_SECURE_NO_WARNINGS. This will tell the compiler to default to the C++ standard. Additionally, there is an known issue with how Visual Studio
+						handles the C++ 2017 byte type. To force Visual Studio to compile correctly against the C++ 2017 standard, the "_HAS_STD_BYTE=0" option must also be 
+						added to the "Preprocessor Definitions" box.
+					</p>
+					
+					<h2 id="sec_vs_troubleshooting">2.5 Troubleshooting</h2>
+					<p align="justify">
+						If you're seeing header missing issues, double check that the configuration you set the compilation options for is the same as the one that is 
+						enabled in the Visual Studio IDE. In general, it's recommended to use x64. Confirm that you set the compilation options for the architecture/release
+						combination you're using within the IDE.
+					</p>
+					
+				</article>
+			</div>
+		</div>
+
+		<!-- Scripts -->
+		<script src="../../../assets/js/jquery.min.js"></script>
+		<script src="../../../assets/js/browser.min.js"></script>
+		<script src="../../../assets/js/breakpoints.min.js"></script>
+		<script src="../../../assets/js/util.js"></script>
+		<script src="../../../assets/js/main.js"></script>
+
+	</body>
+</html>

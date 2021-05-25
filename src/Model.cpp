@@ -54,6 +54,8 @@ Version History
 #include <mpi.h>
 #include <math.h>
 #include <string.h>
+#include <string>
+#include <filesystem>
 
 #include "Model.h"
 #include "ObservationGroup.h"
@@ -144,37 +146,40 @@ void Model::PreserveModel(int rank, int trial, int counter, IroncladString ofcat
       return;
    }
 
-   /* use built in preservation option --- tries to save everything */
+   /* use built in preservation option
+      Saves everything that was not an input file or folder
+   */
    if(m_PreserveCmd == NULL)
-   {
-      IroncladString dirName = GetExeDirName();
+   {   
+      // Get the current path to the worker
+      std::filesystem::path directory = std::filesystem::current_path();
+      
+      // Move up one directory to project directory
+      directory = directory.parent_path();
 
-      #ifdef _WIN32
-        // Create the archive directory
-        sprintf(tmp, "mkdir ..\\archive\\%s%d\\run_%d >> %s", m_DirPrefix, rank, counter, GetOstExeOut());
-        system(tmp);
+      // Construct the archive folder
+      directory /= std::string("archive");
+      if (!std::filesystem::exists(directory)) {
+          std::filesystem::create_directory(directory);
+      };
 
-        // Get the the files in the working directory
-        sprintf(tmp, "dir /B run* > Exclude.txt"); //need to exclude previous 'run' directories
-        system(tmp);
+      // Construct the worker folder
+      directory /= m_DirPrefix + std::to_string(rank);
+      if (!std::filesystem::exists(directory)) {
+          std::filesystem::create_directory(directory);
+      }
 
-        // Copy the data
-        sprintf(tmp, "xcopy * ..\\archive\\%s%d\\run_%d /S /EXCLUDE:Exclude.txt >> %s", m_DirPrefix, rank, counter, GetOstExeOut());  //perform copy
-        system(tmp);
+      // Construct the run folder 
+      directory /= "run_" + std::to_string(counter - 1); // This adjusts by one to align with the model output files
+      std::filesystem::create_directory(directory);
 
-        sprintf(tmp, "..\\archive\\%s%d\\run_%d", m_DirPrefix, rank, counter);
+      // Move the files from the worker to the archive
+      // TODO: Add an exclude operation to prevent copying unnecessary files
+      std::filesystem::copy(std::filesystem::current_path(), directory, std::filesystem::copy_options::recursive);
 
-      #else
-        sprintf(tmp, "mkdir -p ../archive/%s%d/run_%d", m_DirPrefix, rank, counter);
-        system(tmp);
-        sprintf(tmp, "cp * ../archive/%s%d/run_%d 2>&1 | >> %s", m_DirPrefix, rank, counter, GetOstExeOut());
-        system(tmp);
+      // Cleanup the worker
+      m_pFileCleanupList->Cleanup(directory);
 
-        sprintf(tmp, "../archive/%s%d/run_%d", m_DirPrefix, rank, counter);
-      #endif
-
-
-      m_pFileCleanupList->Cleanup(tmp, m_DirPrefix, rank);
    }/* end if() */
    /* run the user-supplied preservation command */
    else
@@ -479,14 +484,18 @@ Model::Model(void)
          // add to cleanup list
          m_pFileCleanupList->Insert(tmp1);
 
-         if(pDirName[0] != '.')
-         {
-            #ifdef _WIN32
-               sprintf(tmp2, "copy %s %s", tmp1, pDirName);
-            #else
-               sprintf(tmp2, "cp %s %s", tmp1, pDirName);
-            #endif
-            system(tmp2);
+         // Move the file
+         if(pDirName[0] != '.') {
+             // Construct the worker path 
+             std::filesystem::path workerPath = std::filesystem::current_path() /= std::string(pDirName);
+             workerPath /= tmp1;
+
+             // Construct the path to the source file
+             std::filesystem::path sourcePath = std::filesystem::current_path() /= tmp1;
+
+            // Copy the file from the source to the worker path
+             std::filesystem::copy_file(sourcePath, workerPath);
+               
          }/* end if() */
 
          line = GetNxtDataLine(pInFile, inFileName);
@@ -513,14 +522,36 @@ Model::Model(void)
          //extra dir
          ExtractFileName(line, tmp1);
 
-         if(pDirName[0] != '.')
-         {
-            #ifdef _WIN32
-               sprintf(tmp2, "xcopy /S /E /I %s %s\\%s", tmp1, pDirName, tmp1);
-            #else
-               sprintf(tmp2, "cp -R %s %s", tmp1, pDirName);
-            #endif
-            system(tmp2);
+         // Move all entries in the directory
+         if(pDirName[0] != '.') {
+             // Construct the worker path 
+             std::filesystem::path workerPath = std::filesystem::current_path() /= std::string(pDirName);
+             workerPath /= tmp1;
+
+             if (~std::filesystem::exists(workerPath)) {
+                 std::filesystem::create_directories(workerPath);
+             }
+
+             // Construct the path to the source source
+             std::filesystem::path sourcePath = std::filesystem::current_path() /= tmp1;
+
+             // Copy the files
+             std::filesystem::copy(sourcePath, workerPath, std::filesystem::copy_options::recursive);
+
+             // Get a list of files in the source directory
+             std::vector<std::string> sourceFiles;
+             for (const auto& entry : std::filesystem::recursive_directory_iterator(sourcePath)) {
+                 if (!std::filesystem::is_directory(entry.path())) {
+                     std::filesystem::path partialPath = entry.path().lexically_relative(std::filesystem::current_path());
+                     sourceFiles.push_back(partialPath.string());
+                 }
+             }
+
+             // Add files within the directory to the cleanup list
+             for (int entry=0; entry < sourceFiles.size(); entry++) {
+                 m_pFileCleanupList->Insert(&sourceFiles[entry][0]);             
+             }
+
          }/* end if() */
 
          line = GetNxtDataLine(pInFile, inFileName);
@@ -1040,11 +1071,15 @@ void Model::Destroy(void)
 
    if(m_pFileCleanupList != NULL)
    {
-      IroncladString dirName = GetExeDirName(); 
-      if(dirName[0] != '.')
-      {
-         m_pFileCleanupList->Cleanup(dirName, m_DirPrefix, 0);         
-      }
+       // Create the directories
+       std::filesystem::path directory = GetExeDirName();
+       std::filesystem::path cutoff = ".";
+
+       // If directory is not the cuffoff value, clean up the remaining files in the folder
+       if(~directory.compare(cutoff)) {
+          m_pFileCleanupList->Cleanup(directory);
+       }
+
       delete m_pFileCleanupList;
    }
 
