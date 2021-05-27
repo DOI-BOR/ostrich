@@ -14,9 +14,9 @@
 #include <Observation.h>
 #include <FilePair.h>
 #include <Utility.h>
-#include <ParameterGroup.h>
+#include <ParameterGroupWorker.h>
 #include "ParameterCorrection.h"
-#include <ParameterABC.h>
+#include <ParameterWorker.h>
 #include "Exception.h"
 #include "ValueExtractor.h"
 #include "ObservationGroup.h"
@@ -58,7 +58,7 @@ private:
 	std::vector<std::string> fileCleanupList;
 	std::vector<std::vector<std::string>> filePairs;
 	ObservationGroup *observationGroup;
-	ParameterGroup *paramGroup;
+	ParameterGroupWorker *paramGroup;
 	
 	// Solution variables
 	int solveCounter = 0;

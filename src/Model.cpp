@@ -1562,7 +1562,7 @@ bool Model::CheckCache(double * val)
          pParam = pGroup->GetParamPtr(i);
          j = ExtractColString(pTmp, valStr, ' ');
          paramVal = pParam->ConvertInVal(atof(valStr));
-         if(fabs(paramVal - pParam->GetEstVal()) > 1E-10)
+         if(fabs(paramVal - pParam->GetEstimatedValueTransformed()) > 1E-10)
          {
             bFound = false;
             break;
@@ -1766,8 +1766,8 @@ void Model::CheckGlobalSensitivity(void)
    for(j = 0; j < nprm; j++)
    {
       prm_names[j] = m_pParamGroup->GetParamPtr(j)->GetName();
-      upr = m_pParamGroup->GetParamPtr(j)->GetUprBnd();
-      m_pParamGroup->GetParamPtr(j)->SetEstVal(upr);
+      upr = m_pParamGroup->GetParamPtr(j)->GetUpperBoundTransformed();
+      m_pParamGroup->GetParamPtr(j)->SetEstimatedValueTransformed(upr);
       Fupr = Execute();
 
       //store computed observation values
@@ -1776,8 +1776,8 @@ void Model::CheckGlobalSensitivity(void)
          ObsUpr[i] = m_pObsGroup->GetObsPtr(i)->GetComputedVal(true, true);
       }
 
-      lwr = m_pParamGroup->GetParamPtr(j)->GetLwrBnd();
-      m_pParamGroup->GetParamPtr(j)->SetEstVal(lwr);
+      lwr = m_pParamGroup->GetParamPtr(j)->GetLowerBoundTransformed();
+      m_pParamGroup->GetParamPtr(j)->SetEstimatedValueTransformed(lwr);
       Flwr = Execute();
 
       //store computed observation values

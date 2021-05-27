@@ -532,11 +532,11 @@ double ComboSA::Transition(double initVal)
    {
       //perterb the parameter to a neighboring state (-1, 0, +1)      
       pParam = pGroup->GetParamPtr(i);
-      upr = (int)(pParam->GetUprBnd());
-      lwr = (int)(pParam->GetLwrBnd());
+      upr = (int)(pParam->GetUpperBoundTransformed());
+      lwr = (int)(pParam->GetLowerBoundTransformed());
       range = upr - lwr;
      
-      val = (int)(pParam->GetEstVal())-lwr;
+      val = (int)(pParam->GetEstimatedValueTransformed())-lwr;
       
       //determine random direction
       dir = (MyRand() % 3)-1;      
@@ -549,7 +549,7 @@ double ComboSA::Transition(double initVal)
       //modulous arithmetic should prevent bounds violations
       if(val > range){val = range; m_NumUprViols++;}
       if(val < 0)    {val = 0;     m_NumLwrViols++;}
-      pParam->SetEstVal((double)(val+lwr));
+      pParam->SetEstimatedValueTransformed((double)(val+lwr));
    }
 	curVal = m_pModel->Execute();
    m_TransCount++;
@@ -604,9 +604,9 @@ void ComboSA::GenerateRandomMove(ParameterABC * pParam)
    int lwr; //lower limit of current move
    int adj; //random adjustment 
    
-   upr = (int)(pParam->GetUprBnd());
-   lwr = (int)(pParam->GetLwrBnd());
-   val = (int)(pParam->GetEstVal()-lwr);
+   upr = (int)(pParam->GetUpperBoundTransformed());
+   lwr = (int)(pParam->GetLowerBoundTransformed());
+   val = (int)(pParam->GetEstimatedValueTransformed()-lwr);
    range  = (upr - lwr);
    
    /*----------------------------------------------
@@ -623,7 +623,7 @@ void ComboSA::GenerateRandomMove(ParameterABC * pParam)
    if(val > range){val = range; m_NumUprViols++;}
    if(val < 0)    {val = 0;     m_NumLwrViols++;}
 
-   pParam->SetEstVal((double)(val+lwr));
+   pParam->SetEstimatedValueTransformed((double)(val+lwr));
 } /* end GenerateRandomMove() */
 
 /******************************************************************************

@@ -195,7 +195,7 @@ void   DDSAlgorithm::Optimize()
 
 	for (k=0; k<NumParams;k++)
 	{
-		BestParams[k]=TestParams[k]=pParamGroup->GetParamPtr(k)->GetEstVal();		
+		BestParams[k]=TestParams[k]=pParamGroup->GetParamPtr(k)->GetEstimatedValueTransformed();		
 	}
 
    //write setup
@@ -217,7 +217,7 @@ void   DDSAlgorithm::Optimize()
 		for(k=0;k<NumParams;k++)
       {
          //Estimated value=warm start solution
-			TestParams[k]=pParamGroup->GetParamPtr(k)->GetEstVal(); 
+			TestParams[k]=pParamGroup->GetParamPtr(k)->GetEstimatedValueTransformed(); 
 		}
    }
 	//user supplied fixed initial solution------------------------
@@ -227,7 +227,7 @@ void   DDSAlgorithm::Optimize()
 		for(k=0;k<NumParams;k++)
       {
          //Estimated value=initial solution
-			TestParams[k]=pParamGroup->GetParamPtr(k)->GetEstVal(); 
+			TestParams[k]=pParamGroup->GetParamPtr(k)->GetEstimatedValueTransformed(); 
 		}
 		// printf("Evaluating user supplied initial solution....  \n");
 	}   
@@ -267,7 +267,7 @@ void   DDSAlgorithm::Optimize()
 			for(k=0;k<NumParams;k++)
 			{
 				pParam  = pParamGroup->GetParamPtr(k); 
-				TestParams[k]=UniformRandom()*(pParam->GetUprBnd()-pParam->GetLwrBnd())+pParam->GetLwrBnd();
+				TestParams[k]=UniformRandom()*(pParam->GetUpperBoundTransformed()-pParam->GetLowerBoundTransformed())+pParam->GetLowerBoundTransformed();
 			}
 		} 
 
@@ -435,8 +435,8 @@ void DDSAlgorithm::MakeParameterCorrections(double * x, double * xb, int n, doub
 
    for(int k = 0; k < n; k++)
    {
-      lwr=m_pModel->GetParamGroupPtr()->GetParamPtr(k)->GetLwrBnd();
-      upr=m_pModel->GetParamGroupPtr()->GetParamPtr(k)->GetUprBnd();
+      lwr=m_pModel->GetParamGroupPtr()->GetParamPtr(k)->GetLowerBoundTransformed();
+      upr=m_pModel->GetParamGroupPtr()->GetParamPtr(k)->GetUpperBoundTransformed();
       x[k]=TelescopicCorrection(lwr, upr, xb[k], a, x[k]);
    }
    pParamGroup->WriteParams(x); 		
@@ -445,7 +445,7 @@ void DDSAlgorithm::MakeParameterCorrections(double * x, double * xb, int n, doub
    m_pModel->PerformParameterCorrections();
    for(int i = 0; i < n; i++)
    {
-      x[i] = pParamGroup->GetParamPtr(i)->GetEstVal();
+      x[i] = pParamGroup->GetParamPtr(i)->GetEstimatedValueTransformed();
    }/* end for() */
 
 }/* enad MakeParameterCorrections() */
@@ -467,8 +467,8 @@ double DDSAlgorithm::PerturbParam(const double &x_best, //current best decision 
 
 	double x_new, r;
 
-	double x_max = pParam->GetUprBnd();
-	double x_min = pParam->GetLwrBnd();
+	double x_max = pParam->GetUpperBoundTransformed();
+	double x_min = pParam->GetLowerBoundTransformed();
 
    if(strcmp(pParam->GetType(), "real") == 0)
    {

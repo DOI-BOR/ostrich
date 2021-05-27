@@ -199,6 +199,11 @@ void SurrogateParameterGroup::InitTiedParams(IroncladString pFileName, Parameter
             NEW_PRINT("TiedParamLin2", 1);
             m_pTied[i] = new TiedParamLin2(nameStr, &pParams[0], &pParams[1], pTok);
          }
+         else if (np == 3)
+         {
+             NEW_PRINT("TiedParamLinMax", 1);
+             m_pTied[i] = new TiedParamLinMax(nameStr, &pParams[0], &pParams[1], pTok);
+         }
          else{ invalidNumParams = true;}
       }
 	  else if(strcmp(typeStr, "ratio") == 0)

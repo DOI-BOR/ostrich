@@ -119,7 +119,7 @@ double CapacityConstraint::CalcPenalty(void)
    total = 0.00;
    for(i = 0; i < m_NumVars; i++)
    {
-      cur = m_pParams[i]->GetEstVal();
+      cur = m_pParams[i]->GetEstimatedValueTransformed();
       total += cur;
    }/* end for() */
 

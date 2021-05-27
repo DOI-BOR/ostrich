@@ -173,12 +173,12 @@ void BisectionAlgorithm::Optimize(void)
          for(j = 0; j < m_NumParams; j++) //for each parameter
          {
             //generate a random between lower and upper bound
-            Xlwr = pGroup->GetParamPtr(j)->GetLwrBnd();
-            Xupr = pGroup->GetParamPtr(j)->GetUprBnd();
+            Xlwr = pGroup->GetParamPtr(j)->GetLowerBoundTransformed();
+            Xupr = pGroup->GetParamPtr(j)->GetUpperBoundTransformed();
             range = Xupr - Xlwr;
             r = (double)MyRand() / (double)MY_RAND_MAX;
             val = (r * range) + Xlwr;
-            pGroup->GetParamPtr(j)->SetEstVal(val);
+            pGroup->GetParamPtr(j)->SetEstimatedValueTransformed(val);
          }/* end for() */
       }/* end if() */
 
@@ -189,38 +189,38 @@ void BisectionAlgorithm::Optimize(void)
       for(p = 0; p < m_NumParams; p++)
       {
          pParam = pGroup->GetParamPtr(p);
-         Xcur = pParam->GetEstVal();
+         Xcur = pParam->GetEstimatedValueTransformed();
 
          /*------------------------------------------
          Assign and evaluate initial points, these
          subdivide the domain into 4 quadrants.
          ----------------------------------------- */
-         Xupr = pParam->GetUprBnd();
-         pParam->SetEstVal(Xupr);
+         Xupr = pParam->GetUpperBoundTransformed();
+         pParam->SetEstimatedValueTransformed(Xupr);
          Fupr = m_pModel->Execute();
          m_AlgCount++;
          WriteInnerEval(++tmp, 0, '.');
 
-         Xlwr = pParam->GetLwrBnd();
-         pParam->SetEstVal(Xlwr);
+         Xlwr = pParam->GetLowerBoundTransformed();
+         pParam->SetEstimatedValueTransformed(Xlwr);
          Flwr = m_pModel->Execute();
          m_AlgCount++;
          WriteInnerEval(++tmp, 0, '.');
 
          Xqtr = Xlwr + 0.25*(Xupr - Xlwr);
-         pParam->SetEstVal(Xqtr);
+         pParam->SetEstimatedValueTransformed(Xqtr);
          Fqtr = m_pModel->Execute();
          m_AlgCount++;
          WriteInnerEval(++tmp, 0, '.');
 
          Xmid = Xlwr + 0.50*(Xupr - Xlwr);
-         pParam->SetEstVal(Xmid);
+         pParam->SetEstimatedValueTransformed(Xmid);
          Fmid = m_pModel->Execute();
          m_AlgCount++;
          WriteInnerEval(++tmp, 0, '.');
 
          X3qt = Xlwr + 0.75*(Xupr - Xlwr);
-         pParam->SetEstVal(X3qt);
+         pParam->SetEstimatedValueTransformed(X3qt);
          F3qt = m_pModel->Execute();
          m_AlgCount++;
          WriteInnerEval(++tmp, 0, '.');
@@ -283,7 +283,7 @@ void BisectionAlgorithm::Optimize(void)
 
                //assign and evaluate new mid-point
                Xmid = Xlwr + 0.5*(Xupr - Xlwr);
-               pParam->SetEstVal(Xmid);
+               pParam->SetEstimatedValueTransformed(Xmid);
                Fmid = m_pModel->Execute();
                m_AlgCount++;
                WriteInnerEval(++tmp, 0, '.');
@@ -301,7 +301,7 @@ void BisectionAlgorithm::Optimize(void)
 
                //assign and evaluate new mid-point
                Xmid = Xlwr + 0.5*(Xupr - Xlwr);
-               pParam->SetEstVal(Xmid);
+               pParam->SetEstimatedValueTransformed(Xmid);
                Fmid = m_pModel->Execute();
                m_AlgCount++;
                WriteInnerEval(++tmp, 0, '.');
@@ -323,13 +323,13 @@ void BisectionAlgorithm::Optimize(void)
 
             //assign and evaluate new quarter points
             Xqtr = Xlwr + 0.25*(Xupr - Xlwr);
-            pParam->SetEstVal(Xqtr);
+            pParam->SetEstimatedValueTransformed(Xqtr);
             Fqtr = m_pModel->Execute();
             m_AlgCount++;
             WriteInnerEval(++tmp, 0, '.');
 
             X3qt = Xlwr + 0.75*(Xupr - Xlwr);
-            pParam->SetEstVal(X3qt);
+            pParam->SetEstimatedValueTransformed(X3qt);
             F3qt = m_pModel->Execute();
             m_AlgCount++;
             WriteInnerEval(++tmp, 0, '.');
@@ -337,13 +337,13 @@ void BisectionAlgorithm::Optimize(void)
          if(Fmin < Fcur)
          {
             Fcur = Fmin;
-            pParam->SetEstVal(Xmin);
+            pParam->SetEstimatedValueTransformed(Xmin);
             m_pModel->SetObjFuncVal(Fmin);
             m_pModel->GetParamGroupPtr()->ReadParams(pXmin);
          }
          else //search failed revert to initial value
          {
-            pParam->SetEstVal(Xcur);
+            pParam->SetEstimatedValueTransformed(Xcur);
             m_pModel->SetObjFuncVal(Fcur);
          }
       }/* end for(parameters) */

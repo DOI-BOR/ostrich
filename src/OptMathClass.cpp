@@ -304,7 +304,7 @@ Unchangeable2DArray OptMathClass::CalcHessian(void)
       }
       else if(m_DiffIncType == FD_RANGE_REL)
       {
-         double range = pParamGroup->GetParamPtr(i)->GetUprBnd() - pParamGroup->GetParamPtr(i)->GetLwrBnd();
+         double range = pParamGroup->GetParamPtr(i)->GetUpperBoundTransformed() - pParamGroup->GetParamPtr(i)->GetLowerBoundTransformed();
          dxi = fabs(m_pDiffInc[i])*range;
       }
       else //value-relative
@@ -317,7 +317,7 @@ Unchangeable2DArray OptMathClass::CalcHessian(void)
       next = x[i] + dxi;
       dxi = next - x[i];
       pdx[i] = dxi;
-      if((x[i]+2*dxi) > pParamGroup->GetParamPtr(i)->GetUprBnd())
+      if((x[i]+2*dxi) > pParamGroup->GetParamPtr(i)->GetUpperBoundTransformed())
             pdx[i] = -dxi;      
    }/* end for() */
 
@@ -464,9 +464,9 @@ retry:
    ------------------------------------*/   
    //retrieve parameter limits
    pParam = pGroup->GetParamPtr(parmIdx);
-   cur = pParam->GetEstVal();
-   upr = pParam->GetUprBnd();
-   lwr = pParam->GetLwrBnd();
+   cur = pParam->GetEstimatedValueTransformed();
+   upr = pParam->GetUpperBoundTransformed();
+   lwr = pParam->GetLowerBoundTransformed();
    //setup step size
    midParm = m_pDiffPoint[parmIdx];
 

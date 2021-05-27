@@ -218,8 +218,8 @@ void RejectionSampler::Optimize(void)
          {
             for(j = 0; j < num; j++) //for each parameter
             {
-               lwr = pGroup->GetParamPtr(j)->GetLwrBnd();
-               upr = pGroup->GetParamPtr(j)->GetUprBnd();
+               lwr = pGroup->GetParamPtr(j)->GetLowerBoundTransformed();
+               upr = pGroup->GetParamPtr(j)->GetUpperBoundTransformed();
 
                range = upr - lwr;
                r = (double)MyRand() / (double)MY_RAND_MAX;
@@ -288,8 +288,8 @@ void RejectionSampler::Optimize(void)
             {
                for(m = 0; m < num; m++) //for each parameter
                {
-                  pmax = lwr = pGroup->GetParamPtr(m)->GetLwrBnd();
-                  pmin = upr = pGroup->GetParamPtr(m)->GetUprBnd();
+                  pmax = lwr = pGroup->GetParamPtr(m)->GetLowerBoundTransformed();
+                  pmin = upr = pGroup->GetParamPtr(m)->GetUpperBoundTransformed();
                   //determine range of accepted values for the parameter 
                   for(i = 0; i < m_NumFound;  i++) //for each entry
                   {
@@ -299,8 +299,8 @@ void RejectionSampler::Optimize(void)
                   }/* end for() */
                   lwr += (pmin - lwr)*rate;
                   upr -= (upr - pmax)*rate; 
-                  pGroup->GetParamPtr(m)->SetLwrBnd(lwr);
-                  pGroup->GetParamPtr(m)->SetUprBnd(upr);               
+                  pGroup->GetParamPtr(m)->SetLowerBoundTransformed(lwr);
+                  pGroup->GetParamPtr(m)->SetUpperBoundTransformed(upr);               
                }/* end for() */
             }/* end if() */
          }/* end if() */

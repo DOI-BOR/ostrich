@@ -109,7 +109,7 @@ SetEstVal()
 
 Set the estimated value of the parameter.
 ******************************************************************************/
-double ComboIntParam::SetEstVal(double Idx)
+double ComboIntParam::SetEstimatedValueTransformed(double Idx)
 { 
    int tmp = (int)(Idx + 0.5); //round up real value
 
@@ -257,7 +257,7 @@ SetEstVal()
 
 Set the estimated value of the parameter.
 ******************************************************************************/
-double ComboDblParam::SetEstVal(double Idx)
+double ComboDblParam::SetEstimatedValueTransformed(double Idx)
 { 
    int tmp = (int)(Idx + 0.5); //round up real value
 
@@ -413,7 +413,7 @@ SetEstVal()
 
 Set the estimated value of the parameter.
 ******************************************************************************/
-double ComboStrParam::SetEstVal(double Idx)
+double ComboStrParam::SetEstimatedValueTransformed(double Idx)
 { 
    int tmp = (int)(Idx + 0.5); //round up real value
 

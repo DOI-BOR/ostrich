@@ -285,8 +285,8 @@ void ParticleSwarm::Optimize(void)
          for(j = 0; j < num; j++) //for each parameter
          {
             //generate a random between lower and upper bound
-            lwr = pGroup->GetParamPtr(j)->GetLwrBnd();
-            upr = pGroup->GetParamPtr(j)->GetUprBnd();
+            lwr = pGroup->GetParamPtr(j)->GetLowerBoundTransformed();
+            upr = pGroup->GetParamPtr(j)->GetUpperBoundTransformed();
             range = upr - lwr;
             r = (double)MyRand() / (double)MY_RAND_MAX;
             rval = (r * range) + lwr;
@@ -304,8 +304,8 @@ void ParticleSwarm::Optimize(void)
             m_pTrees = new QuadTree[m_TreeSize];
             for(j = 0; j < m_TreeSize; j++)
             { 
-               lwr = pGroup->GetParamPtr(j)->GetLwrBnd();
-               upr = pGroup->GetParamPtr(j)->GetUprBnd();
+               lwr = pGroup->GetParamPtr(j)->GetLowerBoundTransformed();
+               upr = pGroup->GetParamPtr(j)->GetUpperBoundTransformed();
                m_pTrees[j].Init(lwr, upr);
             }/* end for() */
          }/* end if() */
@@ -474,8 +474,8 @@ void ParticleSwarm::Optimize(void)
             dx_min = 1.00;
             for(j = 0; j < num; j++) //for each parameter
             {
-               lwr = pGroup->GetParamPtr(j)->GetLwrBnd();
-               upr = pGroup->GetParamPtr(j)->GetUprBnd();
+               lwr = pGroup->GetParamPtr(j)->GetLowerBoundTransformed();
+               upr = pGroup->GetParamPtr(j)->GetUpperBoundTransformed();
 
                v = m_pSwarm[i].v[j];
                x = m_pSwarm[i].x[j] - v; //original position
@@ -692,8 +692,8 @@ void ParticleSwarm::MakeParameterCorrections(double * x, double * xb, int n, dou
 
    for(int k = 0; k < n; k++)
    {
-      lwr=m_pModel->GetParamGroupPtr()->GetParamPtr(k)->GetLwrBnd();
-      upr=m_pModel->GetParamGroupPtr()->GetParamPtr(k)->GetUprBnd();
+      lwr=m_pModel->GetParamGroupPtr()->GetParamPtr(k)->GetLowerBoundTransformed();
+      upr=m_pModel->GetParamGroupPtr()->GetParamPtr(k)->GetUpperBoundTransformed();
       x[k]=TelescopicCorrection(lwr, upr, xb[k], a, x[k]);
    }
    pParamGroup->WriteParams(x); 		
@@ -702,7 +702,7 @@ void ParticleSwarm::MakeParameterCorrections(double * x, double * xb, int n, dou
    m_pModel->PerformParameterCorrections();
    for(int i = 0; i < n; i++)
    {
-      x[i] = pParamGroup->GetParamPtr(i)->GetEstVal();
+      x[i] = pParamGroup->GetParamPtr(i)->GetEstimatedValueTransformed();
    }/* end for() */
 }/* enad MakeParameterCorrections() */
 

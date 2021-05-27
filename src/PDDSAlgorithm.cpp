@@ -634,7 +634,7 @@ void PDDSAlgorithm::Optimize(void)
                   WarmStart();
                   for(j = 0; j < m_num_dec; j++)
                   {
-                     m_stest[j] = m_pModel->GetParamGroupPtr()->GetParamPtr(j)->GetEstVal(); 
+                     m_stest[j] = m_pModel->GetParamGroupPtr()->GetParamPtr(j)->GetEstimatedValueTransformed(); 
                   }
                }
                else
@@ -996,9 +996,9 @@ void PDDSAlgorithm::InitDdsDataMembers(void)
    m_stest = new double[m_num_dec+nSpecial+1];
    for(i = 0; i < m_num_dec; i++)
    {
-      m_s_min[i] = pGroup->GetParamPtr(i)->GetLwrBnd();
-      m_s_max[i] = pGroup->GetParamPtr(i)->GetUprBnd();
-      m_sbest[i] = pGroup->GetParamPtr(i)->GetEstVal();
+      m_s_min[i] = pGroup->GetParamPtr(i)->GetLowerBoundTransformed();
+      m_s_max[i] = pGroup->GetParamPtr(i)->GetUpperBoundTransformed();
+      m_sbest[i] = pGroup->GetParamPtr(i)->GetEstimatedValueTransformed();
       m_stest[i] = m_sbest[i];
    }/* end for() */
 
@@ -1083,8 +1083,8 @@ void PDDSAlgorithm::MakeParameterCorrections(double * x, double * xb, int n, dou
 
    for(int k = 0; k < n; k++)
    {
-      lwr=pParamGroup->GetParamPtr(k)->GetLwrBnd();
-      upr=pParamGroup->GetParamPtr(k)->GetUprBnd();
+      lwr=pParamGroup->GetParamPtr(k)->GetLowerBoundTransformed();
+      upr=pParamGroup->GetParamPtr(k)->GetUpperBoundTransformed();
       x[k]=TelescopicCorrection(lwr, upr, xb[k], a, x[k]);
    }
    pParamGroup->WriteParams(x); 		
@@ -1093,7 +1093,7 @@ void PDDSAlgorithm::MakeParameterCorrections(double * x, double * xb, int n, dou
    m_pModel->PerformParameterCorrections();
    for(int i = 0; i < n; i++)
    {
-      x[i] = pParamGroup->GetParamPtr(i)->GetEstVal();
+      x[i] = pParamGroup->GetParamPtr(i)->GetEstimatedValueTransformed();
    }/* end for() */
 }/* enad MakeParameterCorrections() */
 

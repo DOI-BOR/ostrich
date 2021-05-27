@@ -217,8 +217,8 @@ double OptSearchClass::CalcF(double alpha, double * fmin, double * xmin)
       m_pAlphaPoint[i] = m_pAlphaPoint[i] + alpha * m_pDir[i];
 
       //if it's out of bounds, move half the distance to upr/lwr
-      upr = pGroup->GetParamPtr(i)->GetUprBnd();
-      lwr = pGroup->GetParamPtr(i)->GetLwrBnd();
+      upr = pGroup->GetParamPtr(i)->GetUpperBoundTransformed();
+      lwr = pGroup->GetParamPtr(i)->GetLowerBoundTransformed();
       if(m_pAlphaPoint[i] > upr)
 	  {
 		  m_pAlphaPoint[i] = (upr+old_pi)/2.00;
@@ -674,11 +674,11 @@ double OptSearchClass::LimitStepSize(double alpha, double * pDir)
    ---------------------------------------------------------*/
    for(i = 0; i < m_NumParams; i++)
    {
-      opi = m_pModel->GetParamGroupPtr()->GetParamPtr(i)->GetEstVal();
+      opi = m_pModel->GetParamGroupPtr()->GetParamPtr(i)->GetEstimatedValueTransformed();
 	  pi = opi + alpha * pDir[i];
       //if it's out of bounds, move half the distance to upr/lwr
-      upr = m_pModel->GetParamGroupPtr()->GetParamPtr(i)->GetUprBnd();
-      lwr = m_pModel->GetParamGroupPtr()->GetParamPtr(i)->GetLwrBnd();
+      upr = m_pModel->GetParamGroupPtr()->GetParamPtr(i)->GetUpperBoundTransformed();
+      lwr = m_pModel->GetParamGroupPtr()->GetParamPtr(i)->GetLowerBoundTransformed();
       if(pi > upr)
 	  {
          alpha = (upr - opi)/pDir[i];

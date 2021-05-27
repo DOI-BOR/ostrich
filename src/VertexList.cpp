@@ -22,15 +22,15 @@ Converts an augmented vertex to a normal vertex.
 void ConvertAugVertex(AugVertexList * pVert, VertexList * pConv)
 {
    if(pVert->px != NULL){ pConv->x = pVert->px->GetTransformedVal();}
-   else if(pVert->tx != NULL){pConv->x = pVert->tx->GetEstVal();}
+   else if(pVert->tx != NULL){pConv->x = pVert->tx->GetEstimatedValueTransformed();}
    else (pConv->x = pVert->x);
 
    if(pVert->py != NULL){ pConv->y = pVert->py->GetTransformedVal();}
-   else if(pVert->ty != NULL){pConv->y = pVert->ty->GetEstVal();}
+   else if(pVert->ty != NULL){pConv->y = pVert->ty->GetEstimatedValueTransformed();}
    else (pConv->y = pVert->y);
 
    if(pVert->pz != NULL){ pConv->z = pVert->pz->GetTransformedVal();}
-   else if(pVert->tz != NULL){pConv->z = pVert->tz->GetEstVal();}
+   else if(pVert->tz != NULL){pConv->z = pVert->tz->GetEstimatedValueTransformed();}
    else (pConv->z = pVert->z);
 }/* end ConvertAugVertex() */
 
@@ -42,19 +42,19 @@ Converts an augmented circle to a normal circle.
 void ConvertAugCircle(AugCircle * pAug, Circle2D * pCirc, double * pZ)
 {
    if     (pAug->px != NULL){ pCirc->x = pAug->px->GetTransformedVal();}
-   else if(pAug->tx != NULL){ pCirc->x = pAug->tx->GetEstVal();}
+   else if(pAug->tx != NULL){ pCirc->x = pAug->tx->GetEstimatedValueTransformed();}
    else   (pCirc->x = pAug->x);
 
    if     (pAug->py != NULL){ pCirc->y = pAug->py->GetTransformedVal();}
-   else if(pAug->ty != NULL){ pCirc->y = pAug->ty->GetEstVal();}
+   else if(pAug->ty != NULL){ pCirc->y = pAug->ty->GetEstimatedValueTransformed();}
    else   (pCirc->y = pAug->y);
 
    if     (pAug->pr != NULL){ pCirc->r = pAug->pr->GetTransformedVal();}
-   else if(pAug->tr != NULL){ pCirc->r = pAug->tr->GetEstVal();}
+   else if(pAug->tr != NULL){ pCirc->r = pAug->tr->GetEstimatedValueTransformed();}
    else   (pCirc->r = pAug->r);
 
    if     (pAug->pz != NULL){ *pZ = pAug->pz->GetTransformedVal();}
-   else if(pAug->tz != NULL){ *pZ = pAug->tz->GetEstVal();}
+   else if(pAug->tz != NULL){ *pZ = pAug->tz->GetEstimatedValueTransformed();}
    else   (*pZ = pAug->z);
 }/* end ConvertAugCircle() */
 

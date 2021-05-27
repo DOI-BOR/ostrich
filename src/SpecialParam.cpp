@@ -52,7 +52,7 @@ SpecialParam::SpecialParam(void)
    m_pLimit = NULL;
    m_pConstraint = NULL;
 
-   m_EstVal = -1.00;
+   m_estimatedValueTransformed = -1.00;
    m_bSet = false;
    IncCtorCount();
 } /* end default CTOR */
@@ -62,13 +62,13 @@ SpecialParam::SetEstVal()
 
 Sets the estimated value of the parameter, depending on it's type (cost or constraint).
 ******************************************************************************/
-void SpecialParam::SetEstVal(double minObj, double minCon)
+void SpecialParam::SetEstimatedValueTransformed(double minObj, double minCon)
 {
    if(!m_bSet) return; //use initial values until algorithm is ready....
 
    if(strcmp(m_pType, "BestCost") == 0)
    {
-	  m_EstVal = minObj;
+	  m_estimatedValueTransformed = minObj;
    }
    else if(strcmp(m_pType, "BestConstraint") == 0)
    {
@@ -76,16 +76,16 @@ void SpecialParam::SetEstVal(double minObj, double minCon)
       if(strcmp(m_pLimit, "upper") == 0)
       {
          limit = GetConstraint()->GetUpperLimit();
-         m_EstVal = MyMax(limit, minCon);
+         m_estimatedValueTransformed = MyMax(limit, minCon);
       }
       else if(strcmp(m_pLimit, "lower") == 0)
       {
          limit = GetConstraint()->GetLowerLimit();
-         m_EstVal = MyMin(limit, minCon);
+         m_estimatedValueTransformed = MyMin(limit, minCon);
       }
       else
       {
-         m_EstVal = minCon;
+         m_estimatedValueTransformed = minCon;
       }
    }
 } /* end SpecialParam::SetEstVal() */
@@ -139,7 +139,7 @@ SpecialParam::SpecialParam(IroncladString name, IroncladString type,
 
    strcpy(m_pConstraint, constraint);
 
-   m_EstVal = init;
+   m_estimatedValueTransformed = init;
    m_bSet = false;
 
    IncCtorCount();
@@ -154,7 +154,7 @@ void SpecialParam::Write(FILE * pFile, int type)
 {
    double val;
 
-   val = ConvertOutVal(m_EstVal);
+   val = ConvertOutVal(m_estimatedValueTransformed);
 
    if(type == WRITE_SCI)
    {
@@ -170,7 +170,7 @@ void SpecialParam::Write(FILE * pFile, int type)
 	  fprintf(pFile, "Type  = %s  ", m_pType);
 	  fprintf(pFile, "Limit = %s  ", m_pLimit);
 	  fprintf(pFile, "Constraint = %s  ", m_pConstraint);
-      fprintf(pFile, "Est Value = %E\n", m_EstVal);
+      fprintf(pFile, "Est Value = %E\n", m_estimatedValueTransformed);
    }/* end else if() */
    else if (type == WRITE_TX_BNR)
    {

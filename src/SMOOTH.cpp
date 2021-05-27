@@ -126,8 +126,8 @@ void SMOOTH::Optimize(void)
          {
             pParam = pGroup->GetParamPtr(j);
             //generate a random between lower and upper bound
-            lwr = pParam->GetLwrBnd();
-            upr = pParam->GetUprBnd();
+            lwr = pParam->GetLowerBoundTransformed();
+            upr = pParam->GetUpperBoundTransformed();
             range = upr - lwr;
             r = (double)MyRand() / (double)MY_RAND_MAX;
             X[j] = (r * range) + lwr;            

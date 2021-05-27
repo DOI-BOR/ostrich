@@ -237,9 +237,9 @@ void ModelWorker::ReceiveWorkerParameters(void) {
     int numberOfExcluded = 0;
 
     // Create a parameter group object to store everything in
-    ParameterABC** m_pList = new ParameterABC *[numberOfTotalParameters];
+    ParameterWorkerABC** m_pList = new ParameterWorkerABC *[numberOfTotalParameters];
     char** m_ParamNameList = new char* [numberOfTotalParameters];
-    ParameterABC** m_pExcl = new ParameterABC *[numberOfTotalParameters];
+    ParameterWorkerABC** m_pExcl = new ParameterWorkerABC *[numberOfTotalParameters];
     int positionCounter = 0;
 
     // Real parameters
@@ -249,31 +249,25 @@ void ModelWorker::ReceiveWorkerParameters(void) {
     // Request the values from the primary worker
     for (int entryReal = 0; entryReal < numberOfRealParameters; entryReal++) {
 
-        // Receive the values from the primary worker
+        // Receive the name from the primary worker
         std::string tempName = ReceiveString(tag_paramRealName);
         IroncladString paramName = &tempName[0];
 
+        // Recive the value
         double paramInitial = ReceiveDouble(tag_paramRealInit);
-        double paramLowerBound = ReceiveDouble(tag_paramRealLower);
-        double paramUpperBound = ReceiveDouble(tag_paramRealUpper);
-        
-        std::string tempIn = ReceiveString(tag_paramRealIn);
-        IroncladString paramTxIn = &tempIn[0];
 
-        std::string tempOst = ReceiveString(tag_paramRealOst);
-        IroncladString paramTxOst = &tempOst[0];
-
-        std::string tempOut = ReceiveString(tag_paramRealOut);
-        IroncladString paramTxOut = &tempOut[0];
-
+        // Receive the format
         std::string tempFmt = ReceiveString(tag_paramRealFmt);
         IroncladString paramFmt = &tempFmt[0];
 
-        m_pList[positionCounter] = new RealParam(paramName, paramInitial, paramLowerBound, paramUpperBound, paramTxIn, paramTxOst, paramTxOut, paramFmt);
+        // Create the parameter
+        m_pList[positionCounter] = new RealParamWorker(paramName, paramInitial, paramFmt);
         
+        // Construct the name list
         m_ParamNameList[positionCounter] = new char[strlen(paramName) + 1];
         strcpy(m_ParamNameList[positionCounter], paramName);
         
+        // Update the exclusion list
         m_pExcl[positionCounter] = NULL; // No values are assumed in the exclude list
 
         // Increment the position counter
@@ -287,40 +281,73 @@ void ModelWorker::ReceiveWorkerParameters(void) {
     // Request the values from the primary worker
     for (int entryInt = 0; entryInt < numberOfIntegerParameters; entryInt++) {
 
-        // Receive the values tag_paramInitName the primary worker
+        // Receive the name from the primary worker
         std::string tempIn = ReceiveString(tag_paramInitName);
         IroncladString paramName = &tempIn[0];
 
+        // Receive the value
         int paramInitial = ReceiveInteger(tag_paramIntInit);
-        int paramLowerBound = ReceiveInteger(tag_paramIntLower);
-        int paramUpperBound = ReceiveInteger(tag_paramIntUpper);
 
-        m_pList[positionCounter] = new IntParam(paramName, paramInitial, paramLowerBound, paramUpperBound);
+        // Create the parameter
+        m_pList[positionCounter] = new IntParamWorker(paramName, paramInitial);
 
+        // Update the name list
         m_ParamNameList[positionCounter] = new char[strlen(paramName) + 1];
         strcpy(m_ParamNameList[positionCounter], paramName);
 
+        // Update the exclusion list
+        m_pExcl[positionCounter] = NULL; // No values are assumed in the exclude list
+
+        // Increment the position counter
+        positionCounter++;
+    }
+    
+    // Special parameters
+     
+    // Tied parameters
+    // Get the number of tied parameters
+    int numberOfTiedParameters = ReceiveInteger(tag_paramTotalReal);
+
+    // Request the values from the primary worker
+    for (int entryTied = 0; entryTied < numberOfTiedParameters; entryTied++) {
+
+        // Receive the values from the primary worker
+        std::string tempName = ReceiveString(tag_paramRealName);
+        IroncladString paramName = &tempName[0];
+
+        // Recive the value
+        double paramInitial = ReceiveDouble(tag_paramRealInit);
+
+        // Recive the format
+        std::string tempFmt = ReceiveString(tag_paramRealFmt);
+        IroncladString paramFmt = &tempFmt[0];
+
+        // Create a real parameter instead of the tied parameter
+        m_pList[positionCounter] = new RealParamWorker(paramName, paramInitial, paramFmt);
+
+        // Update the name list
+        m_ParamNameList[positionCounter] = new char[strlen(paramName) + 1];
+        strcpy(m_ParamNameList[positionCounter], paramName);
+
+        // Update the exclusion list
         m_pExcl[positionCounter] = NULL; // No values are assumed in the exclude list
 
         // Increment the position counter
         positionCounter++;
     }
 
-    // Special parameters
-    SpecialParam **m_pSpecial = new SpecialParam * [0];
+    // Geometric parameters
 
-    // Tied parameters
-    TiedParamABC **m_pTied = new TiedParamABC * [0];
 
-    // Geom parameters
-    GeomParamABC **m_pGeom = new GeomParamABC * [0];
+
+
 
     // Set the arrays into a group object
     // Initialize a parameter group
-    paramGroup = new ParameterGroup(false);
+    paramGroup = new ParameterGroupWorker();
     
     // Set the parameter values into the group
-    paramGroup->SetGroupValues(m_pList, m_pExcl, m_pTied, m_pGeom, m_pSpecial, m_ParamNameList, numberOfTotalParameters,  0,  0, 0,  numberOfExcluded);
+    paramGroup->SetGroupValues(m_pList, m_pExcl, m_ParamNameList, numberOfTotalParameters, numberOfExcluded);
 }
 
 
@@ -739,14 +766,6 @@ double ModelWorker::StdExecute(double viol) {
 
     //inc. number of times model has been executed
     solveCounter++;
-
-    /*
-    adjust geometries to conform to topology rules, if the topology cannot be 'fixed' then false will be returned....
-    */
-    isGoodTopo = paramGroup->FixGeometry();
-    if (isGoodTopo == false) {
-        LogError(ERR_MODL_EXE, "Could not correct model topology");
-    }
 
     // Make substitution of parameters into model input files
     for (int entryPair = 0; entryPair < filePairs.size(); entryPair++) {

@@ -156,7 +156,7 @@ void   DiscreteDDSAlgorithm::Optimize()
 
 	for (k=0; k<NumParams;k++)
 	{
-		BestParams[k]=TestParams[k]=pParamGroup->GetParamPtr(k)->GetEstVal();		
+		BestParams[k]=TestParams[k]=pParamGroup->GetParamPtr(k)->GetEstimatedValueTransformed();		
 	}
 
   //write setup
@@ -178,7 +178,7 @@ void   DiscreteDDSAlgorithm::Optimize()
 		for(k=0;k<NumParams;k++)
       {
          //Estimated value=warm start solution
-			TestParams[k]=pParamGroup->GetParamPtr(k)->GetEstVal(); 
+			TestParams[k]=pParamGroup->GetParamPtr(k)->GetEstimatedValueTransformed(); 
 		}
    }  
 	//user supplied fixed initial solution------------------------
@@ -188,7 +188,7 @@ void   DiscreteDDSAlgorithm::Optimize()
 		for(k=0;k<NumParams;k++)
       {
          //Estimated value=initial solution
-			TestParams[k]=pParamGroup->GetParamPtr(k)->GetEstVal(); 
+			TestParams[k]=pParamGroup->GetParamPtr(k)->GetEstimatedValueTransformed(); 
 		}
 		// printf("Evaluating user supplied initial solution....  \n");
 	}
@@ -223,7 +223,7 @@ void   DiscreteDDSAlgorithm::Optimize()
 			for(k=0;k<NumParams;k++)
 			{
 				pParam  = pParamGroup->GetParamPtr(k); 
-				TestParams[k]=UniformRandom()*(pParam->GetUprBnd()-pParam->GetLwrBnd())+pParam->GetLwrBnd();
+				TestParams[k]=UniformRandom()*(pParam->GetUpperBoundTransformed()-pParam->GetLowerBoundTransformed())+pParam->GetLowerBoundTransformed();
 			}
 		} 
 
@@ -369,8 +369,8 @@ double DiscreteDDSAlgorithm::PerturbParam(const double &x_best, //current best d
 
 	double x_new;
 
-	double x_max = pParam->GetUprBnd();
-	double x_min = pParam->GetLwrBnd();
+	double x_max = pParam->GetUpperBoundTransformed();
+	double x_min = pParam->GetLowerBoundTransformed();
 
 	x_new=x_best+GaussRandom()*m_r_val*(x_max-x_min);
 

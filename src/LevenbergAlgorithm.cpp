@@ -259,8 +259,8 @@ void LevenbergAlgorithm::GetRndParamSet(MyPoint * Point)
 
    for(i = 0; i < np; i++)
    {
-      lwr = m_pModel->GetParamGroupPtr()->GetParamPtr(i)->GetLwrBnd();
-      upr = m_pModel->GetParamGroupPtr()->GetParamPtr(i)->GetUprBnd();
+      lwr = m_pModel->GetParamGroupPtr()->GetParamPtr(i)->GetLowerBoundTransformed();
+      upr = m_pModel->GetParamGroupPtr()->GetParamPtr(i)->GetUpperBoundTransformed();
       range = upr - lwr;
       r = (double)MyRand() / (double)MY_RAND_MAX;
       Point->v[i] = (r * range) + lwr;
@@ -754,9 +754,9 @@ void LevenbergAlgorithm::AdjModelParams(void)
    for(i = 0; i < m_NumParams; i++)
    {
       pParam = pGroup->GetParamPtr(i);
-      oldVal = pParam->GetEstVal();
-      upr = pParam->GetUprBnd();
-      lwr = pParam->GetLwrBnd();
+      oldVal = pParam->GetEstimatedValueTransformed();
+      upr = pParam->GetUpperBoundTransformed();
+      lwr = pParam->GetLowerBoundTransformed();
       range = upr - lwr;
       maxAdj = range * m_MoveLimit;
       /*
@@ -785,7 +785,7 @@ void LevenbergAlgorithm::AdjModelParams(void)
       if(curVal <= lwr){ curVal = (oldVal+lwr)/2.00; m_NumLwrViols++;}
       if(curVal >= upr){ curVal = (oldVal+upr)/2.00; m_NumUprViols++;}
 
-      pParam->SetEstVal(curVal);
+      pParam->SetEstimatedValueTransformed(curVal);
    }/* end for() */   
 }/* end AdjModelParams() */
 

@@ -21,6 +21,7 @@ these groups.
 #include "SurrogateParameterGroup.h"
 #include "ParameterGroup.h"
 #include "ParameterABC.h"
+#include "TiedParamABC.h"
 #include "FilePair.h"
 #include "FileList.h"
 #include "AccessConverter.h"
@@ -1045,7 +1046,7 @@ void Algorithm::ConfigureWorkerParameterGroups(int workerRank) {
 
     
     // Send the total number of parameters
-    int numberOfTotalParameters = m_pParamGroup->GetNumParams();
+    int numberOfTotalParameters = m_pParamGroup->GetNumParams() + m_pParamGroup->GetNumTiedParams();
     MPI_Send(&numberOfTotalParameters, 1, MPI_INT, workerRank, tag_paramTotalNum, MPI_COMM_WORLD);
 
     // Real parameters
@@ -1058,22 +1059,13 @@ void Algorithm::ConfigureWorkerParameterGroups(int workerRank) {
 
         // Get the information from the parameter
         std::string name = param->GetName();
-        double intialValue = param->GetInitialValueUntransformed();
-        double lowerBound = param->GetLowerBoundUntransformed();
-        double upperBound = param->GetUpperBoundUntransformed();
-        std::string txIn = param->GetTxInUntransformed();
-        std::string txOst = param->GetOstUntransformed();
-        std::string txOut = param->GetTxOutUntransformed();
-        std::string fixFmt = param->GetFixFmtUntransformed();
+        double sampleValue = param->GetEstimatedValueTransformed();
+        sampleValue = param->ConvertOutVal(sampleValue);
+        std::string fixFmt = param->GetFixFmt();
 
         // Send the values to the worker
         MPI_Send(&name[0], name.length() + 1, MPI_CHAR, workerRank, tag_paramRealName, MPI_COMM_WORLD);
-        MPI_Send(&intialValue, 1, MPI_DOUBLE, workerRank, tag_paramRealInit, MPI_COMM_WORLD);
-        MPI_Send(&lowerBound, 1, MPI_DOUBLE, workerRank, tag_paramRealLower, MPI_COMM_WORLD);
-        MPI_Send(&upperBound, 1, MPI_DOUBLE, workerRank, tag_paramRealUpper, MPI_COMM_WORLD);
-        MPI_Send(&txIn[0], txIn.length() + 1, MPI_CHAR, workerRank, tag_paramRealIn, MPI_COMM_WORLD);
-        MPI_Send(&txOst[0], txOst.length() + 1, MPI_CHAR, workerRank, tag_paramRealOst, MPI_COMM_WORLD);
-        MPI_Send(&txOut[0], txOut.length() + 1, MPI_CHAR, workerRank, tag_paramRealOut, MPI_COMM_WORLD);
+        MPI_Send(&sampleValue, 1, MPI_DOUBLE, workerRank, tag_paramRealInit, MPI_COMM_WORLD);
         MPI_Send(&fixFmt[0], fixFmt.length() + 1, MPI_CHAR, workerRank, tag_paramRealFmt, MPI_COMM_WORLD);
     }
 
@@ -1088,16 +1080,12 @@ void Algorithm::ConfigureWorkerParameterGroups(int workerRank) {
 
         // Get the information from the parameter
         std::string name = param->GetName();
-        int intialValue = param->GetInitialValueUntransformed();
-        int lowerBound = param->GetLowerBoundUntransformed();
-        int upperBound = param->GetUpperBoundUntransformed();
+        int sampleValue = param->GetEstimatedValueTransformed();
+        sampleValue = param->ConvertOutVal(sampleValue);
 
         // Send the values to the worker
         MPI_Send(&name[0], name.length() + 1, MPI_CHAR, workerRank, tag_paramInitName, MPI_COMM_WORLD);
-        MPI_Send(&intialValue, 1, MPI_INT, workerRank, tag_paramIntInit, MPI_COMM_WORLD);
-        MPI_Send(&lowerBound, 1, MPI_INT, workerRank, tag_paramIntLower, MPI_COMM_WORLD);
-        MPI_Send(&upperBound, 1, MPI_INT, workerRank, tag_paramIntUpper, MPI_COMM_WORLD);
-
+        MPI_Send(&sampleValue, 1, MPI_INT, workerRank, tag_paramIntInit, MPI_COMM_WORLD);
     }
 
 
@@ -1105,7 +1093,25 @@ void Algorithm::ConfigureWorkerParameterGroups(int workerRank) {
     // TODO: Write special parameters
 
     // Tied parameters 
-    // TODO: Write tied parameters
+    // These will appear as more real parameters on the secondary worker
+    int numberOfTiedParameters = m_pParamGroup->GetNumTiedParams();
+    MPI_Send(&numberOfTiedParameters, 1, MPI_INT, workerRank, tag_paramTotalReal, MPI_COMM_WORLD);
+
+    for (int entryParameter = 0; entryParameter < numberOfTiedParameters; entryParameter++) {
+        // Get the parameter from the group
+        TiedParamABC *param = m_pParamGroup->GetTiedParamPtr(entryParameter);
+
+        // Get the information from the parameter
+        std::string name = param->GetName();
+        double sampleValue = param->GetEstimatedValueTransformed();
+        std::string fixFmt = param->GetFixFmt();
+
+        // Send the values to the worker
+        MPI_Send(&name[0], name.length() + 1, MPI_CHAR, workerRank, tag_paramRealName, MPI_COMM_WORLD);
+        MPI_Send(&sampleValue, 1, MPI_DOUBLE, workerRank, tag_paramRealInit, MPI_COMM_WORLD);
+        MPI_Send(&fixFmt[0], fixFmt.length() + 1, MPI_CHAR, workerRank, tag_paramRealFmt, MPI_COMM_WORLD);
+    }
+
 
     // Geom parameters
     // TODO: write geom parameter
@@ -1157,19 +1163,57 @@ MPI Communication - SendWorkerParameters()
    Transfers parameters from the primary to the secondary workers
 ------------------------------------------------------------------------------------------------------------------------------
 */
-void Algorithm::SendWorkerParameters(int workerRank, int alternativeIndex, double parameters[], int parameterSize) {
+void Algorithm::SendWorkerParameters(int workerRank, int alternativeIndex, double parametersRegular[]) {
 
-    // Create a copy of the vectory to add the alternative number as the lead value
-    double *parametersTemp = new double[parameterSize + 1];
+
+    // Convert the parameters from transformation to log space
+    double *parametersConverted = new double[m_pParamGroup->m_NumParams];
+    for (int entryParameter = 0; entryParameter < m_pParamGroup->m_NumParams; entryParameter++) {
+        // Extract the pointer
+        ParameterABC *param = m_pParamGroup->GetParamPtr(entryParameter);
+
+        // Update the parameter with the converted value
+        param->SetEstimatedValueTransformed(parametersRegular[entryParameter]);
+
+        // Get the converted value
+        parametersConverted[entryParameter] = param->GetTransformedVal();
+    }
+
+    // Update the tied parameters
+    double *parametersTied = new double[m_pParamGroup->m_NumTied];
+    for (int entryParameter = 0; entryParameter < m_pParamGroup->m_NumTied; entryParameter++) {
+        // Extract the pointer
+        TiedParamABC* param = m_pParamGroup->GetTiedParamPtr(entryParameter);
+
+        // Get the updated value
+        parametersTied[entryParameter] = param->GetEstimatedValueTransformed();
+    }
+ 
+
+    // Create a copy of the vector to add the alternative number as the lead value, joining the data together
+    int numberOfParamters = m_pParamGroup->m_NumParams + m_pParamGroup->m_NumTied;
+    double *parametersTemp = new double[numberOfParamters + 1];
     
     // Fill the array
     parametersTemp[0] = (double)alternativeIndex;
-    for (int entryParameter = 0; entryParameter < parameterSize; entryParameter++) {
-        parametersTemp[entryParameter + 1] = parameters[entryParameter];
+    
+    for (int entryParameter = 0; entryParameter < m_pParamGroup->m_NumParams; entryParameter++) {
+        parametersTemp[entryParameter + 1] = parametersConverted[entryParameter];
     }
 
+    for (int entryParameter = 0; entryParameter < m_pParamGroup->m_NumTied; entryParameter++) {
+        parametersTemp[m_pParamGroup->m_NumParams + entryParameter + 1] = parametersTied[entryParameter];
+    }
+
+    std::cout << "Sent paramater" << '\t';
+    for (int entryParameter = 0; entryParameter < numberOfParamters + 1; entryParameter++) {
+        std::cout << parametersTemp[entryParameter] << '\t';
+    }
+    std::cout << std::endl;
+    
+
     // Send the array to the secondary worker
-    MPI_Send(&parametersTemp[0], parameterSize + 1, MPI_DOUBLE, workerRank, tag_data, MPI_COMM_WORLD);
+    MPI_Send(&parametersTemp[0], numberOfParamters + 1, MPI_DOUBLE, workerRank, tag_data, MPI_COMM_WORLD);
 }
 
 /*
@@ -1244,7 +1288,7 @@ void Algorithm::ManageSingleObjectiveIterations(double **parameters, int numberO
                 SendWorkerContinue(workerRank, true);
 
                 // Transmit the parameteres to the worker to solve
-                SendWorkerParameters(workerRank, sendCounter, parameters[sendCounter], numberOfParameters);
+                SendWorkerParameters(workerRank, sendCounter, parameters[sendCounter]);
 
                 // Increment the send counter
                 sendCounter++;

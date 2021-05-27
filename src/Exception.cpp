@@ -314,10 +314,10 @@ IroncladString GetParameterValStr(int idx, double val)
    if(m_pModelReg == NULL){ return NULL;}
    if(m_pModelReg->GetParamGroupPtr() == NULL){ return NULL;}
 
-   old = m_pModelReg->GetParamGroupPtr()->GetParamPtr(idx)->GetEstVal();
-   m_pModelReg->GetParamGroupPtr()->GetParamPtr(idx)->SetEstVal(val);
+   old = m_pModelReg->GetParamGroupPtr()->GetParamPtr(idx)->GetEstimatedValueTransformed();
+   m_pModelReg->GetParamGroupPtr()->GetParamPtr(idx)->SetEstimatedValueTransformed(val);
    m_pModelReg->GetParamGroupPtr()->GetParamPtr(idx)->GetValAsStr(str);
-   m_pModelReg->GetParamGroupPtr()->GetParamPtr(idx)->SetEstVal(old);
+   m_pModelReg->GetParamGroupPtr()->GetParamPtr(idx)->SetEstimatedValueTransformed(old);
 
    return(str);
 }/* end GetParameterValStr() */

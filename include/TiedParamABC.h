@@ -31,6 +31,7 @@ Version History
 #ifndef TIED_PARAM_ABC_H
 #define TIED_PARAM_ABC_H
 
+#include <string>
 #include "MyHeaderInc.h"
 
 /******************************************************************************
@@ -45,8 +46,9 @@ class TiedParamABC
       virtual void Destroy(void) = 0;
       virtual void   GetValAsStr(UnmoveableString valStr) = 0;
       virtual void   Write(FILE * pFile, int type) = 0;
-      virtual double GetEstVal(void) = 0;      
-      virtual UnchangeableString GetName(void) = 0;      
+      virtual double GetEstimatedValueTransformed(void) = 0;      
+      virtual UnchangeableString GetName(void) = 0;
+      virtual std::string GetFixFmt(void) = 0;
 }; /* end class TiedParamABC */
 
 /******************************************************************************
@@ -65,8 +67,9 @@ class TiedParamLin1 : public TiedParamABC
 
       void   GetValAsStr(UnmoveableString valStr);
       void   Write(FILE * pFile, int type);
-      double GetEstVal(void);
+      double GetEstimatedValueTransformed(void);
       UnchangeableString GetName(void){ return m_pName;}
+      std::string GetFixFmt(void) { return m_pFixFmt; }
             
    private:
       StringType m_pName;
@@ -91,8 +94,9 @@ class TiedParamLin2 : public TiedParamABC
 
       void   GetValAsStr(UnmoveableString valStr);
       void   Write(FILE * pFile, int type);
-      double GetEstVal(void);
+      double GetEstimatedValueTransformed(void);
       UnchangeableString GetName(void){ return m_pName;}
+      std::string GetFixFmt(void) { return m_pFixFmt; }
             
    private:
       StringType m_pName;
@@ -100,6 +104,34 @@ class TiedParamLin2 : public TiedParamABC
       MetaParameter m_Tie1;
       MetaParameter m_Tie2;
       double m_C3, m_C2, m_C1, m_C0; //coefficients
+}; /* end class TiedParamLin2 */
+
+/******************************************************************************
+class TiedParamLinMax
+
+Represents a linear function of two parameters (F = aX + bY + cXY + d) where the 
+tied value must be at least the value of X but less than a specified value
+******************************************************************************/
+class TiedParamLinMax : public TiedParamABC {
+public:
+    TiedParamLinMax(void);
+    TiedParamLinMax(IroncladString name, MetaParameter* p1, MetaParameter* p2,
+        UnmoveableString configStr);
+    ~TiedParamLinMax(void) { DBG_PRINT("TiedParamLin2::DTOR"); Destroy(); }
+    void Destroy(void);
+
+    void   GetValAsStr(UnmoveableString valStr);
+    void   Write(FILE* pFile, int type);
+    double GetEstimatedValueTransformed(void);
+    UnchangeableString GetName(void) { return m_pName; }
+    std::string GetFixFmt(void) { return m_pFixFmt; }
+
+private:
+    StringType m_pName;
+    StringType m_pFixFmt;
+    MetaParameter m_Tie1;
+    MetaParameter m_Tie2;
+    double m_C3, m_C2, m_C1, m_C0, m_max; //coefficients
 }; /* end class TiedParamLin2 */
 
 /******************************************************************************
@@ -118,8 +150,9 @@ class TiedParamExp : public TiedParamABC
 
       void   GetValAsStr(UnmoveableString valStr);
       void   Write(FILE * pFile, int type);
-      double GetEstVal(void);
+      double GetEstimatedValueTransformed(void);
       UnchangeableString GetName(void){ return m_pName;}
+      std::string GetFixFmt(void) { return m_pFixFmt; }
             
    private:
       StringType m_pName;
@@ -145,8 +178,9 @@ class TiedParamLog : public TiedParamABC
 
       void   GetValAsStr(UnmoveableString valStr);
       void   Write(FILE * pFile, int type);
-      double GetEstVal(void);
+      double GetEstimatedValueTransformed(void);
       UnchangeableString GetName(void){ return m_pName;}
+      std::string GetFixFmt(void) { return m_pFixFmt; }
             
    private:
       StringType m_pName;
@@ -173,8 +207,9 @@ class TiedDistXY : public TiedParamABC
 
       void   GetValAsStr(UnmoveableString valStr);
       void   Write(FILE * pFile, int type);
-      double GetEstVal(void);
+      double GetEstimatedValueTransformed(void);
       UnchangeableString GetName(void){ return m_pName;}
+      std::string GetFixFmt(void) { return m_pFixFmt; }
             
    private:
       StringType m_pName;
@@ -202,8 +237,9 @@ class TiedParamSimpleRatio : public TiedParamABC
 
       void   GetValAsStr(UnmoveableString valStr);
       void   Write(FILE * pFile, int type);
-      double GetEstVal(void);
+      double GetEstimatedValueTransformed(void);
       UnchangeableString GetName(void){ return m_pName;}
+      std::string GetFixFmt(void) { return m_pFixFmt; }
             
    private:
       StringType m_pName;
@@ -233,8 +269,9 @@ class TiedParamComplexRatio : public TiedParamABC
 
       void   GetValAsStr(UnmoveableString valStr);
       void   Write(FILE * pFile, int type);
-      double GetEstVal(void);
+      double GetEstimatedValueTransformed(void);
       UnchangeableString GetName(void){ return m_pName;}
+      std::string GetFixFmt(void) { return m_pFixFmt; }
             
    private:
       StringType m_pName;
@@ -261,8 +298,9 @@ class TiedParamConstant : public TiedParamABC
 
       void   GetValAsStr(UnmoveableString valStr);
       void   Write(FILE * pFile, int type);
-      double GetEstVal(void);
+      double GetEstimatedValueTransformed(void);
       UnchangeableString GetName(void){ return m_pName;}
+      std::string GetFixFmt(void) { return m_pFixFmt; }
             
    private:
       StringType m_pName;
@@ -286,8 +324,9 @@ class TiedParamWsum : public TiedParamABC
 
       void   GetValAsStr(UnmoveableString valStr);
       void   Write(FILE * pFile, int type);
-      double GetEstVal(void);
+      double GetEstimatedValueTransformed(void);
       UnchangeableString GetName(void){ return m_pName;}
+      std::string GetFixFmt(void) { return m_pFixFmt; }
             
    private:
       StringType m_pName;

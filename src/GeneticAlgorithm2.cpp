@@ -16,7 +16,7 @@ Mutation such that each successive genration of solutions is an improvement
 #include "GeneticAlgorithm2.h"
 #include "LatinHypercube.h"
 #include "ParameterGroup.h"
-//#include <ParameterABC.h>
+#include <ParameterABC.h>
 //#include "StatsClass.h"
 
 #include "Exception.h"
@@ -211,9 +211,9 @@ GeneticAlgorithm::GeneticAlgorithm() {
         ParameterABC* test = m_pParamGroup->GetParamPtr(entryParameter);
 
         // Set the parameter values into the Gene 
-        m_pGenes[entryParameter].SetValue(test->GetInitVal());
-        m_pGenes[entryParameter].SetUpr(test->GetUprBnd());
-        m_pGenes[entryParameter].SetLwr(test->GetLwrBnd());
+        m_pGenes[entryParameter].SetValue(test->GetInitialValueTransformed());
+        m_pGenes[entryParameter].SetUpr(test->GetUpperBoundTransformed());
+        m_pGenes[entryParameter].SetLwr(test->GetLowerBoundTransformed());
         m_pGenes[entryParameter].SetMutationRate(m_MutationRate);
         m_pGenes[entryParameter].SetCrossoverRate(m_CrossoverRate);
 
@@ -1037,7 +1037,7 @@ void GeneticAlgorithm::Optimize(void) {
        // Set the values into the pointer groups
        for (int entryParam = 0; entryParam < m_pParamGroup->GetNumParams(); entryParam++) {
            ParameterABC* temp = m_pParamGroup->GetParamPtr(entryParam);
-           temp->SetEstVal(m_BestAlternative[entryParam]);
+           temp->SetEstimatedValueTransformed(m_BestAlternative[entryParam]);
        }
 
        // Write iterationr result to the log file

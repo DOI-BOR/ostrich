@@ -219,8 +219,8 @@ void PowellAlgorithm::Optimize(void)
    //get uppper and lower bounds
    for(j = 0; j < n; j++)
    {
-      upr[j] = pGroup->GetParamPtr(j)->GetUprBnd();
-      lwr[j] = pGroup->GetParamPtr(j)->GetLwrBnd();
+      upr[j] = pGroup->GetParamPtr(j)->GetUpperBoundTransformed();
+      lwr[j] = pGroup->GetParamPtr(j)->GetLowerBoundTransformed();
    }/* end for() */
 
    //initialize fret   

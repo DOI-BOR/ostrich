@@ -138,8 +138,8 @@ SamplingAlgorithm::SamplingAlgorithm(ModelABC * pModel)
    
    for(i = 0; i < m_NumParams; i++)
    { 
-      m_pLwr[i] = m_pModel->GetParamGroupPtr()->GetParamPtr(i)->GetLwrBnd();
-      m_pUpr[i] = m_pModel->GetParamGroupPtr()->GetParamPtr(i)->GetUprBnd();
+      m_pLwr[i] = m_pModel->GetParamGroupPtr()->GetParamPtr(i)->GetLowerBoundTransformed();
+      m_pUpr[i] = m_pModel->GetParamGroupPtr()->GetParamPtr(i)->GetUpperBoundTransformed();
    }/* end for() */
 
    NEW_PRINT("double", m_NumParams);

@@ -181,12 +181,12 @@ void GridAlgorithm::Optimize(void)
    if(m_pModel->CheckWarmStart() == true)
    {
       WarmStart();
-      for(j = 0; j < num; j++) {m_pMini->p[0][j] = m_pModel->GetParamGroupPtr()->GetParamPtr(j)->GetEstVal(); }      
+      for(j = 0; j < num; j++) {m_pMini->p[0][j] = m_pModel->GetParamGroupPtr()->GetParamPtr(j)->GetEstimatedValueTransformed(); }      
    }
    //handle parameter extraction
    if(m_pModel->GetParamGroupPtr()->CheckExtraction() == true)
    {
-      for(j = 0; j < num; j++) {m_pMini->p[0][j] = m_pModel->GetParamGroupPtr()->GetParamPtr(j)->GetEstVal(); }
+      for(j = 0; j < num; j++) {m_pMini->p[0][j] = m_pModel->GetParamGroupPtr()->GetParamPtr(j)->GetEstimatedValueTransformed(); }
    }
 
    //write out setup
@@ -670,8 +670,8 @@ void GridAlgorithm::InitFromFile(IroncladString pFileName)
    for(i = 0; i < num; i++)
    { 
       dim = (double)m_pDims[i];
-      upr = m_pModel->GetParamGroupPtr()->GetParamPtr(i)->GetUprBnd();
-      lwr = m_pModel->GetParamGroupPtr()->GetParamPtr(i)->GetLwrBnd();
+      upr = m_pModel->GetParamGroupPtr()->GetParamPtr(i)->GetUpperBoundTransformed();
+      lwr = m_pModel->GetParamGroupPtr()->GetParamPtr(i)->GetLowerBoundTransformed();
       m_pMini->dp[i] = (upr - lwr)/(dim - 1.00);
       m_Lwr[i] = lwr;
    }

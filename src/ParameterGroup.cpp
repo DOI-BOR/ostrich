@@ -62,7 +62,7 @@ void ParameterGroup::ReadParams(double * p)
 {
    for(int j = 0; j < m_NumParams; j++)
    {
-      p[j] = m_pList[j]->GetEstVal();
+      p[j] = m_pList[j]->GetEstimatedValueTransformed();
    }
 }/* end ReadParams() */
 
@@ -81,7 +81,7 @@ double ParameterGroup::WriteParams(Ironclad1DArray p)
    double viol = 0.00;
    for(int j = 0; j < m_NumParams; j++)
    {
-      viol += m_pList[j]->SetEstVal(p[j]); 
+      viol += m_pList[j]->SetEstimatedValueTransformed(p[j]); 
    }
    return viol;
 }/* end WriteParams() */
@@ -162,6 +162,16 @@ TiedParamABC * ParameterGroup::GetTiedParamPtr(IroncladString name)
 } /* end GetTiedParamPtr() */
 
 /******************************************************************************
+GetTiedParamPtr()
+
+Retrieves a pointer to the ith parameter.
+******************************************************************************/
+TiedParamABC* ParameterGroup::GetTiedParamPtr(int i)
+{
+    return m_pTied[i];
+}
+
+/******************************************************************************
 ConfigureSpecialParams()
 
 Set the objective function threshold criteria for pre-emption of model
@@ -172,7 +182,7 @@ void ParameterGroup::ConfigureSpecialParams(double minObj, double * minCon)
 
    for(j = 0; j < m_NumSpecial; j++)
    {
-      m_pSpecial[j]->SetEstVal(minObj, minCon[j]);
+      m_pSpecial[j]->SetEstimatedValueTransformed(minObj, minCon[j]);
    }/* end for() */
 } /* end ConfigureSpecialParams() */
 
@@ -882,16 +892,16 @@ void ParameterGroup::InitRealParams(IroncladString pFileName)
        //assign random values from within transformed space
       if(strcmp(tmpInitVal, "random") == 0)
       { 
-         upperBound = m_pList[i]->GetUprBnd();
-         lowerBound = m_pList[i]->GetLwrBnd();
+         upperBound = m_pList[i]->GetUpperBoundTransformed();
+         lowerBound = m_pList[i]->GetLowerBoundTransformed();
          initialValue = (((double)MyRand() / (double)MY_RAND_MAX) * (upperBound - lowerBound)) + lowerBound;
-         m_pList[i]->SetEstVal(initialValue);
+         m_pList[i]->SetEstimatedValueTransformed(initialValue);
       }
 
       //assign extracted values from within transformed space
       if(strcmp(tmpInitVal, "extract") == 0)
       { 
-         m_pList[i]->SetEstVal(initialValue);
+         m_pList[i]->SetEstimatedValueTransformed(initialValue);
          m_bExtracted = true;
       }
       line = GetNxtDataLine(pFile, pFileName);
@@ -1165,6 +1175,11 @@ void ParameterGroup::InitTiedParams(IroncladString pFileName)
             }
             else{ invalidNumParams = true;}
          }
+         else if (strcmp(typeStr, "linearmax") == 0)
+         {
+             NEW_PRINT("TiedParamLinMax", 1);
+             m_pTied[i] = new TiedParamLinMax(nameStr, &(pParams[0]), &(pParams[1]), pTok);
+         }
          else if(strcmp(typeStr, "wsum") == 0)
          { 
             NEW_PRINT("TiedParamWsum", 1);
@@ -1410,31 +1425,6 @@ void ParameterGroup::InitGeomParams(IroncladString pFileName)
    fclose(pFile);
 } /* end InitGeomParams() */
 
-/******************************************************************************
-SetGroupValues()
-
-Allows ability to set values into a parameter group
-******************************************************************************/
-void ParameterGroup::SetGroupValues(ParameterABC** m_pListInput, ParameterABC** m_pExclInput, TiedParamABC** m_pTiedInput,
-                                    GeomParamABC** m_pGeomInput, SpecialParam** m_pSpecialInput, char** m_ParamNameListInput,
-                                    int numberOfParameters, int numberOfTiedParameters, int numberOfGeomParameters, 
-                                    int numberOfSpecialParameters,  int numberOfExcluded) {
-
-    // Set the group values from the input arrays
-    m_pList = m_pListInput;
-    m_pExcl = m_pExclInput;
-    m_pTied = m_pTiedInput;
-    m_pGeom = m_pGeomInput;
-    m_pSpecial = m_pSpecialInput;
-    m_ParamNameList = m_ParamNameListInput;
-
-    // Set the size values from the input arrays
-    m_NumParams = numberOfParameters;
-    m_NumTied = numberOfTiedParameters;
-    m_NumGeom = numberOfGeomParameters;
-    m_NumSpecial = numberOfSpecialParameters;
-    m_NumExcl = numberOfExcluded;
-}
 
 /******************************************************************************
 Write()
@@ -1829,7 +1819,7 @@ void ParameterGroup::CheckBounds(void)
    char msg[DEF_STR_SZ];
    for(i = 0; i < m_NumParams; i++)
    {     
-      if(m_pList[i]->GetUprBnd() < m_pList[i]->GetLwrBnd())
+      if(m_pList[i]->GetUpperBoundTransformed() < m_pList[i]->GetLowerBoundTransformed())
       {
          sprintf(msg, "Parameter (%s) has incorrect bounds (upper bound less than lower bound)\n", m_pList[i]->GetName());
          LogError(ERR_FILE_IO, msg);
@@ -1857,8 +1847,8 @@ void ParameterGroup::ExcludeParam(UnchangeableString prm)
    if(i == m_NumParams) return; //no match
 
    //fix value at midpoint of range
-   val = 0.5 * (m_pList[i]->GetUprBnd() + m_pList[i]->GetLwrBnd());
-   m_pList[i]->SetEstVal(val);
+   val = 0.5 * (m_pList[i]->GetUpperBoundTransformed() + m_pList[i]->GetLowerBoundTransformed());
+   m_pList[i]->SetEstimatedValueTransformed(val);
 
    //move parameter to excluded list
    m_pExcl[m_NumExcl] = m_pList[i];

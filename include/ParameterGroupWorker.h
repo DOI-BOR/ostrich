@@ -19,17 +19,15 @@ Version History
 07-18-07    lsm   Added support for SuperMUSE
 ******************************************************************************/
 
-#ifndef PARAMETER_GROUP_H
-#define PARAMETER_GROUP_H
+#ifndef PARAMETER_GROUP_WORKER
+#define PARAMETER_GROUP_WORKER
 
 #include "MyHeaderInc.h"
+#include "ParameterWorker.h"
 
 //forward decs
 class DatabaseABC;
-class ParameterABC;
-class TiedParamABC;
-class GeomParamABC;
-class SpecialParam;
+class ParameterWorker;
 class FilePair;
 class FilePipe;
 struct AUG_VERT_LIST_STRUCT;
@@ -41,76 +39,59 @@ class ParameterGroup
  Represents the collection of ingeter, continuou and combinatorial parameters 
  and deals with the group of parameters as a whole unit.
 ******************************************************************************/
-class ParameterGroup
-{
+class ParameterGroupWorker {
    public:
-     ParameterGroup(bool initialize);
-     ~ParameterGroup(void){ DBG_PRINT("ParameterGroup::DTOR"); Destroy();}
+       ParameterGroupWorker();
+     ~ParameterGroupWorker(void){ DBG_PRINT("ParameterGroupWorker::DTOR"); Destroy();}
       void Destroy(void);
 
      void SubIntoFile(FilePipe * pPipe);
 	 void SubIntoDbase(DatabaseABC * pDbase);
      void WriteDatabaseParameter(DatabaseABC * pDbase, char * find, char * replace);
      void Write(FILE * pFile, int type);     
-     ParameterABC *GetParamPtr(int i);
-     ParameterABC *GetParamPtr(IroncladString name);
-     TiedParamABC *GetTiedParamPtr(IroncladString name);
-     TiedParamABC *GetTiedParamPtr(int i);
-	 //SpecialParam * GetSpecialParamPtr(IroncladString name);
+     
+     ParameterWorkerABC* GetParamPtr(int i);
+     ParameterWorkerABC* GetParamPtr(IroncladString name);
      int GetNumParams(void);
-     int GetNumTiedParams(void){ return m_NumTied;}
-     int GetNumSpecialParams(void){ return m_NumSpecial;}
+
      void ReadParams(double * p);
-     double WriteParams(Ironclad1DArray p);
+     void WriteParams(Ironclad1DArray p);
      void CheckTemplateFiles(FilePair * pList);
      void CheckMnemonics(void);
-     bool FixGeometry(void);
      void CheckBounds(void);
      void ExcludeParam(UnchangeableString prm);
      void WriteSuperMuseArgs(FILE * pFile);
-	 void GetSpecialConstraints(double * pSC);
-	 void ConfigureSpecialParams(double minObj, double * minCon);
-	 void InitSpecialParams(IroncladString pFileName);
-	 void EnableSpecialParams(void);
-     bool ExtractInitialValue(char * name, bool bFixFmt, double * pVal);
+
+     bool ExtractValue(char * name, bool bFixFmt, double * pVal);
      MetaParameter GetMetaParam(IroncladString name);
      bool CheckExtraction(void){ return m_bExtracted;}
+
+     
+     void SetGroupValues(ParameterWorkerABC** m_pList, ParameterWorkerABC** m_pExcl, char** m_ParamNameList,
+                         int numberOfParameters, int numberOfExcluded);    
 
      int GetNumRealParams(void) { return m_NumRealParams; };
      int GetNumIntParams(void) { return m_NumIntParams; };
 
-     int m_NumParams;
-     int m_NumRealParams;
-     int m_NumIntParams;
-     char** m_ParamNameList; //list of parameter names
-     int m_NumTied;
-     int m_NumGeom;
-     int m_NumSpecial;
-     int m_NumExcl;
-
 
    private:      
-      ParameterABC ** m_pList;
-      ParameterABC ** m_pExcl;
-      TiedParamABC ** m_pTied;
-      GeomParamABC ** m_pGeom;
-	  SpecialParam ** m_pSpecial;
+       ParameterWorkerABC** m_pList;
+       ParameterWorkerABC** m_pExcl;
+      
 
-      void InitFromFile(IroncladString pParamFileName);
-      int  CountParams(IroncladString pFileName);
+      int m_NumParams;
+      int m_NumRealParams;
+      int m_NumIntParams;
+      char ** m_ParamNameList; //list of parameter names
+
+      int m_NumExcl;
       void GetParameterNames(IroncladString pFileName);
       int  GetNextEmptyParamIdx(void);
       void InitRealParams(IroncladString pFileName);
       void InitIntParams(IroncladString pFileName);
-      void InitComboParams(IroncladString pFileName);
-      void InitTiedParams(IroncladString pFileName);
-      void InitGeomParams(IroncladString pFileName);
+      
       bool m_bExtracted;
-	  struct AUG_VERT_LIST_STRUCT * InitAugVertex(IroncladString xstr, IroncladString ystr,
-                                    IroncladString zstr);
-	  struct AUG_CIRCLE_STRUCT * InitAugCircle(IroncladString xstr, IroncladString ystr,
-                                    IroncladString zstr, IroncladString rstr);
-}; /* end class ParameterGroup */
+}; 
 
-#endif /* PARAMETER_GROUP_H */
+#endif 
 
