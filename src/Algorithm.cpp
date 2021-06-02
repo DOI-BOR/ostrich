@@ -1203,14 +1203,7 @@ void Algorithm::SendWorkerParameters(int workerRank, int alternativeIndex, doubl
 
     for (int entryParameter = 0; entryParameter < m_pParamGroup->m_NumTied; entryParameter++) {
         parametersTemp[m_pParamGroup->m_NumParams + entryParameter + 1] = parametersTied[entryParameter];
-    }
-
-    std::cout << "Sent paramater" << '\t';
-    for (int entryParameter = 0; entryParameter < numberOfParamters + 1; entryParameter++) {
-        std::cout << parametersTemp[entryParameter] << '\t';
-    }
-    std::cout << std::endl;
-    
+    }    
 
     // Send the array to the secondary worker
     MPI_Send(&parametersTemp[0], numberOfParamters + 1, MPI_DOUBLE, workerRank, tag_data, MPI_COMM_WORLD);

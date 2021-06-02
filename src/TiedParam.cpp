@@ -441,12 +441,6 @@ TiedParamLinMax::TiedParamLinMax(IroncladString name, MetaParameter* p1, MetaPar
     bOk = GetFixedFormatValAsStr(valStr, 0.00, m_pFixFmt);
     if (!bOk) strcpy(m_pFixFmt, "free");
 
-    std::cout << "c0\t" << m_C0 << std::endl;
-    std::cout << "c1\t" << m_C1 << std::endl;
-    std::cout << "c2\t" << m_C2 << std::endl;
-    std::cout << "c3\t" << m_C3 << std::endl;
-    std::cout << "max\t" << m_max << std::endl;
-
     IncCtorCount();
 } /* end CTOR */
 
@@ -492,8 +486,6 @@ double TiedParamLinMax::GetEstimatedValueTransformed(void) {
     if (y > m_max) {
         y = m_max;
     }
-
-    std::cout << "Generated values:\t" << x1 << '\t' << x2 << '\t' << y << std::endl;
 
     return y;
 } /* end GetEstVal() */
