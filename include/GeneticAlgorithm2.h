@@ -35,7 +35,7 @@ class GeneticAlgorithm : Algorithm {
       GeneticAlgorithm();      
       ~GeneticAlgorithm(void){ DBG_PRINT("GeneticAlgorithm::DTOR"); Destroy(); }
       double** CreateInitialSample(int sampleSize);
-      double** CreateSample(double* objectives, int numberOfObjectives, double** samples);
+      double** CreateSample(double* objectives, int numberOfObjectives, double** samples, double** scratch);
       void Optimize(void);
       void Calibrate(void);
       void Destroy(void);

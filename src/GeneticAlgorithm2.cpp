@@ -523,14 +523,8 @@ Creates the next generation of the chromosome population using tourney selection
 crossover, and mutation.
 *****************************************************************************
 */
-double** GeneticAlgorithm::CreateSample(double* objectives, int numberOfObjectives, double** samples) {
+double** GeneticAlgorithm::CreateSample(double* objectives, int numberOfObjectives, double** samples, double** scratch) {
 
-    // Create a scratch array to hold the updated dated
-    double** scratch; 
-    scratch = new double* [numberOfObjectives];
-    for (int entrySample = 0; entrySample < numberOfObjectives; entrySample++) {
-        scratch[entrySample] = new double[numberOfObjectives];
-    }
         
     // Go through the genetic sampling process
     TourneySelection(2, objectives, numberOfObjectives, samples, scratch);
@@ -1014,6 +1008,13 @@ void GeneticAlgorithm::Optimize(void) {
    // Initialize the chromosome for the first solve
    double** samples = CreateInitialSample(m_NumPopulation);
 
+   // Create a scratch array to hold the updated dated
+   double** scratch;
+   scratch = new double* [m_NumPopulation];
+   for (int entrySample = 0; entrySample < m_NumPopulation; entrySample++) {
+       scratch[entrySample] = new double[m_pParamGroup->GetNumParams()];
+   }
+
     // Enter the solution loop
    while (m_NumGenerationsMaximum > m_Generation && m_CurStop >= m_StopVal) {
 
@@ -1048,7 +1049,13 @@ void GeneticAlgorithm::Optimize(void) {
 
        // Generate another set of samples if solution will continue
        if (m_Generation < m_NumGenerationsMaximum && m_CurStop >= m_StopVal) {
-           samples = CreateSample(objectives, m_NumPopulation, samples);
+           // Update the scratch array
+           scratch = CreateSample(objectives, m_NumPopulation, samples, scratch);
+
+           // Swap the arrays
+           double** temp = samples;
+           samples = scratch;
+           scratch = samples;
        }
    }
 
@@ -1060,7 +1067,11 @@ void GeneticAlgorithm::Optimize(void) {
    WriteEndingMetrics();
 
    // Cleanup memory space
-   delete samples;
+   for (int entry = 0; entry < m_NumPopulation; entry++) {
+       delete[] samples[entry], scratch[entry];
+   }
+   delete[] samples, scratch;
+   
 } 
 
 /******************************************************************************

@@ -1255,7 +1255,6 @@ void Algorithm::ManageSingleObjectiveIterations(double **parameters, int numberO
 
         int requestFlag = 0;
         int sourceFlag = 0;
-        int message = 0;
 
         // Set the counter variables         
         int sendCounter = 0;
@@ -1268,11 +1267,11 @@ void Algorithm::ManageSingleObjectiveIterations(double **parameters, int numberO
 
             // TODO: Break each of these into separate functions for reuse
             // Check for any workers with a continue flag 
-            MPI_Improbe(MPI_ANY_SOURCE, tag_continue, MPI_COMM_WORLD, &sourceFlag, &message, &mpiStatus);
+            MPI_Improbe(MPI_ANY_SOURCE, tag_continue, MPI_COMM_WORLD, &sourceFlag, &mpiMessage, &mpiStatus);
             if (sourceFlag) {
                 // Worker is available to accept work. Go through the steps to send work to it.
                 // Receive the continue flag from the worker
-                MPI_Mrecv(&workerValue, 1, MPI_INT, &message, &mpiStatus);
+                MPI_Mrecv(&workerValue, 1, MPI_INT, &mpiMessage, &mpiStatus);
 
                 // Extract the worker rank from the status request
                 workerRank = mpiStatus.MPI_SOURCE;
@@ -1288,11 +1287,11 @@ void Algorithm::ManageSingleObjectiveIterations(double **parameters, int numberO
             }
 
             // Determine if we can receive any values               
-            MPI_Improbe(MPI_ANY_SOURCE, tag_data, MPI_COMM_WORLD, &requestFlag, &message, &mpiStatus);
+            MPI_Improbe(MPI_ANY_SOURCE, tag_data, MPI_COMM_WORLD, &requestFlag, &mpiMessage, &mpiStatus);
             if (requestFlag) {
                 // Get the alternative index and objective function from the secondary worker
                 double data[2];
-                MPI_Mrecv(&data, 2, MPI_DOUBLE, &message, &mpiStatus);
+                MPI_Mrecv(&data, 2, MPI_DOUBLE, &mpiMessage, &mpiStatus);
 
                 // Set the objective value into the objective array
                 returnArray[(int)data[0]] = data[1];
@@ -1305,11 +1304,11 @@ void Algorithm::ManageSingleObjectiveIterations(double **parameters, int numberO
         // All alternatives have been sent. Receive all of the solutions
         while (receiveCounter < numberOfAlternatives) {
             // Determine if we can receive any values               
-            MPI_Improbe(MPI_ANY_SOURCE, tag_data, MPI_COMM_WORLD, &requestFlag, &message, &mpiStatus);
+            MPI_Improbe(MPI_ANY_SOURCE, tag_data, MPI_COMM_WORLD, &requestFlag, &mpiMessage, &mpiStatus);
             if (requestFlag) {
                 // Get the alternative index and objective function from the secondary worker
                 double data[2];
-                MPI_Mrecv(&data, 2, MPI_DOUBLE, &message, &mpiStatus);
+                MPI_Mrecv(&data, 2, MPI_DOUBLE, &mpiMessage, &mpiStatus);
 
                 // Set the objective value into the objective array
                 returnArray[(int)data[0]] = data[1];
