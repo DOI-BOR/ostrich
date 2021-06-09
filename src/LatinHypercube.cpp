@@ -103,9 +103,6 @@ void LatinHypercube::CreateUniformSample(double* lowerBounds, double *upperBound
 
     // Create a vector containing the bin numbers for all the inputs for sampling.
     // This is more efficient that randomly sampling and checking against the counter
-    // Obtain a time-based seed
-    unsigned seed = std::chrono::system_clock::now().time_since_epoch().count();
-
     // Create the parent vector
     std::vector<std::vector<double>> availableIndices;
 
@@ -118,6 +115,9 @@ void LatinHypercube::CreateUniformSample(double* lowerBounds, double *upperBound
         for (int j = 0; j < m_MaxCols; j++) {
             temp.push_back((double)j);
         }
+
+        // Obtain a time-based seed
+        unsigned seed = std::chrono::system_clock::now().time_since_epoch().count();
 
         // Shuffle the indices to simplify later indexing
         std::shuffle(temp.begin(), temp.end(), std::default_random_engine(seed));
