@@ -1055,7 +1055,7 @@ void GeneticAlgorithm::Optimize(void) {
            // Swap the arrays
            double** temp = samples;
            samples = scratch;
-           scratch = samples;
+           scratch = temp;
        }
    }
 
@@ -1071,7 +1071,8 @@ void GeneticAlgorithm::Optimize(void) {
        delete[] samples[entry], scratch[entry];
    }
    delete[] samples, scratch;
-   
+
+
 } 
 
 /******************************************************************************
@@ -1108,6 +1109,8 @@ void GA_Program(int argC, StringType argV[]) {
 
        // Tear-down is triggered by the primary worker
    }
+
+
 
 } 
 
