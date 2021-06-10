@@ -431,16 +431,16 @@ void GeneticAlgorithm::Crossover(double* objectives, int numberOfObjectives, dou
     // Find the best from the previous generation to maintain in the current generation
     if (m_NumSurvivors > 1) {
         // Create the arrays
-        double *objectiveValues = new double[m_NumSurvivors - 1];
-        int *objectiveIndices = new int[m_NumSurvivors - 1];
+        double* objectiveValues = new double[m_NumSurvivors - 1];
+        int* objectiveIndices = new int[m_NumSurvivors - 1];
 
         // Fill them with values
         for (int entryIndex = 0; entryIndex < m_NumSurvivors - 1; entryIndex++) {
-            objectiveValues[entryIndex] = INFINITY;
-            objectiveIndices[entryIndex] = -1;
+            objectiveValues[entryIndex] = objectives[entryIndex];
+            objectiveIndices[entryIndex] = entryIndex;
         }
 
-        for (int entryObjective = 0; entryObjective < numberOfObjectives; entryObjective++) {
+        for (int entryObjective = m_NumSurvivors - 1; entryObjective < numberOfObjectives; entryObjective++) {
             double maxDifference = 0;
             int maxDifferenceIndex = -1;
 
@@ -453,13 +453,14 @@ void GeneticAlgorithm::Crossover(double* objectives, int numberOfObjectives, dou
                 }
             }
 
-            objectiveIndices[maxDifferenceIndex] = maxDifferenceIndex;
-            objectiveValues[maxDifferenceIndex] = objectives[entryObjective];
-
+            if (maxDifferenceIndex > -1) {
+                objectiveIndices[maxDifferenceIndex] = entryObjective;
+                objectiveValues[maxDifferenceIndex] = objectives[entryObjective];
+            }
         }
 
         // Set the remaining survivors into the scratch array
-        for (int entryIndex = 1; entryIndex < m_NumSurvivors - 1; entryIndex++) {
+        for (int entryIndex = 1; entryIndex < m_NumSurvivors; entryIndex++) {
             scratch[entryIndex] = samples[objectiveIndices[entryIndex - 1]];
         }
     }
@@ -469,9 +470,9 @@ void GeneticAlgorithm::Crossover(double* objectives, int numberOfObjectives, dou
     if (m_NumSurvivors > survivorsAdjusted) {
         survivorsAdjusted = m_NumSurvivors;
     }
-    
+
     //crossover everyone with their neighbor
-    for (int i = survivorsAdjusted; i < numberOfObjectives - 1; i++) {
+    for (int i = survivorsAdjusted - 1; i < numberOfObjectives - 1; i++) {
         // Get the parent chromosomes
         double* pMom = samples[i];
         double* pPop = samples[i + 1];
@@ -485,13 +486,12 @@ void GeneticAlgorithm::Crossover(double* objectives, int numberOfObjectives, dou
 
         // Crossover each entry in the array
         for (int entryParam = 0; entryParam < m_pParamGroup->GetNumParams(); entryParam++) {
-            tempChromosome[entryParam] = m_pGenes[entryParam].Crossover(&m_pGenes[entryParam + 1], samples[i][entryParam], samples[i + 1][entryParam], 
-                                                                         pMomObjective, pPopObjective, m_pParamGroup->GetNumParams());
-
+            tempChromosome[entryParam] = m_pGenes[entryParam].Crossover(&m_pGenes[entryParam + 1], samples[i][entryParam], samples[i + 1][entryParam],
+                pMomObjective, pPopObjective, m_pParamGroup->GetNumParams());
         }
 
         // Set the chromosome into the scratch array
-        scratch[i] = tempChromosome;
+        scratch[i + 1] = tempChromosome;
     }
 }
 
@@ -505,7 +505,6 @@ pre-established mutation rate.
 *****************************************************************************
 */
 void GeneticAlgorithm::Mutate(double** scratch, int numberOfSamples) {
-
 
     for (int entryAlternative = m_NumSurvivors; entryAlternative < m_NumPopulation; entryAlternative++) {
         for (int entryParam = 0; entryParam < m_pParamGroup->GetNumParams(); entryParam++) {
@@ -527,7 +526,7 @@ double** GeneticAlgorithm::CreateSample(double* objectives, int numberOfObjectiv
 
         
     // Go through the genetic sampling process
-    TourneySelection(2, objectives, numberOfObjectives, samples, scratch);
+    //TourneySelection(2, objectives, numberOfObjectives, samples, scratch);
     Crossover(objectives, numberOfObjectives,  samples, scratch);
     Mutate( scratch, numberOfObjectives);
 
@@ -1067,9 +1066,12 @@ void GeneticAlgorithm::Optimize(void) {
    WriteEndingMetrics();
 
    // Cleanup memory space
-   for (int entry = 0; entry < m_NumPopulation; entry++) {
-       delete[] samples[entry], scratch[entry];
-   }
+   /*for (int entry = 0; entry < m_NumPopulation; entry++) {
+       std::cout << "\tSample:\t" << entry << std::endl;
+       delete[] samples[entry];
+       std::cout << "\tScratch:\t:" << entry << std::endl;
+       delete[] scratch[entry];
+   }*/
    delete[] samples, scratch;
 
 
