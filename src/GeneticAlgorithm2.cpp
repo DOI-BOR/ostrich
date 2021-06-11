@@ -420,27 +420,27 @@ void GeneticAlgorithm::TourneySelection(int nCombatants, double* objectives, int
 Crossover()
 
 Crosses over each chromsome of the population with the next one in the
-population, except those that are in the top <m_NumSurvivors>.
+population, except those that are in the top <m_NumSurvivors>. Simplified compared 
+to the original processes
 *****************************************************************************
 */
-void GeneticAlgorithm::Crossover(double* objectives, int numberOfObjectives, double** samples, double** scratch) {
+void GeneticAlgorithm::Crossover(double* objectives, double** samples, double** scratch) {
 
     // Add the best back to the worker to maintain it in the population
     scratch[0] = m_BestAlternative;
 
     // Find the best from the previous generation to maintain in the current generation
-    if (m_NumSurvivors > 1) {
-        // Create the arrays
-        double* objectiveValues = new double[m_NumSurvivors - 1];
-        int* objectiveIndices = new int[m_NumSurvivors - 1];
+    double* objectiveValues = new double[m_NumSurvivors - 1];
+    int* objectiveIndices = new int[m_NumSurvivors - 1];
 
+    if (m_NumSurvivors > 1) {
         // Fill them with values
         for (int entryIndex = 0; entryIndex < m_NumSurvivors - 1; entryIndex++) {
             objectiveValues[entryIndex] = objectives[entryIndex];
             objectiveIndices[entryIndex] = entryIndex;
         }
 
-        for (int entryObjective = m_NumSurvivors - 1; entryObjective < numberOfObjectives; entryObjective++) {
+        for (int entryObjective = m_NumSurvivors - 1; entryObjective < m_NumPopulation; entryObjective++) {
             double maxDifference = 0;
             int maxDifferenceIndex = -1;
 
@@ -461,7 +461,9 @@ void GeneticAlgorithm::Crossover(double* objectives, int numberOfObjectives, dou
 
         // Set the remaining survivors into the scratch array
         for (int entryIndex = 1; entryIndex < m_NumSurvivors; entryIndex++) {
+            double* temp = scratch[entryIndex];
             scratch[entryIndex] = samples[objectiveIndices[entryIndex - 1]];
+            samples[objectiveIndices[entryIndex - 1]] = temp;
         }
     }
 
@@ -471,30 +473,74 @@ void GeneticAlgorithm::Crossover(double* objectives, int numberOfObjectives, dou
         survivorsAdjusted = m_NumSurvivors;
     }
 
-    //crossover everyone with their neighbor
-    for (int i = survivorsAdjusted - 1; i < numberOfObjectives - 1; i++) {
-        // Get the parent chromosomes
-        double* pMom = samples[i];
-        double* pPop = samples[i + 1];
+    // Determine if the chromosomes will cross over
+    int currentIndex = 0;
+    for (int i = survivorsAdjusted; i < m_NumPopulation; i++) {
+        // Draw a random value for crossing over
+        double r = (double)MyRand() / (double)MY_RAND_MAX;
 
-        // Get the parent objectives
-        double pMomObjective = objectives[i];
-        double pPopObjective = objectives[i + 1];
-
-        // Create the array to hold the new chromosome
-        double* tempChromosome = new double[m_pParamGroup->GetNumParams()];
-
-        // Crossover each entry in the array
-        for (int entryParam = 0; entryParam < m_pParamGroup->GetNumParams(); entryParam++) {
-            tempChromosome[entryParam] = m_pGenes[entryParam].Crossover(&m_pGenes[entryParam + 1], samples[i][entryParam], samples[i + 1][entryParam],
-                pMomObjective, pPopObjective, m_pParamGroup->GetNumParams());
+        // Confirm that the target is not currently in the new samples        
+        if (m_NumSurvivors > 1){
+            bool swappedPreviously = true;
+            while (swappedPreviously) {
+                for (int entry = 0; entry < m_NumSurvivors - 1; entry++) {
+                    if (currentIndex == objectiveIndices[entry]) {
+                        // Increment the current index counter to shift off the value
+                        currentIndex++;
+                        swappedPreviously = true;
+                        break;
+                    } else {
+                        // Set the value to not swapped
+                        swappedPreviously = false;
+                    }
+                }
+            }
         }
 
-        // Set the chromosome into the scratch array
-        scratch[i + 1] = tempChromosome;
-    }
-}
+        // Determine if the chromosome should cross over
+        if (r < m_CrossoverRate) {
+            // Chromosome will cross over
+            // Determine the crossover partner
+            int crossoverPartner = (int)((double)MyRand() / (double)MY_RAND_MAX * (double)m_NumPopulation);
 
+            // Determine the crossover location
+            int crossoverLocation = (int)((double)MyRand() / (double)MY_RAND_MAX * (double)m_pParamGroup->GetNumParams());
+
+            // Create a temporary holder for the data
+            double* temp = new double[m_pParamGroup->GetNumParams()];
+
+            // Fill the temporary array up the the fill location
+            for (int entry = 0; entry < crossoverLocation; entry++) {
+                temp[entry] = samples[currentIndex][entry];
+            }
+
+            // If value is less than the current index, pull from the scratch array. Otherwise pull from the sample array
+            if (crossoverPartner < currentIndex) {
+                for (int entry = crossoverLocation; entry < m_pParamGroup->GetNumParams(); entry++) {
+                    temp[entry] = scratch[currentIndex][entry];
+                }
+            }
+            else {
+                for (int entry = crossoverLocation; entry < m_pParamGroup->GetNumParams(); entry++) {
+                    temp[entry] = samples[currentIndex][entry];
+                }
+
+            }
+
+            // Set the values into the scratch array
+            scratch[i] = temp;
+
+        }
+        else {
+            // Chromosome will not cross over. Set the chromosome into the scratch arra
+            double* temp = scratch[i];
+            scratch[i] = samples[currentIndex];
+            samples[currentIndex] = temp;
+        }
+    }
+
+    currentIndex++;
+}
 
 /*
 *****************************************************************************
@@ -504,7 +550,7 @@ Mutates individual chromsomes of the population according to a
 pre-established mutation rate.
 *****************************************************************************
 */
-void GeneticAlgorithm::Mutate(double** scratch, int numberOfSamples) {
+void GeneticAlgorithm::Mutate(double** scratch) {
 
     for (int entryAlternative = m_NumSurvivors; entryAlternative < m_NumPopulation; entryAlternative++) {
         for (int entryParam = 0; entryParam < m_pParamGroup->GetNumParams(); entryParam++) {
@@ -527,8 +573,8 @@ double** GeneticAlgorithm::CreateSample(double* objectives, int numberOfObjectiv
         
     // Go through the genetic sampling process
     //TourneySelection(2, objectives, numberOfObjectives, samples, scratch);
-    Crossover(objectives, numberOfObjectives,  samples, scratch);
-    Mutate( scratch, numberOfObjectives);
+    Crossover(objectives, samples, scratch);
+    Mutate(scratch);
 
     // Swap scratch with the samples
     return scratch;

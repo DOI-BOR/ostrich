@@ -19,6 +19,7 @@ these groups.
 #include <filesystem>
 #include "WriteUtility2.h"
 #include <cstring>
+#include <vector>
 
 
 //forward decs

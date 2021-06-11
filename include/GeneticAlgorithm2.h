@@ -65,8 +65,8 @@ class GeneticAlgorithm : Algorithm {
        double CalcMedianFitness(double* objectives, int numberOfObjectives);
 
        void TourneySelection(int nCombatants, double* objectives, int numberOfObjectives, double** samples, double** scratch);
-       void Crossover(double* objectives, int numberOfObjectives, double** samples, double** scratch);
-       void Mutate(double** scratch, int numberOfSamples);
+       void Crossover(double* objectives, double** samples, double** scratch);
+       void Mutate(double** scratch);
 
        //StatsClass m_pStats;
 
