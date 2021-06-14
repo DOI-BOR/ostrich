@@ -13,6 +13,8 @@ these groups.
 #include <math.h>
 #include <string>
 #include <iostream>
+#include <chrono>
+#include <thread>
 
 #include "Algorithm.h"
 #include "ObservationGroup.h"
@@ -1206,7 +1208,8 @@ void Algorithm::SendWorkerParameters(int workerRank, int alternativeIndex, doubl
     }    
 
     // Send the array to the secondary worker
-    MPI_Send(&parametersTemp[0], numberOfParamters + 1, MPI_DOUBLE, workerRank, tag_data, MPI_COMM_WORLD);
+    //MPI_Send(&parametersTemp[0], numberOfParamters + 1, MPI_DOUBLE, workerRank, tag_data, MPI_COMM_WORLD);
+    MPI_Ssend(&parametersTemp[0], numberOfParamters + 1, MPI_DOUBLE, workerRank, tag_data, MPI_COMM_WORLD);
 }
 
 /*
@@ -1219,11 +1222,13 @@ void Algorithm::SendWorkerContinue(int workerRank, bool workerContinue) {
 
     int transferValue = 1;
     if (workerContinue) {
-        MPI_Send(&transferValue, 1, MPI_INT, workerRank, tag_continue, MPI_COMM_WORLD);
+        //MPI_Send(&transferValue, 1, MPI_INT, workerRank, tag_continue, MPI_COMM_WORLD);
+        MPI_Ssend(&transferValue, 1, MPI_INT, workerRank, tag_continue, MPI_COMM_WORLD);
     }
     else {
         transferValue = 0;
-        MPI_Send(&transferValue, 1, MPI_INT, workerRank, tag_continue, MPI_COMM_WORLD);
+        //MPI_Send(&transferValue, 1, MPI_INT, workerRank, tag_continue, MPI_COMM_WORLD);
+        MPI_Ssend(&transferValue, 1, MPI_INT, workerRank, tag_continue, MPI_COMM_WORLD);
     }
 
 }
@@ -1249,7 +1254,6 @@ void Algorithm::ManageSingleObjectiveIterations(double **parameters, int numberO
     else {
         // Do not solve models on the primary worker
         // Setup the request space
-        MPI_Request* request = new MPI_Request[numberOfMpiProcesses - 1];
         MPI_Message mpiMessage;
         MPI_Status mpiStatus;
 
@@ -1289,21 +1293,28 @@ void Algorithm::ManageSingleObjectiveIterations(double **parameters, int numberO
             // Determine if we can receive any values               
             MPI_Improbe(MPI_ANY_SOURCE, tag_data, MPI_COMM_WORLD, &requestFlag, &mpiMessage, &mpiStatus);
             if (requestFlag) {
-                // Get the alternative index and objective function from the secondary worker
-                double data[2];
-                MPI_Mrecv(&data, 2, MPI_DOUBLE, &mpiMessage, &mpiStatus);
+                try {
+                    // Get the alternative index and objective function from the secondary worker
+                    double data[2];
+                    MPI_Mrecv(&data, 2, MPI_DOUBLE, &mpiMessage, &mpiStatus);
 
-                // Set the objective value into the objective array
-                returnArray[(int)data[0]] = data[1];
+                    // Set the objective value into the objective array
+                    returnArray[(int)data[0]] = data[1];
+
+                } catch (...) {
+                    // Read from the secondary worker failed. Fail by keeping the infinite value in the array
+                }
 
                 // Increment the solution counter
                 receiveCounter++;
             }
+
+            std::this_thread::sleep_for(std::chrono::milliseconds(1));
         }
 
         // All alternatives have been sent. Receive all of the solutions
         while (receiveCounter < numberOfAlternatives) {
-            // Determine if we can receive any values               
+            // Determine if we can receive any values
             MPI_Improbe(MPI_ANY_SOURCE, tag_data, MPI_COMM_WORLD, &requestFlag, &mpiMessage, &mpiStatus);
             if (requestFlag) {
                 // Get the alternative index and objective function from the secondary worker

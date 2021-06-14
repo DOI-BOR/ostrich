@@ -4,6 +4,8 @@
 #include "Exception.h"
 
 #include <iostream>
+#include <chrono>
+#include <thread>
 
 
 /*
@@ -420,7 +422,7 @@ void  ModelWorker::SendDouble(int tag_number, double value) {
     // TODO: Doc string
 
     // Send the value
-    MPI_Send(&value, 1, MPI_DOUBLE, 0, tag_number, MPI_COMM_WORLD);
+    MPI_Ssend(&value, 1, MPI_DOUBLE, 0, tag_number, MPI_COMM_WORLD);
 
 }
 
@@ -428,7 +430,7 @@ void  ModelWorker::SendInt(int tag_number, int value) {
     // TODO: Doc string
 
     // Send the value
-    MPI_Send(&value, 1, MPI_INT, 0, tag_number, MPI_COMM_WORLD);
+    MPI_Ssend(&value, 1, MPI_INT, 0, tag_number, MPI_COMM_WORLD);
 
 }
 
@@ -483,6 +485,11 @@ void ModelWorker::SetupWork(void) {
 void  ModelWorker::CommenceWork() {
     // TODO: doc string
 
+    // Set the MPI variables
+    MPI_Status mpiStatus;
+    MPI_Request mpiRequest;
+    int requestFlag = 0;
+
     // Define control variable to break the solution loop
     bool continueWork = true;
 
@@ -499,13 +506,18 @@ void  ModelWorker::CommenceWork() {
             // Solve the model
             if (objectiveType == single) {
                 // Call the solve function
-                double objective = ExecuteSingle();
+                double objective;
+                try {
+                    objective = ExecuteSingle();
+                } catch (...) {
+                    objective = INFINITY;
+                }
 
                 // Stack the alternative and the objective into a single array to transimit 
                 double returnArray[2]{ (double)alternativeIndex, objective };
                 
                 // Send to the primary worker
-                MPI_Send(returnArray, 2, MPI_DOUBLE, 0, tag_data, MPI_COMM_WORLD);
+                MPI_Ssend(returnArray, 2, MPI_DOUBLE, 0, tag_data, MPI_COMM_WORLD);
 
             }
             else {
@@ -555,8 +567,16 @@ int ModelWorker::RequestParameters(void) {
 bool ModelWorker::RequestContinue(void) {
     
 
+    // Setup the request space
+    MPI_Message mpiMessage;
+    MPI_Status mpiStatus;
+    MPI_Request mpiRequest;
+    int requestFlag = 0;
+
     // Send that it's reddy to receive work
-    SendInt(tag_continue, 1);
+    int sendValue = 1;
+    MPI_Isend(&sendValue, 1, MPI_INT, 0, tag_continue, MPI_COMM_WORLD, &mpiRequest);
+    MPI_Wait(&mpiRequest, &mpiStatus);
 
     // Request the continue flag back
     int continueValue = ReceiveInteger(tag_continue);
@@ -568,7 +588,6 @@ bool ModelWorker::RequestContinue(void) {
     else {
         return true;
     }
-
 }
 
 
@@ -1037,6 +1056,7 @@ void ModelWorker::Write(double objFuncVal)
     // Log the solve
     pFile = fopen(name, "a+");
     if (pFile == NULL) {
+        std::cout << "File write error" << std::endl;
         LogError(ERR_FILE_IO, "Write(): Couldn't open OstModel.txt file");
         ExitProgram(1);
     }
@@ -1052,11 +1072,8 @@ void ModelWorker::Write(double objFuncVal)
 
         paramGroup->Write(pFile, WRITE_BNR);
         fprintf(pFile, "\n");
-        fclose(pFile);
     }
 
-    
-    pFile = fopen(name, "a+");
     fprintf(pFile, "%-4d  ", solveCounter);
 
     if (objectiveType == single) {

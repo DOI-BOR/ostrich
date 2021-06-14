@@ -12,6 +12,7 @@ Mutation such that each successive genration of solutions is an improvement
 #include <math.h>
 #include <time.h>
 #include <stdlib.h>
+#include <algorithm>
 
 #include "GeneticAlgorithm2.h"
 #include "LatinHypercube.h"
@@ -430,14 +431,14 @@ void GeneticAlgorithm::Crossover(double* objectives, double** samples, double** 
     scratch[0] = m_BestAlternative;
 
     // Find the best from the previous generation to maintain in the current generation
-    double* objectiveValues = new double[m_NumSurvivors - 1];
-    int* objectiveIndices = new int[m_NumSurvivors - 1];
+    std::vector<double> objectiveValues;
+    std::vector<int> objectiveIndices;
 
     if (m_NumSurvivors > 1) {
         // Fill them with values
         for (int entryIndex = 0; entryIndex < m_NumSurvivors - 1; entryIndex++) {
-            objectiveValues[entryIndex] = objectives[entryIndex];
-            objectiveIndices[entryIndex] = entryIndex;
+            objectiveValues.push_back(objectives[entryIndex]);
+            objectiveIndices.push_back(entryIndex);
         }
 
         for (int entryObjective = m_NumSurvivors - 1; entryObjective < m_NumPopulation; entryObjective++) {
@@ -480,28 +481,26 @@ void GeneticAlgorithm::Crossover(double* objectives, double** samples, double** 
         double r = (double)MyRand() / (double)MY_RAND_MAX;
 
         // Confirm that the target is not currently in the new samples        
-        if (m_NumSurvivors > 1){
-            bool swappedPreviously = true;
-            while (swappedPreviously) {
-                for (int entry = 0; entry < m_NumSurvivors - 1; entry++) {
-                    if (currentIndex == objectiveIndices[entry]) {
-                        // Increment the current index counter to shift off the value
-                        currentIndex++;
-                        swappedPreviously = true;
-                        break;
-                    } else {
-                        // Set the value to not swapped
-                        swappedPreviously = false;
-                    }
-                }
-            }
+        while (std::find(objectiveIndices.begin(), objectiveIndices.end(), currentIndex) != objectiveIndices.end()) {
+            currentIndex++;
         }
 
         // Determine if the chromosome should cross over
         if (r < m_CrossoverRate) {
             // Chromosome will cross over
-            // Determine the crossover partner
+            // Pull a random value
             int crossoverPartner = (int)((double)MyRand() / (double)MY_RAND_MAX * (double)m_NumPopulation);
+
+            // Determine if it should its already been transferred to the sample
+            bool crossTransfered = false;
+            int crossIndex = -1;
+
+            
+            auto it = std::find(objectiveIndices.begin(), objectiveIndices.end(), crossoverPartner);
+            if (std::find(objectiveIndices.begin(), objectiveIndices.end(), crossoverPartner) != objectiveIndices.end()) {
+                crossTransfered = true;
+                crossIndex = it - objectiveIndices.begin() + 1;
+            }
 
             // Determine the crossover location
             int crossoverLocation = (int)((double)MyRand() / (double)MY_RAND_MAX * (double)m_pParamGroup->GetNumParams());
@@ -515,31 +514,38 @@ void GeneticAlgorithm::Crossover(double* objectives, double** samples, double** 
             }
 
             // If value is less than the current index, pull from the scratch array. Otherwise pull from the sample array
-            if (crossoverPartner < currentIndex) {
+            //if (crossTransfered){
+            if (crossTransfered || crossoverPartner < i) {
+                // Already been transfered. Pull from the scratch array
+                if (crossTransfered) {
+                    for (int entry = crossoverLocation; entry < m_pParamGroup->GetNumParams(); entry++) {
+                        temp[entry] = scratch[crossIndex][entry];
+                    }
+                } else {
+                    for (int entry = crossoverLocation; entry < m_pParamGroup->GetNumParams(); entry++) {
+                        temp[entry] = scratch[crossoverPartner][entry];
+                    }
+                }
+                
+            } else {
+                // Not transferred. Pull from the sample array.
                 for (int entry = crossoverLocation; entry < m_pParamGroup->GetNumParams(); entry++) {
-                    temp[entry] = scratch[currentIndex][entry];
+                    temp[entry] = samples[crossoverPartner][entry];
                 }
             }
-            else {
-                for (int entry = crossoverLocation; entry < m_pParamGroup->GetNumParams(); entry++) {
-                    temp[entry] = samples[currentIndex][entry];
-                }
-
-            }
-
+            
             // Set the values into the scratch array
             scratch[i] = temp;
 
-        }
-        else {
+        } else {
             // Chromosome will not cross over. Set the chromosome into the scratch arra
             double* temp = scratch[i];
             scratch[i] = samples[currentIndex];
             samples[currentIndex] = temp;
         }
-    }
 
-    currentIndex++;
+        currentIndex++;
+    }
 }
 
 /*
@@ -1063,8 +1069,13 @@ void GeneticAlgorithm::Optimize(void) {
     // Enter the solution loop
    while (m_NumGenerationsMaximum > m_Generation && m_CurStop >= m_StopVal) {
 
-       // Evaluate the fitness of the sample set
+       // Create the objectives and fill with infinity to fail safe on bad runs
        double *objectives = new double[m_NumPopulation];
+       for (int entry = 0; entry < m_NumPopulation; entry++) {
+           objectives[entry] = INFINITY;
+       }
+
+       // Evaluate the fitness of the sample set
        ManageSingleObjectiveIterations(samples, m_pParamGroup->GetNumParams(), m_NumPopulation, objectives);
 
        // Compute the best and averages
@@ -1076,7 +1087,10 @@ void GeneticAlgorithm::Optimize(void) {
        // Swap the current with the best if doing better
        if (m_BestObjectiveIteration < m_BestObjective) {
            m_BestObjective = m_BestObjectiveIteration;
-           m_BestAlternative = samples[m_BestObjectiveIndexIteration];
+
+           m_BestAlternative = new double[m_pParamGroup->GetNumParams()];
+           memcpy(m_BestAlternative, samples[m_BestObjectiveIndexIteration], sizeof(double) * m_pParamGroup->GetNumParams());
+           //m_BestAlternative = samples[m_BestObjectiveIndexIteration];
        }
        
        // Log the iteration
