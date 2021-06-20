@@ -69,13 +69,13 @@ void ModelWorker::ReceiveWorkerDirectory(void) {
     // TODO: Doc string
 
     // Request the directory from the primary worker
-    workerDirectory = ReceiveString(tag_directory);
+    m_workerDirectory = ReceiveString(tag_directory);
 
     // Remove the last character. This is necessary for the numbers to append correctly.
-    workerDirectory.pop_back();
+    m_workerDirectory.pop_back();
 
     // Append the worker number onto the tag
-    workerDirectory += std::to_string(rank);
+    m_workerDirectory += std::to_string(rank);
 
 }
 
@@ -438,16 +438,16 @@ void  ModelWorker::SendInt(int tag_number, int value) {
 void ModelWorker::SetupWork(void) {
 
     // Create the working directory
-    if (!std::filesystem::exists(workerDirectory)) {
+    if (!std::filesystem::exists(m_workerDirectory)) {
         // Directory does not already exist. Create it.
-        std::filesystem::create_directories(workerDirectory);
+        std::filesystem::create_directories(m_workerDirectory);
     }
 
     // Copy all the files to it from the source directory
     for (int entryFile = 0; entryFile < fileCleanupList.size(); entryFile++) {
 
         // GEt the current working directory
-        std::filesystem::path workerDirectoryPath = workerDirectory;
+        std::filesystem::path workerDirectoryPath = m_workerDirectory;
         
         // Remove the last character which causes issues.
         // TODO: remove this during the read of the control file
@@ -617,7 +617,7 @@ void ModelWorker::PreserveModel(int rank, int trial, int counter, IroncladString
         };
 
         // Construct the worker folder
-        std::filesystem::path workerDirectoryPath = workerDirectory;
+        std::filesystem::path workerDirectoryPath = m_workerDirectory;
         directory /= workerDirectoryPath.parent_path().filename();
         directory += std::to_string(rank);
 
@@ -795,7 +795,7 @@ double ModelWorker::StdExecute(double viol) {
         // Setup the output file and path
         std::string outFileString = filePairs[entryPair][1];
         outFileString.pop_back();
-        std::filesystem::path outTemp = workerDirectory;
+        std::filesystem::path outTemp = m_workerDirectory;
         outTemp = outTemp /= outFileString;
 
         outFileString = outTemp.string();
@@ -815,7 +815,7 @@ double ModelWorker::StdExecute(double viol) {
 
     // Move to model subdirectory, if needed
     std::filesystem::path parentPath = std::filesystem::current_path();
-    std::filesystem::current_path(workerDirectory);
+    std::filesystem::current_path(m_workerDirectory);
 
 
     //make substitution of parameters into model input databases
@@ -1042,7 +1042,6 @@ void ModelWorker::Write(double objFuncVal)
 {
     //ResponseVarGroup* pRespVarGroup;
     FILE* pFile;
-    char name[DEF_STR_SZ];
 
     /*pRespVarGroup = NULL;
     if (m_pObjFunc != NULL)
@@ -1051,10 +1050,14 @@ void ModelWorker::Write(double objFuncVal)
     }*/
 
     // Create the name of the log file for the secondary worker
-    sprintf(name, "OstModel%d.txt", rank);
+    std::filesystem::path parentPath = m_workerDirectory;
+    parentPath /= "..";
+    parentPath /= "..";
+    parentPath /= "OstModel" + std::to_string(rank) + ".txt";
+    parentPath = parentPath.lexically_normal();
 
     // Log the solve
-    pFile = fopen(name, "a+");
+    pFile = fopen(parentPath.string().c_str(), "a+");
     if (pFile == NULL) {
         std::cout << "File write error" << std::endl;
         LogError(ERR_FILE_IO, "Write(): Couldn't open OstModel.txt file");

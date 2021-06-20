@@ -54,7 +54,7 @@ private:
 	std::string preserveCommand;
 
 	// Configuration variables
-	std::string workerDirectory;
+	std::string m_workerDirectory;
 	std::vector<std::string> fileCleanupList;
 	std::vector<std::vector<std::string>> filePairs;
 	ObservationGroup *observationGroup;
