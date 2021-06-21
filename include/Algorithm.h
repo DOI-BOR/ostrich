@@ -74,7 +74,7 @@ public:
     double *m_BestAlternative;                    // Best alternative
     
     void ConfigureWorkers(void);
-    void ManageSingleObjectiveIterations(double** parameters, int numberOfParameters, int numberOfAlternatives, double* returnArray);
+    void ManageSingleObjectiveIterations(double** parameters, int startingIndex, int numberOfParameters, int numberOfAlternatives, double* returnArray);
     void TerminateWorkers();
 
 private:

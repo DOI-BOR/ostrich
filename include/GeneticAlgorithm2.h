@@ -35,7 +35,7 @@ class GeneticAlgorithm : Algorithm {
       GeneticAlgorithm();      
       ~GeneticAlgorithm(void){ DBG_PRINT("GeneticAlgorithm::DTOR"); Destroy(); }
       double** CreateInitialSample(int sampleSize);
-      double** CreateSample(double* objectives, int numberOfObjectives, double** samples, double** scratch);
+      double** CreateSample(double* objectives, double* objectivesNew, double** samples, double** scratch);
       void Optimize(void);
       void Calibrate(void);
       void Destroy(void);
@@ -65,7 +65,7 @@ class GeneticAlgorithm : Algorithm {
        double CalcMedianFitness(double* objectives, int numberOfObjectives);
 
        void TourneySelection(int nCombatants, double* objectives, int numberOfObjectives, double** samples, double** scratch);
-       void Crossover(double* objectives, double** samples, double** scratch);
+       void Crossover(double* objectives, double* objectivesNew, double** samples, double** scratch);
        void Mutate(double** scratch);
 
        //StatsClass m_pStats;

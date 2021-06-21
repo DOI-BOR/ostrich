@@ -1240,7 +1240,7 @@ MPI Communication - ManageSingleObjectiveIterations()
    Manages the solution of a set of parameter alternatives
 ------------------------------------------------------------------------------------------------------------------------------
 */
-void Algorithm::ManageSingleObjectiveIterations(double **parameters, int numberOfParameters, int numberOfAlternatives, double* returnArray) {
+void Algorithm::ManageSingleObjectiveIterations(double** parameters, int startingIndex, int numberOfParameters, int numberOfAlternatives, double* returnArray) {
 
     // Get the number of workers in the MPI space
     int numberOfMpiProcesses;
@@ -1261,8 +1261,8 @@ void Algorithm::ManageSingleObjectiveIterations(double **parameters, int numberO
         int sourceFlag = 0;
 
         // Set the counter variables         
-        int sendCounter = 0;
-        int receiveCounter = 0;
+        int sendCounter = startingIndex;
+        int receiveCounter = startingIndex;
 
         // Loop and send work to the secondary workers as they become available
         while (sendCounter < numberOfAlternatives){
