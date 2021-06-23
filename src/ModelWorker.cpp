@@ -51,6 +51,9 @@ void ModelWorker::SetupFromPrimary() {
     // Get the solve command
     ReceiveWorkerSolveCommand();
 
+    // Get the archive commands
+    ReciveWorkerArchiveCommand();
+
     // Get the extra files from the directory
     ReceiveWorkerExtraFiles();
 
@@ -88,6 +91,35 @@ void ModelWorker::ReceiveWorkerSolveCommand(void) {
     // Remove the last character.
     solveCommand.pop_back();
 
+}
+
+void ModelWorker::ReciveWorkerArchiveCommand(void) {
+    // TODO: doc string
+    
+    // Request the preservation status from the primary worker
+    int preserveStatus = ReceiveInteger(tag_archive);
+
+    if (preserveStatus == 0) {
+        // Model will not be archived. Set the status to false
+        preserveModelOutput = false;
+
+    } else if (preserveStatus == 1) {
+        // Model will be archived using standard method
+        // Toggle the preserve status to true
+        preserveModelOutput = true;
+
+    } else if (preserveStatus == 2) {
+        // Model will be archived using a custom command.
+        // Toggle the preserve status to true
+        preserveModelOutput = true;
+
+        // Request the preservation command from the worker
+        preserveCommand = ReceiveString(tag_archive);
+
+        // Remove the last character of the solve command
+        preserveCommand.pop_back();
+
+    }
 }
 
 
@@ -525,7 +557,10 @@ void  ModelWorker::CommenceWork() {
                 // TODO: Add multiobject evaluation
             }
 
-            // Perform any inter-call cleanup
+            // Archive the model if it is enabled
+            if (preserveModelOutput) {
+                PreserveModel();
+            }
         }
         
     }
@@ -559,6 +594,7 @@ int ModelWorker::RequestParameters(void) {
 
     // Cleanup the memory space
     delete parametersTemp;
+    delete parameters;
 
     // Return the alternative index to the calling function
     return alternativeIndex;
@@ -593,23 +629,20 @@ bool ModelWorker::RequestContinue(void) {
 
 /******************************************************************************
  PreserveModel()
+    Preserves the model solution by moving it from the working directory.
 ******************************************************************************/
-void ModelWorker::PreserveModel(int rank, int trial, int counter, IroncladString ofcat)
-{
+void ModelWorker::PreserveModel() {
     char tmp[DEF_STR_SZ];
 
     if (preserveModelOutput == false) {
         return;
     }
 
-    /* use built in preservation option --- tries to save everything */
+    // Get the current path to the worker
+    std::filesystem::path directory = std::filesystem::current_path();
+
+    // Save everything in the working directory
     if (preserveCommand.empty()) {
-        // Get the current path to the worker
-        std::filesystem::path directory = std::filesystem::current_path();
-
-        // Move up one directory to project directory
-        directory = directory.parent_path();
-
         // Construct the archive folder
         directory /= std::string("archive");
         if (!std::filesystem::exists(directory)) {
@@ -618,34 +651,41 @@ void ModelWorker::PreserveModel(int rank, int trial, int counter, IroncladString
 
         // Construct the worker folder
         std::filesystem::path workerDirectoryPath = m_workerDirectory;
-        directory /= workerDirectoryPath.parent_path().filename();
-        directory += std::to_string(rank);
+        directory /= m_workerDirectory;
 
         if (!std::filesystem::exists(directory)) {
             std::filesystem::create_directory(directory);
         }
 
         // Construct the run folder 
-        directory /= "run_" + std::to_string(counter - 1); // This adjusts by one to align with the model output files
+        directory /= "run_" + std::to_string(solveCounter - 1); // This adjusts by one to align with the model output files
         std::filesystem::create_directory(directory);
 
         // Move the files from the worker to the archive
-        std::filesystem::copy(std::filesystem::current_path(), directory, std::filesystem::copy_options::recursive);
-    }
-    else{
+        std::filesystem::copy(workerDirectoryPath, directory, std::filesystem::copy_options::recursive);
+
+    } else{
+        // Run user commands to save specific model files
         /* run the user-supplied preservation command */
-        sprintf(tmp, "%s %d %d %d %s", preserveCommand, rank, trial, counter, ofcat);
+        sprintf(tmp, "%s %d %d", preserveCommand, rank, solveCounter);
 
-        #ifdef _WIN32 //windows version
-            strcat(tmp, " > OstPreserveModelOut.txt");
-        #else //Linux (bash, dash, and csh)
-            // '>&' redircts both output and error
-            strcat(tmp, " > OstPreserveModelOut.txt 2>&1");
-        #endif
+        // Construct the logfile name
+        directory += "OstPreserveModelOut.txt";
 
+        // Open the log file
+        FILE* pFile = fopen(directory.string().c_str(), "a+");
+
+        // Log the command
+        fprintf(pFile, tmp);  
+        fprintf(pFile, "\n");
+
+        // Close the file
+        fclose(pFile);
+
+        // Issue the command to the system
         system(tmp);    
     }
-}/* end PreserveModel() */
+}
 
 
 /*****************************************************************************

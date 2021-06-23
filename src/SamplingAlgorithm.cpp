@@ -13,6 +13,7 @@ Version History
 #include <time.h>
 #include <stdlib.h>
 #include <string.h>
+#include <vector>
 
 #include "SamplingAlgorithm.h"
 #include "Model.h"
@@ -413,7 +414,7 @@ GenerateInitialSamples()
 Create a set of LHS samples.
 ******************************************************************************/
 void SamplingAlgorithm::GenerateInitialSamples(int num) {
-    double** samples;
+  
    LatinHypercube * pLHS;
    pLHS = new LatinHypercube(num, m_NumParams, num);
 
@@ -421,11 +422,11 @@ void SamplingAlgorithm::GenerateInitialSamples(int num) {
    pLHS->CreateUniformSample(m_pLwr, m_pUpr);
 
    // Get the sample matrix from the LHS object
-   samples = pLHS->GetSampleMatrix();
+   std::vector<std::vector<double>> samples = pLHS->GetSampleMatrix();
 
    // Fill back into the sampling objects
    for(int i = 0; i < num; i++) {
-       m_pSamples[i].v = samples[i];
+       m_pSamples[i].v = samples[i].data();
    }
 
    //free up sampler

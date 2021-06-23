@@ -37,7 +37,7 @@ public:
 	double ExecuteSingle(void);
 	void ExecuteMulti(double* pF, int nObj);
 	double DisklessExecute(void);
-	void PreserveModel(int rank, int trial, int counter, IroncladString ofcat);
+	void PreserveModel();
 	void   Write(double objFuncVal);
 
 	//bool CheckCache(double* val);
@@ -92,6 +92,7 @@ private:
 	// Setup functions 
 	void ReceiveWorkerDirectory(void);
 	void ReceiveWorkerSolveCommand(void);
+	void ReciveWorkerArchiveCommand(void);
 	void ReceiveWorkerExtraFiles(void);
 	void ReceiveWorkerFilePairs(void);
 	void ReceiveWorkerObservations(void);

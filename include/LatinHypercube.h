@@ -29,10 +29,10 @@ public:
     //double SampleRow(int row);
     void ReDim(int cols);
 
-    double** GetSampleMatrix(void) { return m_pVals; };
+    std::vector<std::vector<double>> GetSampleMatrix(void) { return m_pVals; };
 
 private:
-    double** m_pVals;
+    std::vector<std::vector<double>> m_pVals;
     int m_Rows;
     int m_Cols;
     int m_MaxCols;

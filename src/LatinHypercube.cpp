@@ -25,15 +25,10 @@ Version History
 /******************************************************************************
 Destroy()
 ******************************************************************************/
-void LatinHypercube::Destroy(void)
-{
-   int i;
-
-   for(i = 0; i < m_Rows; i++){ delete [] m_pVals[i];}
-   delete [] m_pVals;
+void LatinHypercube::Destroy(void) {
 
    IncDtorCount();
-} /* end Destroy() */
+} 
 
 /******************************************************************************
 CTOR
@@ -52,21 +47,8 @@ LatinHypercube::LatinHypercube(int numberOfSamples, int numberOfParameters, int 
        m_MaxCols *= 2;
    }
 
-   // Create the sample initial array
-   m_pVals = new double *[m_Rows];
-   MEM_CHECK(m_pVals);
-
-   // Create the sample subarrays
-   for(i = 0; i < m_Rows; i++) {
-      // Initialize the array
-      m_pVals[i] = new double[m_Cols];
-      MEM_CHECK(m_pVals[i]);
-
-      // Set the value to zero
-      for (j = 0; j < m_Cols; j++) {
-          m_pVals[i][j] = 0.00;
-      }
-   }
+   // Create the sample initial array and intialize to zeron
+   m_pVals = std::vector<std::vector<double>>(m_Rows, std::vector<double>(m_Cols, 0));
 
    IncCtorCount();
 } /* end default CTOR */

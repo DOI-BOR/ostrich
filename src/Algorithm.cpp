@@ -779,7 +779,6 @@ void Algorithm::Destroy(void) {
     delete[] m_CurMultiObjF;
     m_bSave = false;
     delete m_pDecision;
-    delete m_BestAlternative;
 
     if (m_pFileCleanupList != NULL) {
         IroncladString dirName = GetExeDirName();
@@ -924,6 +923,39 @@ void Algorithm::ConfigureWorkerSolveCommand(int workerRank) {
 
     // Send the worker file stem to the secondary worker
     MPI_Send(m_ExecCmd, strlen(m_ExecCmd) + 1, MPI_CHAR, workerRank, tag_solve, MPI_COMM_WORLD);
+}
+
+/*
+------------------------------------------------------------------------------------------------------------------------------
+MPI Communication - ConfigureWorkerArchiveCommand()
+   Transfers the worker archive command from the primary to the secondary worker
+------------------------------------------------------------------------------------------------------------------------------
+*/
+void Algorithm::ConfigureWorkerArchiveCommand(int workerRank) {
+
+    int sendValue;
+
+    if (!m_bPreserveModelOutput) {
+        // Model will not be preserved
+        sendValue = 0;
+        MPI_Send(&sendValue, 1, MPI_INT, workerRank, tag_archive, MPI_COMM_WORLD);
+
+    } else if (m_bPreserveModelOutput && !m_PreserveCmd) {
+        // Model will be preserved with the the standard full archive method
+        sendValue = 1;
+        MPI_Send(&sendValue, 1, MPI_INT, workerRank, tag_archive, MPI_COMM_WORLD);
+
+    }
+    else if (m_bPreserveModelOutput && m_PreserveCmd) {
+        // Model will be preserved with a custom archive command
+        sendValue = 2;
+        MPI_Send(&sendValue, 1, MPI_INT, workerRank, tag_archive, MPI_COMM_WORLD);
+
+
+        // Send the worker file stem to the secondary worker
+        MPI_Send(m_PreserveCmd, strlen(m_PreserveCmd) + 1, MPI_CHAR, workerRank, tag_archive, MPI_COMM_WORLD);
+
+    }
 }
 
 /*
@@ -1141,6 +1173,9 @@ void Algorithm::ConfigureWorkers() {
         // Configure the worker solve command
         ConfigureWorkerSolveCommand(entryWorker);
 
+        // Configure the worker archive command
+        ConfigureWorkerArchiveCommand(entryWorker);
+
         // Get the extra files from the directory
         ConfigureWorkerExtraFiles(entryWorker);
 
@@ -1240,7 +1275,7 @@ MPI Communication - ManageSingleObjectiveIterations()
    Manages the solution of a set of parameter alternatives
 ------------------------------------------------------------------------------------------------------------------------------
 */
-void Algorithm::ManageSingleObjectiveIterations(double** parameters, int startingIndex, int numberOfParameters, int numberOfAlternatives, double* returnArray) {
+void Algorithm::ManageSingleObjectiveIterations(std::vector<std::vector<double>> parameters, int startingIndex, int numberOfParameters, std::vector<double>& returnArray) {
 
     // Get the number of workers in the MPI space
     int numberOfMpiProcesses;
@@ -1265,7 +1300,8 @@ void Algorithm::ManageSingleObjectiveIterations(double** parameters, int startin
         int receiveCounter = startingIndex;
 
         // Loop and send work to the secondary workers as they become available
-        while (sendCounter < numberOfAlternatives){
+        while (sendCounter < parameters.size()){
+            
             // Get the rank number of a secondary worker waiting for work
             int workerRank, workerValue;
 
@@ -1284,7 +1320,7 @@ void Algorithm::ManageSingleObjectiveIterations(double** parameters, int startin
                 SendWorkerContinue(workerRank, true);
 
                 // Transmit the parameteres to the worker to solve
-                SendWorkerParameters(workerRank, sendCounter, parameters[sendCounter]);
+                SendWorkerParameters(workerRank, sendCounter, parameters[sendCounter].data());
 
                 // Increment the send counter
                 sendCounter++;
@@ -1313,7 +1349,7 @@ void Algorithm::ManageSingleObjectiveIterations(double** parameters, int startin
         }
 
         // All alternatives have been sent. Receive all of the solutions
-        while (receiveCounter < numberOfAlternatives) {
+        while (receiveCounter < parameters.size()) {
             // Determine if we can receive any values
             MPI_Improbe(MPI_ANY_SOURCE, tag_data, MPI_COMM_WORLD, &requestFlag, &mpiMessage, &mpiStatus);
             if (requestFlag) {
@@ -1329,6 +1365,10 @@ void Algorithm::ManageSingleObjectiveIterations(double** parameters, int startin
 
             }
         }    
+    }
+
+    for (int entry = 0; entry < returnArray.size(); entry++) {
+        std::cout << returnArray[entry] << std::endl;
     }
 }
 

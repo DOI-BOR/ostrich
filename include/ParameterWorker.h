@@ -89,7 +89,7 @@ class IntParamWorker : public ParameterWorkerABC {
       void Write(FILE* pFile, int type);
 
       double GetValue(void){ return (double)m_value;}
-      void SetValue(double value){ m_value = value; }
+      void SetValue(double value){ m_value = (double)value; }
       const char * GetType(void) {return "integer";}
 
 

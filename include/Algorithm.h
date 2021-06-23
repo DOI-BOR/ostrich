@@ -70,11 +70,11 @@ public:
     void SaveBest(int id);
     //TelescopeType GetTelescopingStrategy(void) { return m_Telescope; }
 
-    double m_BestObjective = 1e12;                 // Best objective
-    double *m_BestAlternative;                    // Best alternative
+    double m_BestObjective = INFINITY;                          // Best objective
+    std::vector<double> m_BestAlternative;                  // Best alternative
     
     void ConfigureWorkers(void);
-    void ManageSingleObjectiveIterations(double** parameters, int startingIndex, int numberOfParameters, int numberOfAlternatives, double* returnArray);
+    void ManageSingleObjectiveIterations(std::vector<std::vector<double>> parameters, int startingIndex, int numberOfParameters, std::vector<double>& objectives);
     void TerminateWorkers();
 
 private:
@@ -116,6 +116,7 @@ private:
     // MPI communication functions
     void ConfigureWorkerDirectory(int workerRank);
     void ConfigureWorkerSolveCommand(int workerRank);
+    void ConfigureWorkerArchiveCommand(int workerRank);
     void ConfigureWorkerExtraFiles(int workerRank);
     void ConfigureWorkerFilePairs(int workerRank);
     void ConfigureWorkerObservations(int workerRank);

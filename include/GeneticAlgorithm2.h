@@ -34,8 +34,9 @@ class GeneticAlgorithm : Algorithm {
    public:
       GeneticAlgorithm();      
       ~GeneticAlgorithm(void){ DBG_PRINT("GeneticAlgorithm::DTOR"); Destroy(); }
-      double** CreateInitialSample(int sampleSize);
-      double** CreateSample(double* objectives, double* objectivesNew, double** samples, double** scratch);
+      std::vector<std::vector<double>> CreateInitialSample(int sampleSize);
+      void CreateSample(std::vector<double>& objectives, std::vector<double>& objectivesScratch, std::vector<std::vector<double>>& samples, 
+                        std::vector<std::vector<double>>& samplesScratch);
       void Optimize(void);
       void Calibrate(void);
       void Destroy(void);
@@ -60,13 +61,14 @@ class GeneticAlgorithm : Algorithm {
        double m_BestObjectiveIteration = INFINITY;       // Best objective within the iteration
        int m_BestObjectiveIndexIteration = -1;      // Best objective index within the iteration
        
-       void GetBestObjective(double* objectives, int numberOfObjectives);
-       double CalcMeanFitness(double* objectives, int numberOfObjectives);
-       double CalcMedianFitness(double* objectives, int numberOfObjectives);
+       void GetBestObjective(std::vector<double> objectives);
+       double CalcMeanFitness(std::vector<double> objectives);
+       double CalcMedianFitness(std::vector<double> objectives);
 
        void TourneySelection(int nCombatants, double* objectives, int numberOfObjectives, double** samples, double** scratch);
-       void Crossover(double* objectives, double* objectivesNew, double** samples, double** scratch);
-       void Mutate(double** scratch);
+       void Crossover(std::vector<double>& objectives, std::vector<double>& objectivesScratch, std::vector<std::vector<double>>& samples,
+                      std::vector<std::vector<double>>& samplesScratch);
+       void Mutate(std::vector<std::vector<double>>& scratch);
 
        //StatsClass m_pStats;
 
