@@ -1202,9 +1202,13 @@ MPI Communication - SendWorkerParameters()
 */
 void Algorithm::SendWorkerParameters(int workerRank, int alternativeIndex, double parametersRegular[]) {
 
+    // Create a vector to hold the parameters
+    std::vector<double> parametersTemp;
 
-    // Convert the parameters from transformation to log space
-    double *parametersConverted = new double[m_pParamGroup->m_NumParams];
+    // Put the index in as the first entry
+    parametersTemp.push_back((double)alternativeIndex);
+
+    // Convert the parameters from transformation to normal space
     for (int entryParameter = 0; entryParameter < m_pParamGroup->m_NumParams; entryParameter++) {
         // Extract the pointer
         ParameterABC *param = m_pParamGroup->GetParamPtr(entryParameter);
@@ -1213,38 +1217,27 @@ void Algorithm::SendWorkerParameters(int workerRank, int alternativeIndex, doubl
         param->SetEstimatedValueTransformed(parametersRegular[entryParameter]);
 
         // Get the converted value
-        parametersConverted[entryParameter] = param->GetTransformedVal();
+        parametersTemp.push_back(param->GetTransformedVal());
     }
 
     // Update the tied parameters
-    double *parametersTied = new double[m_pParamGroup->m_NumTied];
     for (int entryParameter = 0; entryParameter < m_pParamGroup->m_NumTied; entryParameter++) {
         // Extract the pointer
         TiedParamABC* param = m_pParamGroup->GetTiedParamPtr(entryParameter);
 
         // Get the updated value
-        parametersTied[entryParameter] = param->GetEstimatedValueTransformed();
+        parametersTemp.push_back(param->GetEstimatedValueTransformed());
     }
  
-
-    // Create a copy of the vector to add the alternative number as the lead value, joining the data together
-    int numberOfParamters = m_pParamGroup->m_NumParams + m_pParamGroup->m_NumTied;
-    double *parametersTemp = new double[numberOfParamters + 1];
-    
-    // Fill the array
-    parametersTemp[0] = (double)alternativeIndex;
-    
-    for (int entryParameter = 0; entryParameter < m_pParamGroup->m_NumParams; entryParameter++) {
-        parametersTemp[entryParameter + 1] = parametersConverted[entryParameter];
-    }
-
-    for (int entryParameter = 0; entryParameter < m_pParamGroup->m_NumTied; entryParameter++) {
-        parametersTemp[m_pParamGroup->m_NumParams + entryParameter + 1] = parametersTied[entryParameter];
-    }    
+    // Get the total number of parameters
+    int numberOfParamters = m_pParamGroup->m_NumParams + m_pParamGroup->m_NumTied;   
 
     // Send the array to the secondary worker
     //MPI_Send(&parametersTemp[0], numberOfParamters + 1, MPI_DOUBLE, workerRank, tag_data, MPI_COMM_WORLD);
-    MPI_Ssend(&parametersTemp[0], numberOfParamters + 1, MPI_DOUBLE, workerRank, tag_data, MPI_COMM_WORLD);
+    MPI_Ssend(parametersTemp.data(), numberOfParamters + 1, MPI_DOUBLE, workerRank, tag_data, MPI_COMM_WORLD);
+
+    // Cleanup memory
+
 }
 
 /*
@@ -1365,10 +1358,6 @@ void Algorithm::ManageSingleObjectiveIterations(std::vector<std::vector<double>>
 
             }
         }    
-    }
-
-    for (int entry = 0; entry < returnArray.size(); entry++) {
-        std::cout << returnArray[entry] << std::endl;
     }
 }
 
