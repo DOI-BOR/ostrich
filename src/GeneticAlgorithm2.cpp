@@ -446,17 +446,14 @@ void GeneticAlgorithm::Crossover(std::vector<double>& objectives, std::vector<do
 
     if (m_NumSurvivors > 1) {
         // Initialize original index locations
-        std::cout << "Setup sort" << std::endl;
         std::vector<size_t> idx(objectives.size());
         iota(idx.begin(), idx.end(), 0);
 
         // Sort indexes based on comparing values in objectives using std::stable_sort instead of std::sort
         // to avoid unnecessary index re-orderings when objectives contains elements of equal values 
-        std::cout << "Sort" << std::endl;
         stable_sort(idx.begin(), idx.end(), [&objectives](size_t i1, size_t i2) {return objectives[i1] < objectives[i2]; });
 
         // Put the first values alternatives into the new alternatives that don't match the the best alternative
-        std::cout << "Fill sort" << std::endl;
         int survivorCounter = 1;
         int indexCounter = 0;
         while (survivorCounter < m_NumSurvivors && indexCounter < m_NumPopulation) {
@@ -464,7 +461,6 @@ void GeneticAlgorithm::Crossover(std::vector<double>& objectives, std::vector<do
             // Test the current index to make sure it does not equal the best alternative
             if (!std::equal(m_BestAlternative.begin(), m_BestAlternative.end(), samples[indexCounter].begin())) {
                 // Set alternative into the new sample array
-                std::cout << "Min index:\t" << idx[indexCounter] << std::endl;
                 samplesScratch[survivorCounter] = samples[idx[indexCounter]];
                 objectivesScratch[survivorCounter] = objectives[idx[indexCounter]];
 
@@ -477,10 +473,8 @@ void GeneticAlgorithm::Crossover(std::vector<double>& objectives, std::vector<do
         }
     }
 
-    std::cout << "Beginning crossover" << std::endl;
     // Determine if the chromosomes will cross over
     for (int i = m_NumSurvivors; i < m_NumPopulation; i++) {
-        std::cout << "\tCrossover\t" << i << std::endl;
         // Draw a random value for crossing over
         double r = (double)MyRand() / (double)MY_RAND_MAX;
 
@@ -501,27 +495,23 @@ void GeneticAlgorithm::Crossover(std::vector<double>& objectives, std::vector<do
             // Create a temporary holder for the data
             std::vector<double> temp;
 
-            std::cout << "\tFill from target" << crossoverTarget << "\t" << crossoverLocation << std::endl;
             // Fill the temporary array up the the fill location from the target
             for (int entry = 0; entry < crossoverLocation; entry++) {
                 temp.push_back(samples[crossoverTarget][entry]);
             }
 
-            std::cout << "\tFill from partner\t" << crossoverPartner << std::endl;
             // Fill the temporary array up the the fill location from the partner
             for (int entry = crossoverLocation; entry < m_pParamGroup->GetNumParams(); entry++) {
                 temp.push_back(samples[crossoverPartner][entry]);
             }
             
             // Set the vector into the new alternatives vector
-            std::cout << "\tCrossoer assign" << std::endl;
             samplesScratch[i] = temp;
 
 
         } else {
             // Chromosome will not cross over. Set the chromosome into the scratch array
             int crossoverTarget = (int)((double)MyRand() / (double)MY_RAND_MAX * (double)m_NumPopulation);
-            std::cout << "\tReassigning alternative" << std::endl;
 
             // Set the vector into the new alternatives vector
             samplesScratch[i] = samples[crossoverTarget];
@@ -626,12 +616,8 @@ Retrieves the chromosome value and index that has the best fitness value.
 */
 void GeneticAlgorithm::GetBestObjective(std::vector<double> objectives) {
 
-    std::cout << "best objective calculation" << std::endl;
-
     m_BestObjectiveIndexIteration = std::min_element(objectives.begin(), objectives.end()) - objectives.begin();
     m_BestObjectiveIteration = *std::min_element(objectives.begin(), objectives.end());
-
-    std::cout << "Minimum Index:\t" << m_BestObjectiveIndexIteration << "\tMinimum Objective:\t" << m_BestObjectiveIteration << std::endl;
     
 }
 
@@ -1021,69 +1007,82 @@ void GeneticAlgorithm::Optimize(void) {
     // Initialize the workers
     ConfigureWorkers();
 
-   // Initialize the chromosome for the first solve
-   std::vector<std::vector<double>> samples = CreateInitialSample(m_NumPopulation);
+    // Initialize the sample matrix for the first solve
+    std::vector<double> initialConditions;
+    for (int entryParameter = 0; entryParameter < m_pParamGroup->GetNumParams(); entryParameter++) {
+        // Get the parameter
+        ParameterABC* temp = m_pParamGroup->GetParamPtr(entryParameter);
 
-   // Initialize the objectives for the first solve
-   std::vector<double> objectives = std::vector<double>(m_NumPopulation, INFINITY);
+        // Add the condition to the vectory
+        initialConditions.push_back(temp->GetInitialValueTransformed());
+    }
+    
+    // Generate the remaining sample size
+    std::vector<std::vector<double>> samples = CreateInitialSample(m_NumPopulation-1);
+
+    // Add the initial conditions as the first sample
+    samples.insert(samples.begin(), initialConditions);
+
+    // Initialize the objectives for the first solve
+    std::vector<double> objectives = std::vector<double>(m_NumPopulation, INFINITY);
 
     // Enter the solution loop
-   while (m_NumGenerationsMaximum > m_Generation && m_CurStop >= m_StopVal) {
+    while (m_NumGenerationsMaximum > m_Generation && m_CurStop >= m_StopVal) {
 
-       // Evaluate the fitness of the sample set
-       if (m_Generation == 0) {
-           // Solve all the alternatives
-           ManageSingleObjectiveIterations(samples, 0, m_pParamGroup->GetNumParams(), objectives);
-       } else {
-           // Skip the survivors to save time. No need to resolove as objectives are known.
-           ManageSingleObjectiveIterations(samples, m_NumSurvivors, m_pParamGroup->GetNumParams(), objectives);
-       }
+        // Evaluate the fitness of the sample set
+        if (m_Generation == 0) {
+            // Solve all the alternatives
+            ManageSingleObjectiveIterations(samples, 0, m_pParamGroup->GetNumParams(), objectives);
+        } else {
+            // Skip the survivors to save time. No need to resolove as objectives are known.
+            ManageSingleObjectiveIterations(samples, m_NumSurvivors, m_pParamGroup->GetNumParams(), objectives);
+        }
        
-       // Compute the best and averages
-       GetBestObjective(objectives);
-       double meanObjective = CalcMeanFitness(objectives);
-       double medianOBjective = CalcMedianFitness(objectives);
-       m_CurStop = fabs((medianOBjective - m_BestObjectiveIteration) / medianOBjective);
+        // Compute the best and averages
+        GetBestObjective(objectives);
+        double meanObjective = CalcMeanFitness(objectives);
+        double medianOBjective = CalcMedianFitness(objectives);
+        m_CurStop = fabs((medianOBjective - m_BestObjectiveIteration) / medianOBjective);
 
-       // Set the best alternative from the index
-       if (m_BestObjectiveIteration < m_BestObjective) {
-           m_BestObjective = m_BestObjectiveIteration;
-           m_BestAlternative = samples[m_BestObjectiveIndexIteration];
-       }
+        // Set the best alternative from the index
+        if (m_BestObjectiveIteration < m_BestObjective) {
+            m_BestObjective = m_BestObjectiveIteration;
+            m_BestAlternative = samples[m_BestObjectiveIndexIteration];
+        }
        
-       // Log the iteration
-       // Set the values into the pointer groups
-       for (int entryParam = 0; entryParam < m_pParamGroup->GetNumParams(); entryParam++) {
-           ParameterABC* temp = m_pParamGroup->GetParamPtr(entryParam);
-           temp->SetEstimatedValueTransformed(m_BestAlternative[entryParam]);
-       }
+        // Log the iteration
+        // Set the values into the pointer groups
+        for (int entryParam = 0; entryParam < m_pParamGroup->GetNumParams(); entryParam++) {
+            ParameterABC* temp = m_pParamGroup->GetParamPtr(entryParam);
+            temp->SetEstimatedValueTransformed(m_BestAlternative[entryParam]);
+        }
 
-       // Write iterationr result to the log file
-       WriteRecord2(this, m_Generation, m_BestObjective, m_CurStop);
+        // Write iterationr result to the log file
+        WriteRecord2(this, m_Generation, m_BestObjective, m_CurStop);
 
-       // Increment the generation variable
-       m_Generation++;
+        // Increment the generation variable
+        m_Generation++;
 
-       // Generate another set of samples if solution will continue
-       if (m_Generation < m_NumGenerationsMaximum && m_CurStop >= m_StopVal) {
-           // Create a scratch arrays to hold the updated data
-           std::vector<std::vector<double>> samplesScratch = std::vector<std::vector<double>>(m_NumPopulation, std::vector<double>(m_pParamGroup->GetNumParams(), 0));
-           std::vector<double> objectivesScratch = std::vector<double>(m_NumPopulation, INFINITY);
+        // Generate another set of samples if solution will continue
+        if (m_Generation < m_NumGenerationsMaximum && m_CurStop >= m_StopVal) {
+            // Create a scratch arrays to hold the updated data
+            std::vector<std::vector<double>> samplesScratch = std::vector<std::vector<double>>(m_NumPopulation, std::vector<double>(m_pParamGroup->GetNumParams(), 0));
+            std::vector<double> objectivesScratch = std::vector<double>(m_NumPopulation, INFINITY);
 
-           // Update the scratch array
-           CreateSample(objectives, objectivesScratch, samples, samplesScratch);
+            // Update the scratch array
+            CreateSample(objectives, objectivesScratch, samples, samplesScratch);
 
-           // Swap the alternative arrays
-           samples.swap(samplesScratch);
-           objectives.swap(objectivesScratch);
-       }
-   }
+            // Swap the alternative arrays
+            samples.swap(samplesScratch);
+            objectives.swap(objectivesScratch);
+        }
+    }
 
-   // Terminate the secondary workers and let the clean up.
-   TerminateWorkers();
+    // Terminate the secondary workers and let the clean up.
+    TerminateWorkers();
 
-   //write algorithm metrics
-   WriteEndingMetrics();
+    //write algorithm metrics
+    WriteEndingMetrics();
 
 } 
 
