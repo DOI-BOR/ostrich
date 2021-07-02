@@ -1200,7 +1200,7 @@ MPI Communication - SendWorkerParameters()
    Transfers parameters from the primary to the secondary workers
 ------------------------------------------------------------------------------------------------------------------------------
 */
-void Algorithm::SendWorkerParameters(int workerRank, int alternativeIndex, double parametersRegular[]) {
+void Algorithm::SendWorkerParameters(int workerRank, int alternativeIndex, std::vector<double> parametersRegular) {
 
     // Create a vector to hold the parameters
     std::vector<double> parametersTemp;
@@ -1313,7 +1313,7 @@ void Algorithm::ManageSingleObjectiveIterations(std::vector<std::vector<double>>
                 SendWorkerContinue(workerRank, true);
 
                 // Transmit the parameteres to the worker to solve
-                SendWorkerParameters(workerRank, sendCounter, parameters[sendCounter].data());
+                SendWorkerParameters(workerRank, sendCounter, parameters[sendCounter]);
 
                 // Increment the send counter
                 sendCounter++;

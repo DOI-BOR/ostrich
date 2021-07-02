@@ -74,11 +74,6 @@ double RealParam::SetEstimatedValueTransformed(double estVal) {
       estVal = m_upperBoundTransformed;
    }/* end if() */
 
-   //handle parameter threshold
-   if((estVal < m_ThreshUpr) && (estVal > m_ThreshLwr))
-   {
-      estVal = m_ThreshOff;
-   }
 
    m_estimatedValueTransformed = estVal;
    return viol;
@@ -267,9 +262,6 @@ void RealParam::Write(FILE * pFile, int type)
       fprintf(pFile, "Initial Value %E\n", m_InitialValueTransformed);
       fprintf(pFile, "Lower Bound %E\n", m_lowerBoundTransformed);
       fprintf(pFile, "Upper Bound %E\n", m_upperBoundTransformed);
-      fprintf(pFile, "Lower Threshold %E\n", m_ThreshLwr);
-      fprintf(pFile, "Upper Threshold %E\n", m_ThreshUpr);
-      fprintf(pFile, "Off Threshold %E\n", m_ThreshOff);
       fprintf(pFile, "Est Value = %E\n", m_estimatedValueTransformed);
    }/* end else if() */
    else if (type == WRITE_TX_BNR)
@@ -355,12 +347,6 @@ double IntParam::SetEstimatedValueTransformed(double estVal)
       tmp = m_upperBoundTransformed;
    }/* end if() */
 
-   //handle parameter threshold
-   if((tmp < m_ThreshUpr) && (tmp > m_ThreshLwr))
-   {
-      tmp = m_ThreshOff;
-   }
-
    m_estimatedValueTransformed = tmp;
    return viol;
 } /* end IntParam::SetEstVal() */
@@ -381,7 +367,7 @@ IntParam::IntParam(IroncladString name, int initialValue, int lowerBound,
    strcpy(m_pName, name);
   
    m_InitialValueTransformed = initialValue;
-   m_ThreshLwr = m_ThreshUpr = m_ThreshOff = m_lowerBoundTransformed = lowerBound;
+   m_lowerBoundTransformed = lowerBound;
    m_upperBoundTransformed = upperBound;
    m_estimatedValueTransformed = initialValue;
       
@@ -413,9 +399,6 @@ void IntParam::Write(FILE * pFile, int type)
       fprintf(pFile, "Initial Value %d\n", m_InitialValueTransformed);
       fprintf(pFile, "Lower Bound  %d\n", m_lowerBoundTransformed);
       fprintf(pFile, "Upper Bound  %d\n", m_upperBoundTransformed);
-      fprintf(pFile, "Lower Threshold %d\n", m_ThreshLwr);
-      fprintf(pFile, "Upper Threshold %d\n", m_ThreshUpr);
-      fprintf(pFile, "Threshold Off %d\n", m_ThreshOff);
       fprintf(pFile, "Est Value =  %d\n", m_estimatedValueTransformed);
    }/* end else if() */
    else if (type == WRITE_TX_BNR)

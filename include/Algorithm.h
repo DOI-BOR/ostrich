@@ -123,7 +123,7 @@ private:
     void ConfigureWorkerParameterGroups(int workerRank);
 
     void SendWorkerContinue(int workerRank, bool workerContinue);
-    void SendWorkerParameters(int workerRank, int alternativeIndex, double parameters[]);
+    void SendWorkerParameters(int workerRank, int alternativeIndex, std::vector<double> parameters);
 
     
 

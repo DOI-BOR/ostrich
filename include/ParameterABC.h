@@ -65,7 +65,7 @@ class ParameterABC
       virtual double SetEstimatedValueTransformed(double estVal) = 0;
 
       //threshold values (allow for implicit on/off of parameters)
-      virtual void SetThreshVal(double lwr, double upr, double off) = 0;
+      //virtual void SetThreshVal(double lwr, double upr, double off) = 0;
 
       virtual UnchangeableString GetName(void) = 0;
       virtual double GetTransformedVal(void) = 0;
@@ -108,7 +108,7 @@ class RealParam : public ParameterABC
       double ConvertOutVal(double val);
       double ConvertInVal(double val);
       //threshold values (allow for implicit on/off of parameters)
-      void SetThreshVal(double lwr, double upr, double off){ m_ThreshLwr = lwr; m_ThreshUpr = upr; m_ThreshOff = off;}
+      //void SetThreshVal(double lwr, double upr, double off){ m_ThreshLwr = lwr; m_ThreshUpr = upr; m_ThreshOff = off;}
       const char* GetType(void) { return "real"; };
             
    private:
@@ -118,7 +118,7 @@ class RealParam : public ParameterABC
       double m_lowerBoundTransformed;
       double m_upperBoundTransformed;
       double m_estimatedValueTransformed;      
-      double m_ThreshLwr, m_ThreshUpr, m_ThreshOff;
+      //double m_ThreshLwr, m_ThreshUpr, m_ThreshOff;
 
       TransformTypeEnum m_TransID[NUM_STAGES];      
       void SetTransformation(TransformStageEnum which, IroncladString tx);
@@ -152,7 +152,7 @@ class IntParam : public ParameterABC
       double ConvertInVal(double val){ return val;}
       UnchangeableString GetName(void){ return m_pName;}
       void Write(FILE * pFile, int type);      
-      void SetThreshVal(double lwr, double upr, double off){ m_ThreshLwr = (int)lwr; m_ThreshUpr = (int)upr; m_ThreshOff = (int)off;}
+      //void SetThreshVal(double lwr, double upr, double off){ m_ThreshLwr = (int)lwr; m_ThreshUpr = (int)upr; m_ThreshOff = (int)off;}
       const char * GetType(void) {return "integer";}
 
    private:
@@ -162,7 +162,7 @@ class IntParam : public ParameterABC
       int m_lowerBoundTransformed;
       int m_upperBoundTransformed;
       int m_estimatedValueTransformed;            
-      int m_ThreshLwr, m_ThreshUpr, m_ThreshOff;
+      //int m_ThreshLwr, m_ThreshUpr, m_ThreshOff;
 
       TransformTypeEnum m_TransID[NUM_STAGES];
 

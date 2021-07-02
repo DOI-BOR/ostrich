@@ -983,7 +983,8 @@ void PATO::InitWells(void)
             LogError(ERR_FILE_IO, msg);
             ExitProgram(1);         
          }/* end if() */
-         m_pWells[i].pQ->SetThreshVal(-m_RateThresh, m_RateThresh, 0.00);
+         // TODO: renable this behavior
+         //m_pWells[i].pQ->SetThreshVal(-m_RateThresh, m_RateThresh, 0.00);
          
          if(m_ObjType != PATO_OBJ_RATE)
          {
