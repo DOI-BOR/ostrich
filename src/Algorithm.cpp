@@ -489,56 +489,22 @@ Algorithm::Algorithm(void) {
         else if (strcmp(tmp2, "no") == 0) {
             m_bPreserveModelOutput = false;
         }
-        else { //a valid PreserveModelOutput script?
-            //line format = 'PreserveModelOutput  <var>'
-            /*--------------------------------------------------------
-            Read in executable, taking care to preserve full path,
-            even in the presence of long and space-separated filenames.
-            --------------------------------------------------------*/
-            i = ExtractString(line, tmp2);
-            i = ValidateExtraction(i, 1, 1, "Model()");
-            i = ExtractFileName(&(line[i]), tmp1);
+        else { 
+            // Convert the input command to a path
+            std::filesystem::path preserveInput = tmp2;
+            std::cout << "Preserve input\t" << preserveInput << std::endl;
 
-            //must wrap in quotes if there is whitespace in the execuable path
-            quoteWrap = false;
-            j = (int)strlen(tmp1);
-            for (i = 0; i < j; i++) { if (tmp1[i] == ' ') { quoteWrap = true; } }
-            if (quoteWrap == true) { tmp1[j++] = '"'; }
-            tmp1[j] = (char)NULL;
-            if (quoteWrap == true) {
-                MyStrRev(tmp1);
-                tmp1[j++] = '"';
-                tmp1[j] = (char)NULL;
-                MyStrRev(tmp1);
-            }
-
-            //stage to workdir if needed
-            if (pDirName[0] != '.') {
-                #ifdef _WIN32
-                    sprintf(tmp2, "copy %s %s", tmp1, pDirName);
-                #else
-                    sprintf(tmp2, "cp %s %s", tmp1, pDirName);
-                #endif
-                system(tmp2);
-            } 
-
-            //make sure the executable exists
-            strcpy(tmp2, tmp1);
-
-            if (tmp2[0] == '"') {
-                tmp2[0] = ' ';
-                tmp2[strlen(tmp2) - 1] = ' ';
-                MyTrim(tmp2);
-            }
-            if (MY_ACCESS(tmp2, 0) == -1) {
+            // Check that the script exists
+            if (!std::filesystem::exists(preserveInput)) {
                 sprintf(tmp1, "File for preserving model output (|%s|) not found", tmp2);
+                std::cout << tmp1 << std::endl;
                 LogError(ERR_FILE_IO, tmp1);
                 ExitProgram(1);
             }
 
+            // Set the variables into the class fields
             m_bPreserveModelOutput = true;
-            m_PreserveCmd = new char[(int)strlen(tmp1) + 1];
-            strcpy(m_PreserveCmd, tmp1);
+            m_PreserveCmd = preserveInput;
         } 
     }
 
@@ -775,7 +741,6 @@ void Algorithm::Destroy(void) {
     delete m_DbaseList;
     delete[] m_ExecCmd;
     delete[] m_SaveCmd;
-    delete[] m_PreserveCmd;
     delete[] m_CurMultiObjF;
     m_bSave = false;
     delete m_pDecision;
@@ -940,20 +905,19 @@ void Algorithm::ConfigureWorkerArchiveCommand(int workerRank) {
         sendValue = 0;
         MPI_Send(&sendValue, 1, MPI_INT, workerRank, tag_archive, MPI_COMM_WORLD);
 
-    } else if (m_bPreserveModelOutput && !m_PreserveCmd) {
+    } else if (m_bPreserveModelOutput && m_PreserveCmd.string().length() == 0) {
         // Model will be preserved with the the standard full archive method
         sendValue = 1;
         MPI_Send(&sendValue, 1, MPI_INT, workerRank, tag_archive, MPI_COMM_WORLD);
 
     }
-    else if (m_bPreserveModelOutput && m_PreserveCmd) {
+    else if (m_bPreserveModelOutput && m_PreserveCmd.string().length() > 0) {
         // Model will be preserved with a custom archive command
         sendValue = 2;
         MPI_Send(&sendValue, 1, MPI_INT, workerRank, tag_archive, MPI_COMM_WORLD);
 
-
         // Send the worker file stem to the secondary worker
-        MPI_Send(m_PreserveCmd, strlen(m_PreserveCmd) + 1, MPI_CHAR, workerRank, tag_archive, MPI_COMM_WORLD);
+        MPI_Send(&m_PreserveCmd.string()[0], m_PreserveCmd.string().length() + 1, MPI_CHAR, workerRank, tag_archive, MPI_COMM_WORLD);
 
     }
 }

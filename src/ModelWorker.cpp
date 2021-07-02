@@ -6,6 +6,9 @@
 #include <iostream>
 #include <chrono>
 #include <thread>
+#include <algorithm> 
+#include <cctype>
+#include <locale>
 
 
 /*
@@ -118,6 +121,7 @@ void ModelWorker::ReciveWorkerArchiveCommand(void) {
 
         // Remove the last character of the solve command
         preserveCommand.pop_back();
+        std::cout << "Received preserve command\t" << preserveCommand << std::endl;
 
     }
 }
@@ -478,34 +482,59 @@ void ModelWorker::SetupWork(void) {
     // Copy all the files to it from the source directory
     for (int entryFile = 0; entryFile < fileCleanupList.size(); entryFile++) {
 
-        // GEt the current working directory
+        // Get the current working directory
         std::filesystem::path workerDirectoryPath = m_workerDirectory;
-        
-        // Remove the last character which causes issues.
-        // TODO: remove this during the read of the control file
-        std::string temp = fileCleanupList[entryFile];
-        temp.pop_back();
-
-        // Create the filespath
-        std::filesystem::path filePath = workerDirectoryPath /= temp;
-        std::filesystem::path testPath = filePath.remove_filename();
-
-        // If the directory structure does not exist, create it
-        if (!std::filesystem::exists(testPath)) {
-            std::filesystem::create_directories(testPath);
-        }
         
         // Create the source path
         std::filesystem::path sourcePath = fileCleanupList[entryFile];
 
-        // Copy from the source path to the worker path
+        // Create an error code object to capture any errors
         std::error_code code;
-        std::filesystem::copy(sourcePath, filePath, code);
 
-        // Handle any errors in a user friendly mannter.
-        if (code.value() == 2){
-            std::cout << "Extra file " << fileCleanupList[entryFile] << " is not found." << std::endl;
-            LogError(ERR_FILE_IO, "Using default algorithm setup.");
+        // Copy from the source path to the worker path. This handles directories and files differently due to the need to create the folder structure
+        if (std::filesystem::is_directory(sourcePath)) {
+            // Recursively copy files in the directory
+            // Create the recursive iterator
+            std::filesystem::recursive_directory_iterator iterator = std::filesystem::recursive_directory_iterator(fileCleanupList[entryFile].c_str());
+
+            // Iteratate over the files
+            for (std::filesystem::path sourcePathRecursive : iterator) {
+                
+                if (!std::filesystem::is_directory(sourcePathRecursive)) {
+                    // Copy the file
+                    std::filesystem::path filePath = workerDirectoryPath; 
+                    filePath /= sourcePathRecursive;
+
+                    // Create directories to make sure the file can be transferred
+                    if (!std::filesystem::is_directory(filePath.remove_filename())) {
+                        std::filesystem::create_directories(filePath.remove_filename());
+                    }
+
+                    std::filesystem::copy(sourcePathRecursive, filePath, code);
+
+                    // Add to the cleanup list
+                    fileCleanupList.push_back(sourcePathRecursive.string());
+
+                    // Handle the error code
+                    if (code.value() == 2) {
+                        std::cout << "Extra file " << fileCleanupList[entryFile] << " is not found." << std::endl;
+                    }
+                }                 
+            }
+
+            // Remove the current entry from the file list
+            fileCleanupList.erase(fileCleanupList.begin() + entryFile);
+
+        }
+        else {
+            // It is a file. Copy it directly
+            std::filesystem::path filePath = workerDirectoryPath /= fileCleanupList[entryFile];
+            std::filesystem::copy(sourcePath, filePath, code);
+
+            // Handle an error code
+            if (code.value() == 2) {
+                std::cout << "Extra file " << fileCleanupList[entryFile] << " is not found." << std::endl;
+            }
         }
     }
 
@@ -632,8 +661,8 @@ bool ModelWorker::RequestContinue(void) {
     Preserves the model solution by moving it from the working directory.
 ******************************************************************************/
 void ModelWorker::PreserveModel() {
-    char tmp[DEF_STR_SZ];
 
+    // Model preservation is disabled. Take no action.
     if (preserveModelOutput == false) {
         return;
     }
@@ -662,28 +691,79 @@ void ModelWorker::PreserveModel() {
         std::filesystem::create_directory(directory);
 
         // Move the files from the worker to the archive
-        std::filesystem::copy(workerDirectoryPath, directory, std::filesystem::copy_options::recursive);
+        // Create the iterator over the files in the working directory
+        std::filesystem::recursive_directory_iterator iterator = std::filesystem::recursive_directory_iterator(workerDirectoryPath);
 
+        // Iterate over the directory contents
+        for (std::filesystem::path path : iterator) {
+            // Confirm that the path is to a file
+            if (!std::filesystem::is_directory(path)) {
+                // Check that the file is not an input file
+                bool archiveFlag = true;
+                for (int entry = 0; entry < fileCleanupList.size(); entry++) {
+                    // Construct the path to the file in the worker directory
+                    std::filesystem::path temp = m_workerDirectory;
+                    temp /= fileCleanupList[entry];
+
+                    // Compare to the active path to the cleanup list value
+                    if (std::filesystem::equivalent(temp, path)) {
+                        archiveFlag = false;
+                        break;
+                    }
+                }
+
+                // If the file is not in the cleanup list, archive it
+                if (archiveFlag) {
+                    // Create the main path to the archive directory
+                    std::filesystem::path temp = "archive";
+                    temp /= m_workerDirectory;
+                    temp /= "run_" + std::to_string(solveCounter - 1);
+                    
+                    // Remove the worker name from the active path
+                    int counter = 0;
+                    for (auto& part : path) {
+                        if (counter > 0) {
+                            temp /= part;
+                        }
+                        counter++;
+                    }
+
+                    // Confirm that the path to the file exists. If not, create it.
+                    if (!std::filesystem::is_directory(temp.remove_filename())) {
+                        std::filesystem::create_directories(temp.remove_filename());
+                    }
+
+                    // Copy the file
+                    std::filesystem::copy(path, temp);
+                }
+            }
+        }
     } else{
         // Run user commands to save specific model files
         /* run the user-supplied preservation command */
-        sprintf(tmp, "%s %d %d", preserveCommand, rank, solveCounter);
+        //sprintf(tmp, "%s %d %d", preserveCommand, rank, solveCounter);
 
-        // Construct the logfile name
+        std::cout << preserveCommand << std::endl;
+        std::string preserveCommandActive = preserveCommand;
+        preserveCommandActive.append(' ' + std::to_string(rank));
+        preserveCommandActive.append(' ' + std::to_string(solveCounter));
+        std::cout << preserveCommandActive << std::endl;
+
+        /*// Construct the logfile name
         directory += "OstPreserveModelOut.txt";
 
         // Open the log file
         FILE* pFile = fopen(directory.string().c_str(), "a+");
 
         // Log the command
-        fprintf(pFile, tmp);  
+        fprintf(pFile, preserveCommandActive.c_str());
         fprintf(pFile, "\n");
 
         // Close the file
-        fclose(pFile);
+        fclose(pFile);*/
 
         // Issue the command to the system
-        system(tmp);    
+        system(preserveCommandActive.c_str());
     }
 }
 

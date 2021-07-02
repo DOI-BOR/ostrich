@@ -86,7 +86,7 @@ private:
     int m_Precision = 6;
     StringType  m_ExecCmd = NULL;
     StringType  m_SaveCmd = NULL;
-    StringType  m_PreserveCmd = NULL;
+    std::filesystem::path  m_PreserveCmd;
     char m_DirPrefix[DEF_STR_SZ];
     char pDirName[DEF_STR_SZ];                                          // Stem of the worker path without the rank
     FileList* m_pFileCleanupList = NULL;
