@@ -117,11 +117,36 @@ void ModelWorker::ReciveWorkerArchiveCommand(void) {
         preserveModelOutput = true;
 
         // Request the preservation command from the worker
-        preserveCommand = ReceiveString(tag_archive);
+        preserveOutputCommand = ReceiveString(tag_archive);
 
         // Remove the last character of the solve command
-        preserveCommand.pop_back();
-        std::cout << "Received preserve command\t" << preserveCommand << std::endl;
+        preserveOutputCommand.pop_back();
+    }
+
+    // Request if the best model will be preserved
+    preserveStatus = ReceiveInteger(tag_archive);
+
+    if (preserveStatus == 0) {
+        // Model will not be archived. Set the status to false
+        preserveModelBest = false;
+
+    }
+    else if (preserveStatus == 1) {
+        // Model will be archived using standard method
+        // Toggle the preserve status to true
+        preserveModelBest = true;
+
+    }
+    else if (preserveStatus == 2) {
+        // Model will be archived using a custom command.
+        // Toggle the preserve status to true
+        preserveModelBest = true;
+
+        // Request the preservation command from the worker
+        preserveBestCommand = ReceiveString(tag_archive);
+
+        // Remove the last character of the solve command
+        preserveBestCommand.pop_back();
 
     }
 }
@@ -580,15 +605,25 @@ void  ModelWorker::CommenceWork() {
                 // Send to the primary worker
                 MPI_Ssend(returnArray, 2, MPI_DOUBLE, 0, tag_data, MPI_COMM_WORLD);
 
-            }
-            else {
+                // Check for best archive
+                if (preserveModelBest) {
+                    // Request archive instructions from the primary worker
+                    int preserveValue = ReceiveInteger(tag_preserveBest);
+
+                    // Preserve the model if requested
+                    if (preserveValue == 1) {
+                        PreserveModel(true);
+                    }
+                }
+
+            } else {
                 // Calculate the objective function
                 // TODO: Add multiobject evaluation
             }
 
-            // Archive the model if it is enabled
+            // Archive the model if it is enabled. Disable saving to the best directory.
             if (preserveModelOutput) {
-                PreserveModel();
+                PreserveModel(false);
             }
         }
         
@@ -660,35 +695,52 @@ bool ModelWorker::RequestContinue(void) {
  PreserveModel()
     Preserves the model solution by moving it from the working directory.
 ******************************************************************************/
-void ModelWorker::PreserveModel() {
+void ModelWorker::PreserveModel(bool preserveBest) {
 
     // Model preservation is disabled. Take no action.
-    if (preserveModelOutput == false) {
+    if (preserveModelOutput == false && preserveBest == false) {
         return;
     }
 
     // Get the current path to the worker
     std::filesystem::path directory = std::filesystem::current_path();
 
-    // Save everything in the working directory
-    if (preserveCommand.empty()) {
+    // Save everything in the working directory to either the model archive or the best folder.
+    if (preserveModelOutput || (preserveBest && preserveBestCommand.empty())) {
         // Construct the archive folder
         directory /= std::string("archive");
         if (!std::filesystem::exists(directory)) {
-            std::filesystem::create_directory(directory);
+            std::filesystem::create_directories(directory);
         };
 
         // Construct the worker folder
         std::filesystem::path workerDirectoryPath = m_workerDirectory;
-        directory /= m_workerDirectory;
 
-        if (!std::filesystem::exists(directory)) {
+        // Handle the initial setup
+        if (preserveBest) {
+            // Append the best into the archive path
+            directory /= "best";
+
+            // Delete the current contents of the best directory
+            std::filesystem::remove_all(directory);
+
+            // Create the directory if it doesn't exist
+            if (!std::filesystem::exists(directory)) {
+                std::filesystem::create_directories(directory);
+            };
+
+        } else {
+            // Construct the worker folder
+            directory /= m_workerDirectory;
+
+            if (!std::filesystem::exists(directory)) {
+                std::filesystem::create_directory(directory);
+            }
+
+            // Construct the run folder 
+            directory /= "run_" + std::to_string(solveCounter - 1); // This adjusts by one to align with the model output files
             std::filesystem::create_directory(directory);
         }
-
-        // Construct the run folder 
-        directory /= "run_" + std::to_string(solveCounter - 1); // This adjusts by one to align with the model output files
-        std::filesystem::create_directory(directory);
 
         // Move the files from the worker to the archive
         // Create the iterator over the files in the working directory
@@ -716,9 +768,18 @@ void ModelWorker::PreserveModel() {
                 if (archiveFlag) {
                     // Create the main path to the archive directory
                     std::filesystem::path temp = "archive";
-                    temp /= m_workerDirectory;
-                    temp /= "run_" + std::to_string(solveCounter - 1);
-                    
+
+                    // Add in the best path if enabled
+                    if (preserveBest) {
+                        temp /= "best";
+
+                    } else {
+                        // Append the model and run number
+                        temp /= m_workerDirectory;
+                        temp /= "run_" + std::to_string(solveCounter - 1);
+
+                    }
+
                     // Remove the worker name from the active path
                     int counter = 0;
                     for (auto& part : path) {
@@ -738,32 +799,30 @@ void ModelWorker::PreserveModel() {
                 }
             }
         }
-    } else{
+    } else {
         // Run user commands to save specific model files
-        /* run the user-supplied preservation command */
-        //sprintf(tmp, "%s %d %d", preserveCommand, rank, solveCounter);
+        if (preserveBest) {
+            // Preserve to the best folder
+            // Construct the command
+            std::string preserveCommandActive = preserveBestCommand;
+            preserveCommandActive.append(' ' + std::to_string(rank));
+            preserveCommandActive.append(' ' + std::to_string(solveCounter));
+            std::cout << preserveCommandActive << std::endl;
 
-        std::cout << preserveCommand << std::endl;
-        std::string preserveCommandActive = preserveCommand;
-        preserveCommandActive.append(' ' + std::to_string(rank));
-        preserveCommandActive.append(' ' + std::to_string(solveCounter));
-        std::cout << preserveCommandActive << std::endl;
+            // Send it to the system to execute
+            system(preserveCommandActive.c_str());
 
-        /*// Construct the logfile name
-        directory += "OstPreserveModelOut.txt";
+        } else {
+            // Preserve to the archive folder for the run
+            // Construct the command
+            std::string preserveCommandActive = preserveOutputCommand;
+            preserveCommandActive.append(' ' + std::to_string(rank));
+            preserveCommandActive.append(' ' + std::to_string(solveCounter));
+            std::cout << preserveCommandActive << std::endl;
 
-        // Open the log file
-        FILE* pFile = fopen(directory.string().c_str(), "a+");
-
-        // Log the command
-        fprintf(pFile, preserveCommandActive.c_str());
-        fprintf(pFile, "\n");
-
-        // Close the file
-        fclose(pFile);*/
-
-        // Issue the command to the system
-        system(preserveCommandActive.c_str());
+            // Send it to the system to execute
+            system(preserveCommandActive.c_str());
+        }
     }
 }
 

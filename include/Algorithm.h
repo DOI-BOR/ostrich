@@ -67,7 +67,6 @@ public:
     //bool CheckWarmStart(void) { return m_bWarmStart; }
     
     //FilePair* GetFilePairs(void) { return m_FileList; }
-    void SaveBest(int id);
     //TelescopeType GetTelescopingStrategy(void) { return m_Telescope; }
 
     double m_BestObjective = INFINITY;                          // Best objective
@@ -85,19 +84,24 @@ private:
     int m_NumCacheHits = 0;
     int m_Precision = 6;
     StringType  m_ExecCmd = NULL;
-    StringType  m_SaveCmd = NULL;
-    std::filesystem::path  m_PreserveCmd;
     char m_DirPrefix[DEF_STR_SZ];
     char pDirName[DEF_STR_SZ];                                          // Stem of the worker path without the rank
     FileList* m_pFileCleanupList = NULL;
     bool m_InternalModel = false;
     bool m_bCheckGlobalSens = false;
     bool m_bUseSurrogates = false;
-    bool m_bPreserveModelOutput = false;
+    
+    // Model preservation options
+    bool m_bPreserveModelOutput = false;                                // Preserve the output from each of the model runs
+    std::filesystem::path  m_PreserveOutputCmd;                         // Custom command to preserve the output from each model run
+    bool m_bPreserveModelBest = false;                                  // Preserve the best solution from the analysis
+    std::filesystem::path  m_PreserveBestCmd;                           // Custom command to preserve best solution from the analysis
+
+    // Model solution options
     bool m_bWarmStart = false;
     bool m_bSolveOnPrimary = false;
     bool m_bCaching = false;
-    bool m_bSave = false;
+    
     bool m_bDiskless = false;
     bool m_bMultiObjProblem = false;
     double* m_CurMultiObjF = NULL;
@@ -123,6 +127,7 @@ private:
     void ConfigureWorkerParameterGroups(int workerRank);
 
     void SendWorkerContinue(int workerRank, bool workerContinue);
+    void SendWorkerPreserveBest(int workerRank, bool preserveModel);
     void SendWorkerParameters(int workerRank, int alternativeIndex, std::vector<double> parameters);
 
     

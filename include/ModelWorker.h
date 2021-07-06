@@ -37,7 +37,7 @@ public:
 	double ExecuteSingle(void);
 	void ExecuteMulti(double* pF, int nObj);
 	double DisklessExecute(void);
-	void PreserveModel();
+	void PreserveModel(bool preserveBest);
 	void   Write(double objFuncVal);
 
 	//bool CheckCache(double* val);
@@ -50,8 +50,10 @@ private:
 	void SetCmdToExecModel(IroncladString cmd);
 
 	// Preservation variables
+	bool preserveModelBest = false;
+	std::string preserveBestCommand;
 	bool preserveModelOutput = false;
-	std::string preserveCommand;
+	std::string preserveOutputCommand;
 
 	// Configuration variables
 	std::string m_workerDirectory;

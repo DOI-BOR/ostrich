@@ -333,6 +333,7 @@ Algorithm::Algorithm(void) {
     Read in diskless model
     --------------------------------------------------------------------------------------------------------------------------
     */
+    // todo: reenable this functionality
     rewind(pInFile);
     if (CheckToken(pInFile, "DisklessModel", inFileName) == true) {
         line = GetCurDataLine();
@@ -347,68 +348,41 @@ Algorithm::Algorithm(void) {
     --------------------------------------------------------------------------------------------------------------------------
     */
     rewind(pInFile);
-    if (CheckToken(pInFile, "PreserveBestModel", inFileName) == true)
-    {
+    if (CheckToken(pInFile, "PreserveBestModel", inFileName) == true) {
         line = GetCurDataLine();
         //line format = 'PreserveBestModel   <var>'
         /*--------------------------------------------------------------------------------------------------------------------
         Read in executable, taking care to preserve full path, even in the presence of long and space-separated filenames.
         ----------------------------------------------------------------------------------------------------------------------
         */
-        i = ExtractString(line, tmp2);
-        i = ValidateExtraction(i, 1, 1, "Model()");
-        i = ExtractFileName(&(line[i]), tmp1);
+        line = GetCurDataLine();
+        sscanf(line, "%s %s", tmp1, tmp2);
+        MyStrLwr(tmp2);
+        MyTrim(tmp2);
 
-        //must wrap in quotes if there is whitespace in the execuable path
-        quoteWrap = false;
-        j = (int)strlen(tmp1);
-        for (i = 0; i < j; i++) { if (tmp1[i] == ' ') { quoteWrap = true; } }
-        if (quoteWrap == true) { tmp1[j++] = '"'; }
-        tmp1[j] = (char)NULL;
-        if (quoteWrap == true) {
-            MyStrRev(tmp1);
-            tmp1[j++] = '"';
-            tmp1[j] = (char)NULL;
-            MyStrRev(tmp1);
+        if (strcmp(tmp2, "yes") == 0) {
+            m_bPreserveModelBest = true;
         }
-
-        if (pDirName[0] != '.') {
-            #ifdef _WIN32
-                sprintf(tmp2, "copy %s %s", tmp1, pDirName);
-            #else
-                sprintf(tmp2, "cp %s %s", tmp1, pDirName);
-            #endif
-            system(tmp2);
-        } 
-
-        //make sure the executable exists
-        strcpy(tmp2, tmp1);
-
-        if (tmp2[0] == '"') {
-            tmp2[0] = ' ';
-            tmp2[strlen(tmp2) - 1] = ' ';
-            MyTrim(tmp2);
+        else if (strcmp(tmp2, "no") == 0) {
+            m_bPreserveModelBest = false;
         }
+        else {
+            // Convert the input command to a path
+            std::filesystem::path preserveInput = tmp2;
 
-        if (MY_ACCESS(tmp2, 0) == -1){
-            sprintf(tmp1, "File for saving best solution (|%s|) not found", tmp2);
-            LogError(ERR_FILE_IO, tmp1);
-            ExitProgram(1);
+            // Check that the script exists
+            if (!std::filesystem::exists(preserveInput)) {
+                sprintf(tmp1, "File for preserving model best output (|%s|) not found", tmp2);
+                std::cout << tmp1 << std::endl;
+                LogError(ERR_FILE_IO, tmp1);
+                ExitProgram(1);
+            }
+
+            // Set the variables into the class fields
+            m_bPreserveModelBest = true;
+            m_PreserveBestCmd = preserveInput;
         }
-
-        #ifdef _WIN32 //windows version
-            strcat(tmp1, " > OstSaveOut.txt");
-        #else //Linux (bash, dash, and csh)
-            strcpy(tmp2, tmp1);
-            // '>&' redircts both output and error
-            strcat(tmp2, " > OstSaveOut.txt 2>&1");
-            strcpy(tmp1, tmp2);
-        #endif
-
-        m_bSave = true;
-        m_SaveCmd = new char[(int)strlen(tmp1) + 1];
-        strcpy(m_SaveCmd, tmp1);
-    }/* end if(PreserveBestModel) */
+    }
 
     /*
     --------------------------------------------------------------------------------------------------------------------------
@@ -476,23 +450,22 @@ Algorithm::Algorithm(void) {
     Read in flag to preserve model output files. This only applies if a model subdirectory is used.
     --------------------------------------------------------------------------------------------------------------------------
     */
-    // TODO: rework this process
     rewind(pInFile);
     if (CheckToken(pInFile, "PreserveModelOutput", inFileName) == true) {
         line = GetCurDataLine();
         sscanf(line, "%s %s", tmp1, tmp2);
         MyStrLwr(tmp2);
         MyTrim(tmp2);
+
         if (strcmp(tmp2, "yes") == 0) {
             m_bPreserveModelOutput = true;
-        }
-        else if (strcmp(tmp2, "no") == 0) {
+
+        } else if (strcmp(tmp2, "no") == 0) {
             m_bPreserveModelOutput = false;
-        }
-        else { 
+
+        } else { 
             // Convert the input command to a path
             std::filesystem::path preserveInput = tmp2;
-            std::cout << "Preserve input\t" << preserveInput << std::endl;
 
             // Check that the script exists
             if (!std::filesystem::exists(preserveInput)) {
@@ -504,7 +477,7 @@ Algorithm::Algorithm(void) {
 
             // Set the variables into the class fields
             m_bPreserveModelOutput = true;
-            m_PreserveCmd = preserveInput;
+            m_PreserveOutputCmd = preserveInput;
         } 
     }
 
@@ -514,6 +487,7 @@ Algorithm::Algorithm(void) {
     which the OstModel0.txt file has been preserved.
     --------------------------------------------------------------------------------------------------------------------------
     */
+    // TODO: rework this process
     rewind(pInFile);
     if (CheckToken(pInFile, "OstrichWarmStart", inFileName) == true) {
         line = GetCurDataLine();
@@ -740,9 +714,8 @@ void Algorithm::Destroy(void) {
     delete m_pObjFunc;
     delete m_DbaseList;
     delete[] m_ExecCmd;
-    delete[] m_SaveCmd;
     delete[] m_CurMultiObjF;
-    m_bSave = false;
+    m_bPreserveModelBest = false;
     delete m_pDecision;
 
     if (m_pFileCleanupList != NULL) {
@@ -769,29 +742,6 @@ PerformParameterCorrections()
 void Algorithm::PerformParameterCorrections(void) {
     if (m_pParameterCorrection != NULL) m_pParameterCorrection->Execute();
 }/* end PerformParameterCorrections() */
-
-/*
-------------------------------------------------------------------------------------------------------------------------------
- SaveBest()
-------------------------------------------------------------------------------------------------------------------------------
-*/
-void Algorithm::SaveBest(int id) {
-    char saveDir[DEF_STR_SZ];
-    if (m_bSave) {
-        //cd to model subdirectory, if needed
-        if (m_DirPrefix[0] != '.') {
-            sprintf(saveDir, "%s%d", m_DirPrefix, id);
-            MY_CHDIR(saveDir);
-        }
-
-        system(m_SaveCmd);
-
-        if (m_DirPrefix[0] != '.'){
-            //cd out of model subdirectory, if needed
-            MY_CHDIR("..");
-        }
-    }
-}/* end SaveBest() */
 
 
 /*
@@ -898,26 +848,51 @@ MPI Communication - ConfigureWorkerArchiveCommand()
 */
 void Algorithm::ConfigureWorkerArchiveCommand(int workerRank) {
 
+    // Define the variable that will be sent to the workers
     int sendValue;
 
+    // Send information to preserve the individual model runs
     if (!m_bPreserveModelOutput) {
         // Model will not be preserved
         sendValue = 0;
         MPI_Send(&sendValue, 1, MPI_INT, workerRank, tag_archive, MPI_COMM_WORLD);
 
-    } else if (m_bPreserveModelOutput && m_PreserveCmd.string().length() == 0) {
+    } else if (m_bPreserveModelOutput && m_PreserveOutputCmd.string().length() == 0) {
         // Model will be preserved with the the standard full archive method
         sendValue = 1;
         MPI_Send(&sendValue, 1, MPI_INT, workerRank, tag_archive, MPI_COMM_WORLD);
 
     }
-    else if (m_bPreserveModelOutput && m_PreserveCmd.string().length() > 0) {
+    else if (m_bPreserveModelOutput && m_PreserveOutputCmd.string().length() > 0) {
         // Model will be preserved with a custom archive command
         sendValue = 2;
         MPI_Send(&sendValue, 1, MPI_INT, workerRank, tag_archive, MPI_COMM_WORLD);
 
         // Send the worker file stem to the secondary worker
-        MPI_Send(&m_PreserveCmd.string()[0], m_PreserveCmd.string().length() + 1, MPI_CHAR, workerRank, tag_archive, MPI_COMM_WORLD);
+        MPI_Send(&m_PreserveOutputCmd.string()[0], m_PreserveOutputCmd.string().length() + 1, MPI_CHAR, workerRank, tag_archive, MPI_COMM_WORLD);
+
+    }
+
+    // Send information to preserve the best of the model run
+    if (!m_bPreserveModelBest) {
+        // Model will not be preserved
+        sendValue = 0;
+        MPI_Send(&sendValue, 1, MPI_INT, workerRank, tag_archive, MPI_COMM_WORLD);
+
+    }
+    else if (m_bPreserveModelBest && m_PreserveBestCmd.string().length() == 0) {
+        // Model will be preserved with the the standard full archive method
+        sendValue = 1;
+        MPI_Send(&sendValue, 1, MPI_INT, workerRank, tag_archive, MPI_COMM_WORLD);
+
+    }
+    else if (m_bPreserveModelBest && m_PreserveBestCmd.string().length() > 0) {
+        // Model will be preserved with a custom archive command
+        sendValue = 2;
+        MPI_Send(&sendValue, 1, MPI_INT, workerRank, tag_archive, MPI_COMM_WORLD);
+
+        // Send the worker file stem to the secondary worker
+        MPI_Send(&m_PreserveBestCmd.string()[0], m_PreserveBestCmd.string().length() + 1, MPI_CHAR, workerRank, tag_archive, MPI_COMM_WORLD);
 
     }
 }
@@ -1225,6 +1200,27 @@ void Algorithm::SendWorkerContinue(int workerRank, bool workerContinue) {
 
 }
 
+/*
+------------------------------------------------------------------------------------------------------------------------------
+MPI Communication - SendWorkerPreservebest()
+   Transfers parameters from the primary to the secondary workers
+------------------------------------------------------------------------------------------------------------------------------
+*/
+void Algorithm::SendWorkerPreserveBest(int workerRank, bool preserveModel) {
+
+    int transferValue = 1;
+    if (preserveModel) {
+        //MPI_Send(&transferValue, 1, MPI_INT, workerRank, tag_continue, MPI_COMM_WORLD);
+        MPI_Ssend(&transferValue, 1, MPI_INT, workerRank, tag_preserveBest, MPI_COMM_WORLD);
+    }
+    else {
+        transferValue = 0;
+        //MPI_Send(&transferValue, 1, MPI_INT, workerRank, tag_continue, MPI_COMM_WORLD);
+        MPI_Ssend(&transferValue, 1, MPI_INT, workerRank, tag_preserveBest, MPI_COMM_WORLD);
+    }
+
+}
+
 
 /*
 ------------------------------------------------------------------------------------------------------------------------------
@@ -1237,6 +1233,9 @@ void Algorithm::ManageSingleObjectiveIterations(std::vector<std::vector<double>>
     // Get the number of workers in the MPI space
     int numberOfMpiProcesses;
     MPI_Comm_size(MPI_COMM_WORLD, &numberOfMpiProcesses);
+
+    // Create a copy of the current best objective function
+    double bestObjectiveIteration = m_BestObjective;
 
     // Begin solving the alternatives
     if (m_bSolveOnPrimary) {
@@ -1293,6 +1292,25 @@ void Algorithm::ManageSingleObjectiveIterations(std::vector<std::vector<double>>
 
                     // Set the objective value into the objective array
                     returnArray[(int)data[0]] = data[1];
+
+                    // If archiving the best is enabled, test the objective against the current best and tell
+                    // the worker what to do with the result
+                    if (m_bPreserveModelBest) {
+                        // Determine if the worker should archive the model
+                        if (data[1] < bestObjectiveIteration) {
+                            // Solution value is better the previous best solution.
+                            // Replace the objective value
+                            bestObjectiveIteration = data[1];
+
+                            // Tell the worker to preserve the model
+                            SendWorkerPreserveBest(mpiStatus.MPI_SOURCE, true);
+
+                        }
+                        else {
+                            // Tell the worker not to preserve the output
+                            SendWorkerPreserveBest(mpiStatus.MPI_SOURCE, false);
+                        }
+                    }
 
                 } catch (...) {
                     // Read from the secondary worker failed. Fail by keeping the infinite value in the array
