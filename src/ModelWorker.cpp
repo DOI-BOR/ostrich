@@ -9,6 +9,7 @@
 #include <algorithm> 
 #include <cctype>
 #include <locale>
+#include <vector>
 
 
 /*
@@ -77,9 +78,6 @@ void ModelWorker::ReceiveWorkerDirectory(void) {
     // Request the directory from the primary worker
     m_workerDirectory = ReceiveString(tag_directory);
 
-    // Remove the last character. This is necessary for the numbers to append correctly.
-    m_workerDirectory.pop_back();
-
     // Append the worker number onto the tag
     m_workerDirectory += std::to_string(rank);
 
@@ -90,9 +88,6 @@ void ModelWorker::ReceiveWorkerSolveCommand(void) {
 
     // Request the directory from the primary worker
     solveCommand = ReceiveString(tag_solve);
-
-    // Remove the last character.
-    solveCommand.pop_back();
 
 }
 
@@ -119,8 +114,6 @@ void ModelWorker::ReciveWorkerArchiveCommand(void) {
         // Request the preservation command from the worker
         preserveOutputCommand = ReceiveString(tag_archive);
 
-        // Remove the last character of the solve command
-        preserveOutputCommand.pop_back();
     }
 
     // Request if the best model will be preserved
@@ -144,9 +137,6 @@ void ModelWorker::ReciveWorkerArchiveCommand(void) {
 
         // Request the preservation command from the worker
         preserveBestCommand = ReceiveString(tag_archive);
-
-        // Remove the last character of the solve command
-        preserveBestCommand.pop_back();
 
     }
 }
@@ -435,6 +425,9 @@ std::string  ModelWorker::ReceiveString(int tag_number) {
     std::string convertedArray = std::string(directoryFromPrimary, characterLength);
     delete directoryFromPrimary;
 
+    // Remove the last character that's the null 
+    convertedArray.pop_back();
+
     // Return the array to the calling function
     return convertedArray;
 }
@@ -504,14 +497,18 @@ void ModelWorker::SetupWork(void) {
         std::filesystem::create_directories(m_workerDirectory);
     }
 
+    // Create holders to store the additional files added in the analysis
+    std::vector<std::filesystem::path> additionalFiles;
+    std::vector<int> indices2delete;
+
     // Copy all the files to it from the source directory
     for (int entryFile = 0; entryFile < fileCleanupList.size(); entryFile++) {
 
         // Get the current working directory
         std::filesystem::path workerDirectoryPath = m_workerDirectory;
-        
-        // Create the source path
-        std::filesystem::path sourcePath = fileCleanupList[entryFile];
+	
+	    // Create the source path. Remove the last character that creates issues.
+	    std::filesystem::path sourcePath = fileCleanupList[entryFile];
 
         // Create an error code object to capture any errors
         std::error_code code;
@@ -520,7 +517,7 @@ void ModelWorker::SetupWork(void) {
         if (std::filesystem::is_directory(sourcePath)) {
             // Recursively copy files in the directory
             // Create the recursive iterator
-            std::filesystem::recursive_directory_iterator iterator = std::filesystem::recursive_directory_iterator(fileCleanupList[entryFile].c_str());
+            std::filesystem::recursive_directory_iterator iterator = std::filesystem::recursive_directory_iterator(sourcePath);
 
             // Iteratate over the files
             for (std::filesystem::path sourcePathRecursive : iterator) {
@@ -530,40 +527,82 @@ void ModelWorker::SetupWork(void) {
                     std::filesystem::path filePath = workerDirectoryPath; 
                     filePath /= sourcePathRecursive;
 
+                    std::cout << filePath << std::endl;
+
                     // Create directories to make sure the file can be transferred
                     if (!std::filesystem::is_directory(filePath.remove_filename())) {
                         std::filesystem::create_directories(filePath.remove_filename());
                     }
 
-                    std::filesystem::copy(sourcePathRecursive, filePath, code);
+		            std::filesystem::copy(sourcePathRecursive, filePath, code);
 
                     // Add to the cleanup list
-                    fileCleanupList.push_back(sourcePathRecursive.string());
+                    additionalFiles.push_back(sourcePathRecursive.string());
+                    indices2delete.push_back(entryFile);
 
                     // Handle the error code
                     if (code.value() == 2) {
-                        std::cout << "Extra file " << fileCleanupList[entryFile] << " is not found." << std::endl;
+                        std::cout << "Extra file " << sourcePathRecursive << "\t" << filePath << " is not found." << std::endl;
                     }
                 }                 
             }
 
-            // Remove the current entry from the file list
-            fileCleanupList.erase(fileCleanupList.begin() + entryFile);
-
-        }
-        else {
+        } else {
             // It is a file. Copy it directly
-            std::filesystem::path filePath = workerDirectoryPath /= fileCleanupList[entryFile];
+            std::filesystem::path filePath = workerDirectoryPath /= sourcePath;
+
+	        // Make sure the directory exists to the the files
+	        if (!std::filesystem::is_directory(filePath.remove_filename())){
+            	std::filesystem::create_directories(filePath.remove_filename());
+	        }
+
+	        // Perform the copy
             std::filesystem::copy(sourcePath, filePath, code);
 
             // Handle an error code
             if (code.value() == 2) {
-                std::cout << "Extra file " << fileCleanupList[entryFile] << " is not found." << std::endl;
+                std::cout << "Extra file " << std::filesystem::current_path() << "\t" << sourcePath << "\t" << filePath << " is not found." << std::endl;
             }
         }
     }
 
-    // Perform any checks on the model setup  
+    // Cleanup the initial list by removing directory names
+    // Remove duplicates from the file cleanup index list
+    std::sort(indices2delete.begin(), indices2delete.end());
+    std::vector<int>::iterator ip = std::unique(indices2delete.begin(), indices2delete.end());
+
+    // Resizing the vector so as to remove the undefined terms
+    indices2delete.resize(std::distance(indices2delete.begin(), ip));
+
+    // Starting from the end, delete entries from the file list
+    std::cout << indices2delete.size() << std::endl;
+    for (int entry = indices2delete.size() - 1; entry >= 0; entry--) {
+        // Remove the current entry from the file list
+        fileCleanupList.erase(fileCleanupList.begin() + indices2delete[entry]);
+    }
+
+    // Add the list of additional files into the file cleanup list
+    for (int entry = 0; entry < additionalFiles.size(); entry++) {
+        fileCleanupList.push_back(additionalFiles[entry].string());
+    }
+
+    // Check that the vector only has unique values
+    // Remove duplicates from the file cleanup index list
+    std::sort(fileCleanupList.begin(), fileCleanupList.end());
+
+    indices2delete.clear();
+    if (fileCleanupList.size() > 1) {
+        for (int entry = 1; entry < fileCleanupList.size(); entry++) {
+            if (fileCleanupList[entry] == fileCleanupList[entry - 1]) {
+                indices2delete.push_back(entry);
+            }
+        }
+    }
+
+    for (int entry = indices2delete.size() - 1; entry >= 0; entry--) {
+        // Remove the current entry from the file list
+        fileCleanupList.erase(fileCleanupList.begin() + indices2delete[entry]);
+    }
 
 }
 
@@ -973,7 +1012,6 @@ double ModelWorker::StdExecute(double viol) {
 
         // Setup the output file and path
         std::string outFileString = filePairs[entryPair][1];
-        outFileString.pop_back();
         std::filesystem::path outTemp = m_workerDirectory;
         outTemp = outTemp /= outFileString;
 
