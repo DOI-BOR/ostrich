@@ -480,7 +480,7 @@ void  ModelWorker::SendDouble(int tag_number, double value) {
 
 }
 
-void  ModelWorker::SendInt(int tag_number, int value) {
+void  ModelWorker::SendInteger(int tag_number, int value) {
     // TODO: Doc string
 
     // Send the value
@@ -527,13 +527,12 @@ void ModelWorker::SetupWork(void) {
                     std::filesystem::path filePath = workerDirectoryPath; 
                     filePath /= sourcePathRecursive;
 
-                    std::cout << filePath << std::endl;
-
                     // Create directories to make sure the file can be transferred
                     if (!std::filesystem::is_directory(filePath.remove_filename())) {
                         std::filesystem::create_directories(filePath.remove_filename());
                     }
 
+                    // Copy the file
 		            std::filesystem::copy(sourcePathRecursive, filePath, code);
 
                     // Add to the cleanup list
@@ -575,7 +574,6 @@ void ModelWorker::SetupWork(void) {
     indices2delete.resize(std::distance(indices2delete.begin(), ip));
 
     // Starting from the end, delete entries from the file list
-    std::cout << indices2delete.size() << std::endl;
     for (int entry = indices2delete.size() - 1; entry >= 0; entry--) {
         // Remove the current entry from the file list
         fileCleanupList.erase(fileCleanupList.begin() + indices2delete[entry]);
@@ -651,7 +649,11 @@ void  ModelWorker::CommenceWork() {
 
                     // Preserve the model if requested
                     if (preserveValue == 1) {
+                        // Move the files
                         PreserveModel(true);
+
+                        // Send the preserve is complete
+                        SendInteger(tag_preserveBest, 1);
                     }
                 }
 

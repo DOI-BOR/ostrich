@@ -117,6 +117,8 @@ private:
     
     void AddDatabase(DatabaseABC* pDbase);
 
+    void ManagePreserveBest(double& solutionObjective, double alternativeObjective, MPI_Status mpiStatus);
+
     // MPI communication functions
     void ConfigureWorkerDirectory(int workerRank);
     void ConfigureWorkerSolveCommand(int workerRank);
@@ -129,6 +131,10 @@ private:
     void SendWorkerContinue(int workerRank, bool workerContinue);
     void SendWorkerPreserveBest(int workerRank, bool preserveModel);
     void SendWorkerParameters(int workerRank, int alternativeIndex, std::vector<double> parameters);
+
+    void ReceiveWorkerPreserveBest(void);
+
+
 
     
 

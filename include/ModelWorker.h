@@ -89,7 +89,7 @@ private:
 	char ReceiveChar(int tag_number);
 
 	void SendDouble(int tag_number, double value);
-	void SendInt(int tag_number, int value);
+	void SendInteger(int tag_number, int value);
 
 	// Setup functions 
 	void ReceiveWorkerDirectory(void);

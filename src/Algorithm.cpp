@@ -1189,12 +1189,10 @@ void Algorithm::SendWorkerContinue(int workerRank, bool workerContinue) {
 
     int transferValue = 1;
     if (workerContinue) {
-        //MPI_Send(&transferValue, 1, MPI_INT, workerRank, tag_continue, MPI_COMM_WORLD);
         MPI_Ssend(&transferValue, 1, MPI_INT, workerRank, tag_continue, MPI_COMM_WORLD);
     }
     else {
         transferValue = 0;
-        //MPI_Send(&transferValue, 1, MPI_INT, workerRank, tag_continue, MPI_COMM_WORLD);
         MPI_Ssend(&transferValue, 1, MPI_INT, workerRank, tag_continue, MPI_COMM_WORLD);
     }
 
@@ -1210,15 +1208,56 @@ void Algorithm::SendWorkerPreserveBest(int workerRank, bool preserveModel) {
 
     int transferValue = 1;
     if (preserveModel) {
-        //MPI_Send(&transferValue, 1, MPI_INT, workerRank, tag_continue, MPI_COMM_WORLD);
         MPI_Ssend(&transferValue, 1, MPI_INT, workerRank, tag_preserveBest, MPI_COMM_WORLD);
     }
     else {
         transferValue = 0;
-        //MPI_Send(&transferValue, 1, MPI_INT, workerRank, tag_continue, MPI_COMM_WORLD);
         MPI_Ssend(&transferValue, 1, MPI_INT, workerRank, tag_preserveBest, MPI_COMM_WORLD);
     }
+}
 
+
+/*
+------------------------------------------------------------------------------------------------------------------------------
+MPI Communication - ReceiveWorkerPreserveBest()
+   Receives from worker that the model preserve is complete
+------------------------------------------------------------------------------------------------------------------------------
+*/
+void Algorithm::ReceiveWorkerPreserveBest() {
+
+    int transferValue;
+    MPI_Recv(&transferValue, 1, MPI_INT, MPI_ANY_SOURCE, tag_preserveBest, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
+}
+
+
+/*
+------------------------------------------------------------------------------------------------------------------------------
+MPI Communication - ManagePreserveBest()
+   Manages the process for preserving the best model
+------------------------------------------------------------------------------------------------------------------------------
+*/
+void Algorithm::ManagePreserveBest(double &solutionObjective, double alternativeObjective, MPI_Status mpiStatus) {
+
+
+    if (m_bPreserveModelBest) {
+        // Determine if the worker should archive the model
+        if (alternativeObjective < solutionObjective) {
+            // Solution value is better the previous best solution.
+            // Replace the objective value
+            solutionObjective = alternativeObjective;
+
+            // Tell the worker to preserve the model
+            SendWorkerPreserveBest(mpiStatus.MPI_SOURCE, true);
+
+            // Wait for confirmation
+            ReceiveWorkerPreserveBest();
+
+        }
+        else {
+            // Tell the worker not to preserve the output
+            SendWorkerPreserveBest(mpiStatus.MPI_SOURCE, false);
+        }
+    }
 }
 
 
@@ -1293,24 +1332,8 @@ void Algorithm::ManageSingleObjectiveIterations(std::vector<std::vector<double>>
                     // Set the objective value into the objective array
                     returnArray[(int)data[0]] = data[1];
 
-                    // If archiving the best is enabled, test the objective against the current best and tell
-                    // the worker what to do with the result
-                    if (m_bPreserveModelBest) {
-                        // Determine if the worker should archive the model
-                        if (data[1] < bestObjectiveIteration) {
-                            // Solution value is better the previous best solution.
-                            // Replace the objective value
-                            bestObjectiveIteration = data[1];
-
-                            // Tell the worker to preserve the model
-                            SendWorkerPreserveBest(mpiStatus.MPI_SOURCE, true);
-
-                        }
-                        else {
-                            // Tell the worker not to preserve the output
-                            SendWorkerPreserveBest(mpiStatus.MPI_SOURCE, false);
-                        }
-                    }
+                    // Check if the alternative should be preserved
+                    ManagePreserveBest(bestObjectiveIteration, data[1], mpiStatus);
 
                 } catch (...) {
                     // Read from the secondary worker failed. Fail by keeping the infinite value in the array
@@ -1319,8 +1342,6 @@ void Algorithm::ManageSingleObjectiveIterations(std::vector<std::vector<double>>
                 // Increment the solution counter
                 receiveCounter++;
             }
-
-            std::this_thread::sleep_for(std::chrono::milliseconds(1));
         }
 
         // All alternatives have been sent. Receive all of the solutions
@@ -1334,6 +1355,9 @@ void Algorithm::ManageSingleObjectiveIterations(std::vector<std::vector<double>>
 
                 // Set the objective value into the objective array
                 returnArray[(int)data[0]] = data[1];
+
+                // Check if the alternative should be preserved
+                ManagePreserveBest(bestObjectiveIteration, data[1], mpiStatus);
 
                 // Increment the solution counter
                 receiveCounter++;
