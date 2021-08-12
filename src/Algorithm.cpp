@@ -646,12 +646,6 @@ Algorithm::Algorithm(void) {
         m_bMultiObjProblem = true;
     }
 
-    /*
-    --------------------------------------------------------------------------------------------------------------------------
-    Read in special parameters.
-    --------------------------------------------------------------------------------------------------------------------------
-    */
-    m_pParamGroup->InitSpecialParams(inFileName);
 
     /*
     --------------------------------------------------------------------------------------------------------------------------
@@ -1061,10 +1055,6 @@ void Algorithm::ConfigureWorkerParameterGroups(int workerRank) {
         MPI_Send(&sampleValue, 1, MPI_INT, workerRank, tag_paramIntInit, MPI_COMM_WORLD);
     }
 
-
-    // Special parameters
-    // TODO: Write special parameters
-
     // Tied parameters 
     // These will appear as more real parameters on the secondary worker
     int numberOfTiedParameters = m_pParamGroup->GetNumTiedParams();
@@ -1084,7 +1074,6 @@ void Algorithm::ConfigureWorkerParameterGroups(int workerRank) {
         MPI_Send(&sampleValue, 1, MPI_DOUBLE, workerRank, tag_paramRealInit, MPI_COMM_WORLD);
         MPI_Send(&fixFmt[0], fixFmt.length() + 1, MPI_CHAR, workerRank, tag_paramRealFmt, MPI_COMM_WORLD);
     }
-
 
     // Geom parameters
     // TODO: write geom parameter

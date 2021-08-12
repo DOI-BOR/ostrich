@@ -29,7 +29,6 @@ class DatabaseABC;
 class ParameterABC;
 class TiedParamABC;
 class GeomParamABC;
-class SpecialParam;
 class FilePair;
 class FilePipe;
 struct AUG_VERT_LIST_STRUCT;
@@ -56,10 +55,8 @@ class ParameterGroup
      ParameterABC *GetParamPtr(IroncladString name);
      TiedParamABC *GetTiedParamPtr(IroncladString name);
      TiedParamABC *GetTiedParamPtr(int i);
-	 //SpecialParam * GetSpecialParamPtr(IroncladString name);
      int GetNumParams(void);
      int GetNumTiedParams(void){ return m_NumTied;}
-     int GetNumSpecialParams(void){ return m_NumSpecial;}
      void ReadParams(double * p);
      double WriteParams(Ironclad1DArray p);
      void CheckTemplateFiles(FilePair * pList);
@@ -68,10 +65,6 @@ class ParameterGroup
      void CheckBounds(void);
      void ExcludeParam(UnchangeableString prm);
      void WriteSuperMuseArgs(FILE * pFile);
-	 void GetSpecialConstraints(double * pSC);
-	 void ConfigureSpecialParams(double minObj, double * minCon);
-	 void InitSpecialParams(IroncladString pFileName);
-	 void EnableSpecialParams(void);
      bool ExtractInitialValue(char * name, bool bFixFmt, double * pVal);
      MetaParameter GetMetaParam(IroncladString name);
      bool CheckExtraction(void){ return m_bExtracted;}
@@ -85,7 +78,6 @@ class ParameterGroup
      char** m_ParamNameList; //list of parameter names
      int m_NumTied;
      int m_NumGeom;
-     int m_NumSpecial;
      int m_NumExcl;
 
 
@@ -94,7 +86,6 @@ class ParameterGroup
       ParameterABC ** m_pExcl;
       TiedParamABC ** m_pTied;
       GeomParamABC ** m_pGeom;
-	  SpecialParam ** m_pSpecial;
 
       void InitFromFile(IroncladString pParamFileName);
       int  CountParams(IroncladString pFileName);

@@ -172,134 +172,6 @@ TiedParamABC* ParameterGroup::GetTiedParamPtr(int i)
 }
 
 /******************************************************************************
-ConfigureSpecialParams()
-
-Set the objective function threshold criteria for pre-emption of model
-******************************************************************************/
-void ParameterGroup::ConfigureSpecialParams(double minObj, double * minCon)
-{
-   int j;
-
-   for(j = 0; j < m_NumSpecial; j++)
-   {
-      m_pSpecial[j]->SetEstimatedValueTransformed(minObj, minCon[j]);
-   }/* end for() */
-} /* end ConfigureSpecialParams() */
-
-/******************************************************************************
-GetSpecialConstraints()
-
-Retrieve the current values of the response variable associated with each 
-constraint. These canbe used in conjunction with ConfigureSpecialParams()
-to update pre-emption thresholds.
-******************************************************************************/
-void ParameterGroup::GetSpecialConstraints(double * pSC)
-{
-   ConstraintABC * pCon;
-   double rv = 0.00;
-
-   int j;
-
-   for(j = 0; j < m_NumSpecial; j++)
-   {
-      pCon = m_pSpecial[j]->GetConstraint();
-	   if(pCon != NULL)
-	   {
-         rv = pCon->GetResponseVar();
-         pSC[j] = rv;
-      }
-      else
-      {
-         pSC[j] = 0.00;
-      }
-   }/* end for() */
-}/* end GetSpecialConstraint() */
-
-/******************************************************************************
-EnableSpecialParams()
-
-Enable model pre-emption.
-******************************************************************************/
-void ParameterGroup::EnableSpecialParams(void)
-{
-	int j;
-
-   for(j = 0; j < m_NumSpecial; j++)
-   {
-      m_pSpecial[j]->Enable();
-   }/* end for() */
-}/* end EnableSpecialParams() */
-
-/******************************************************************************
-InitSpecialParams()
-
-Example syntax:
-	BeginSpecialParams
-		#template   initial    special       upper or  cons-
-		#mnemonic   value     parameter      lower?    traint
-		OST_COST    1E60       BestCost	     n/a      n/a      
-		OST_MASS    1E60     BestConstraint  upper    MyPen    
-	EndSpecialParams
-******************************************************************************/
-void ParameterGroup::InitSpecialParams(IroncladString pFileName)
-{
-   int i;   
-   FILE * pFile;
-   char pName[DEF_STR_SZ];
-   double initialValue;
-   char pType[DEF_STR_SZ];
-   char pLimit[DEF_STR_SZ];
-   char pConstraint[DEF_STR_SZ];
-   char * line;
-      
-   pFile = fopen(pFileName, "r");
-
-   //check that file could be opened
-   if(pFile == NULL){ FileOpenFailure("InitSpecialParams()", pFileName);}
-
-   //check for parameter token
-   if(CheckToken(pFile, "BeginSpecialParams", pFileName) == false)
-   { 
-      fclose(pFile);
-      return;
-   }
-   FindToken(pFile, "EndSpecialParams", pFileName);
-   rewind(pFile);
-   
-   //count number of parameters
-   m_NumSpecial = 0;
-   FindToken(pFile, "BeginSpecialParams", pFileName);
-   line = GetNxtDataLine(pFile, pFileName);
-   while(strstr(line, "EndSpecialParams") == NULL)
-   {            
-      m_NumSpecial++;
-      line = GetNxtDataLine(pFile, pFileName);
-   }/* end while() */
-
-   NEW_PRINT("SpecialParam *", m_NumSpecial);
-   m_pSpecial = new SpecialParam *[m_NumSpecial];
-   MEM_CHECK(m_pSpecial);
-
-   rewind(pFile);
-   FindToken(pFile, "BeginSpecialParams", pFileName);
-   line = GetNxtDataLine(pFile, pFileName);
-   i = 0;
-   while(strstr(line, "EndSpecialParams") == NULL)
-   {            
-      sscanf(line, "%s %lf %s %s %s", pName, &initialValue, pType, pLimit, pConstraint);
-
-      NEW_PRINT("SpecialParam", 1);
-      m_pSpecial[i] = new SpecialParam(pName, pType, pLimit, pConstraint, initialValue);
-      MEM_CHECK(m_pSpecial[i]);
-
-      line = GetNxtDataLine(pFile, pFileName);
-	  i++;
-   }/* end while() */
-
-   fclose(pFile);
-} /* end InitSpecialParams() */
-
-/******************************************************************************
 Destroy()
 
 Frees the memory used by the objects of all the parameters contained in it
@@ -331,12 +203,6 @@ void ParameterGroup::Destroy(void)
    }
    delete [] m_pGeom;
 
-   for(j = 0; j < m_NumSpecial; j++)
-   {
-      delete m_pSpecial[j];
-   }
-   delete [] m_pSpecial;
-
    for(j = 0; j < m_NumParams; j++)
    {
       delete [] m_ParamNameList[j];
@@ -357,13 +223,11 @@ ParameterGroup::ParameterGroup(bool initialize)
    m_pExcl = NULL;
    m_pTied = NULL;
    m_pGeom = NULL;
-   m_pSpecial = NULL;
    m_ParamNameList = NULL;
    m_NumParams = 0;
    m_NumExcl = 0;
    m_NumTied = 0;
    m_NumGeom = 0;
-   m_NumSpecial = 0;
 
    // Initialize the 
    if (initialize) {
@@ -386,7 +250,6 @@ void ParameterGroup::SubIntoFile(FilePipe * pPipe)
    ParameterABC * pParam;
    TiedParamABC * pTied;
    GeomParamABC * pGeom;
-   SpecialParam * pSpecial;
 
    //Adjustable parameters
    for(i = 0; i < m_NumParams; i++)
@@ -431,15 +294,6 @@ void ParameterGroup::SubIntoFile(FilePipe * pPipe)
       delete [] pRep;
    } /* end for() */
 
-   //special parameters
-   for(i = 0; i < m_NumSpecial; i++)
-   {     
-      pSpecial = m_pSpecial[i];
-      strcpy(find, pSpecial->GetName());
-      pSpecial->GetValAsStr(replace);
-      pPipe->FindAndReplace(find,replace);
-   } /* end for() */
-
    pPipe->StringToFile();
 } /* end SubIntoFile() */
 
@@ -480,7 +334,6 @@ void ParameterGroup::SubIntoDbase(DatabaseABC * pDbase)
    ParameterABC * pParam;
    TiedParamABC * pTied;
    GeomParamABC * pGeom;
-   SpecialParam * pSpecial;
 
    //Adjustable parameters
    for(i = 0; i < m_NumParams; i++)
@@ -525,14 +378,6 @@ void ParameterGroup::SubIntoDbase(DatabaseABC * pDbase)
       delete [] pRep;
    } /* end for() */
 
-   //special parameters
-   for(i = 0; i < m_NumSpecial; i++)
-   {     
-      pSpecial = m_pSpecial[i];
-      strcpy(find, pSpecial->GetName());
-      pSpecial->GetValAsStr(replace);
-      WriteDatabaseParameter(pDbase, find, replace);
-   } /* end for() */
 } /* end SubIntoDbase() */
 
 /******************************************************************************

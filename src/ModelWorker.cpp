@@ -354,8 +354,6 @@ void ModelWorker::ReceiveWorkerParameters(void) {
         // Increment the position counter
         positionCounter++;
     }
-    
-    // Special parameters
      
     // Tied parameters
     // Get the number of tied parameters

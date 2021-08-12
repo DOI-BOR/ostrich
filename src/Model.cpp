@@ -941,7 +941,7 @@ Model::Model(void)
    /*-----------------------------------------------------------------------
    Read in special parameters.
    ------------------------------------------------------------------------*/
-   m_pParamGroup->InitSpecialParams(inFileName);
+   //m_pParamGroup->InitSpecialParams(inFileName);
 
    /*-----------------------------------------------------------------------
    Check template files against parameters, each parameter should appear in

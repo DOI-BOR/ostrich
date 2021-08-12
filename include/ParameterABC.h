@@ -280,53 +280,5 @@ class ComboStrParam : public ParameterABC
       char ** m_pCombos;
 }; /* end class ComboStrParam */
 
-/******************************************************************************
-class SpecialParam
-
-Special Ostrich parameters. These correspond to 'optimal' cost and constraint
-values at any given stage of Ostrich. Can be used for linking Ostrich with
-the model pre-emption capabilities of a given model.
-******************************************************************************/
-class SpecialParam
-{
-   public:      
-      SpecialParam(void);
-      SpecialParam(IroncladString name,  IroncladString type, 
-                   IroncladString limit, IroncladString constraint, 
-				   double init); 
-      ~SpecialParam(void){ DBG_PRINT("SpecialParam::DTOR"); Destroy();}
-      void Destroy(void);
-
-	  void   GetValAsStr(UnmoveableString valStr);
-      void   Write(FILE * pFile, int type);
-	  //treat special parameters as unbounded
-      double GetLowerBoundTransformed(void){ return NEARLY_ZERO;}
-      double GetUpperBoundTransformed(void){ return NEARLY_HUGE;}
-      void SetLowerBoundTransformed(double val){ return;}
-      void SetUpperBoundTransformed(double val){ return;}
-      double GetEstimatedValueTransformed(void){ return m_estimatedValueTransformed;}
-	  double SetEstimatedValueTransformed(double estVal){ m_estimatedValueTransformed = estVal; return 0.00;}
-	  void   SetEstimatedValueTransformed(double minObj, double minCon);
-	  void   SetMinObj(double minObj){ m_MinObj = minObj;}
-      UnchangeableString GetName(void){ return m_pName;}
-      double GetTransformedVal(void){ return m_estimatedValueTransformed;}
-      double ConvertOutVal(double val){ return val;}
-      double ConvertInVal(double val){ return val;}
-	  void   Enable(void){ m_bSet = true;}
-      //threshold values (allow for implicit on/off of parameters)
-      void SetThreshVal(double lwr, double upr, double off){ return;}
-      const char * GetType(void) {return "special";}
-	  ConstraintABC * GetConstraint(void);
-            
-   private:
-      StringType m_pName;
-	  StringType m_pType; 
-      StringType m_pLimit;
-	  StringType m_pConstraint;
-	  double m_MinObj;
-      double m_estimatedValueTransformed;
-	  bool m_bSet;
-}; /* end class SpecialParam */
-
 
 #endif /* PARAMETER_ABC_H */
