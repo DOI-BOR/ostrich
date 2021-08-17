@@ -55,6 +55,8 @@ class ParameterGroup
      ParameterABC *GetParamPtr(IroncladString name);
      TiedParamABC *GetTiedParamPtr(IroncladString name);
      TiedParamABC *GetTiedParamPtr(int i);
+     GeomParamABC* GetGeomParamPtr(IroncladString name);
+     GeomParamABC* GetGeomParamPtr(int i);
      int GetNumParams(void);
      int GetNumTiedParams(void){ return m_NumTied;}
      void ReadParams(double * p);

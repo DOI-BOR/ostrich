@@ -59,25 +59,23 @@ double RealParam::SetEstimatedValueTransformed(double estVal) {
    double viol = 0.00;
    char msg[80];
 
-   if(estVal < m_lowerBoundTransformed) 
-   {            
+   if(estVal < m_lowerBoundTransformed) {            
       sprintf(msg, "%E < lower bound (%E)", estVal, m_lowerBoundTransformed);      
       LogError(ERR_PRM_BNDS, msg);
 	  viol = m_lowerBoundTransformed - estVal;
       estVal = m_lowerBoundTransformed;
-   }/* end if() */
-   if(estVal > m_upperBoundTransformed) 
-   {      
+   }
+
+   if(estVal > m_upperBoundTransformed) {      
       sprintf(msg, "%E > upper bound (%E)", estVal, m_upperBoundTransformed);
       LogError(ERR_PRM_BNDS, msg);
 	  viol = estVal - m_upperBoundTransformed;
       estVal = m_upperBoundTransformed;
-   }/* end if() */
-
+   }
 
    m_estimatedValueTransformed = estVal;
    return viol;
-} /* end RealParam::SetEstVal() */
+} 
 
 /******************************************************************************
 RealParam::GetTransformedVal()
@@ -101,37 +99,32 @@ RealParam::ConvertOutVal()
 
 Converts the input value based on users choice of output style.
 ******************************************************************************/
-double RealParam::ConvertOutVal(double val)
-{
-   switch(m_TransID[TX_OST])
-   {
+double RealParam::ConvertOutVal(double val) {
+   switch(m_TransID[TX_OST]) {
       case(TX_NONE)  : 
-         switch(m_TransID[TX_OUT])
-         {
+         switch(m_TransID[TX_OUT]) {
             case(TX_NONE)  : return val;
             case(TX_LOG10) : return log10(val);
             case(TX_LN)    : return log(val);
             default        : return 0.00;
-         }/* end switch () */
+         }
       case(TX_LOG10) :          
-         switch(m_TransID[TX_OUT])
-         {
+         switch(m_TransID[TX_OUT]) {
             case(TX_NONE)  : return pow(10, val);
             case(TX_LOG10) : return val;
             case(TX_LN)    : return log(pow(10,val));
             default        : return 0.00;
-         }/* end switch () */
+         }
       case(TX_LN)    : 
-         switch(m_TransID[TX_OUT])
-         {
+         switch(m_TransID[TX_OUT]) {
             case(TX_NONE)  : return exp(val);
             case(TX_LOG10) : return log10(exp(val));
             case(TX_LN)    : return val;
             default        : return 0.00;
-         }/* end switch () */
+         }
       default        : return 0.00;
-   }/* end switch () */
-} /* end RealParam::ConvertOutVal() */
+   }
+} 
 
 /******************************************************************************
 RealParam::ConvertInVal()
@@ -139,21 +132,18 @@ RealParam::ConvertInVal()
 Converts the input value based on users choice of Ostrich style. The resulting
 value will be consistent with the transformation used by the Ostrich program.
 ******************************************************************************/
-double RealParam::ConvertInVal(double val)
-{
+double RealParam::ConvertInVal(double val) {
    switch(m_TransID[TX_OST])
    {
       case(TX_NONE)  : 
-         switch(m_TransID[TX_IN])
-         {
+         switch(m_TransID[TX_IN]) {
             case(TX_NONE)  : return val;
             case(TX_LOG10) : return pow(10, val);
             case(TX_LN)    : return exp(val);
             default        : return 0.00;
-         }/* end switch () */
+         }
       case(TX_LOG10) :      
-         switch(m_TransID[TX_IN])
-         {
+         switch(m_TransID[TX_IN]){
             case(TX_NONE)  : 
             {
                 if (val <= 0.00) { val = NEARLY_ZERO;}
@@ -162,10 +152,9 @@ double RealParam::ConvertInVal(double val)
             case(TX_LOG10) : return val;
             case(TX_LN)    : return log10(exp(val));
             default        : return 0.00;
-         }/* end switch () */
+         }
       case(TX_LN)    : 
-         switch(m_TransID[TX_IN])
-         {
+         switch(m_TransID[TX_IN]) {
             case(TX_NONE)  : 
             {
                if (val <= 0.00) { val = NEARLY_ZERO;}
@@ -174,18 +163,16 @@ double RealParam::ConvertInVal(double val)
             case(TX_LOG10) : return log(pow(10,val));
             case(TX_LN)    : return val;
             default        : return 0.00;
-         }/* end switch () */
+         }
       default        : return 0.00;
-   }/* end switch () */
-} /* end RealParam::ConvertInVal() */
+   }
+} 
 
 /******************************************************************************
 CTOR (RealParam)
 ******************************************************************************/
-RealParam::RealParam(IroncladString name, double initialValue, 
-                     double lowerBound, double upperBound, IroncladString txIn, 
-                     IroncladString txOst, IroncladString txOut, IroncladString fixFmt)
-{
+RealParam::RealParam(IroncladString name, double initialValue, double lowerBound, double upperBound, IroncladString txIn, 
+                     IroncladString txOst, IroncladString txOut, IroncladString fixFmt) {
    int len;
 
    len = (int)strlen(name) + 10;  

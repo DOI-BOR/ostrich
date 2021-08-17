@@ -81,7 +81,7 @@ int main(int argc, StringType argv[])
 #endif
 
    //initialize input files (assume only one input file)
-   strcpy(GetOstFileName(), "ostIn.txt");
+   strcpy(GetOstFileName(), "OstIn.txt");
    strcpy(GetExeDirName(), ".");
    InitDataLine(GetOstFileName());
    
@@ -89,8 +89,7 @@ int main(int argc, StringType argv[])
    SetProgramType(program);
 
    //execute desired operation
-   switch(program)
-   {
+   switch(program) {
       case(GA_PROGRAM) : 
       {
          GA_Program(argc, argv);

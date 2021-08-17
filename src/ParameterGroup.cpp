@@ -172,6 +172,36 @@ TiedParamABC* ParameterGroup::GetTiedParamPtr(int i)
 }
 
 /******************************************************************************
+GetGeomParamPtr()
+
+Retrieves a pointer to the tied parameter with matching name.
+******************************************************************************/
+GeomParamABC* ParameterGroup::GetGeomParamPtr(IroncladString name)
+{
+    int j;
+
+    //determine indices by examing parameter names
+    for (j = 0; j < m_NumGeom; j++)
+    {
+        if (m_pGeom[j] != NULL)
+        {
+            if (strcmp(m_pGeom[j]->GetName(), name) == 0) { return m_pGeom[j]; }
+        }
+    }
+    return NULL;
+} 
+
+/******************************************************************************
+GetGeomParamPtr()
+
+Retrieves a pointer to the ith parameter.
+******************************************************************************/
+GeomParamABC* ParameterGroup::GetGeomParamPtr(int i)
+{
+    return m_pGeom[i];
+}
+
+/******************************************************************************
 Destroy()
 
 Frees the memory used by the objects of all the parameters contained in it
@@ -685,26 +715,24 @@ void ParameterGroup::InitRealParams(IroncladString pFileName)
    if(pFile == NULL){ FileOpenFailure("InitRealParams()", pFileName);}
 
    //check for parameter token
-   if(CheckToken(pFile, "BeginParams", pFileName) == false)
-   { 
+   if(CheckToken(pFile, "BeginParams", pFileName) == false) { 
       fclose(pFile);
       return;
    }
+
    FindToken(pFile, "EndParams", pFileName);
    rewind(pFile);
    
    FindToken(pFile, "BeginParams", pFileName);
    line = GetNxtDataLine(pFile, pFileName);
    m_bExtracted = false;
-   while(strstr(line, "EndParams") == NULL)
-   {            
+   while(strstr(line, "EndParams") == NULL) {            
       strcpy(tmpTrans1, "none");
       strcpy(tmpTrans2, "none");
       strcpy(tmpTrans3, "none");
       strcpy(tmpFixFmt, "free");
 
-      sscanf(line, "%s %s %lf %lf %s %s %s %s", tmpName, tmpInitVal, &lowerBound,
-             &upperBound, tmpTrans1, tmpTrans2, tmpTrans3, tmpFixFmt);
+      sscanf(line, "%s %s %lf %lf %s %s %s %s", tmpName, tmpInitVal, &lowerBound, &upperBound, tmpTrans1, tmpTrans2, tmpTrans3, tmpFixFmt);
 
       if(strcmp(tmpFixFmt, "free") == 0) bFixFmt = false;
       else bFixFmt = true;
@@ -730,11 +758,13 @@ void ParameterGroup::InitRealParams(IroncladString pFileName)
       i = GetNextEmptyParamIdx();
 
       NEW_PRINT("RealParam", 1);
-      m_pList[i] = new RealParam(tmpName, initialValue, lowerBound, upperBound,
-                                 tmpTrans1, tmpTrans2, tmpTrans3, tmpFixFmt);
+      ParameterABC *temp = new RealParam(tmpName, initialValue, lowerBound, upperBound,
+          tmpTrans1, tmpTrans2, tmpTrans3, tmpFixFmt);
+      m_pList[i] = temp;
       MEM_CHECK(m_pList[i]);
 
-       //assign random values from within transformed space
+      // todo: document these features
+      //assign random values from within transformed space
       if(strcmp(tmpInitVal, "random") == 0)
       { 
          upperBound = m_pList[i]->GetUpperBoundTransformed();

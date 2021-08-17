@@ -125,55 +125,6 @@ GeneticAlgorithm::GeneticAlgorithm() {
             LogError(ERR_FILE_IO, "Using default algorithm setup.");
         }
 
-        /* initialize some or all pop. members to specied values */
-        //rewind(pFile);
-        //if (CheckToken(pFile, "BeginInitParams", name) == true) {
-        //    FindToken(pFile, "EndInitParams", name);
-        //    rewind(pFile);
-
-        //    //allocate space for the parameter list
-        //    num = m_pComm->GetParamGroupPtr()->GetNumParams();
-
-        //    //count the number of entries
-        //    FindToken(pFile, "BeginInitParams", name);
-        //    line = GetNxtDataLine(pFile, name);
-        //    m_NumInit = 0;
-        //    while (strstr(line, "EndInitParams") == NULL) {
-        //        m_NumInit++;
-        //        line = GetNxtDataLine(pFile, name);
-        //    }/* end while() */
-
-        //    //allocate space for entries
-        //    if (m_NumInit > 0) {
-        //        NEW_PRINT("double *", m_NumInit);
-        //        m_pInit = new double* [m_NumInit];
-        //        MEM_CHECK(m_pInit);
-        //        for (i = 0; i < m_NumInit; i++) {
-        //            NEW_PRINT("double", num);
-        //            m_pInit[i] = new double[num];
-        //            MEM_CHECK(m_pInit[i]);
-        //        }
-        //    }/* end if() */
-
-        //    //read in entries
-        //    rewind(pFile);
-        //    FindToken(pFile, "BeginInitParams", name);
-        //    line = GetNxtDataLine(pFile, name);
-        //    i = 0;
-        //    while (strstr(line, "EndInitParams") == NULL) {
-        //        pTok = line;
-        //        //extract values, one-by-one, making any necessary conversions
-        //        for (k = 0; k < num; k++) {
-        //            j = ExtractString(pTok, tmp);
-        //            j = ValidateExtraction(j, k, num, "ChromosomePool::Initialize()");
-        //            pTok += j;
-        //            m_pInit[i][k] = m_pComm->GetParamGroupPtr()->GetParamPtr(k)->ConvertInVal(atof(tmp));
-        //        }/* end for() */
-        //        i++;
-        //        line = GetNxtDataLine(pFile, name);
-        //    }/* end while() */
-        //}/* end if() */
-
         fclose(pFile);
     }/* end if() */
 
@@ -205,11 +156,9 @@ GeneticAlgorithm::GeneticAlgorithm() {
         ExitProgram(1);
     }
 
-
     /*
     Create the genes for the algorithm
     */
-    // Create the genes
     m_pGenes = new RealEncodedGene[m_pParamGroup->GetNumParams()];
     MEM_CHECK(m_pGenes);
 
@@ -223,34 +172,25 @@ GeneticAlgorithm::GeneticAlgorithm() {
         m_pGenes[entryParameter].SetValue(test->GetInitialValueTransformed());
         m_pGenes[entryParameter].SetUpr(test->GetUpperBoundTransformed());
         m_pGenes[entryParameter].SetLwr(test->GetLowerBoundTransformed());
-        m_pGenes[entryParameter].SetMutationRate(m_MutationRate);
-        m_pGenes[entryParameter].SetCrossoverRate(m_CrossoverRate);
-
     }
-
    
    IncCtorCount();
-}/* end CTOR() */
+}
 
 /******************************************************************************
 Destroy()
 
 Free up memory used by the GA and it's member variables.
 ******************************************************************************/
-void GeneticAlgorithm::Destroy(void) {
-                                                 
+void GeneticAlgorithm::Destroy(void) {                                                 
                        
     delete m_pGenes;
 
-                
-
-
-   IncDtorCount();
+    IncDtorCount();
 }
 
 /*
 Initialize()
-
 */
 std::vector<std::vector<double>> GeneticAlgorithm::CreateInitialSample(int sampleSize) {
 
@@ -529,9 +469,25 @@ pre-established mutation rate.
 */
 void GeneticAlgorithm::Mutate(std::vector<std::vector<double>>& samplesScratch) {
 
+    double r, range, value;
+
     for (int entryAlternative = m_NumSurvivors; entryAlternative < m_NumPopulation; entryAlternative++) {
         for (int entryParam = 0; entryParam < m_pParamGroup->GetNumParams(); entryParam++) {
-            samplesScratch[entryAlternative][entryParam] = m_pGenes[entryParam].Mutate(samplesScratch[entryAlternative][entryParam]);
+            
+            // Calculate the range of the value
+            range = m_pGenes[entryParam].GetUpr() - m_pGenes[entryParam].GetLwr();
+
+            // Pull a random value
+            r = (double)MyRand() / (double)MY_RAND_MAX;
+
+            // Mutate if the value is less than the mutation rate
+            if (r < m_MutationRate) {
+                r = (double)MyRand() / (double)MY_RAND_MAX;
+                value = (r * range) + m_pGenes[entryParam].GetLwr();
+
+                m_pGenes[entryParam].SetValue(value);
+                samplesScratch[entryAlternative][entryParam] = value;
+            }
         }
     }
 }

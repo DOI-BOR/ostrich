@@ -24,6 +24,7 @@ these groups.
 #include "ParameterGroup.h"
 #include "ParameterABC.h"
 #include "TiedParamABC.h"
+#include "GeomParamABC.h"
 #include "FilePair.h"
 #include "FileList.h"
 #include "AccessConverter.h"
@@ -252,7 +253,6 @@ Algorithm::Algorithm(void) {
     Read in any extra model files, these will need to be copied to the model subdirectory.
     --------------------------------------------------------------------------------------------------------------------------
     */
-    
     rewind(pInFile);
     if (CheckToken(pInFile, "BeginExtraFiles", inFileName) == true) {
         //make sure end token exists
@@ -273,7 +273,6 @@ Algorithm::Algorithm(void) {
                 m_pFileCleanupList->Insert(tmp1);
             }
             
-
             // Get the next data line
             line = GetNxtDataLine(pInFile, inFileName);
         }
@@ -284,7 +283,6 @@ Algorithm::Algorithm(void) {
     Read in any extra model folders, these will need to be copied (along with their contects) to the model subdirectory.
     --------------------------------------------------------------------------------------------------------------------------
     */
-    // TODO: Update with new filesystem syntx
     rewind(pInFile);
     if (CheckToken(pInFile, "BeginExtraDirs", inFileName) == true) {
         //make sure end token exists
@@ -389,6 +387,7 @@ Algorithm::Algorithm(void) {
     Check for alternate objective function (default is WSSE)
     --------------------------------------------------------------------------------------------------------------------------
     */
+    // todo: reenable this functionality
     rewind(pInFile);
     if (CheckToken(pInFile, "ObjectiveFunction", inFileName) == true) {
         line = GetCurDataLine();
@@ -406,6 +405,7 @@ Algorithm::Algorithm(void) {
     Read in flag to check sensitivities
     --------------------------------------------------------------------------------------------------------------------------
     */
+    // todo: reenable this functionality
     rewind(pInFile);
     if (CheckToken(pInFile, "CheckSensitivities", inFileName) == true) {
         line = GetCurDataLine();
@@ -419,6 +419,7 @@ Algorithm::Algorithm(void) {
     Read in flag to use surrogate models
     --------------------------------------------------------------------------------------------------------------------------
     */
+    // todo: reenable this functionality
     rewind(pInFile);
     if (CheckToken(pInFile, "SurrogateApproach", inFileName) == true) {
         line = GetCurDataLine();
@@ -432,6 +433,7 @@ Algorithm::Algorithm(void) {
     Read in flag to use SuperMUSE
     --------------------------------------------------------------------------------------------------------------------------
     */
+    // todo: reenable this functionality
     rewind(pInFile);
     bool bSMUSE = false;
     if (CheckToken(pInFile, "SuperMUSE", inFileName) == true) {
@@ -447,7 +449,7 @@ Algorithm::Algorithm(void) {
 
     /*
     --------------------------------------------------------------------------------------------------------------------------
-    Read in flag to preserve model output files. This only applies if a model subdirectory is used.
+    Read in flag to preserve model output files. 
     --------------------------------------------------------------------------------------------------------------------------
     */
     rewind(pInFile);
@@ -508,6 +510,7 @@ Algorithm::Algorithm(void) {
     won't have to run the model.
     --------------------------------------------------------------------------------------------------------------------------
     */
+    // todo: reenable this functionality
     rewind(pInFile);
     if (CheckToken(pInFile, "OstrichCaching", inFileName) == true) {
         line = GetCurDataLine();
@@ -538,6 +541,7 @@ Algorithm::Algorithm(void) {
     Read in telescoping strategy, if any.
     --------------------------------------------------------------------------------------------------------------------------
     */
+    // todo: reenable this functionality
     char tscp[DEF_STR_SZ];
     rewind(pInFile);
     if (CheckToken(pInFile, "TelescopingStrategy", inFileName) == true) {
@@ -557,6 +561,7 @@ Algorithm::Algorithm(void) {
     Read in BoxCox transformation, if any.
     --------------------------------------------------------------------------------------------------------------------------
     */
+    // todo: reenable this functionality
     char boxcox[DEF_STR_SZ];
     bool bBoxCox = false;
     double boxCoxValue = 1.00;
@@ -605,7 +610,6 @@ Algorithm::Algorithm(void) {
     Read in the observation group information
     --------------------------------------------------------------------------------------------------------------------------
     */
-
     NEW_PRINT("ParameterGroup", 1);
     m_pParamGroup = new ParameterGroup(true);
     MEM_CHECK(m_pParamGroup);
@@ -1076,7 +1080,24 @@ void Algorithm::ConfigureWorkerParameterGroups(int workerRank) {
     }
 
     // Geom parameters
-    // TODO: write geom parameter
+    // These will appear as more real parameters on the secondary worker
+    /*int numberOfGeomParameters = m_pParamGroup->m_NumGeom;
+    MPI_Send(&numberOfGeomParameters, 1, MPI_INT, workerRank, tag_paramTotalReal, MPI_COMM_WORLD);
+
+    for (int entryParameter = 0; entryParameter < numberOfGeomParameters; entryParameter++) {
+        // Get the parameter from the group
+        GeomParamABC* param = m_pParamGroup->GetGeomParamPtr(entryParameter);
+
+        // Get the information from the parameter
+        std::string name = param->GetName();
+        double sampleValue = param->GetEstimatedValueTransformed();
+        std::string fixFmt = param->GetFixFmt();
+
+        // Send the values to the worker
+        MPI_Send(&name[0], name.length() + 1, MPI_CHAR, workerRank, tag_paramRealName, MPI_COMM_WORLD);
+        MPI_Send(&sampleValue, 1, MPI_DOUBLE, workerRank, tag_paramRealInit, MPI_COMM_WORLD);
+        MPI_Send(&fixFmt[0], fixFmt.length() + 1, MPI_CHAR, workerRank, tag_paramRealFmt, MPI_COMM_WORLD);
+    }*/
 
 }
 
@@ -1145,7 +1166,7 @@ void Algorithm::SendWorkerParameters(int workerRank, int alternativeIndex, std::
         param->SetEstimatedValueTransformed(parametersRegular[entryParameter]);
 
         // Get the converted value
-        parametersTemp.push_back(param->GetTransformedVal());
+        parametersTemp.push_back(param->ConvertOutVal(parametersRegular[entryParameter]));
     }
 
     // Update the tied parameters
