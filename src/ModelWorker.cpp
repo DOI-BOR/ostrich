@@ -934,7 +934,7 @@ Execute()
     MPI_Comm_rank(MPI_COMM_WORLD, &rank);
 
     //inc. number of times model has been executed
-    m_Counter++;
+    m_NumSolves++;
 
     //make substitution of parameters into model input file
     pCur = m_FileList;
@@ -987,7 +987,7 @@ Execute()
     if (dirName[0] != '.') { MY_CHDIR(dirName); }
 
     //preserve model output, if desired
-    PreserveModel(rank, GetTrialNumber(), m_Counter, pCatStr);
+    PreserveModel(rank, GetTrialNumber(), m_NumSolves, pCatStr);
 
     //cd out of model subdirectory, if needed
     if (dirName[0] != '.') { MY_CHDIR(".."); }
@@ -1147,7 +1147,7 @@ DisklessExecute()
 ******************************************************************************/
 /*double ModelWorker::DisklessExecute(void) {
     //inc. number of times model has been executed
-    m_Counter++;
+    m_NumSolves++;
 
     if (strcmp(m_ExecCmd, "Isotherm()") == 0) { DisklessIsotherm(m_pParamGroup, m_pObsGroup); }
     //else if(strcmp(m_ExecCmd, "Orear()") == 0){ DisklessOrear();}
@@ -1196,7 +1196,7 @@ GetObjFuncCategory()
     case(APPSO_PROGRAM):
     case(BEERS_PROGRAM):
     {
-        if ((m_Counter <= 1) || (pF[0] < GetBestObjFunc(m_pParamGroup->GetNumParams())))
+        if ((m_NumSolves <= 1) || (pF[0] < GetBestObjFunc(m_pParamGroup->GetNumParams())))
         {
             return(ObjFuncBest);
         }
@@ -1226,7 +1226,7 @@ GetObjFuncCategory()
     case(PADDS_PROGRAM):
     case(PARA_PADDS_PROGRAM):
     {
-        if ((m_Counter <= 1) || IsNonDominated(pF, nObj))
+        if ((m_NumSolves <= 1) || IsNonDominated(pF, nObj))
         {
             return ObjFuncNonDominated;
         }

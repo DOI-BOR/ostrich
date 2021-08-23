@@ -64,7 +64,7 @@ public:
     
     //void   WriteMetrics(FILE* pFile);
     //void   Bookkeep(bool bFinal);
-    //int GetNumDigitsOfPrecision(void) { return m_Precision; }
+    int GetNumDigitsOfPrecision(void) { return m_Precision; }
     //bool CheckWarmStart(void) { return m_bWarmStart; }
 
     // Objective information
@@ -90,13 +90,15 @@ private:
     int m_NumCacheHits = 0;
     std::vector<std::vector<double>> m_CacheMembers;
 
-    int m_Counter = 0;
-    int m_Precision = 6;
+    
+
 
     // Solution information
-    StringType  m_ExecCmd = NULL;
-    bool m_bWarmStart = false;
-    bool m_bSolveOnPrimary = false;
+    StringType  m_ExecCmd = NULL;                                       // Command used to solve the model
+    bool m_bWarmStart = false;                                          // Start the solution from a previously terminated run
+    bool m_bSolveOnPrimary = false;                                     // Solve on the primary worker in addition to the secondary workers
+    int m_Precision = 6;                                                // Precision that should be used unless otherwise specified
+    int m_NumSolves = 0;                                                // Number of times the model has been solved
     
     
     bool m_bCheckGlobalSens = false;
@@ -206,7 +208,7 @@ private:
     SurrogateParameterGroup* m_pParamGroup;
 
     FilePair* m_FileList;
-    int m_Counter;
+    int m_NumSolves;
     StringType  m_ExecCmd;
     StringType  m_pTypeStr;
     double m_CurObjFuncVal;

@@ -432,7 +432,6 @@ Algorithm::Algorithm(void) {
     won't have to run the model.
     --------------------------------------------------------------------------------------------------------------------------
     */
-    // todo: reenable this functionality
     rewind(pInFile);
     if (CheckToken(pInFile, "OstrichCaching", inFileName) == true) {
         line = GetCurDataLine();
@@ -448,7 +447,6 @@ Algorithm::Algorithm(void) {
     Read in number of digits of precision in I/O.
     --------------------------------------------------------------------------------------------------------------------------
     */
-    // todo: renenable this functionality
     rewind(pInFile);
     if (CheckToken(pInFile, "NumDigitsOfPrecision", inFileName) == true) {
         line = GetCurDataLine();
@@ -650,7 +648,7 @@ GetCounter()
 ------------------------------------------------------------------------------------------------------------------------------
 */
 int Algorithm::GetCounter(void) {
-    return m_Counter;
+    return m_NumSolves;
 }
 
 /*
@@ -659,7 +657,7 @@ SetCounter()
 ------------------------------------------------------------------------------------------------------------------------------
 */
 void Algorithm::SetCounter(int count) {
-    m_Counter = count;
+    m_NumSolves = count;
 } 
 
 /*
@@ -1166,13 +1164,16 @@ void Algorithm::ManageSingleObjectiveIterations(std::vector<std::vector<double>>
                 // Alternative is not present in the cache. Add it to be solved.
                 indicesToSolve.push_back(entryAlternative);
             }
+            else {
+                // Log the cache hit
+                m_NumCacheHits++;
+            }
         }
         else {
             // Caching is not enabled. Add it to the solve list
             indicesToSolve.push_back(entryAlternative);
         }
     }
-    std::cout << "Cache size:\t" << m_CacheMembers.size() << std::endl;
 
     // Begin solving the alternatives
     if (m_bSolveOnPrimary) {
@@ -1242,8 +1243,11 @@ void Algorithm::ManageSingleObjectiveIterations(std::vector<std::vector<double>>
                     // Read from the secondary worker failed. Fail by keeping the infinite value in the array
                 }
 
-                // Increment the solution counter
+                // Increment the receive counter
                 receiveCounter++;
+
+                // Increment the solve counter
+                m_NumSolves++;
             }
         }
 
@@ -1267,9 +1271,11 @@ void Algorithm::ManageSingleObjectiveIterations(std::vector<std::vector<double>>
                 // Check if the alternative should be preserved
                 ManagePreserveBest(bestObjectiveIteration, data[1], mpiStatus);
 
-                // Increment the solution counter
+                // Increment the receive counter
                 receiveCounter++;
 
+                // Increment the solve counter
+                m_NumSolves++;
             }
         }    
     }
@@ -1325,9 +1331,9 @@ Bookkeep()
     {
         for (i = 1; i < nprocs; i++)
         {
-            temp = m_Counter;
+            temp = m_NumSolves;
             MPI_Bcast(&temp, 1, MPI_INTEGER, i, MPI_COMM_WORLD);
-            if (id == 0) m_Counter += temp;
+            if (id == 0) m_NumSolves += temp;
         }
     }
 } /* end Bookkeep() */
@@ -1343,7 +1349,7 @@ GatherTask()
     double val;
 
     //inc. number of times model has been executed
-    m_Counter++;
+    m_NumSolves++;
 
     //cd to task subdirectory
     MY_CHDIR(pDir);
@@ -1377,7 +1383,7 @@ WriteMetrics()
     }
     else
     {
-        fprintf(pFile, "Total Evals             : %d\n", m_Counter);
+        fprintf(pFile, "Total Evals             : %d\n", m_NumSolves);
         fprintf(pFile, "Telescoping Strategy    : ");
         switch (m_Telescope)
         {
