@@ -399,6 +399,21 @@ void ModelWorker::ReceiveWorkerParameters(void) {
     
     // Set the parameter values into the group
     paramGroup->SetGroupValues(m_pList, m_pExcl, m_ParamNameList, numberOfTotalParameters, numberOfExcluded);
+
+    /*
+    --------------------------------------------------------------------------------------------------------------------------
+    Check template files against parameters, each parameter should appear in at least one template file or at least one database entry.
+    --------------------------------------------------------------------------------------------------------------------------
+    */
+    paramGroup->CheckTemplateFiles(filePairs, m_workerDirectory);
+
+    /*
+    --------------------------------------------------------------------------------------------------------------------------
+    Check parameters for uniqueness, each parameter should be unique and should not be a substring of another parameter.
+    --------------------------------------------------------------------------------------------------------------------------
+    */
+    paramGroup->CheckMnemonics();
+
 }
 
 

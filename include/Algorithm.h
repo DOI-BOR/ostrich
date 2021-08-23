@@ -78,7 +78,6 @@ public:
 
 private:
     // Set the default variables for the class
-    DatabaseABC* m_DbaseList = NULL;
     std::vector<std::vector<std::string>> fileListPairs;
     int m_Counter = 0;
     int m_NumCacheHits = 0;
@@ -87,7 +86,6 @@ private:
     char m_DirPrefix[DEF_STR_SZ];
     char pDirName[DEF_STR_SZ];                                          // Stem of the worker path without the rank
     FileList* m_pFileCleanupList = NULL;
-    bool m_InternalModel = false;
     bool m_bCheckGlobalSens = false;
     bool m_bUseSurrogates = false;
     
@@ -107,8 +105,8 @@ private:
     double* m_CurMultiObjF = NULL;
 
     // Solution functions
-    double** CreateInitialSample(int sampleSize);
-    double** CreateSample(int sampleSize);
+    std::vector<std::vector<double>> CreateInitialSample(int sampleSize);
+    std::vector<std::vector<double>> CreateSample(int sampleSize);
     void Optimize(void);
     void Calibrate(void);
     void WriteMetrics(FILE* pFile);

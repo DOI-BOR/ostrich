@@ -68,7 +68,6 @@ Algorithm::Algorithm(void) {
     bool quoteWrap; //if true, then executable must be wrapped in quotes
 
 
-    //RegisterModelPtr(this);
     // Get the current directory and the input filename
     IroncladString inFileName = GetInFileName();
     UnmoveableString pDirName = GetExeDirName();
@@ -120,101 +119,25 @@ Algorithm::Algorithm(void) {
         strcpy(m_DirPrefix, tmp1);
     }
 
+
     /*
     --------------------------------------------------------------------------------------------------------------------------
-    Read in the model executable, modifying so that output is redirected to a file. Also, copy the executable file to the 
-    directory of execution.
+    Setup the executable to be called during the OSTRICH run
     --------------------------------------------------------------------------------------------------------------------------
     */
     rewind(pInFile);
     FindToken(pInFile, "ModelExecutable", inFileName);
     line = GetCurDataLine();
 
-
-    /*
-    --------------------------------------------------------------------------------------------------------------------------
-    Read in executable, taking care to preserve full path, even in the presence of long and space-separated filenames.
-    --------------------------------------------------------------------------------------------------------------------------
-    */
     i = ExtractString(line, tmp2);
     i = ValidateExtraction(i, 1, 1, "Model()");
     i = ExtractFileName(&(line[i]), tmp1);
 
-    //must wrap in quotes if there is whitespace in the execuable path
-    //quoteWrap = false;
-    //j = (int)strlen(tmp1);
-    //for (i = 0; i < j; i++) { if (tmp1[i] == ' ') { quoteWrap = true; } }
-    //if (quoteWrap == true) { tmp1[j++] = '"'; }
-    //tmp1[j] = (char)NULL;
-    //if (quoteWrap == true) {
-    //    MyStrRev(tmp1);
-    //    tmp1[j++] = '"';
-    //    tmp1[j] = (char)NULL;
-    //    MyStrRev(tmp1);
-    //}
+    int len = (int)strlen(tmp1) + 1;
+    m_ExecCmd = new char[len];
+    MEM_CHECK(m_ExecCmd);
 
-    /*
-    --------------------------------------------------------------------------------------------------------------------------
-    Extract OSTRICH executable file name from rest of path and save it. This is so that Ostrich can cleanup after itself when 
-    copying files around.
-    --------------------------------------------------------------------------------------------------------------------------
-    */
-    // TODO: make this process more robust
-    /*#ifdef _WIN32
-        m_pFileCleanupList = new FileList("ostrich.exe");
-    #else
-        m_pFileCleanupList = new FileList("Ostrich");
-    #endif*/
-
-    /*
-    --------------------------------------------------------------------------------------------------------------------------
-    Extract executable file name from rest of path and save it. This is so that Ostrich can cleanup after itself when copying 
-    files around.
-    --------------------------------------------------------------------------------------------------------------------------
-    */
-   /* if (m_InternalModel == false) {
-        j = 0;
-        for (i = (int)(strlen(tmp1)) - 1; i > 0; i--) {
-            if ((tmp1[i] != '\\') && (tmp1[i] != '/')) {
-                tmp2[j] = tmp1[i];
-                j++;
-            }
-            else {
-                if (quoteWrap == true) {
-                    tmp2[j] = '"';
-                    j++;
-                }
-                tmp2[j] = (char)NULL;
-                MyStrRev(tmp2);
-                m_pFileCleanupList->Insert(tmp2);
-                break;
-            }
-        }
-    }*/
-
-    /*
-    --------------------------------------------------------------------------------------------------------------------------
-    Check to see if the model is internal. If it is, it will be a function call and end in a '()'. Setup the operations for an 
-    internal model.
-    --------------------------------------------------------------------------------------------------------------------------
-    */
-    if ((strlen(tmp1) > 1) && (tmp1[strlen(tmp1) - 2] == '(') && (tmp1[strlen(tmp1) - 1] == ')')) {
-        m_InternalModel = true;
-    }
-
-    /*
-    --------------------------------------------------------------------------------------------------------------------------
-    Check to see if the model is external. Setup operations for an external model.
-    --------------------------------------------------------------------------------------------------------------------------
-    */
-    if (m_InternalModel == false) {
-        // Store the run command
-        MyTrim(tmp1);
-        int len = (int)strlen(tmp1) + 1;
-
-        m_ExecCmd = new char[len];
-        strcpy(m_ExecCmd, tmp1);
-    }
+    strcpy(m_ExecCmd, tmp1);
 
 
     /*
@@ -228,12 +151,11 @@ Algorithm::Algorithm(void) {
     while (strstr(line, "EndFilePairs") == NULL) {
         if ((strstr(line, ";") == NULL) && (strstr(line, "\t") == NULL)) {
             LogError(ERR_FILE_IO, "Model::CTOR(): missing separator (;) in file pair.");
-        }/* end if() */
+        }
 
         /*
         ----------------------------------------------------------------------------------------------------------------------
-        Read in file pairs, taking care to preserve full path,
-        even in the presence of long and space-separated filenames.
+        Read in file pairs, taking care to preserve full path, even in the presence of long and space-separated filenames.
         ----------------------------------------------------------------------------------------------------------------------
         */
         //first file in pair.....
@@ -583,27 +505,7 @@ Algorithm::Algorithm(void) {
 
     if (bSMUSE) CleanSuperMUSE();
 
-    /*
-    --------------------------------------------------------------------------------------------------------------------------
-    Read in database conversion information.
-    --------------------------------------------------------------------------------------------------------------------------
-    */
-    DatabaseABC* access_DbaseList = new AccessConverter();
-    DatabaseABC* netcdf_DbaseList = new NetCDFConverter();
-    MEM_CHECK(access_DbaseList);
-    MEM_CHECK(netcdf_DbaseList);
-    if (access_DbaseList->ReadFromFile()) {
-        NEW_PRINT("AccessConverter", 1);
-        m_DbaseList = access_DbaseList;
-        delete netcdf_DbaseList;
-        netcdf_DbaseList = NULL;
-    }
-    else if (netcdf_DbaseList->ReadFromFile()) {
-        NEW_PRINT("NetCDFConverter", 1);
-        m_DbaseList = netcdf_DbaseList;
-        delete access_DbaseList;
-        access_DbaseList = NULL;
-    }
+
 
     /*
     --------------------------------------------------------------------------------------------------------------------------
@@ -621,7 +523,7 @@ Algorithm::Algorithm(void) {
         NEW_PRINT("ObservationGroup", 1);
         m_pObsGroup = new ObservationGroup();
         MEM_CHECK(m_pObsGroup);
-    }/* end if() */
+    }
 
     //setup the objective function
     if (m_ObjFuncId == OBJ_FUNC_WSSE) {
@@ -651,22 +553,8 @@ Algorithm::Algorithm(void) {
     }
 
 
-    /*
-    --------------------------------------------------------------------------------------------------------------------------
-    Check template files against parameters, each parameter should appear in
-    at least one template file or at least one database entry.
-    --------------------------------------------------------------------------------------------------------------------------
-    */
-    //m_pParamGroup->CheckTemplateFiles(m_FileList);
-    //m_pParamGroup->CheckDbaseFiles(m_DbaseList);
 
-    /*
-    --------------------------------------------------------------------------------------------------------------------------
-    Check parameters for uniqueness, each parameter should be unique and
-    should not be a substring of another parameter.
-    --------------------------------------------------------------------------------------------------------------------------
-    */
-    m_pParamGroup->CheckMnemonics();
+
 
     /*
     --------------------------------------------------------------------------------------------------------------------------
@@ -710,7 +598,6 @@ void Algorithm::Destroy(void) {
     delete m_pParamGroup;
     delete m_pParameterCorrection;
     delete m_pObjFunc;
-    delete m_DbaseList;
     delete[] m_ExecCmd;
     delete[] m_CurMultiObjF;
     m_bPreserveModelBest = false;
@@ -780,18 +667,6 @@ void Algorithm::SetCounter(int count) {
     m_Counter = count;
 } 
 
-
-/*
-------------------------------------------------------------------------------------------------------------------------------
-AddDatabase()
-   Adds a database conversion to the list.
-------------------------------------------------------------------------------------------------------------------------------
-*/
-void Algorithm::AddDatabase(DatabaseABC* pDbase) {
-    if (m_DbaseList == NULL) { m_DbaseList = pDbase; }
-    else { m_DbaseList->InsertDbase(pDbase); }
-}
-
 /*
 ------------------------------------------------------------------------------------------------------------------------------
 GetObsGroupPtr()
@@ -811,7 +686,6 @@ GetParamGroupPtr()
 ParameterGroup* Algorithm::GetParamGroupPtr(void) {
     return m_pParamGroup;
 }
-
 
 
 /*

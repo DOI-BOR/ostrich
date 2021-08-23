@@ -24,6 +24,10 @@ Version History
 
 #include "MyHeaderInc.h"
 #include "ParameterWorker.h"
+#include <vector>
+#include <string>
+#include <filesystem>
+#include <iostream>
 
 //forward decs
 class DatabaseABC;
@@ -56,7 +60,7 @@ class ParameterGroupWorker {
 
      void ReadParams(double * p);
      void WriteParams(Ironclad1DArray p);
-     void CheckTemplateFiles(FilePair * pList);
+     void CheckTemplateFiles(std::vector<std::vector<std::string>> filePairs, std::string workerDirectory);
      void CheckMnemonics(void);
      void CheckBounds(void);
      void ExcludeParam(UnchangeableString prm);

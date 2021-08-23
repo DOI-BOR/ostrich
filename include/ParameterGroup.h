@@ -23,6 +23,9 @@ Version History
 #define PARAMETER_GROUP_H
 
 #include "MyHeaderInc.h"
+#include <vector>
+#include <string>
+
 
 //forward decs
 class DatabaseABC;
@@ -61,8 +64,6 @@ class ParameterGroup
      int GetNumTiedParams(void){ return m_NumTied;}
      void ReadParams(double * p);
      double WriteParams(Ironclad1DArray p);
-     void CheckTemplateFiles(FilePair * pList);
-     void CheckMnemonics(void);
      bool FixGeometry(void);
      void CheckBounds(void);
      void ExcludeParam(UnchangeableString prm);

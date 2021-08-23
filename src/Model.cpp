@@ -947,14 +947,14 @@ Model::Model(void)
    Check template files against parameters, each parameter should appear in
    at least one template file or at least one database entry.
    ------------------------------------------------------------------------*/
-   m_pParamGroup->CheckTemplateFiles(m_FileList);
+   //m_pParamGroup->CheckTemplateFiles(m_FileList);
    //m_pParamGroup->CheckDbaseFiles(m_DbaseList);
 
    /*-----------------------------------------------------------------------
    Check parameters for uniqueness, each parameter should be unique and 
    should not be a substring of another parameter.
    ------------------------------------------------------------------------*/
-   m_pParamGroup->CheckMnemonics();
+   //m_pParamGroup->CheckMnemonics();
 
    /*-----------------------------------------------------------------------
    Initialize surrogate models, if the surrogate-based approach is enabled.

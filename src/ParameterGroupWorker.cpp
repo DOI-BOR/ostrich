@@ -26,7 +26,6 @@ Version History
 #include <string.h>
 #include <time.h>
 #include <stdlib.h>
-#include <iostream>
 
 #include "ParameterGroupWorker.h"
 
@@ -339,50 +338,48 @@ void ParameterGroupWorker::Write(FILE * pFile, int type)
 CheckTemplateFiles()
 
 Checks to see if every parameter is included in at least one template file.
-Parameters not found in any template file will trigger a warning message but 
+Parameters not found in any template file will trigger a warning message but
 will not halt the program.
 ******************************************************************************/
-void ParameterGroupWorker::CheckTemplateFiles(FilePair * pList)
-{
-   FilePair * pCur;
-   FilePipe * pPipe;
+void ParameterGroupWorker::CheckTemplateFiles(std::vector<std::vector<std::string>> filePairs, std::string workerDirectory) {
+   
    UnchangeableString name;
    char msg[DEF_STR_SZ];
-   int i;
    bool found;
 
-   //check adjustable parameters
-   for(i = 0; i < m_NumParams; i++)
-   {
+   for(int i = 0; i < m_NumParams; i++) {
       name = m_pList[i]->GetName();
-      pCur = pList;
-      found = false;
-      while(pCur != NULL)
-      {
-         pPipe = pCur->GetPipe();
-         if(pPipe->FindAndReplace(name, "0.00") > 0)
-         {
-            found = true;
-            break;
-         }         
-         pCur = pCur->GetNext();
-      }
-      if(found == false)
-      {
-         sprintf(msg, "Parameter |%s| not found in any template file", name);
-         LogError(ERR_FILE_IO, msg);
-      }
-   }
 
-   //this will cause reset of replacement string....
-   pCur = pList;
-   while(pCur != NULL)
-   {
-      pPipe = pCur->GetPipe();
-      pPipe->StringToFile();
-      pCur = pCur->GetNext();
+      found = false;
+      for (int entryPair = 0; entryPair < filePairs.size(); entryPair++) {
+          // Setup the input file and path
+          std::string inTemp = filePairs[entryPair][0];
+          IroncladString inFile = &inTemp[0];
+
+          // Setup the output file and path
+          std::string outFileString = filePairs[entryPair][1];
+          std::filesystem::path outTemp = workerDirectory;
+          outTemp = outTemp /= outFileString;
+
+          outFileString = outTemp.string();
+          IroncladString outFile = &outFileString[0];
+          
+          // Define a pair and pipe to allow substitution
+          FilePair* filePair = new FilePair(inFile, outFile);
+          FilePipe* filePile = filePair->GetPipe();
+
+          if (filePile->FindAndReplace(name, "0.00") > 0) {
+              found = true;
+              break;
+          }
+      }
+
+      if (found == false) {
+          sprintf(msg, "Parameter |%s| not found in any template file", name);
+          LogError(ERR_FILE_IO, msg);
+      }
    }
-}/* end CheckTemplateFiles() */
+}
 
 /******************************************************************************
 CheckMnemonics()
@@ -401,29 +398,24 @@ void ParameterGroupWorker::CheckMnemonics(void)
    bool found = false;
 
    //check adjustable parameters
-   for(i = 0; i < m_NumParams; i++)
-   {
+   for(i = 0; i < m_NumParams; i++) {
       name = m_pList[i]->GetName();      
 
       //check adjustable parameters
-      for(j = 0; j < m_NumParams; j++)
-      {
+      for(j = 0; j < m_NumParams; j++) {
          comp = m_pList[j]->GetName();
-         if((i != j) && (strstr(comp, name) != NULL))
-         {
+         if((i != j) && (strstr(comp, name) != NULL)) {
             sprintf(msg, "|%s| is a substring of |%s|", name, comp);
             LogError(ERR_PRM_NEST, msg);
             found = true;
          }
       }
+   }
 
-   }/* end check adjustable parameters */
-
-   if(found == true)
-   {
+   if(found == true) {
       ExitProgram(1);
    }
-}/* end CheckMnemonics() */
+}
 
 /******************************************************************************
 WriteParams()
@@ -438,4 +430,4 @@ void ParameterGroupWorker::WriteParams(Ironclad1DArray p) {
     for (int j = 0; j < m_NumParams; j++) {
         m_pList[j]->SetValue(p[j]);
     }
-}/* end WriteParams() */
+}
