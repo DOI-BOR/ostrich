@@ -328,13 +328,13 @@ Algorithm::Algorithm(void) {
     --------------------------------------------------------------------------------------------------------------------------
     */
     // todo: reenable this functionality
-    rewind(pInFile);
+    /*rewind(pInFile);
     if (CheckToken(pInFile, "CheckSensitivities", inFileName) == true) {
         line = GetCurDataLine();
         sscanf(line, "%s %s", tmp1, tmp2);
         MyStrLwr(tmp2);
         if (strncmp(tmp2, "yes", 3) == 0) { m_bCheckGlobalSens = true; }
-    }
+    }*/
 
     /*
     --------------------------------------------------------------------------------------------------------------------------
@@ -342,13 +342,13 @@ Algorithm::Algorithm(void) {
     --------------------------------------------------------------------------------------------------------------------------
     */
     // todo: reenable this functionality
-    rewind(pInFile);
+    /*rewind(pInFile);
     if (CheckToken(pInFile, "SurrogateApproach", inFileName) == true) {
         line = GetCurDataLine();
         sscanf(line, "%s %s", tmp1, tmp2);
         MyStrLwr(tmp2);
         if (strncmp(tmp2, "yes", 3) == 0) { m_bUseSurrogates = true; }
-    }
+    }*/
 
     /*
     --------------------------------------------------------------------------------------------------------------------------
@@ -356,7 +356,7 @@ Algorithm::Algorithm(void) {
     --------------------------------------------------------------------------------------------------------------------------
     */
     // todo: reenable this functionality
-    rewind(pInFile);
+    /*rewind(pInFile);
     bool bSMUSE = false;
     if (CheckToken(pInFile, "SuperMUSE", inFileName) == true) {
         line = GetCurDataLine();
@@ -367,7 +367,7 @@ Algorithm::Algorithm(void) {
             InitSuperMUSE(pInFile, (ModelABC*)this);
             bSMUSE = true;
         }
-    }
+    }*/
 
     /*
     --------------------------------------------------------------------------------------------------------------------------
@@ -412,7 +412,7 @@ Algorithm::Algorithm(void) {
     --------------------------------------------------------------------------------------------------------------------------
     */
     // TODO: rework this process
-    rewind(pInFile);
+    /*rewind(pInFile);
     if (CheckToken(pInFile, "OstrichWarmStart", inFileName) == true) {
         line = GetCurDataLine();
         sscanf(line, "%s %s", tmp1, tmp2);
@@ -423,7 +423,7 @@ Algorithm::Algorithm(void) {
             m_bWarmStart = true;
             RestoreRandomSeed();
         }
-    }
+    }*/
 
     /*
     --------------------------------------------------------------------------------------------------------------------------
@@ -448,6 +448,7 @@ Algorithm::Algorithm(void) {
     Read in number of digits of precision in I/O.
     --------------------------------------------------------------------------------------------------------------------------
     */
+    // todo: renenable this functionality
     rewind(pInFile);
     if (CheckToken(pInFile, "NumDigitsOfPrecision", inFileName) == true) {
         line = GetCurDataLine();
@@ -464,7 +465,7 @@ Algorithm::Algorithm(void) {
     --------------------------------------------------------------------------------------------------------------------------
     */
     // todo: reenable this functionality
-    char tscp[DEF_STR_SZ];
+    /*char tscp[DEF_STR_SZ];
     rewind(pInFile);
     if (CheckToken(pInFile, "TelescopingStrategy", inFileName) == true) {
         line = GetCurDataLine();
@@ -476,7 +477,7 @@ Algorithm::Algorithm(void) {
         if (strcmp(tscp, "linear") == 0) m_Telescope = TSCOPE_LINR;
         if (strcmp(tscp, "concave") == 0) m_Telescope = TSCOPE_CAVE;
         if (strcmp(tscp, "delayed-concave") == 0) m_Telescope = TSCOPE_DCVE;
-    }
+    }*/
 
     /*
     --------------------------------------------------------------------------------------------------------------------------
@@ -484,9 +485,9 @@ Algorithm::Algorithm(void) {
     --------------------------------------------------------------------------------------------------------------------------
     */
     // todo: reenable this functionality
-    char boxcox[DEF_STR_SZ];
     bool bBoxCox = false;
     double boxCoxValue = 1.00;
+    /*char boxcox[DEF_STR_SZ];
     rewind(pInFile);
     if (CheckToken(pInFile, "BoxCoxTransformation", inFileName) == true) {
         line = GetCurDataLine();
@@ -503,7 +504,7 @@ Algorithm::Algorithm(void) {
 
     fclose(pInFile);
 
-    if (bSMUSE) CleanSuperMUSE();
+    if (bSMUSE) CleanSuperMUSE();*/
 
 
 
@@ -577,12 +578,6 @@ Algorithm::Algorithm(void) {
     }
     fclose(pInFile);
     */
-
-    if (m_bSolveOnPrimary) {
-        // Setup a secondary worker object on the primary worker
-        // TODO: create this
-
-    }
 
     IncCtorCount();
 
@@ -1160,6 +1155,25 @@ void Algorithm::ManageSingleObjectiveIterations(std::vector<std::vector<double>>
     // Create a copy of the current best objective function
     double bestObjectiveIteration = m_BestObjective;
 
+    // If caching is enabled, check the solutions against the list of values to be created
+    std::vector<int> indicesToSolve;
+    for (int entryAlternative = startingIndex; entryAlternative < parameters.size(); entryAlternative++) {
+        if (m_bCaching) {
+            // Caching is enabled. Check that the member is not in the cache
+            bool isPresent = std::find(m_CacheMembers.begin(), m_CacheMembers.end(), parameters[entryAlternative]) != m_CacheMembers.end();
+
+            if (!isPresent) {
+                // Alternative is not present in the cache. Add it to be solved.
+                indicesToSolve.push_back(entryAlternative);
+            }
+        }
+        else {
+            // Caching is not enabled. Add it to the solve list
+            indicesToSolve.push_back(entryAlternative);
+        }
+    }
+    std::cout << "Cache size:\t" << m_CacheMembers.size() << std::endl;
+
     // Begin solving the alternatives
     if (m_bSolveOnPrimary) {
         // Include the primary worker as a solution
@@ -1175,11 +1189,11 @@ void Algorithm::ManageSingleObjectiveIterations(std::vector<std::vector<double>>
         int sourceFlag = 0;
 
         // Set the counter variables         
-        int sendCounter = startingIndex;
-        int receiveCounter = startingIndex;
+        int sendCounter = 0;
+        int receiveCounter = 0;
 
         // Loop and send work to the secondary workers as they become available
-        while (sendCounter < parameters.size()){
+        while (sendCounter < indicesToSolve.size()){
             
             // Get the rank number of a secondary worker waiting for work
             int workerRank, workerValue;
@@ -1199,7 +1213,7 @@ void Algorithm::ManageSingleObjectiveIterations(std::vector<std::vector<double>>
                 SendWorkerContinue(workerRank, true);
 
                 // Transmit the parameteres to the worker to solve
-                SendWorkerParameters(workerRank, sendCounter, parameters[sendCounter]);
+                SendWorkerParameters(workerRank, sendCounter, parameters[indicesToSolve[sendCounter]]);
 
                 // Increment the send counter
                 sendCounter++;
@@ -1214,7 +1228,12 @@ void Algorithm::ManageSingleObjectiveIterations(std::vector<std::vector<double>>
                     MPI_Mrecv(&data, 2, MPI_DOUBLE, &mpiMessage, &mpiStatus);
 
                     // Set the objective value into the objective array
-                    returnArray[(int)data[0]] = data[1];
+                    returnArray[indicesToSolve[(int)data[0]]] = data[1];
+
+                    // Store the alternative into the cache, if enabled
+                    if (m_bCaching) {
+                        m_CacheMembers.push_back(parameters[indicesToSolve[(int)data[0]]]);
+                    }
 
                     // Check if the alternative should be preserved
                     ManagePreserveBest(bestObjectiveIteration, data[1], mpiStatus);
@@ -1229,7 +1248,7 @@ void Algorithm::ManageSingleObjectiveIterations(std::vector<std::vector<double>>
         }
 
         // All alternatives have been sent. Receive all of the solutions
-        while (receiveCounter < parameters.size()) {
+        while (receiveCounter < indicesToSolve.size()) {
             // Determine if we can receive any values
             MPI_Improbe(MPI_ANY_SOURCE, tag_data, MPI_COMM_WORLD, &requestFlag, &mpiMessage, &mpiStatus);
             if (requestFlag) {
@@ -1238,7 +1257,12 @@ void Algorithm::ManageSingleObjectiveIterations(std::vector<std::vector<double>>
                 MPI_Mrecv(&data, 2, MPI_DOUBLE, &mpiMessage, &mpiStatus);
 
                 // Set the objective value into the objective array
-                returnArray[(int)data[0]] = data[1];
+                returnArray[indicesToSolve[(int)data[0]]] = data[1];
+
+                // Store the alternative into the cache, if enabled
+                if (m_bCaching) {
+                    m_CacheMembers.push_back(parameters[indicesToSolve[(int)data[0]]]);
+                }
 
                 // Check if the alternative should be preserved
                 ManagePreserveBest(bestObjectiveIteration, data[1], mpiStatus);

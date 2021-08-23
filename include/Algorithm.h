@@ -20,6 +20,7 @@ these groups.
 #include "WriteUtility2.h"
 #include <cstring>
 #include <vector>
+#include <algorithm>
 
 
 //forward decs
@@ -65,27 +66,39 @@ public:
     //void   Bookkeep(bool bFinal);
     //int GetNumDigitsOfPrecision(void) { return m_Precision; }
     //bool CheckWarmStart(void) { return m_bWarmStart; }
-    
-    //FilePair* GetFilePairs(void) { return m_FileList; }
-    //TelescopeType GetTelescopingStrategy(void) { return m_Telescope; }
 
+    // Objective information
     double m_BestObjective = INFINITY;                          // Best objective
-    std::vector<double> m_BestAlternative;                  // Best alternative
+    std::vector<double> m_BestAlternative;                      // Best alternative
     
+    // Expose function to inheriting subclasses
     void ConfigureWorkers(void);
     void ManageSingleObjectiveIterations(std::vector<std::vector<double>> parameters, int startingIndex, int numberOfParameters, std::vector<double>& objectives);
     void TerminateWorkers();
 
 private:
-    // Set the default variables for the class
-    std::vector<std::vector<std::string>> fileListPairs;
-    int m_Counter = 0;
-    int m_NumCacheHits = 0;
-    int m_Precision = 6;
-    StringType  m_ExecCmd = NULL;
-    char m_DirPrefix[DEF_STR_SZ];
+    // Working directorty information
     char pDirName[DEF_STR_SZ];                                          // Stem of the worker path without the rank
+    char m_DirPrefix[DEF_STR_SZ];
+
+    // File information
+    std::vector<std::vector<std::string>> fileListPairs;
     FileList* m_pFileCleanupList = NULL;
+
+    // Caching setup information
+    bool m_bCaching = false;
+    int m_NumCacheHits = 0;
+    std::vector<std::vector<double>> m_CacheMembers;
+
+    int m_Counter = 0;
+    int m_Precision = 6;
+
+    // Solution information
+    StringType  m_ExecCmd = NULL;
+    bool m_bWarmStart = false;
+    bool m_bSolveOnPrimary = false;
+    
+    
     bool m_bCheckGlobalSens = false;
     bool m_bUseSurrogates = false;
     
@@ -96,9 +109,9 @@ private:
     std::filesystem::path  m_PreserveBestCmd;                           // Custom command to preserve best solution from the analysis
 
     // Model solution options
-    bool m_bWarmStart = false;
-    bool m_bSolveOnPrimary = false;
-    bool m_bCaching = false;
+
+    
+
     
     bool m_bDiskless = false;
     bool m_bMultiObjProblem = false;
@@ -130,11 +143,7 @@ private:
     void SendWorkerPreserveBest(int workerRank, bool preserveModel);
     void SendWorkerParameters(int workerRank, int alternativeIndex, std::vector<double> parameters);
 
-    void ReceiveWorkerPreserveBest(void);
-
-
-
-    
+    void ReceiveWorkerPreserveBest(void);    
 
 protected:
     // Set the default groups for the class
