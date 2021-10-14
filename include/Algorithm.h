@@ -21,7 +21,7 @@ these groups.
 #include <cstring>
 #include <vector>
 #include <algorithm>
-
+#include "ModelWorker.h"
 
 //forward decs
 class ObservationGroup;
@@ -60,16 +60,19 @@ public:
     UnchangeableString GetModelStr(void) { return m_ExecCmd; }
     void PerformParameterCorrections(void);
     //misc. member functions     
-    void   CheckGlobalSensitivity(void);
+    //void   CheckGlobalSensitivity(void);
     
     //void   WriteMetrics(FILE* pFile);
     //void   Bookkeep(bool bFinal);
     int GetNumDigitsOfPrecision(void) { return m_Precision; }
     //bool CheckWarmStart(void) { return m_bWarmStart; }
 
+    // Solution information
+    StringType  m_ExecCmd = NULL;                                       // Command used to solve the model
+
     // Objective information
-    double m_BestObjective = INFINITY;                          // Best objective
-    std::vector<double> m_BestAlternative;                      // Best alternative
+    double m_BestObjective = INFINITY;                                  // Best objective
+    std::vector<double> m_BestAlternative;                              // Best alternative
     
     // Expose function to inheriting subclasses
     void ConfigureWorkers(void);
@@ -86,19 +89,17 @@ private:
     FileList* m_pFileCleanupList = NULL;
 
     // Caching setup information
-    bool m_bCaching = false;
-    int m_NumCacheHits = 0;
-    std::vector<std::vector<double>> m_CacheMembers;
-
-    
-
+    bool m_bCaching = false;                                            // Flag to indicate if caching should be enabled
+    int m_NumCacheHits = 0;                                             // Counter for the number of cache hits
+    std::vector<std::vector<double>> m_CacheMembers;                    // Vector to keep track of the previously calculated alternatives
 
     // Solution information
-    StringType  m_ExecCmd = NULL;                                       // Command used to solve the model
     bool m_bWarmStart = false;                                          // Start the solution from a previously terminated run
-    bool m_bSolveOnPrimary = false;                                     // Solve on the primary worker in addition to the secondary workers
     int m_Precision = 6;                                                // Precision that should be used unless otherwise specified
     int m_NumSolves = 0;                                                // Number of times the model has been solved
+
+    bool m_bSolveOnPrimary = false;                                     // Solve on the primary worker in addition to the secondary workers
+    ModelWorker m_primaryWorker;                                 // ModelWorker slot if using solve on primary
     
     
     bool m_bCheckGlobalSens = false;
@@ -111,10 +112,6 @@ private:
     std::filesystem::path  m_PreserveBestCmd;                           // Custom command to preserve best solution from the analysis
 
     // Model solution options
-
-    
-
-    
     bool m_bDiskless = false;
     bool m_bMultiObjProblem = false;
     double* m_CurMultiObjF = NULL;
@@ -135,11 +132,11 @@ private:
     // MPI communication functions
     void ConfigureWorkerDirectory(int workerRank);
     void ConfigureWorkerSolveCommand(int workerRank);
-    void ConfigureWorkerArchiveCommand(int workerRank);
-    void ConfigureWorkerExtraFiles(int workerRank);
-    void ConfigureWorkerFilePairs(int workerRank);
-    void ConfigureWorkerObservations(int workerRank);
-    void ConfigureWorkerParameterGroups(int workerRank);
+    void ConfigureWorkerArchiveCommand(int workerRank, bool bMPI);
+    void ConfigureWorkerExtraFiles(int workerRank, bool bMPI);
+    void ConfigureWorkerFilePairs(int workerRank, bool bMPI);
+    void ConfigureWorkerObservations(int workerRank, bool bMPI);
+    void ConfigureWorkerParameterGroups(int workerRank, bool mMPI);
 
     void SendWorkerContinue(int workerRank, bool workerContinue);
     void SendWorkerPreserveBest(int workerRank, bool preserveModel);
@@ -155,7 +152,7 @@ protected:
     ParameterGroup* m_pParamGroup = NULL;
     DecisionModule* m_pDecision = NULL;
     ParameterCorrection* m_pParameterCorrection = NULL;
-    TelescopeType m_Telescope;                                          // Telescoping bounds strategy
+    //TelescopeType m_Telescope;                                          // Telescoping bounds strategy
 
 //protected: //can be called by DecisionModule
 //    double StdExecute(double viol);

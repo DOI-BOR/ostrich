@@ -247,8 +247,7 @@ CTOR
 
 Initializes parameter group from user-specified input file.
 ******************************************************************************/
-ParameterGroup::ParameterGroup(bool initialize)
-{
+ParameterGroup::ParameterGroup(bool initialize) {
    m_pList = NULL;
    m_pExcl = NULL;
    m_pTied = NULL;
@@ -271,8 +270,7 @@ SubIntoFile()
 
 Substitutes the estimated value of the parameter into the model input file.
 ******************************************************************************/
-void ParameterGroup::SubIntoFile(FilePipe * pPipe)
-{ 
+void ParameterGroup::SubIntoFile(FilePipe * pPipe) { 
    int i, size;
    char find[DEF_STR_SZ];
    char replace[DEF_STR_SZ];

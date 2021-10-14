@@ -875,7 +875,7 @@ void GeneticAlgorithm::WriteStartingMetrics(void) {
     fclose(pFile);
 
 
-}/* end WriteMetrics() */
+}
 
 /******************************************************************************
 WriteEndingMetrics()
@@ -957,7 +957,7 @@ Minimize the objective function using the GA.
 void GeneticAlgorithm::Optimize(void) {
 
     // Write the information to the primary log file
-    WriteSetup2(this, "GeneticAlgorithm");
+    WriteSetup2("GeneticAlgorithm", m_ExecCmd, m_pObjFunc->GetObjFuncStr(), m_pParamGroup->GetNumParams(), m_pParamGroup->GetNumTiedParams());
     WriteStartingMetrics();
 
     // Initialize the workers
@@ -1014,7 +1014,8 @@ void GeneticAlgorithm::Optimize(void) {
         }
 
         // Write iterationr result to the log file
-        WriteRecord2(this, m_Generation, m_BestObjective, m_CurStop);
+        WriteRecord2(m_Generation, m_BestObjective, m_CurStop, m_pObsGroup, m_pObjFunc, m_pParamGroup);
+
 
         // Increment the generation variable
         m_Generation++;
@@ -1063,22 +1064,16 @@ void GA_Program(int argC, StringType argV[]) {
        // and manages the solution process
        GA->Optimize();
 
-
-
-   }
-   else {
+   } else {
        // This is a secondary worker. Create the secondary worker and call the work routine
-       // Create and setup the secondary worker
-       ModelWorker worker = ModelWorker();
+       // Create and setup the secondary worker, telling it to configure from MPI
+       ModelWorker worker = ModelWorker(true);
 
        // Start the work in the processor 
-       worker.Work();
+       worker.WorkMPI();
 
-       // Tear-down is triggered by the primary worker
+       // Tear-down is triggered by the primary worker. Perform any cleanup actions
    }
-
-
-
 } 
 
 

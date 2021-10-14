@@ -10,10 +10,17 @@
 #include <vector>
 #include <filesystem>
 #include <algorithm>
+#include <iostream>
+#include <chrono>
+#include <thread>
+#include <cctype>
+#include <locale>
 
 #include <Observation.h>
 #include <FilePair.h>
 #include <Utility.h>
+#include "ParameterGroup.h"
+#include "TiedParamABC.h"
 #include <ParameterGroupWorker.h>
 #include "ParameterCorrection.h"
 #include <ParameterWorker.h>
@@ -32,22 +39,34 @@ class ModelWorker
 ******************************************************************************/
 class ModelWorker {
 public:
-	ModelWorker(void);
+	ModelWorker();
+	ModelWorker(bool bMPI);
 	void Destroy(void);
 	double ExecuteSingle(void);
-	void ExecuteMulti(double* pF, int nObj);
-	double DisklessExecute(void);
+	//void ExecuteMulti(double* pF, int nObj);		// Todo: reimplement this
+	//double DisklessExecute(void);					// Todo: reimplement this
 	void PreserveModel(bool preserveBest);
-	void   Write(double objFuncVal);
+	void Write(double objFuncVal);
 
-	//bool CheckCache(double* val);
+	// Solution functions
+	void SetupWorker(void);
+	void WorkMPI(void);
+	double StdExecute(double viol);
 
-	void Work(void);
+	// Primary worker setup functions
+	void SetWorkerDirectory(std::string workerDirectory);
+	void SetWorkerSolveCommand(std::string solveCommand);
+	void SetWorkerPreserveArchiveCommand(int preserveStatus, std::string preserveCommand);
+	void SetWorkerPreserveBestCommand(int preserveBest, std::string bestCommand);
+	void SetWorkerExtraFiles(std::vector<std::string> extraFiles);
+	void SetWorkerFilePairs(std::vector<std::vector<std::string>> filePairs);
+	void SetWorkerObservations(ObservationGroup* m_pObsGroup);
+	void SetWorkerParameters(ParameterGroup* m_pParamGroup);
+	int SetStandardParameters(std::vector<double> inputParameters);
 
 
 private:
 	IroncladString GetObjFuncCategory(double* pF, int nObj);
-	void SetCmdToExecModel(IroncladString cmd);
 
 	// Preservation variables
 	bool preserveModelBest = false;
@@ -57,8 +76,8 @@ private:
 
 	// Configuration variables
 	std::string m_workerDirectory;
-	std::vector<std::string> fileCleanupList;
-	std::vector<std::vector<std::string>> filePairs;
+	std::vector<std::string> m_fileCleanupList;
+	std::vector<std::vector<std::string>> m_filePairs;
 	ObservationGroup *observationGroup;
 	ParameterGroupWorker *paramGroup;
 	
@@ -69,16 +88,13 @@ private:
 	int objectiveType = single;
 	std::string solveCommand;
 
-
-	// Workflow functions
-	void SetupFromPrimary(void);
-	void SetupWork(void);
-	void CommenceWork(void);
-	void TerminateWork(void);
-
+	// Solution functions
 	void ReadObservations(void);
-	double StdExecute(double viol);
 
+	// MPI workflow functions
+	void SetupMPI(void);
+	void CommenceMPIWork(void);
+	void TerminateMPIWork(void);
 
 	// MPI communication functions
 	int rank;
@@ -91,7 +107,7 @@ private:
 	void SendDouble(int tag_number, double value);
 	void SendInteger(int tag_number, int value);
 
-	// Setup functions 
+	// MPI setup functions 
 	void ReceiveWorkerDirectory(void);
 	void ReceiveWorkerSolveCommand(void);
 	void ReciveWorkerArchiveCommand(void);
@@ -102,7 +118,6 @@ private:
 
 	int RequestParameters(void);
 	bool RequestContinue(void);
-
 
 };
 

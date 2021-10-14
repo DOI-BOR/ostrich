@@ -341,7 +341,7 @@ Checks to see if every parameter is included in at least one template file.
 Parameters not found in any template file will trigger a warning message but
 will not halt the program.
 ******************************************************************************/
-void ParameterGroupWorker::CheckTemplateFiles(std::vector<std::vector<std::string>> filePairs, std::string workerDirectory) {
+void ParameterGroupWorker::CheckTemplateFiles(std::vector<std::vector<std::string>> m_filePairs, std::string workerDirectory) {
    
    UnchangeableString name;
    char msg[DEF_STR_SZ];
@@ -351,13 +351,13 @@ void ParameterGroupWorker::CheckTemplateFiles(std::vector<std::vector<std::strin
       name = m_pList[i]->GetName();
 
       found = false;
-      for (int entryPair = 0; entryPair < filePairs.size(); entryPair++) {
+      for (int entryPair = 0; entryPair < m_filePairs.size(); entryPair++) {
           // Setup the input file and path
-          std::string inTemp = filePairs[entryPair][0];
+          std::string inTemp = m_filePairs[entryPair][0];
           IroncladString inFile = &inTemp[0];
 
           // Setup the output file and path
-          std::string outFileString = filePairs[entryPair][1];
+          std::string outFileString = m_filePairs[entryPair][1];
           std::filesystem::path outTemp = workerDirectory;
           outTemp = outTemp /= outFileString;
 

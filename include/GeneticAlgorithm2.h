@@ -19,8 +19,8 @@ Mutation such that each successive genration of solutions is an improvement
 #include "Gene.h"
 #include "QuadTree.h"
 #include "StatUtility.h"
-#include "ModelWorker.h"
-#include "WriteUtility2.h"
+//#include "ModelWorker.h"
+//#include "WriteUtility2.h"
 
 
 //forward declarations

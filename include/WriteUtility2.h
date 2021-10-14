@@ -18,33 +18,33 @@ Version History
 #define WRITE_UTILITY_H
 
 #include "MyHeaderInc.h"
-#include "Algorithm.h"
 #include "ParameterGroup.h"
+#include "ObservationGroup.h"
+#include "ObjectiveFunction.h"
+#include <string>
 
-// forward decs
-class Algorithm;
 
-extern "C" {
 void WritePreciseNumber2(FILE * pOut, double x);
-void WriteDisclaimer2(FILE * pFile);
-void WriteSetup2(Algorithm *algo, const char * algStr);
-void WriteSetupToFile2(FILE * pFile, Algorithm *algo, const char * algStr);
-void WriteSetupNoDisclaimer2(Algorithm *algo, const char * algStr);
+std::string GetDisclaimer2();
+void WriteSetup2(std::string algorithmName, std::string modelName, std::string objectiveName, int numberOfParamters, int numberOfTiedParameters);
+void WriteSetupToFile2(FILE* pFile, std::string algorithmName, std::string modelName, std::string objectiveName, int numberOfParamters, int numberOfTiedParameters);
+void WriteSetupNoDisclaimer2(std::string algorithmName, std::string modelName, std::string objectiveName, int numberOfParamters,
+                             int numberOfTiedParameters);
 
-void WriteBanner2(Algorithm *algo, const char * pBef, const char * pAft);
-void WriteBannerToFile2(FILE * pFile, Algorithm *algo, const char * pBef, const char * pAft);
+void WriteBanner2(const char * pBef, const char * pAft);
+void WriteBannerToFile2(FILE * pFile, const char * pBef, const char * pAft);
 
-void WriteMultiObjRecord2(Algorithm *algo, int iter, ArchiveStruct * pArch, double dx);
-void WriteMultiObjRecordToFile2(FILE * pFile, Algorithm *algo, int iter, ArchiveStruct * pArch, double dx);
+void WriteMultiObjRecord2(int iter, ArchiveStruct * pArch, double dx);
+void WriteMultiObjRecordToFile2(FILE * pFile, int iter, ArchiveStruct * pArch, double dx);
 
-void WriteRecord2(Algorithm *algo, int iter, double fx, double dx);
-void WriteRecordToFile2(FILE * pFile, Algorithm *algo, int iter, double fx, double dx);
+void WriteRecord2(int iterationNumber, double objectiveValue, double convergenceValue, ObservationGroup* pObsGroup,  ObjectiveFunction* pObjFunc, ParameterGroup* pParamGroup);
+void WriteRecordToFile2(FILE* pFile, int iterationNumber, double objectiveValue, double convergenceValue, ObservationGroup* pObsGroup, ObjectiveFunction* pObjFunc, ParameterGroup* pParamGroup);
 
-void WriteMultiObjOptimal2(Algorithm *algo, ArchiveStruct * pNonDom, ArchiveStruct * pDom);
-void WriteMultiObjOptimalToFile2(FILE * pFile, Algorithm *algo, ArchiveStruct * pNonDom, ArchiveStruct * pDom);
+void WriteMultiObjOptimal2(ArchiveStruct * pNonDom, ArchiveStruct * pDom);
+void WriteMultiObjOptimalToFile2(FILE * pFile, ArchiveStruct * pNonDom, ArchiveStruct * pDom);
 
-void WriteOptimal2(Algorithm *algo, double fx);
-void WriteOptimalToFile2(FILE * pFile, Algorithm *algo, double fx);
+void WriteOptimal2(double fx);
+void WriteOptimalToFile2(FILE * pFile, double fx);
 void WriteOptimalToFileWithGroup2(FILE* pFile, ParameterGroup *paramGroup, double fx);
 
 //void WriteAlgMetrics(AlgorithmABC * pAlg);
@@ -72,6 +72,6 @@ void Write1dSearch2(int count, int max);
 void WriteInnerEval2(int count, int max, char c);
 
 void WriteGrid2(GridStruct * pGrid, int size);
-}
+
 #endif /* WRITE_UTILITY_H */
 

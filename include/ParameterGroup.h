@@ -83,12 +83,14 @@ class ParameterGroup
      int m_NumGeom;
      int m_NumExcl;
 
+     ParameterABC** m_pList;
+     ParameterABC** m_pExcl;
+     TiedParamABC** m_pTied;
+     GeomParamABC** m_pGeom;
+
 
    private:      
-      ParameterABC ** m_pList;
-      ParameterABC ** m_pExcl;
-      TiedParamABC ** m_pTied;
-      GeomParamABC ** m_pGeom;
+
 
       void InitFromFile(IroncladString pParamFileName);
       int  CountParams(IroncladString pFileName);

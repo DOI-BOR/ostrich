@@ -24,6 +24,7 @@ Version History
 
 #include "MyHeaderInc.h"
 #include "ParameterWorker.h"
+#include "ParameterABC.h"
 #include <vector>
 #include <string>
 #include <filesystem>
@@ -60,7 +61,7 @@ class ParameterGroupWorker {
 
      void ReadParams(double * p);
      void WriteParams(Ironclad1DArray p);
-     void CheckTemplateFiles(std::vector<std::vector<std::string>> filePairs, std::string workerDirectory);
+     void CheckTemplateFiles(std::vector<std::vector<std::string>> m_filePairs, std::string workerDirectory);
      void CheckMnemonics(void);
      void CheckBounds(void);
      void ExcludeParam(UnchangeableString prm);

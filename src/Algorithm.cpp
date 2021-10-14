@@ -264,6 +264,19 @@ Algorithm::Algorithm(void) {
 
     /*
     --------------------------------------------------------------------------------------------------------------------------
+    Read in solve on primary options
+    --------------------------------------------------------------------------------------------------------------------------
+    */
+    rewind(pInFile);
+    if (CheckToken(pInFile, "SolveOnPrimary", inFileName) == true) {
+        line = GetCurDataLine();
+        sscanf(line, "%s %s", tmp1, tmp2);
+        MyStrLwr(tmp2);
+        if (strncmp(tmp2, "yes", 3) == 0) { m_bSolveOnPrimary = true; }
+    }
+
+    /*
+    --------------------------------------------------------------------------------------------------------------------------
     Read in the name of the batch file to run whenever a new 'best' solution is found.
     --------------------------------------------------------------------------------------------------------------------------
     */
@@ -703,6 +716,7 @@ void Algorithm::ConfigureWorkerSolveCommand(int workerRank) {
 
     // Send the worker file stem to the secondary worker
     MPI_Send(m_ExecCmd, strlen(m_ExecCmd) + 1, MPI_CHAR, workerRank, tag_solve, MPI_COMM_WORLD);
+    
 }
 
 /*
@@ -711,7 +725,7 @@ MPI Communication - ConfigureWorkerArchiveCommand()
    Transfers the worker archive command from the primary to the secondary worker
 ------------------------------------------------------------------------------------------------------------------------------
 */
-void Algorithm::ConfigureWorkerArchiveCommand(int workerRank) {
+void Algorithm::ConfigureWorkerArchiveCommand(int workerRank, bool bMPI) {
 
     // Define the variable that will be sent to the workers
     int sendValue;
@@ -720,45 +734,90 @@ void Algorithm::ConfigureWorkerArchiveCommand(int workerRank) {
     if (!m_bPreserveModelOutput) {
         // Model will not be preserved
         sendValue = 0;
-        MPI_Send(&sendValue, 1, MPI_INT, workerRank, tag_archive, MPI_COMM_WORLD);
+        
+        if (bMPI) {
+            // Send configuration to MPI worker
+            MPI_Send(&sendValue, 1, MPI_INT, workerRank, tag_archive, MPI_COMM_WORLD);
 
+        } else {
+            // Set configuration to the local primary worker
+            m_primaryWorker.SetWorkerPreserveArchiveCommand(sendValue, m_PreserveOutputCmd.string());
+        }
+        
     } else if (m_bPreserveModelOutput && m_PreserveOutputCmd.string().length() == 0) {
         // Model will be preserved with the the standard full archive method
         sendValue = 1;
-        MPI_Send(&sendValue, 1, MPI_INT, workerRank, tag_archive, MPI_COMM_WORLD);
 
-    }
-    else if (m_bPreserveModelOutput && m_PreserveOutputCmd.string().length() > 0) {
+        if (bMPI) {
+            // Send configuration to MPI worker
+            MPI_Send(&sendValue, 1, MPI_INT, workerRank, tag_archive, MPI_COMM_WORLD);
+
+        } else {
+            // Set configuration to the local primary worker
+            m_primaryWorker.SetWorkerPreserveArchiveCommand(sendValue, m_PreserveOutputCmd.string());
+        } 
+
+    } else if (m_bPreserveModelOutput && m_PreserveOutputCmd.string().length() > 0) {
         // Model will be preserved with a custom archive command
         sendValue = 2;
-        MPI_Send(&sendValue, 1, MPI_INT, workerRank, tag_archive, MPI_COMM_WORLD);
 
         // Send the worker file stem to the secondary worker
-        MPI_Send(&m_PreserveOutputCmd.string()[0], m_PreserveOutputCmd.string().length() + 1, MPI_CHAR, workerRank, tag_archive, MPI_COMM_WORLD);
+        if (bMPI) {
+            // Send configuration to MPI worker
+            MPI_Send(&sendValue, 1, MPI_INT, workerRank, tag_archive, MPI_COMM_WORLD);
+            MPI_Send(&m_PreserveOutputCmd.string()[0], m_PreserveOutputCmd.string().length() + 1, MPI_CHAR, workerRank, tag_archive, MPI_COMM_WORLD);
 
+        } else {
+            // Set configuration to the local primary worker
+            m_primaryWorker.SetWorkerPreserveArchiveCommand(sendValue, m_PreserveOutputCmd.string());
+        }
     }
 
     // Send information to preserve the best of the model run
     if (!m_bPreserveModelBest) {
         // Model will not be preserved
         sendValue = 0;
-        MPI_Send(&sendValue, 1, MPI_INT, workerRank, tag_archive, MPI_COMM_WORLD);
+        
+        if (bMPI) {
+            // Send configuration to MPI worker
+            MPI_Send(&sendValue, 1, MPI_INT, workerRank, tag_archive, MPI_COMM_WORLD);
+
+        } else {
+            // Set configuration to the local primary worker
+            m_primaryWorker.SetWorkerPreserveBestCommand(sendValue, m_PreserveBestCmd.string());
+        }
+        
 
     }
     else if (m_bPreserveModelBest && m_PreserveBestCmd.string().length() == 0) {
         // Model will be preserved with the the standard full archive method
         sendValue = 1;
-        MPI_Send(&sendValue, 1, MPI_INT, workerRank, tag_archive, MPI_COMM_WORLD);
 
+        if (bMPI) {
+            // Send configuration to MPI worker
+            MPI_Send(&sendValue, 1, MPI_INT, workerRank, tag_archive, MPI_COMM_WORLD);
+
+        } else {
+            // Set configuration to the local primary worker
+            m_primaryWorker.SetWorkerPreserveBestCommand(sendValue, m_PreserveBestCmd.string());
+        }
+        
     }
     else if (m_bPreserveModelBest && m_PreserveBestCmd.string().length() > 0) {
         // Model will be preserved with a custom archive command
         sendValue = 2;
-        MPI_Send(&sendValue, 1, MPI_INT, workerRank, tag_archive, MPI_COMM_WORLD);
 
-        // Send the worker file stem to the secondary worker
-        MPI_Send(&m_PreserveBestCmd.string()[0], m_PreserveBestCmd.string().length() + 1, MPI_CHAR, workerRank, tag_archive, MPI_COMM_WORLD);
+        if (bMPI) {
+            // Send configuration to MPI worker
+            MPI_Send(&sendValue, 1, MPI_INT, workerRank, tag_archive, MPI_COMM_WORLD);
 
+            // Send the worker file stem to the secondary worker
+            MPI_Send(&m_PreserveBestCmd.string()[0], m_PreserveBestCmd.string().length() + 1, MPI_CHAR, workerRank, tag_archive, MPI_COMM_WORLD);
+
+        } else {
+            // Set configuration to the local primary worker
+            m_primaryWorker.SetWorkerPreserveBestCommand(sendValue, m_PreserveBestCmd.string());
+        }
     }
 }
 
@@ -768,28 +827,48 @@ MPI Communication - ConfigureWorkerExtraFiles()
    Transfers the extra filenames for the model from the primary to the secondary worker
 ------------------------------------------------------------------------------------------------------------------------------
 */
-void  Algorithm::ConfigureWorkerExtraFiles(int workerRank) {
+void  Algorithm::ConfigureWorkerExtraFiles(int workerRank, bool bMPI) {
 
-    // Send the number of extra files to the worker
-    // Create a holder for the number of files
-    int numberOfFiles = 0;
+    if (bMPI) {
+        // Send the number of extra files to the worker
+        // Create a holder for the number of files
+        int numberOfFiles = 0;
 
-    // Loop and count the files
-    FileList* pCur;
-    for (pCur = m_pFileCleanupList; pCur != NULL; pCur = pCur->GetNext()) {
-        numberOfFiles++;
-    }
+        // Loop and count the files
+        FileList* pCur;
+        for (pCur = m_pFileCleanupList; pCur != NULL; pCur = pCur->GetNext()) {
+            numberOfFiles++;
+        }
 
-    // Send the number
-    MPI_Send(&numberOfFiles, 1, MPI_INT, workerRank, tag_textLength, MPI_COMM_WORLD);
+        // Send the number
+        MPI_Send(&numberOfFiles, 1, MPI_INT, workerRank, tag_textLength, MPI_COMM_WORLD);
 
-    // Send each file to the worker
-    for (pCur = m_pFileCleanupList; pCur != NULL; pCur = pCur->GetNext()) {
-        // Get the filename from the file list
-        std::string fileName = pCur->GetName();
+        // Send each file to the worker
+        for (pCur = m_pFileCleanupList; pCur != NULL; pCur = pCur->GetNext()) {
+            // Get the filename from the file list
+            std::string fileName = pCur->GetName();
 
-        // Send it to the secondary worker
-        MPI_Send(&fileName[0], fileName.length() + 1, MPI_CHAR, workerRank, tag_textFile, MPI_COMM_WORLD);
+            // Send it to the secondary worker
+            MPI_Send(&fileName[0], fileName.length() + 1, MPI_CHAR, workerRank, tag_textFile, MPI_COMM_WORLD);
+        }
+
+    } else {
+        // Setup and set values in the local primary worker
+        // Define the list
+        std::vector<std::string> files;
+
+        // Loop and count the files
+        FileList* pCur;
+        for (pCur = m_pFileCleanupList; pCur != NULL; pCur = pCur->GetNext()) {
+            // Get the filename from the file list
+            std::string fileName = pCur->GetName();
+
+            // Append to the list
+            files.push_back(fileName);
+        }
+
+        // Set into the primary worker
+        m_primaryWorker.SetWorkerExtraFiles(files);
     }
 }
 
@@ -800,24 +879,30 @@ MPI Communication - ConfigureWorkerFilePairs()
    Transfers the file pairs from the primary to the secondary worker
 ------------------------------------------------------------------------------------------------------------------------------
 */
-void Algorithm::ConfigureWorkerFilePairs(int workerRank) {
+void Algorithm::ConfigureWorkerFilePairs(int workerRank, bool bMPI) {
 
-    // Send the number of extra files to the worker
-    // Create a holder for the number of files
-    int numberOfFiles = fileListPairs.size();
+    if (bMPI) {
+        // Send the number of extra files to the worker
+        // Create a holder for the number of files
+        int numberOfFiles = fileListPairs.size();
 
-    // Send the number
-    MPI_Send(&numberOfFiles, 1, MPI_INT, workerRank, tag_fileLength, MPI_COMM_WORLD);
+        // Send the number
+        MPI_Send(&numberOfFiles, 1, MPI_INT, workerRank, tag_fileLength, MPI_COMM_WORLD);
 
-    // Send each file to the worker
-    for (int entryPair = 0; entryPair < numberOfFiles; entryPair++) {
-        // Get the filename from the file list
-        std::string templateName = fileListPairs[entryPair][0];
-        std::string destinationName = fileListPairs[entryPair][1];
-        
-        // Send it to the secondary worker
-        MPI_Send(&templateName[0], templateName.length() + 1, MPI_CHAR, workerRank, tag_filePairs, MPI_COMM_WORLD);
-        MPI_Send(&destinationName[0], destinationName.length() + 1, MPI_CHAR, workerRank, tag_filePairs, MPI_COMM_WORLD);
+        // Send each file to the worker
+        for (int entryPair = 0; entryPair < numberOfFiles; entryPair++) {
+            // Get the filename from the file list
+            std::string templateName = fileListPairs[entryPair][0];
+            std::string destinationName = fileListPairs[entryPair][1];
+
+            // Send it to the secondary worker
+            MPI_Send(&templateName[0], templateName.length() + 1, MPI_CHAR, workerRank, tag_filePairs, MPI_COMM_WORLD);
+            MPI_Send(&destinationName[0], destinationName.length() + 1, MPI_CHAR, workerRank, tag_filePairs, MPI_COMM_WORLD);
+        }
+
+    } else {
+        // Setup and set values in the local primary worker
+        m_primaryWorker.SetWorkerFilePairs(fileListPairs);
     }
 };
 
@@ -827,51 +912,58 @@ MPI Communication - ConfigureWorkerObservations()
    Transfers the observations from from the primary to the secondary worker
 ------------------------------------------------------------------------------------------------------------------------------
 */
-void Algorithm::ConfigureWorkerObservations(int workerRank) {
+void Algorithm::ConfigureWorkerObservations(int workerRank, bool bMPI) {
 
-    // Get the count variables
-    int numberOfObservations = m_pObsGroup->GetNumObs();
-    int numberOfGroups = m_pObsGroup->GetNumGroups();
+    if (bMPI) {
+        // Send the number of extra files to the worker
+        // Get the count variables
+        int numberOfObservations = m_pObsGroup->GetNumObs();
+        int numberOfGroups = m_pObsGroup->GetNumGroups();
 
-    // Send the count variables
-    MPI_Send(&numberOfObservations, 1, MPI_INT, workerRank, tag_obsLengthNum, MPI_COMM_WORLD);
-    MPI_Send(&numberOfGroups, 1, MPI_INT, workerRank, tag_obsLengthGroup, MPI_COMM_WORLD);
+        // Send the count variables
+        MPI_Send(&numberOfObservations, 1, MPI_INT, workerRank, tag_obsLengthNum, MPI_COMM_WORLD);
+        MPI_Send(&numberOfGroups, 1, MPI_INT, workerRank, tag_obsLengthGroup, MPI_COMM_WORLD);
 
-    // Loop over the observations
-    for (int entryObservation = 0; entryObservation < numberOfObservations; entryObservation++) {
-        // Get the observations from the list
-        Observation *obs = m_pObsGroup->GetObsPtr(entryObservation);
+        // Loop over the observations
+        for (int entryObservation = 0; entryObservation < numberOfObservations; entryObservation++) {
+            // Get the observations from the list
+            Observation* obs = m_pObsGroup->GetObsPtr(entryObservation);
 
-        // Get the values from the observation
-        std::string obsName = obs->GetName();
-        double obsValue = obs->GetMeasuredValueUntransformed();
-        double obsWeight = obs->GetWeightFactor();
-        std::string obsFile = obs->GetFileName();
-        std::string obsKeyword = obs->GetKeyword();
-        int obsLine = obs->GetLine();
-        int obsColumn = obs->GetColumn();
-        char obsToken = obs->GetToken();
-        
-        bool obsAug = obs->IsAugmented();
-        int obsAugValue = 0;
-        if (obsAug) {
-            obsAugValue = 1;
+            // Get the values from the observation
+            std::string obsName = obs->GetName();
+            double obsValue = obs->GetMeasuredValueUntransformed();
+            double obsWeight = obs->GetWeightFactor();
+            std::string obsFile = obs->GetFileName();
+            std::string obsKeyword = obs->GetKeyword();
+            int obsLine = obs->GetLine();
+            int obsColumn = obs->GetColumn();
+            char obsToken = obs->GetToken();
+
+            bool obsAug = obs->IsAugmented();
+            int obsAugValue = 0;
+            if (obsAug) {
+                obsAugValue = 1;
+            }
+            std::string obsGroup = obs->GetGroup();
+
+            // Send each observation component to the secondary worker
+            MPI_Send(&obsName[0], obsName.length() + 1, MPI_CHAR, workerRank, tag_obsName, MPI_COMM_WORLD);
+            MPI_Send(&obsValue, 1, MPI_DOUBLE, workerRank, tag_obsValue, MPI_COMM_WORLD);
+            MPI_Send(&obsWeight, 1, MPI_DOUBLE, workerRank, tag_obsWeight, MPI_COMM_WORLD);
+            MPI_Send(&obsFile[0], obsFile.length() + 1, MPI_CHAR, workerRank, tag_obsFile, MPI_COMM_WORLD);
+            MPI_Send(&obsKeyword[0], obsKeyword.length() + 1, MPI_CHAR, workerRank, tag_obsKeyword, MPI_COMM_WORLD);
+            MPI_Send(&obsLine, 1, MPI_INT, workerRank, tag_obsLine, MPI_COMM_WORLD);
+            MPI_Send(&obsColumn, 1, MPI_INT, workerRank, tag_obsColumn, MPI_COMM_WORLD);
+            MPI_Send(&obsToken, 1, MPI_CHAR, workerRank, tag_obsToken, MPI_COMM_WORLD);
+            MPI_Send(&obsAugValue, 1, MPI_INT, workerRank, tag_obsAugmented, MPI_COMM_WORLD);
+            MPI_Send(&obsGroup[0], obsGroup.length() + 1, MPI_CHAR, workerRank, tag_obsGroup, MPI_COMM_WORLD);
+
         }
-        std::string obsGroup = obs->GetGroup();
-
-        // Send each observation component to the secondary worker
-        MPI_Send(&obsName[0], obsName.length() + 1, MPI_CHAR, workerRank, tag_obsName, MPI_COMM_WORLD);
-        MPI_Send(&obsValue, 1, MPI_DOUBLE, workerRank, tag_obsValue, MPI_COMM_WORLD);
-        MPI_Send(&obsWeight, 1, MPI_DOUBLE, workerRank, tag_obsWeight, MPI_COMM_WORLD);
-        MPI_Send(&obsFile[0], obsFile.length() + 1, MPI_CHAR, workerRank, tag_obsFile, MPI_COMM_WORLD);
-        MPI_Send(&obsKeyword[0], obsKeyword.length() + 1, MPI_CHAR, workerRank, tag_obsKeyword, MPI_COMM_WORLD);
-        MPI_Send(&obsLine, 1, MPI_INT, workerRank, tag_obsLine, MPI_COMM_WORLD);
-        MPI_Send(&obsColumn, 1, MPI_INT, workerRank, tag_obsColumn, MPI_COMM_WORLD);
-        MPI_Send(&obsToken, 1, MPI_CHAR, workerRank, tag_obsToken, MPI_COMM_WORLD);
-        MPI_Send(&obsAugValue, 1, MPI_INT, workerRank, tag_obsAugmented, MPI_COMM_WORLD);
-        MPI_Send(&obsGroup[0], obsGroup.length() + 1, MPI_CHAR, workerRank, tag_obsGroup, MPI_COMM_WORLD);
-        
+    } else {
+        // Set the observation group into the workder
+        m_primaryWorker.SetWorkerObservations(m_pObsGroup);
     }
+    
 }
 
 /*
@@ -880,91 +972,96 @@ MPI Communication - ConfigureWorkerParameterGroups()
    Transfers the parameters from from the primary to the secondary worker
 ------------------------------------------------------------------------------------------------------------------------------
 */
-void Algorithm::ConfigureWorkerParameterGroups(int workerRank) {
+void Algorithm::ConfigureWorkerParameterGroups(int workerRank, bool bMPI) {
 
+    if (bMPI) {
+        // Send the total number of parameters
+        int numberOfTotalParameters = m_pParamGroup->GetNumParams() + m_pParamGroup->GetNumTiedParams();
+        MPI_Send(&numberOfTotalParameters, 1, MPI_INT, workerRank, tag_paramTotalNum, MPI_COMM_WORLD);
+
+        // Real parameters
+        int numberOfRealParameters = m_pParamGroup->GetNumRealParams();
+        MPI_Send(&numberOfRealParameters, 1, MPI_INT, workerRank, tag_paramTotalReal, MPI_COMM_WORLD);
+
+        for (int entryParameter = 0; entryParameter < numberOfRealParameters; entryParameter++) {
+            // Get the parameter from the group, casing to the correct type
+            RealParam* param = (RealParam*)m_pParamGroup->GetParamPtr(entryParameter);
+
+            // Get the information from the parameter
+            std::string name = param->GetName();
+            double sampleValue = param->GetEstimatedValueTransformed();
+            sampleValue = param->ConvertOutVal(sampleValue);
+            std::string fixFmt = param->GetFixFmt();
+
+            // Send the values to the worker
+            MPI_Send(&name[0], name.length() + 1, MPI_CHAR, workerRank, tag_paramRealName, MPI_COMM_WORLD);
+            MPI_Send(&sampleValue, 1, MPI_DOUBLE, workerRank, tag_paramRealInit, MPI_COMM_WORLD);
+            MPI_Send(&fixFmt[0], fixFmt.length() + 1, MPI_CHAR, workerRank, tag_paramRealFmt, MPI_COMM_WORLD);
+        }
+
+        // Integer parameters
+        // Value is offset by the number of real parameters to start indexing the pList correctly
+        int numberOfIntegerParameters = m_pParamGroup->GetNumIntParams();
+        MPI_Send(&numberOfIntegerParameters, 1, MPI_INT, workerRank, tag_paramTotalInt, MPI_COMM_WORLD);
+
+        for (int entryParameter = numberOfRealParameters; entryParameter < numberOfRealParameters + numberOfIntegerParameters; entryParameter++) {
+            // Get the parameter from the group, casing to the correct type
+            IntParam* param = (IntParam*)m_pParamGroup->GetParamPtr(entryParameter);
+
+            // Get the information from the parameter
+            std::string name = param->GetName();
+            int sampleValue = param->GetEstimatedValueTransformed();
+            sampleValue = param->ConvertOutVal(sampleValue);
+
+            // Send the values to the worker
+            MPI_Send(&name[0], name.length() + 1, MPI_CHAR, workerRank, tag_paramInitName, MPI_COMM_WORLD);
+            MPI_Send(&sampleValue, 1, MPI_INT, workerRank, tag_paramIntInit, MPI_COMM_WORLD);
+        }
+
+        // Tied parameters 
+        // These will appear as more real parameters on the secondary worker
+        int numberOfTiedParameters = m_pParamGroup->GetNumTiedParams();
+        MPI_Send(&numberOfTiedParameters, 1, MPI_INT, workerRank, tag_paramTotalReal, MPI_COMM_WORLD);
+
+        for (int entryParameter = 0; entryParameter < numberOfTiedParameters; entryParameter++) {
+            // Get the parameter from the group
+            TiedParamABC* param = m_pParamGroup->GetTiedParamPtr(entryParameter);
+
+            // Get the information from the parameter
+            std::string name = param->GetName();
+            double sampleValue = param->GetEstimatedValueTransformed();
+            std::string fixFmt = param->GetFixFmt();
+
+            // Send the values to the worker
+            MPI_Send(&name[0], name.length() + 1, MPI_CHAR, workerRank, tag_paramRealName, MPI_COMM_WORLD);
+            MPI_Send(&sampleValue, 1, MPI_DOUBLE, workerRank, tag_paramRealInit, MPI_COMM_WORLD);
+            MPI_Send(&fixFmt[0], fixFmt.length() + 1, MPI_CHAR, workerRank, tag_paramRealFmt, MPI_COMM_WORLD);
+        }
+
+        // Geom parameters
+        // These will appear as more real parameters on the secondary worker
+        /*int numberOfGeomParameters = m_pParamGroup->m_NumGeom;
+        MPI_Send(&numberOfGeomParameters, 1, MPI_INT, workerRank, tag_paramTotalReal, MPI_COMM_WORLD);
+
+        for (int entryParameter = 0; entryParameter < numberOfGeomParameters; entryParameter++) {
+            // Get the parameter from the group
+            GeomParamABC* param = m_pParamGroup->GetGeomParamPtr(entryParameter);
+
+            // Get the information from the parameter
+            std::string name = param->GetName();
+            double sampleValue = param->GetEstimatedValueTransformed();
+            std::string fixFmt = param->GetFixFmt();
+
+            // Send the values to the worker
+            MPI_Send(&name[0], name.length() + 1, MPI_CHAR, workerRank, tag_paramRealName, MPI_COMM_WORLD);
+            MPI_Send(&sampleValue, 1, MPI_DOUBLE, workerRank, tag_paramRealInit, MPI_COMM_WORLD);
+            MPI_Send(&fixFmt[0], fixFmt.length() + 1, MPI_CHAR, workerRank, tag_paramRealFmt, MPI_COMM_WORLD);
+        }*/
+    } else {
+        // Set values into the local primary worker
+        m_primaryWorker.SetWorkerParameters(m_pParamGroup);
+    }
     
-    // Send the total number of parameters
-    int numberOfTotalParameters = m_pParamGroup->GetNumParams() + m_pParamGroup->GetNumTiedParams();
-    MPI_Send(&numberOfTotalParameters, 1, MPI_INT, workerRank, tag_paramTotalNum, MPI_COMM_WORLD);
-
-    // Real parameters
-    int numberOfRealParameters = m_pParamGroup->GetNumRealParams();
-    MPI_Send(&numberOfRealParameters, 1, MPI_INT, workerRank, tag_paramTotalReal, MPI_COMM_WORLD);
-
-    for (int entryParameter = 0; entryParameter < numberOfRealParameters; entryParameter++) {
-        // Get the parameter from the group, casing to the correct type
-        RealParam*param = (RealParam*) m_pParamGroup->GetParamPtr(entryParameter);
-
-        // Get the information from the parameter
-        std::string name = param->GetName();
-        double sampleValue = param->GetEstimatedValueTransformed();
-        sampleValue = param->ConvertOutVal(sampleValue);
-        std::string fixFmt = param->GetFixFmt();
-
-        // Send the values to the worker
-        MPI_Send(&name[0], name.length() + 1, MPI_CHAR, workerRank, tag_paramRealName, MPI_COMM_WORLD);
-        MPI_Send(&sampleValue, 1, MPI_DOUBLE, workerRank, tag_paramRealInit, MPI_COMM_WORLD);
-        MPI_Send(&fixFmt[0], fixFmt.length() + 1, MPI_CHAR, workerRank, tag_paramRealFmt, MPI_COMM_WORLD);
-    }
-
-    // Integer parameters
-    // Value is offset by the number of real parameters to start indexing the pList correctly
-    int numberOfIntegerParameters = m_pParamGroup->GetNumIntParams();
-    MPI_Send(&numberOfIntegerParameters, 1, MPI_INT, workerRank, tag_paramTotalInt, MPI_COMM_WORLD);
-
-    for (int entryParameter = numberOfRealParameters; entryParameter < numberOfRealParameters + numberOfIntegerParameters; entryParameter++) {
-        // Get the parameter from the group, casing to the correct type
-        IntParam* param = (IntParam*)m_pParamGroup->GetParamPtr(entryParameter);
-
-        // Get the information from the parameter
-        std::string name = param->GetName();
-        int sampleValue = param->GetEstimatedValueTransformed();
-        sampleValue = param->ConvertOutVal(sampleValue);
-
-        // Send the values to the worker
-        MPI_Send(&name[0], name.length() + 1, MPI_CHAR, workerRank, tag_paramInitName, MPI_COMM_WORLD);
-        MPI_Send(&sampleValue, 1, MPI_INT, workerRank, tag_paramIntInit, MPI_COMM_WORLD);
-    }
-
-    // Tied parameters 
-    // These will appear as more real parameters on the secondary worker
-    int numberOfTiedParameters = m_pParamGroup->GetNumTiedParams();
-    MPI_Send(&numberOfTiedParameters, 1, MPI_INT, workerRank, tag_paramTotalReal, MPI_COMM_WORLD);
-
-    for (int entryParameter = 0; entryParameter < numberOfTiedParameters; entryParameter++) {
-        // Get the parameter from the group
-        TiedParamABC *param = m_pParamGroup->GetTiedParamPtr(entryParameter);
-
-        // Get the information from the parameter
-        std::string name = param->GetName();
-        double sampleValue = param->GetEstimatedValueTransformed();
-        std::string fixFmt = param->GetFixFmt();
-
-        // Send the values to the worker
-        MPI_Send(&name[0], name.length() + 1, MPI_CHAR, workerRank, tag_paramRealName, MPI_COMM_WORLD);
-        MPI_Send(&sampleValue, 1, MPI_DOUBLE, workerRank, tag_paramRealInit, MPI_COMM_WORLD);
-        MPI_Send(&fixFmt[0], fixFmt.length() + 1, MPI_CHAR, workerRank, tag_paramRealFmt, MPI_COMM_WORLD);
-    }
-
-    // Geom parameters
-    // These will appear as more real parameters on the secondary worker
-    /*int numberOfGeomParameters = m_pParamGroup->m_NumGeom;
-    MPI_Send(&numberOfGeomParameters, 1, MPI_INT, workerRank, tag_paramTotalReal, MPI_COMM_WORLD);
-
-    for (int entryParameter = 0; entryParameter < numberOfGeomParameters; entryParameter++) {
-        // Get the parameter from the group
-        GeomParamABC* param = m_pParamGroup->GetGeomParamPtr(entryParameter);
-
-        // Get the information from the parameter
-        std::string name = param->GetName();
-        double sampleValue = param->GetEstimatedValueTransformed();
-        std::string fixFmt = param->GetFixFmt();
-
-        // Send the values to the worker
-        MPI_Send(&name[0], name.length() + 1, MPI_CHAR, workerRank, tag_paramRealName, MPI_COMM_WORLD);
-        MPI_Send(&sampleValue, 1, MPI_DOUBLE, workerRank, tag_paramRealInit, MPI_COMM_WORLD);
-        MPI_Send(&fixFmt[0], fixFmt.length() + 1, MPI_CHAR, workerRank, tag_paramRealFmt, MPI_COMM_WORLD);
-    }*/
 
 }
 
@@ -990,23 +1087,51 @@ void Algorithm::ConfigureWorkers() {
         ConfigureWorkerSolveCommand(entryWorker);
 
         // Configure the worker archive command
-        ConfigureWorkerArchiveCommand(entryWorker);
+        ConfigureWorkerArchiveCommand(entryWorker, true);
 
         // Get the extra files from the directory
-        ConfigureWorkerExtraFiles(entryWorker);
+        ConfigureWorkerExtraFiles(entryWorker, true);
 
         // Get the file pairs for the templates and working files
-        ConfigureWorkerFilePairs(entryWorker);
+        ConfigureWorkerFilePairs(entryWorker, true);
 
         // Get the observations for comparison
-        ConfigureWorkerObservations(entryWorker);
+        ConfigureWorkerObservations(entryWorker, true);
 
         // Get the parameters for the analysis
-        ConfigureWorkerParameterGroups(entryWorker);
+        ConfigureWorkerParameterGroups(entryWorker, true);
 
     }
 
-    // Do any adjustments on the primary for the secondary workers
+    // Setup the primary worker if using
+    if (m_bSolveOnPrimary) {
+        // Construct a local model worker
+        m_primaryWorker = ModelWorker(false);
+
+        // Configure the worker directory
+        m_primaryWorker.SetWorkerDirectory(m_DirPrefix);
+
+        // Configure the worker solve command
+        m_primaryWorker.SetWorkerSolveCommand(m_ExecCmd);
+
+        // Configure the worker archive command
+        ConfigureWorkerArchiveCommand(0, false);
+
+        // Get the extra files from the directory
+        ConfigureWorkerExtraFiles(0, false);
+
+        // Get the file pairs for the templates and working files
+        ConfigureWorkerFilePairs(0, false);
+
+        // Get the observations for comparison
+        ConfigureWorkerObservations(0, false);
+
+        // Get the parameters for the analysis
+        ConfigureWorkerParameterGroups(0, false);
+        
+        // Configure the worker directory
+        m_primaryWorker.SetupWorker();
+    }
     
 }
 
@@ -1175,53 +1300,28 @@ void Algorithm::ManageSingleObjectiveIterations(std::vector<std::vector<double>>
         }
     }
 
-    // Begin solving the alternatives
-    if (m_bSolveOnPrimary) {
-        // Include the primary worker as a solution
-        // TODO: create this
-    }
-    else {
-        // Do not solve models on the primary worker
-        // Setup the request space
-        MPI_Message mpiMessage;
-        MPI_Status mpiStatus;
+    // Setup the request space
+    MPI_Message mpiMessage;
+    MPI_Status mpiStatus;
 
-        int requestFlag = 0;
-        int sourceFlag = 0;
+    int requestFlag = 1;
+    int sendFlag = 1;
 
-        // Set the counter variables         
-        int sendCounter = 0;
-        int receiveCounter = 0;
+    // Set the counter variables         
+    int sendCounter = 0;
+    int receiveCounter = 0;
 
-        // Loop and send work to the secondary workers as they become available
-        while (sendCounter < indicesToSolve.size()){
-            
-            // Get the rank number of a secondary worker waiting for work
-            int workerRank, workerValue;
+    // Loop and send work to the secondary workers as they become available
+    while (sendCounter < indicesToSolve.size()){  
+        // Get the rank number of a secondary worker waiting for work
+        int workerRank, workerValue;
 
-            // TODO: Break each of these into separate functions for reuse
-            // Check for any workers with a continue flag 
-            MPI_Improbe(MPI_ANY_SOURCE, tag_continue, MPI_COMM_WORLD, &sourceFlag, &mpiMessage, &mpiStatus);
-            if (sourceFlag) {
-                // Worker is available to accept work. Go through the steps to send work to it.
-                // Receive the continue flag from the worker
-                MPI_Mrecv(&workerValue, 1, MPI_INT, &mpiMessage, &mpiStatus);
-
-                // Extract the worker rank from the status request
-                workerRank = mpiStatus.MPI_SOURCE;
-
-                // Transmit a continue flag to the idle secondary worker
-                SendWorkerContinue(workerRank, true);
-
-                // Transmit the parameteres to the worker to solve
-                SendWorkerParameters(workerRank, sendCounter, parameters[indicesToSolve[sendCounter]]);
-
-                // Increment the send counter
-                sendCounter++;
-            }
-
-            // Determine if we can receive any values               
+        // Receive until no more receives are available
+        while (requestFlag) {
+            // Attempt to receive from the workers
             MPI_Improbe(MPI_ANY_SOURCE, tag_data, MPI_COMM_WORLD, &requestFlag, &mpiMessage, &mpiStatus);
+            
+            // Handle any available receives
             if (requestFlag) {
                 try {
                     // Get the alternative index and objective function from the secondary worker
@@ -1229,11 +1329,11 @@ void Algorithm::ManageSingleObjectiveIterations(std::vector<std::vector<double>>
                     MPI_Mrecv(&data, 2, MPI_DOUBLE, &mpiMessage, &mpiStatus);
 
                     // Set the objective value into the objective array
-                    returnArray[indicesToSolve[(int)data[0]]] = data[1];
+                    returnArray[(int)data[0]] = data[1];
 
                     // Store the alternative into the cache, if enabled
                     if (m_bCaching) {
-                        m_CacheMembers.push_back(parameters[indicesToSolve[(int)data[0]]]);
+                        m_CacheMembers.push_back(parameters[(int)data[0]]);
                     }
 
                     // Check if the alternative should be preserved
@@ -1251,34 +1351,102 @@ void Algorithm::ManageSingleObjectiveIterations(std::vector<std::vector<double>>
             }
         }
 
-        // All alternatives have been sent. Receive all of the solutions
-        while (receiveCounter < indicesToSolve.size()) {
-            // Determine if we can receive any values
-            MPI_Improbe(MPI_ANY_SOURCE, tag_data, MPI_COMM_WORLD, &requestFlag, &mpiMessage, &mpiStatus);
-            if (requestFlag) {
-                // Get the alternative index and objective function from the secondary worker
-                double data[2];
-                MPI_Mrecv(&data, 2, MPI_DOUBLE, &mpiMessage, &mpiStatus);
+        // Send until no more workers are available
+        while (sendFlag) {
+            // Attempt to send to the workers
+            MPI_Improbe(MPI_ANY_SOURCE, tag_continue, MPI_COMM_WORLD, &sendFlag, &mpiMessage, &mpiStatus);
 
-                // Set the objective value into the objective array
-                returnArray[indicesToSolve[(int)data[0]]] = data[1];
+            // Handle any available sends
+            if (sendFlag) {
+                // Worker is available to accept work. Go through the steps to send work to it.
+                // Receive the continue flag from the worker
+                MPI_Mrecv(&workerValue, 1, MPI_INT, &mpiMessage, &mpiStatus);
+
+                // Extract the worker rank from the status request
+                workerRank = mpiStatus.MPI_SOURCE;
+
+                // Transmit a continue flag to the idle secondary worker
+                SendWorkerContinue(workerRank, true);
+
+                // Transmit the parameteres to the worker to solve
+                SendWorkerParameters(workerRank, indicesToSolve[sendCounter], parameters[indicesToSolve[sendCounter]]);
+
+                // Increment the send counter
+                sendCounter++;
+
+                // Stop sending if all values have been completed
+                if (sendCounter == indicesToSolve.size()) {
+                    break;
+                }
+            }
+        }
+
+        // Solve on the primary worker if enabled
+        if (m_bSolveOnPrimary && sendCounter < indicesToSolve.size()) {
+            // Set the parameters on the primary worker
+            std::cout << "Solving on primary" << std::endl;
+            m_primaryWorker.SetStandardParameters(parameters[indicesToSolve[sendCounter]]);
+
+            // Attempt to solve the model
+            try {
+                // Solve the model
+                std::cout << "Conducting solve\t" << indicesToSolve[sendCounter] << std::endl;
+                double objective =  m_primaryWorker.StdExecute(0);
+                returnArray[indicesToSolve[sendCounter]] = objective;
+                std::cout << "Completed solve" << std::endl;
 
                 // Store the alternative into the cache, if enabled
                 if (m_bCaching) {
-                    m_CacheMembers.push_back(parameters[indicesToSolve[(int)data[0]]]);
+                    m_CacheMembers.push_back(parameters[indicesToSolve[sendCounter]]);
                 }
 
                 // Check if the alternative should be preserved
-                ManagePreserveBest(bestObjectiveIteration, data[1], mpiStatus);
-
-                // Increment the receive counter
-                receiveCounter++;
-
-                // Increment the solve counter
-                m_NumSolves++;
+                std::cout << "Preserving model best" << std::endl;
+                ManagePreserveBest(bestObjectiveIteration, objective, mpiStatus);
             }
-        }    
+            catch (...){
+                // Solution failed. Fail by keeping the infinite value in the array
+            }
+
+            // Increment the counters
+            sendCounter++;
+            receiveCounter++;
+
+        }
+        
+        // Reset the flags for the next loop
+        requestFlag = 1;
+        sendFlag = 1;
+
     }
+
+    // All alternatives have been sent. Receive all of the solutions
+    while (receiveCounter < indicesToSolve.size()) {
+        // Determine if we can receive any values
+        MPI_Improbe(MPI_ANY_SOURCE, tag_data, MPI_COMM_WORLD, &requestFlag, &mpiMessage, &mpiStatus);
+        if (requestFlag) {
+            // Get the alternative index and objective function from the secondary worker
+            double data[2];
+            MPI_Mrecv(&data, 2, MPI_DOUBLE, &mpiMessage, &mpiStatus);
+
+            // Set the objective value into the objective array
+            returnArray[(int)data[0]] = data[1];
+
+            // Store the alternative into the cache, if enabled
+            if (m_bCaching) {
+                m_CacheMembers.push_back(parameters[(int)data[0]]);
+            }
+
+            // Check if the alternative should be preserved
+            ManagePreserveBest(bestObjectiveIteration, data[1], mpiStatus);
+
+            // Increment the receive counter
+            receiveCounter++;
+
+            // Increment the solve counter
+            m_NumSolves++;
+        }
+    }    
 }
 
 

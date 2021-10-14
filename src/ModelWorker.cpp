@@ -3,51 +3,52 @@
 #include "ModelWorker.h"
 #include "Exception.h"
 
-#include <iostream>
-#include <chrono>
-#include <thread>
-#include <algorithm> 
-#include <cctype>
-#include <locale>
-#include <vector>
 
+
+
+// todo: doc string
+ModelWorker::ModelWorker() {
+
+}
 
 /*
 ------------------------------------------------------------------------------------------------------------------------------
  Constructor for the model worker class
 ------------------------------------------------------------------------------------------------------------------------------
 */
-ModelWorker::ModelWorker(void) {
+ModelWorker::ModelWorker(bool bMPI) {
 
     // Get the MPI information
     MPI_Comm_rank(MPI_COMM_WORLD, &rank);
 
     // Get the information through MPI from the primary worker
-    SetupFromPrimary();  
+    if (bMPI) {
+        SetupMPI();
+    }
+    
 }
 
-void ModelWorker::Work(void) {
+void ModelWorker::WorkMPI(void) {
 
     // Setup the worker directory 
-    SetupWork();
+    SetupWorker();
 
     // Enter the solution loop
-    CommenceWork();
+    CommenceMPIWork();
 
     // Cleanup the worker
 
     // Terminate the worker
-    TerminateWork();
+    TerminateMPIWork();
 }
 
 
 void ModelWorker::Destroy(void) {
-    
 
     IncDtorCount();
 };
 
-void ModelWorker::SetupFromPrimary() {  
+void ModelWorker::SetupMPI() {  
 
     // Get the secondary worker directory tag from the primary worker
     ReceiveWorkerDirectory();
@@ -151,7 +152,7 @@ void  ModelWorker::ReceiveWorkerExtraFiles(void) {
     // Loop and request each file from the primary worker
     for (int entryFile = 0; entryFile < numberOfFiles; entryFile++) {
         // Receive and append into the holding vector
-        fileCleanupList.push_back(ReceiveString(tag_textFile));
+        m_fileCleanupList.push_back(ReceiveString(tag_textFile));
     }
 }
 
@@ -183,7 +184,7 @@ void  ModelWorker::ReceiveWorkerExtraFiles(void) {
     // Reformat into a list pair
     for (int entryPair = 0; entryPair < templateFiles.size(); entryPair++) {
         std::vector<std::string> temp{ templateFiles[entryPair], destinationFiles[entryPair] };
-        filePairs.push_back(temp);
+        m_filePairs.push_back(temp);
     }
 
 }
@@ -392,7 +393,6 @@ void ModelWorker::ReceiveWorkerParameters(void) {
 
 
 
-
     // Set the arrays into a group object
     // Initialize a parameter group
     paramGroup = new ParameterGroupWorker();
@@ -405,7 +405,7 @@ void ModelWorker::ReceiveWorkerParameters(void) {
     Check template files against parameters, each parameter should appear in at least one template file or at least one database entry.
     --------------------------------------------------------------------------------------------------------------------------
     */
-    paramGroup->CheckTemplateFiles(filePairs, m_workerDirectory);
+    paramGroup->CheckTemplateFiles(m_filePairs, m_workerDirectory);
 
     /*
     --------------------------------------------------------------------------------------------------------------------------
@@ -502,7 +502,7 @@ void  ModelWorker::SendInteger(int tag_number, int value) {
 }
 
 
-void ModelWorker::SetupWork(void) {
+void ModelWorker::SetupWorker(void) {
 
     // Create the working directory
     if (!std::filesystem::exists(m_workerDirectory)) {
@@ -515,13 +515,13 @@ void ModelWorker::SetupWork(void) {
     std::vector<int> indices2delete;
 
     // Copy all the files to it from the source directory
-    for (int entryFile = 0; entryFile < fileCleanupList.size(); entryFile++) {
+    for (int entryFile = 0; entryFile < m_fileCleanupList.size(); entryFile++) {
 
         // Get the current working directory
         std::filesystem::path workerDirectoryPath = m_workerDirectory;
 	
 	    // Create the source path. Remove the last character that creates issues.
-	    std::filesystem::path sourcePath = fileCleanupList[entryFile];
+	    std::filesystem::path sourcePath = m_fileCleanupList[entryFile];
 
         // Create an error code object to capture any errors
         std::error_code code;
@@ -589,22 +589,22 @@ void ModelWorker::SetupWork(void) {
     // Starting from the end, delete entries from the file list
     for (int entry = indices2delete.size() - 1; entry >= 0; entry--) {
         // Remove the current entry from the file list
-        fileCleanupList.erase(fileCleanupList.begin() + indices2delete[entry]);
+        m_fileCleanupList.erase(m_fileCleanupList.begin() + indices2delete[entry]);
     }
 
     // Add the list of additional files into the file cleanup list
     for (int entry = 0; entry < additionalFiles.size(); entry++) {
-        fileCleanupList.push_back(additionalFiles[entry].string());
+        m_fileCleanupList.push_back(additionalFiles[entry].string());
     }
 
     // Check that the vector only has unique values
     // Remove duplicates from the file cleanup index list
-    std::sort(fileCleanupList.begin(), fileCleanupList.end());
+    std::sort(m_fileCleanupList.begin(), m_fileCleanupList.end());
 
     indices2delete.clear();
-    if (fileCleanupList.size() > 1) {
-        for (int entry = 1; entry < fileCleanupList.size(); entry++) {
-            if (fileCleanupList[entry] == fileCleanupList[entry - 1]) {
+    if (m_fileCleanupList.size() > 1) {
+        for (int entry = 1; entry < m_fileCleanupList.size(); entry++) {
+            if (m_fileCleanupList[entry] == m_fileCleanupList[entry - 1]) {
                 indices2delete.push_back(entry);
             }
         }
@@ -612,13 +612,13 @@ void ModelWorker::SetupWork(void) {
 
     for (int entry = indices2delete.size() - 1; entry >= 0; entry--) {
         // Remove the current entry from the file list
-        fileCleanupList.erase(fileCleanupList.begin() + indices2delete[entry]);
+        m_fileCleanupList.erase(m_fileCleanupList.begin() + indices2delete[entry]);
     }
 
 }
 
 
-void  ModelWorker::CommenceWork() {
+void  ModelWorker::CommenceMPIWork() {
     // TODO: doc string
 
     // Set the MPI variables
@@ -680,16 +680,16 @@ void  ModelWorker::CommenceWork() {
                 PreserveModel(false);
             }
         }
-        
     }
 }
 
-void  ModelWorker::TerminateWork(void) {
+void  ModelWorker::TerminateMPIWork(void) {
     // Todo: update when additional operations are required at work termination
 
 }
 
 int ModelWorker::RequestParameters(void) {
+    // todo: doc string
 
     // Create holder for the parameters. This is one larger than the number of parameters to allow the alternative index to be transferred
     // with the alternatives
@@ -719,7 +719,6 @@ int ModelWorker::RequestParameters(void) {
 }
 
 bool ModelWorker::RequestContinue(void) {
-    
 
     // Setup the request space
     MPI_Message mpiMessage;
@@ -743,6 +742,252 @@ bool ModelWorker::RequestContinue(void) {
         return true;
     }
 }
+
+// Todo: doc string
+void ModelWorker::SetWorkerDirectory(std::string workerDirectory) {
+
+    // Set the string as the directory
+    m_workerDirectory = workerDirectory;
+
+    // Append the worker number onto the tag
+    m_workerDirectory += std::to_string(rank);
+    
+};
+
+// todo: doc string
+void ModelWorker::SetWorkerSolveCommand(std::string solveCommandInput) {
+
+    // Set the string as the solve command
+    solveCommand = solveCommandInput;
+
+};
+
+// todo: doc string
+void ModelWorker::SetWorkerPreserveArchiveCommand(int preserveStatus, std::string preserveCommand) {
+
+    // Setup the solution preservation
+    if (preserveStatus == 0) {
+        // Model will not be archived. Set the status to false
+        preserveModelOutput = false;
+
+    } else if (preserveStatus== 1) {
+        // Model will be archived using standard method
+        // Toggle the preserve status to true
+        preserveModelOutput = true;
+
+    } else if (preserveStatus == 2) {
+        // Model will be archived using a custom command.
+        // Toggle the preserve status to true
+        preserveModelOutput = true;
+
+        // Set the preservation command
+        preserveOutputCommand = preserveCommand;
+
+    }
+}
+
+void ModelWorker::SetWorkerPreserveBestCommand(int preserveBest, std::string bestCommand) {
+
+    // Setup the best perservation
+    if (preserveBest == 0) {
+        // Model will not be archived. Set the status to false
+        preserveModelBest = false;
+
+    }
+    else if (preserveBest == 1) {
+        // Model will be archived using standard method
+        // Toggle the preserve status to true
+        preserveModelBest = true;
+
+    }
+    else if (preserveBest == 2) {
+        // Model will be archived using a custom command.
+        // Toggle the preserve status to true
+        preserveModelBest = true;
+
+        // Set the pservation command
+        preserveBestCommand = bestCommand;
+
+    }
+};
+
+// todo: doc string
+void ModelWorker::SetWorkerExtraFiles(std::vector<std::string> extraFiles) {
+
+    // Set the file cleanup list as the extra file list
+    m_fileCleanupList = extraFiles;
+
+};
+
+// todo: doc string
+void ModelWorker::SetWorkerFilePairs(std::vector<std::vector<std::string>> filePairs) {
+
+    // Set the file paris as object
+    m_filePairs = filePairs;
+
+};
+
+// todo: doc string
+void ModelWorker::SetWorkerObservations(ObservationGroup* m_pObsGroup) {
+
+    // Construct the group from the value passed in
+    observationGroup = m_pObsGroup;
+
+};
+
+// todo: doc string
+void ModelWorker::SetWorkerParameters(ParameterGroup* m_pParamGroup) {
+
+    // Get the total number of paramters
+    int numberOfTotalParameters = m_pParamGroup->GetNumParams() + m_pParamGroup->GetNumTiedParams();
+
+    // Create a counter for the number of excluded parameters
+    int numberOfExcluded = 0;
+
+    // Create a parameter group object to store everything in
+    ParameterWorkerABC** m_pList = new ParameterWorkerABC * [numberOfTotalParameters];
+    char** m_ParamNameList = new char* [numberOfTotalParameters];
+    ParameterWorkerABC** m_pExcl = new ParameterWorkerABC * [numberOfTotalParameters];
+    int positionCounter = 0;
+
+    // Real parameters
+    int numberOfRealParameters = m_pParamGroup->GetNumRealParams();
+    for (int entryParameter = 0; entryParameter < numberOfRealParameters; entryParameter++) {
+        // Get the parameter from the group, casing to the correct type
+        RealParam* param = (RealParam*)m_pParamGroup->GetParamPtr(entryParameter);
+
+        // Get the information from the parameter
+        std::string name = param->GetName();
+        IroncladString paramName = &name[0];
+
+        double sampleValue = param->GetEstimatedValueTransformed();
+        sampleValue = param->ConvertOutVal(sampleValue);
+
+        std::string fixFmt = param->GetFixFmt();
+        IroncladString paramFmt = &fixFmt[0];
+
+        // Create the parameter
+        m_pList[positionCounter] = new RealParamWorker(paramName, sampleValue, paramFmt);
+
+        // Construct the name list
+        m_ParamNameList[positionCounter] = new char[strlen(paramName) + 1];
+        strcpy(m_ParamNameList[positionCounter], paramName);
+
+        // Update the exclusion list
+        m_pExcl[positionCounter] = NULL; // No values are assumed in the exclude list
+
+        // Increment the position counter
+        positionCounter++;
+    }
+
+    // Integer parameters
+    // Get the number of integer parameters
+    int numberOfIntegerParameters = m_pParamGroup->GetNumIntParams();
+
+    // Request the values from the primary worker
+    for (int entryInt = 0; entryInt < numberOfIntegerParameters; entryInt++) {
+        // Get the parameter from the group, casing to the correct type
+        IntParam* param = (IntParam*)m_pParamGroup->GetParamPtr(positionCounter);
+
+        // Get the information from the parameter
+        std::string name = param->GetName();
+        IroncladString paramName = &name[0];
+
+        int sampleValue = param->GetEstimatedValueTransformed();
+        sampleValue = param->ConvertOutVal(sampleValue);
+
+        // Create the parameter
+        m_pList[positionCounter] = new IntParamWorker(paramName, sampleValue);
+
+        // Update the name list
+        m_ParamNameList[positionCounter] = new char[strlen(paramName) + 1];
+        strcpy(m_ParamNameList[positionCounter], paramName);
+
+        // Update the exclusion list
+        m_pExcl[positionCounter] = NULL; // No values are assumed in the exclude list
+
+        // Increment the position counter
+        positionCounter++;
+    }
+
+    // Tied parameters
+    // Get the number of tied parameters
+    int numberOfTiedParameters = m_pParamGroup->GetNumTiedParams();
+
+    // Request the values from the primary worker
+    for (int entryTied = 0; entryTied < numberOfTiedParameters; entryTied++) {
+
+        // Get the parameter from the group
+        TiedParamABC* param = m_pParamGroup->GetTiedParamPtr(entryTied);
+
+        // Get the information from the parameter
+        std::string name = param->GetName();
+        IroncladString paramName = &name[0];
+
+        double sampleValue = param->GetEstimatedValueTransformed();
+        
+        std::string fixFmt = param->GetFixFmt();
+        IroncladString paramFmt = &fixFmt[0];
+
+        // Create a real parameter instead of the tied parameter
+        m_pList[positionCounter] = new RealParamWorker(paramName, sampleValue, paramFmt);
+
+        // Update the name list
+        m_ParamNameList[positionCounter] = new char[strlen(paramName) + 1];
+        strcpy(m_ParamNameList[positionCounter], paramName);
+
+        // Update the exclusion list
+        m_pExcl[positionCounter] = NULL; // No values are assumed in the exclude list
+
+        // Increment the position counter
+        positionCounter++;
+    }
+
+    // Geometric parameters
+
+
+
+
+    // Set the arrays into a group object
+    // Initialize a parameter group
+    paramGroup = new ParameterGroupWorker();
+
+    // Set the parameter values into the group
+    paramGroup->SetGroupValues(m_pList, m_pExcl, m_ParamNameList, numberOfTotalParameters, numberOfExcluded);
+
+
+    /*
+    --------------------------------------------------------------------------------------------------------------------------
+    Check template files against parameters, each parameter should appear in at least one template file or at least one database entry.
+    --------------------------------------------------------------------------------------------------------------------------
+    */
+    paramGroup->CheckTemplateFiles(m_filePairs, m_workerDirectory);
+
+    /*
+    --------------------------------------------------------------------------------------------------------------------------
+    Check parameters for uniqueness, each parameter should be unique and should not be a substring of another parameter.
+    --------------------------------------------------------------------------------------------------------------------------
+    */
+    paramGroup->CheckMnemonics();
+
+};
+
+// todo: doc string
+int ModelWorker::SetStandardParameters(std::vector<double> inputParameters) {
+
+    // Separate out the alternative index from the parameters
+    int alternativeIndex = (int)inputParameters[0];
+
+    // Erase the first element
+    inputParameters.erase(inputParameters.begin());
+
+    // Set the parameters into the the parameter group
+    paramGroup->WriteParams(&inputParameters[0]);
+
+    // Return the alternative index to the calling function
+    return alternativeIndex;
+
+};
 
 
 /******************************************************************************
@@ -806,10 +1051,10 @@ void ModelWorker::PreserveModel(bool preserveBest) {
             if (!std::filesystem::is_directory(path)) {
                 // Check that the file is not an input file
                 bool archiveFlag = true;
-                for (int entry = 0; entry < fileCleanupList.size(); entry++) {
+                for (int entry = 0; entry < m_fileCleanupList.size(); entry++) {
                     // Construct the path to the file in the worker directory
                     std::filesystem::path temp = m_workerDirectory;
-                    temp /= fileCleanupList[entry];
+                    temp /= m_fileCleanupList[entry];
 
                     // Compare to the active path to the cleanup list value
                     if (std::filesystem::equivalent(temp, path)) {
@@ -1020,13 +1265,13 @@ double ModelWorker::StdExecute(double viol) {
     solveCounter++;
 
     // Make substitution of parameters into model input files
-    for (int entryPair = 0; entryPair < filePairs.size(); entryPair++) {
+    for (int entryPair = 0; entryPair < m_filePairs.size(); entryPair++) {
         // Setup the input file and path
-        std::string inTemp = filePairs[entryPair][0];
+        std::string inTemp = m_filePairs[entryPair][0];
         IroncladString inFile = &inTemp[0];
 
         // Setup the output file and path
-        std::string outFileString = filePairs[entryPair][1];
+        std::string outFileString = m_filePairs[entryPair][1];
         std::filesystem::path outTemp = m_workerDirectory;
         outTemp = outTemp /= outFileString;
 
@@ -1055,22 +1300,6 @@ double ModelWorker::StdExecute(double viol) {
     {
         m_pParamGroup->SubIntoDbase(m_DbaseList);
     } */
-
-    /* -----------------------------------------------------------
-    If caching is enabled, attempt to read model evaluation
-    from OstModel0.txt file.
-    ----------------------------------------------------------- */
-    /*if (m_bCaching == true)
-    {
-        bool bCached = CheckCache(&val);
-        if (bCached == true) //found previous model result
-        {
-            m_NumCacheHits++;
-            Write(val);
-            m_CurObjFuncVal = val;
-            return (val);
-        }
-    }*/
 
     // Solve the model 
     /*if (internalModel == true) {
@@ -1252,26 +1481,10 @@ GetObjFuncCategory()
 }*/
 
 /******************************************************************************
-SetCmdToExecModel()
-   Sets the syntax which is used to execute the model
-*******************************************************************************/
-/*void ModelWorker::SetCmdToExecModel(IroncladString cmd)
-{
-    int len;
-    len = (int)strlen(cmd) + 1;
-    NEW_PRINT("char", len);
-    m_ExecCmd = new char[len];
-    MEM_CHECK(m_ExecCmd);
-
-    strcpy(m_ExecCmd, cmd);
-} */
-
-/******************************************************************************
 Write()
    Store parameter and objective function value to model output file.
 ******************************************************************************/
-void ModelWorker::Write(double objFuncVal)
-{
+void ModelWorker::Write(double objFuncVal) {
     //ResponseVarGroup* pRespVarGroup;
     FILE* pFile;
 
@@ -1321,76 +1534,5 @@ void ModelWorker::Write(double objFuncVal)
     paramGroup->Write(pFile, WRITE_SCI);
     fprintf(pFile, "\n");
     fclose(pFile);
-} /* end Write() */
+} 
 
-
-
-/******************************************************************************
-CheckCache()
-   Attempt to read previous result stored in OstModel0.txt file. If successful
-   the corresponding obj. function value will be stored in val argument. Other-
-   wise the function returns false and val is unchanged.
-******************************************************************************/
-/*bool ModelWorker::CheckCache(double* val)
-{
-    int i, j, max_line_size;
-    char* line;
-    char valStr[DEF_STR_SZ];
-    char* pTmp;
-    double objFunc, paramVal;
-    bool bFound;
-    FILE* pIn;
-
-    ParameterABC* pParam;
-    ParameterGroup* pGroup = GetParamGroupPtr();
-    if (pGroup == NULL) return false;
-    int np = pGroup->GetNumParams();
-
-    max_line_size = GetMaxLineSizeInFile((char*)"OstModel0.txt");
-    line = new char[max_line_size + 1];
-    line[0] = NULLSTR;
-    pIn = fopen("OstModel0.txt", "r");
-    if (pIn == NULL)
-    {
-        delete[] line;
-        return false;
-    }
-    while (!feof(pIn))
-    {
-        fgets(line, max_line_size, pIn);
-        pTmp = line;
-        MyTrim(pTmp);
-        j = ExtractColString(pTmp, valStr, ' ');
-        pTmp += j;
-        MyTrim(pTmp);
-        j = ExtractColString(pTmp, valStr, ' ');
-        pTmp += j;
-        MyTrim(pTmp);
-        objFunc = atof(valStr);
-
-        bFound = true;
-        for (i = 0; i < np; i++)
-        {
-            pParam = pGroup->GetParamPtr(i);
-            j = ExtractColString(pTmp, valStr, ' ');
-            paramVal = pParam->ConvertInVal(atof(valStr));
-            if (fabs(paramVal - pParam->GetEstVal()) > 1E-10)
-            {
-                bFound = false;
-                break;
-            }
-            pTmp += j;
-            MyTrim(pTmp);
-        }
-        if (bFound == true)
-        {
-            fclose(pIn);
-            *val = objFunc;
-            delete[] line;
-            return true;
-        }
-    }
-    fclose(pIn);
-    delete[] line;
-    return false;
-}*/
