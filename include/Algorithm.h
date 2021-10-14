@@ -68,6 +68,7 @@ public:
     //bool CheckWarmStart(void) { return m_bWarmStart; }
 
     // Solution information
+    bool m_bWarmStart = false;                                          // Start the solution from a previously terminated run
     StringType  m_ExecCmd = NULL;                                       // Command used to solve the model
 
     // Objective information
@@ -94,7 +95,6 @@ private:
     std::vector<std::vector<double>> m_CacheMembers;                    // Vector to keep track of the previously calculated alternatives
 
     // Solution information
-    bool m_bWarmStart = false;                                          // Start the solution from a previously terminated run
     int m_Precision = 6;                                                // Precision that should be used unless otherwise specified
     int m_NumSolves = 0;                                                // Number of times the model has been solved
 

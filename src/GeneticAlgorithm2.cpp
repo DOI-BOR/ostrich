@@ -963,21 +963,32 @@ void GeneticAlgorithm::Optimize(void) {
     // Initialize the workers
     ConfigureWorkers();
 
-    // Initialize the sample matrix for the first solve
-    std::vector<double> initialConditions;
-    for (int entryParameter = 0; entryParameter < m_pParamGroup->GetNumParams(); entryParameter++) {
-        // Get the parameter
-        ParameterABC* temp = m_pParamGroup->GetParamPtr(entryParameter);
-
-        // Add the condition to the vectory
-        initialConditions.push_back(temp->GetInitialValueTransformed());
-    }
+    // Construct the initial population to solve
+    std::vector<std::vector<double>> samples;
     
-    // Generate the remaining sample size
-    std::vector<std::vector<double>> samples = CreateInitialSample(m_NumPopulation-1);
+    if (m_bWarmStart) {
+        // Load a previous analysis that was interrupted
+        std::cout << "Warm start has not been configured for the Genetic Algorithm. Exiting the analysis..." << std::endl;
+        throw std::invalid_argument("Warm start has not been configured for the Genetic Algorithm");
 
-    // Add the initial conditions as the first sample
-    samples.insert(samples.begin(), initialConditions);
+    } else {
+        // Start a clean analysis
+        // Initialize the sample matrix for the first solve
+        std::vector<double> initialConditions;
+        for (int entryParameter = 0; entryParameter < m_pParamGroup->GetNumParams(); entryParameter++) {
+            // Get the parameter
+            ParameterABC* temp = m_pParamGroup->GetParamPtr(entryParameter);
+
+            // Add the condition to the vectory
+            initialConditions.push_back(temp->GetInitialValueTransformed());
+        }
+
+        // Generate the remaining sample size
+        samples = CreateInitialSample(m_NumPopulation - 1);
+
+        // Add the initial conditions as the first sample
+        samples.insert(samples.begin(), initialConditions);
+    }
 
     // Initialize the objectives for the first solve
     std::vector<double> objectives = std::vector<double>(m_NumPopulation, INFINITY);

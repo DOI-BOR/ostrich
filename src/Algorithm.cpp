@@ -425,18 +425,18 @@ Algorithm::Algorithm(void) {
     --------------------------------------------------------------------------------------------------------------------------
     */
     // TODO: rework this process
-    /*rewind(pInFile);
-    if (CheckToken(pInFile, "OstrichWarmStart", inFileName) == true) {
+    rewind(pInFile);
+    if (CheckToken(pInFile, "WarmStart", inFileName) == true) {
         line = GetCurDataLine();
         sscanf(line, "%s %s", tmp1, tmp2);
         MyStrLwr(tmp2);
         if (strncmp(tmp2, "yes", 3) == 0) {
-            printf("Warm Start has been activated\n");
-            printf("Ostrich will resume a pervious search.\n");
+            std::cout << "Warm Start has been activated" << std::endl;;
+            std::cout << "Ostrich will resume a pervious search" << std::endl;
+
             m_bWarmStart = true;
-            RestoreRandomSeed();
         }
-    }*/
+    }
 
     /*
     --------------------------------------------------------------------------------------------------------------------------
@@ -446,7 +446,7 @@ Algorithm::Algorithm(void) {
     --------------------------------------------------------------------------------------------------------------------------
     */
     rewind(pInFile);
-    if (CheckToken(pInFile, "OstrichCaching", inFileName) == true) {
+    if (CheckToken(pInFile, "Caching", inFileName) == true) {
         line = GetCurDataLine();
         sscanf(line, "%s %s", tmp1, tmp2);
         MyStrLwr(tmp2);
