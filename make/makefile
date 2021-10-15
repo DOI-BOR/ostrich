@@ -28,7 +28,7 @@ all:
 
 
 ICC_MPI:	$(SRC_FILES_CPP) $(SRC_FILES_C)
-	mpiicpc -I$(INCLUDE_DIR) $(SRC_FILES_CPP) -o OstrichMPI
+	mpiicpc -std=c++17 -I$(INCLUDE_DIR) $(SRC_FILES_CPP) -o OstrichMPI
 	rm -f *.o
 
 GCC_MPI:	$(SRC_FILES_CPP) $(SRC_FILES_C)
@@ -36,11 +36,12 @@ GCC_MPI:	$(SRC_FILES_CPP) $(SRC_FILES_C)
 	rm -f *.o
 
 ICC:	$(SRC_FILES_CPP) $(SRC_FILES_C)
-	icc -I$(INCLUDE_DIR) -I$(MPI_MEM_INCLUDE) $(SRC_FILES_CPP) $(MEM_FILES_C) -o Ostrich
+	icc  -std=c++17 -I$(INCLUDE_DIR) -I$(MPI_MEM_INCLUDE) $(SRC_FILES_CPP) $(MEM_FILES_C) -o Ostrich
 	rm -f *.o
 
 GCC:	$(SRC_FILES_CPP) $(SRC_FILES_C)
 	g++ -I$(INCLUDE_DIR) -I$(MPI_MEM_INCLUDE) $(SRC_FILES_CPP) $(MEM_FILES_C) -std=c++17 -lstdc++fs -o Ostrich
+
 	rm -f *.o
 
 
@@ -49,7 +50,7 @@ GCC_DB:	$(SRC_FILES_CPP) $(SRC_FILES_C)
 	rm -f *.o
 
 ICC_DB:	$(SRC_FILES_CPP) $(SRC_FILES_C)
-	icc -I$(INCLUDE_DIR) -I$(MPI_DISK_INCLUDE) $(SRC_FILES_CPP) $(DISK_FILES_C) -o OstrichDB
+	icc -std=c++17 -I$(INCLUDE_DIR) -I$(MPI_DISK_INCLUDE) $(SRC_FILES_CPP) $(DISK_FILES_C) -o OstrichDB
 	rm -f *.o
 
 clean:

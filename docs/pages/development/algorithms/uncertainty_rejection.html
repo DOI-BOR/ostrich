@@ -1,0 +1,203 @@
+<!DOCTYPE HTML>
+<!--
+	Future Imperfect by HTML5 UP
+	html5up.net | @ajlkn
+	Free for personal and commercial use under the CCA 3.0 license (html5up.net/license)
+-->
+<html>
+	<head>
+		<title>OSTRICH - Algorithms - Rejection Sampling</title>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+		<link rel="stylesheet" href="../../../assets/css/main.css" />
+	</head>
+	<body class="single is-preload">
+
+		<!-- Wrapper -->
+			<div id="wrapper">
+
+				<!-- Header -->
+					<header id="header">
+						<h1 class="bannerheading"><a href="../../../index.html">OSTRICH</a></h1>
+						<nav class="links">
+							<ul>
+								<li><a href="../overview.html">Overview</a></li>
+								<li><a href="algorithms.html">Algorithms</a></li>
+								<li><a href="../setup/setup.html">Setup</a></li>
+								<li>
+									<div class="dropdown">
+										<a href="../solution/solution.html"<button class="dropbtn">
+											Solution
+											<i class="fa fa-caret-down"></i></a>
+										</button>
+										<div class="dropdown-content">
+											<a href="../solution/running.html">Running OSTRICH</a>
+											<a href="../solution/building.html">Building OSTRICH</a>
+										</div>
+									</div>
+								</li>
+								<li><a href="../output/output.html">Output</a></li>
+								<li><a href="../examples/examples.html">Examples</a></li>
+								<li><a href="../../releases.html">Releases</a></li>
+							</ul>
+						</nav>
+						<nav class="main">
+							<ul>
+								<li class="menu">
+									<a class="fa-bars" href="#menu">Menu</a>
+								</li>
+							</ul>
+						</nav>
+					</header>
+
+				<!-- Menu -->
+				<section id="menu">
+
+					<!-- Links -->
+					<section>
+						<ul class="links">
+							<li>
+								<a href="../overview.html">
+									<h3>Overview</h3>
+									<p>The basics of OSTRICH</p>
+								</a>
+							</li>
+							<li>
+								<a href="algorithms.html">
+									<h3>Algorithms</h3>
+									<p>Algorithms available within OSTRICH</p>
+								</a>
+							</li>
+							<li>
+								<a href="../setup/setup.html">
+									<h3>Setup</h3>
+									<p>Organzing an OSTRICH analysis</p>
+								</a>
+							</li>
+							<li>
+								<a href="../solution/solution.html">
+									<h3>Solution</h3>
+									<p>Running an OSTRICH analysis</p>
+								</a>
+							</li>
+							<li>
+								<a href="../output/output.html">
+									<h3>Output</h3>
+									<p>Output of an OSTRICH analysis</p>
+								</a>
+							</li>
+							<li>
+								<a href="../examples/examples.html">
+									<h3>Examples</h3>
+									<p>Examples using OSTRICH</p>
+								</a>
+							</li>
+							<li>
+								<a href="../../contributing.html">
+									<h3>Contributing</h3>
+									<p>Contribute to OSTRICH</p>
+								</a>
+							</li>
+						</ul>
+					</section>
+
+				</section>
+
+				<!-- Main -->
+				<div id="main">
+
+					<!-- Post -->
+						<article class="post">
+							<header>
+								<div class="title">
+									<h2><a href="#">Algorithms - Rejection Sampling</a></h2>
+									<p>The OSTRICH rejection sampling uncertainty algorithm</p>
+								</div>
+								<div class="meta">
+									<p align="left">Initial Publication:</p>
+									<time class="time" datetime="2015-11-01">April 11, 2021</time>
+									<p align="left">Modified:</p>
+									<time class="time" datetime="2015-11-01">April 11, 2021</time>
+								</div>
+							</header>
+							<p align="justify">
+								This algorithm seeks to identify parameter probability distributions using a rejection sampling procedure. It is based on the procedure described by
+								Chen (2005). The algorithm samples from a set of truncated uniform distributions in search of parameter sets that are representative of the “true” 
+								posterior probability distribution. It represents a middle ground between informal GLUE-like procedures, including DDS-AU, and formal MCMC procedures. 
+								The following optional group will configure the Rejection Sampling algorithm and will be processed if [ProgramType] is set to “RejectionSampler”.
+							</p>
+															<!-- This has strange alignment for the code to render correctly on the page.-->
+							<table class="layouttable">
+								<tr>
+									<th>
+<pre><code>BeginRejectionSampler
+SamplesPerIter    [nper]
+NumDesired        [nsols]
+BurnInSamples     [nburn]
+MaxSamples        [nmax]
+LikelihoodType    [ltype]
+ShapingFactor     [shape]
+TelescopeRate     [trate]
+MinWSSE           [wsse]
+EndRejectionSampler
+</code></pre>
+</th>
+<th>
+<pre><code>BeginRejectionSampler
+SamplesPerIter    10
+NumDesired        10
+BurnInSamples     0
+MaxSamples        100
+LikelihoodType    Stedinger
+ShapingFactor     0.5
+TelescopeRate     0
+MinWSSE           1.00E308
+EndRejectionSampler
+</code></pre>
+								</th>
+							</tr>
+						</table>
+						<p align="center" id="fig1"><b>Figure 1: General Format (left) and Example (right) of the Rejection Sampler Group</b></p>
+						
+						<p align="justify">
+							Where BeginRejectionSampler and EndRejectionSampler are parsing tags that wrap the following set of algorithm configuration variables:
+						</p>
+						<ul align="justify">
+							<li><b>SamplesPerIter:</b> This variable controls the frequency of output within the OSTRICH run record. The current 
+							best solution will be reported after every SamplesPerIter model evaluations. The current number of accepted solutions will also be reported. Samples 
+							that are accepted after the burn-in period is complete are understood to come from a posterior distribution. The default value is 10.</li>
+							<li><b>NumDesired:</b> The desired number of post burn-in samples (i.e. the number of samples that are desired from the posterior parameter 
+							distributions). The default value is 10.</li>
+							<li><b>BurnInSamples:</b> The number of accepted samples that should be discarded before assuming accepted samples are representative of a posterior 
+							distribution. The default value is 0 (i.e. no burn-in).</li>
+							<li><b>MaxSamples:</b> The maximum number of model evaluations that will be performed as part of the MCMC search. The default value is 100.</li>
+							<li><b>LikelihoodType:</b> Use this variable to select alternative formulations for computing the likelihood ratio. Two options are available, namely 
+							“Beven” and “Stedinger”. The Beven likelihood type is a pseudo-likelihood described by Beven and Binley (1992). The “Stedinger” likelihood type is 
+							a formal likelihood function described by Stedinger et al. (2008). If “Beven” is selected, the ShapingFactor (see below) will also be processed. The 
+							default setting is Stedinger.</li>
+							<li><b>ShapingFactor:</b> This variable is a correction exponent for the Beven pseudo-likelihood function. As described by Stedinger et al. (2008), 
+							adjusting the ShapingFactor can help remove bias when using the “Beven” approach to computing likelihood ratios. The default value is 0.5, 
+							corresponding to a root-mean-squared-error type of likelihood function.</li>
+							<li><b>TelescopeRate:</b> This variable is the fraction by which to constrict parameter bounds after each iteration. It can increase the acceptance 
+							rate by focusing the sampler on high-probability regions of the parameter space. The default value is 0 (i.e. no telescoping).</li>
+							<li><b>MinWSSE:</b> This variable is the calibrated (i.e. minimized) weighted sum of squared error objective function for the model. The default value is 
+							1.00E308 (i.e. infinity). Users should replace this value with the results of a calibration algorithm.</li>
+						</ul>
+						
+						<h1>References</h1>
+						<p align="justify">
+							Chen, Y. 2005. Another look at rejection sampling through importance sampling. Statistics & Probability Letters 72, 277-283.
+						</p>
+					</article>
+				</div>
+		</div>
+
+		<!-- Scripts -->
+		<script src="../../../assets/js/jquery.min.js"></script>
+		<script src="../../../assets/js/browser.min.js"></script>
+		<script src="../../../assets/js/breakpoints.min.js"></script>
+		<script src="../../../assets/js/util.js"></script>
+		<script src="../../../assets/js/main.js"></script>
+
+	</body>
+</html>
