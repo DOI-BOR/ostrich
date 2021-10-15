@@ -808,7 +808,7 @@ step2:
    
    delete [] pdE;
 
-   return (m_pModel->GetObjFuncVal());
+   return (m_pModel->GetObjectiveFunctionValue());
 }/* end Melt() */
 
 /******************************************************************************

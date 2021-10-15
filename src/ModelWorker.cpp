@@ -3,19 +3,20 @@
 #include "ModelWorker.h"
 #include "Exception.h"
 
-
-
-
-// todo: doc string
+/**************************************************************************************************************************************************************
+ ModelWorker()
+ 
+ Default Constructor for the model worker class
+**************************************************************************************************************************************************************/
 ModelWorker::ModelWorker() {
 
 }
 
-/*
-------------------------------------------------------------------------------------------------------------------------------
- Constructor for the model worker class
-------------------------------------------------------------------------------------------------------------------------------
-*/
+/**************************************************************************************************************************************************************
+ModelWorker()
+ 
+Constructor for the model worker class
+**************************************************************************************************************************************************************/
 ModelWorker::ModelWorker(bool bMPI) {
 
     // Get the MPI information
@@ -28,6 +29,21 @@ ModelWorker::ModelWorker(bool bMPI) {
     
 }
 
+/**************************************************************************************************************************************************************
+Destroy()
+
+Destructor for the model worker class
+**************************************************************************************************************************************************************/
+void ModelWorker::Destroy(void) {
+
+    IncDtorCount();
+};
+
+/**************************************************************************************************************************************************************
+WorkMPI
+
+Runs the sequence of operations for a secondary worker called in MPI mode
+**************************************************************************************************************************************************************/
 void ModelWorker::WorkMPI(void) {
 
     // Setup the worker directory 
@@ -42,12 +58,11 @@ void ModelWorker::WorkMPI(void) {
     TerminateMPIWork();
 }
 
+/**************************************************************************************************************************************************************
+SetupMPI
 
-void ModelWorker::Destroy(void) {
-
-    IncDtorCount();
-};
-
+Receives configuration information from the primary worker through the MPI interface in the correct order.
+**************************************************************************************************************************************************************/
 void ModelWorker::SetupMPI() {  
 
     // Get the secondary worker directory tag from the primary worker
@@ -72,9 +87,12 @@ void ModelWorker::SetupMPI() {
     ReceiveWorkerParameters();
 }
 
+/**************************************************************************************************************************************************************
+ReceiveWorkerDirectory
 
+Receives the worker directory from the primary worker using the MPI inerface
+**************************************************************************************************************************************************************/
 void ModelWorker::ReceiveWorkerDirectory(void) {
-    // TODO: Doc string
 
     // Request the directory from the primary worker
     m_workerDirectory = ReceiveString(tag_directory);
@@ -84,16 +102,24 @@ void ModelWorker::ReceiveWorkerDirectory(void) {
 
 }
 
+/**************************************************************************************************************************************************************
+ReceiveWorkerSolveCommand
+
+Receives the worker solve command from the primary worker using the MPI inerface
+**************************************************************************************************************************************************************/
 void ModelWorker::ReceiveWorkerSolveCommand(void) {
-    // TODO: Doc string
 
     // Request the directory from the primary worker
     solveCommand = ReceiveString(tag_solve);
 
 }
 
+/**************************************************************************************************************************************************************
+ReciveWorkerArchiveCommand
+
+Receives the worker archive command from the primary worker using the MPI inerface
+**************************************************************************************************************************************************************/
 void ModelWorker::ReciveWorkerArchiveCommand(void) {
-    // TODO: doc string
     
     // Request the preservation status from the primary worker
     int preserveStatus = ReceiveInteger(tag_archive);
@@ -142,9 +168,12 @@ void ModelWorker::ReciveWorkerArchiveCommand(void) {
     }
 }
 
+/**************************************************************************************************************************************************************
+ReceiveWorkerExtraFiles
 
+Receives the worker extra files from the primary worker using the MPI inerface
+**************************************************************************************************************************************************************/
 void  ModelWorker::ReceiveWorkerExtraFiles(void) {
-    // TODO: doc string
 
     // Get the number of entries that will be coming
     int numberOfFiles = ReceiveInteger(tag_textLength);
@@ -156,9 +185,12 @@ void  ModelWorker::ReceiveWorkerExtraFiles(void) {
     }
 }
 
+/**************************************************************************************************************************************************************
+ReceiveWorkerFilePairs
 
+Receives the worker file pairs from the primary worker using the MPI inerface
+**************************************************************************************************************************************************************/
  void ModelWorker::ReceiveWorkerFilePairs(void) {
-    // TODO: doc string
 
     // Get the number of entries that will be coming
     int numberOfFiles = ReceiveInteger(tag_fileLength);
@@ -186,13 +218,14 @@ void  ModelWorker::ReceiveWorkerExtraFiles(void) {
         std::vector<std::string> temp{ templateFiles[entryPair], destinationFiles[entryPair] };
         m_filePairs.push_back(temp);
     }
-
 }
 
+ /**************************************************************************************************************************************************************
+ ReceiveWorkerObservations
 
+ Receives the worker observations from the primary worker using the MPI inerface
+ **************************************************************************************************************************************************************/
 void ModelWorker::ReceiveWorkerObservations(void) {
-    // TODO: Doc string
-
 
     // Get the number of observatiosn being transferred from the primary worker
     int numberOfObservations = ReceiveInteger(tag_obsLengthNum);
@@ -280,9 +313,12 @@ void ModelWorker::ReceiveWorkerObservations(void) {
 
 }
 
+/**************************************************************************************************************************************************************
+ReceiveWorkerParameters
 
+Receives the worker parameters from the primary worker using the MPI inerface
+**************************************************************************************************************************************************************/
 void ModelWorker::ReceiveWorkerParameters(void) {
-    // TODO: Doc string
 
     // Get the total number of paramters
     int numberOfTotalParameters = ReceiveInteger(tag_paramTotalNum);
@@ -402,7 +438,8 @@ void ModelWorker::ReceiveWorkerParameters(void) {
 
     /*
     --------------------------------------------------------------------------------------------------------------------------
-    Check template files against parameters, each parameter should appear in at least one template file or at least one database entry.
+    Check template files against parameters, each parameter should appear in at least one template file or at least one 
+    database entry.
     --------------------------------------------------------------------------------------------------------------------------
     */
     paramGroup->CheckTemplateFiles(m_filePairs, m_workerDirectory);
@@ -416,9 +453,12 @@ void ModelWorker::ReceiveWorkerParameters(void) {
 
 }
 
+/**************************************************************************************************************************************************************
+ReceiveString
 
+Receives a string from the primary worker using the MPI inerface
+**************************************************************************************************************************************************************/
 std::string  ModelWorker::ReceiveString(int tag_number) {
-    // TODO: Doc string
 
     // Initialize the variables required for the probe
     MPI_Status status;
@@ -445,9 +485,12 @@ std::string  ModelWorker::ReceiveString(int tag_number) {
     return convertedArray;
 }
 
+/**************************************************************************************************************************************************************
+ReceiveInteger
 
+Receives an integer from the primary worker using the MPI inerface
+**************************************************************************************************************************************************************/
 int  ModelWorker::ReceiveInteger(int tag_number) {
-    // TODO: Doc string
 
     // Initialize the variable to fill
     int value;
@@ -458,9 +501,12 @@ int  ModelWorker::ReceiveInteger(int tag_number) {
     return value;
 }
 
+/**************************************************************************************************************************************************************
+ReceiveDouble
 
+Receives a double from the primary worker using the MPI inerface
+**************************************************************************************************************************************************************/
 double  ModelWorker::ReceiveDouble(int tag_number) {
-    // TODO: Doc string
 
     // Initialize the variable to fill
     double value;
@@ -471,9 +517,12 @@ double  ModelWorker::ReceiveDouble(int tag_number) {
     return value;
 }
 
+/**************************************************************************************************************************************************************
+ReceiveChar
 
+Receives a character from the primary worker using the MPI inerface
+**************************************************************************************************************************************************************/
 char  ModelWorker::ReceiveChar(int tag_number) {
-    // TODO: Doc string
 
     // Initialize the variable to fill
     char value;
@@ -484,7 +533,11 @@ char  ModelWorker::ReceiveChar(int tag_number) {
     return value;
 }
 
+/**************************************************************************************************************************************************************
+SendDouble
 
+Sends a double from the primary worker using the MPI inerface
+**************************************************************************************************************************************************************/
 void  ModelWorker::SendDouble(int tag_number, double value) {
     // TODO: Doc string
 
@@ -493,15 +546,23 @@ void  ModelWorker::SendDouble(int tag_number, double value) {
 
 }
 
+/**************************************************************************************************************************************************************
+SendInteger
+
+Sends an integer from the primary worker using the MPI inerface
+**************************************************************************************************************************************************************/
 void  ModelWorker::SendInteger(int tag_number, int value) {
-    // TODO: Doc string
 
     // Send the value
     MPI_Ssend(&value, 1, MPI_INT, 0, tag_number, MPI_COMM_WORLD);
 
 }
 
+/**************************************************************************************************************************************************************
+SetupWorker
 
+Sets up the worker based on the configuration information and preparis it for subsequent use by optimization algorithms.
+**************************************************************************************************************************************************************/
 void ModelWorker::SetupWorker(void) {
 
     // Create the working directory
@@ -617,9 +678,12 @@ void ModelWorker::SetupWorker(void) {
 
 }
 
+/**************************************************************************************************************************************************************
+CommenceMPIWork
 
+Solves a model using the MPI workflow to request and send parameters
+**************************************************************************************************************************************************************/
 void  ModelWorker::CommenceMPIWork() {
-    // TODO: doc string
 
     // Set the MPI variables
     MPI_Status mpiStatus;
@@ -683,13 +747,22 @@ void  ModelWorker::CommenceMPIWork() {
     }
 }
 
+/**************************************************************************************************************************************************************
+TerminateMPIWork
+
+Terminates a secondary worker called using MPI
+**************************************************************************************************************************************************************/
 void  ModelWorker::TerminateMPIWork(void) {
     // Todo: update when additional operations are required at work termination
 
 }
 
+/**************************************************************************************************************************************************************
+RequestParameters
+
+Requests parameters from the primary worker when the seconday worker is using MPI
+**************************************************************************************************************************************************************/
 int ModelWorker::RequestParameters(void) {
-    // todo: doc string
 
     // Create holder for the parameters. This is one larger than the number of parameters to allow the alternative index to be transferred
     // with the alternatives
@@ -718,6 +791,11 @@ int ModelWorker::RequestParameters(void) {
     return alternativeIndex;
 }
 
+/**************************************************************************************************************************************************************
+RequestContinue
+
+Requests whether to continue from the primary worker when the seconday worker is using MPI
+**************************************************************************************************************************************************************/
 bool ModelWorker::RequestContinue(void) {
 
     // Setup the request space
@@ -743,7 +821,11 @@ bool ModelWorker::RequestContinue(void) {
     }
 }
 
-// Todo: doc string
+/**************************************************************************************************************************************************************
+SetWorkerDirectory
+
+Sets the worker directory into the worker when using solve on primary
+**************************************************************************************************************************************************************/
 void ModelWorker::SetWorkerDirectory(std::string workerDirectory) {
 
     // Set the string as the directory
@@ -754,7 +836,11 @@ void ModelWorker::SetWorkerDirectory(std::string workerDirectory) {
     
 };
 
-// todo: doc string
+/**************************************************************************************************************************************************************
+SetWorkerSolveCommand
+
+Sets the solve command into the worker when using solve on primary
+**************************************************************************************************************************************************************/
 void ModelWorker::SetWorkerSolveCommand(std::string solveCommandInput) {
 
     // Set the string as the solve command
@@ -762,7 +848,11 @@ void ModelWorker::SetWorkerSolveCommand(std::string solveCommandInput) {
 
 };
 
-// todo: doc string
+/**************************************************************************************************************************************************************
+SetWorkerPreserveArchiveCommand
+
+Sets the archive command into the worker when using solve on primary
+**************************************************************************************************************************************************************/
 void ModelWorker::SetWorkerPreserveArchiveCommand(int preserveStatus, std::string preserveCommand) {
 
     // Setup the solution preservation
@@ -786,6 +876,11 @@ void ModelWorker::SetWorkerPreserveArchiveCommand(int preserveStatus, std::strin
     }
 }
 
+/**************************************************************************************************************************************************************
+SetWorkerPreserveBestCommand
+
+Sets the preserve command into the worker when using solve on primary
+**************************************************************************************************************************************************************/
 void ModelWorker::SetWorkerPreserveBestCommand(int preserveBest, std::string bestCommand) {
 
     // Setup the best perservation
@@ -793,14 +888,12 @@ void ModelWorker::SetWorkerPreserveBestCommand(int preserveBest, std::string bes
         // Model will not be archived. Set the status to false
         preserveModelBest = false;
 
-    }
-    else if (preserveBest == 1) {
+    } else if (preserveBest == 1) {
         // Model will be archived using standard method
         // Toggle the preserve status to true
         preserveModelBest = true;
 
-    }
-    else if (preserveBest == 2) {
+    } else if (preserveBest == 2) {
         // Model will be archived using a custom command.
         // Toggle the preserve status to true
         preserveModelBest = true;
@@ -811,7 +904,11 @@ void ModelWorker::SetWorkerPreserveBestCommand(int preserveBest, std::string bes
     }
 };
 
-// todo: doc string
+/**************************************************************************************************************************************************************
+SetWorkerExtraFiles
+
+Sets the extra files into the worker when using solve on primary
+**************************************************************************************************************************************************************/
 void ModelWorker::SetWorkerExtraFiles(std::vector<std::string> extraFiles) {
 
     // Set the file cleanup list as the extra file list
@@ -819,15 +916,23 @@ void ModelWorker::SetWorkerExtraFiles(std::vector<std::string> extraFiles) {
 
 };
 
-// todo: doc string
+/**************************************************************************************************************************************************************
+SetWorkerFilePairs
+
+Sets the file pairs into the worker when using solve on primary
+**************************************************************************************************************************************************************/
 void ModelWorker::SetWorkerFilePairs(std::vector<std::vector<std::string>> filePairs) {
 
-    // Set the file paris as object
+    // Set the file pairs as object
     m_filePairs = filePairs;
 
 };
 
-// todo: doc string
+/**************************************************************************************************************************************************************
+SetWorkerObservations
+
+Sets the observation group into the worker when using solve on primary
+**************************************************************************************************************************************************************/
 void ModelWorker::SetWorkerObservations(ObservationGroup* m_pObsGroup) {
 
     // Construct the group from the value passed in
@@ -835,7 +940,11 @@ void ModelWorker::SetWorkerObservations(ObservationGroup* m_pObsGroup) {
 
 };
 
-// todo: doc string
+/**************************************************************************************************************************************************************
+SetWorkerParameters
+
+Sets the parameters initially into the worker when using solve on primary
+**************************************************************************************************************************************************************/
 void ModelWorker::SetWorkerParameters(ParameterGroup* m_pParamGroup) {
 
     // Get the total number of paramters
@@ -972,7 +1081,11 @@ void ModelWorker::SetWorkerParameters(ParameterGroup* m_pParamGroup) {
 
 };
 
-// todo: doc string
+/**************************************************************************************************************************************************************
+SetStandardParameters
+
+Sets the parameters prior to solve into the worker when using solve on primary
+**************************************************************************************************************************************************************/
 int ModelWorker::SetStandardParameters(std::vector<double> inputParameters) {
 
     // Separate out the alternative index from the parameters
@@ -990,10 +1103,11 @@ int ModelWorker::SetStandardParameters(std::vector<double> inputParameters) {
 };
 
 
-/******************************************************************************
- PreserveModel()
-    Preserves the model solution by moving it from the working directory.
-******************************************************************************/
+/**************************************************************************************************************************************************************
+PreserveModel()
+
+Preserves the model solution by moving it from the working directory.
+**************************************************************************************************************************************************************/
 void ModelWorker::PreserveModel(bool preserveBest) {
 
     // Model preservation is disabled. Take no action.
@@ -1126,10 +1240,11 @@ void ModelWorker::PreserveModel(bool preserveBest) {
 }
 
 
-/*****************************************************************************
-Execute()
-   Executes the model (or surrogate) and returns the objective function value.
-******************************************************************************/
+/**************************************************************************************************************************************************************
+ExecuteSingle()
+
+Executes the model (or surrogate) and returns the objective function value.
+**************************************************************************************************************************************************************/
 double ModelWorker::ExecuteSingle(void) {
     
     // Define the objective value
@@ -1154,10 +1269,11 @@ double ModelWorker::ExecuteSingle(void) {
     return objective;
 }
 
-/*****************************************************************************
+/**************************************************************************************************************************************************************
 Execute()
-   Executes the model returns a vector of objective function values.
-******************************************************************************/
+
+Executes the model returns a vector of objective function values.
+**************************************************************************************************************************************************************/
 /*void ModelWorker::ExecuteMulti(double* pF, int nObj) {
     IroncladString dirName = GetExeDirName();
     FilePair* pCur;
@@ -1251,11 +1367,11 @@ Execute()
     Write(val);
 } */
 
-/*****************************************************************************
+/**************************************************************************************************************************************************************
 StdExecute()
-   Executes the standard (complex) model and returns the objective function
-   value.
-******************************************************************************/
+
+Executes the standard model and returns the objective function value.
+**************************************************************************************************************************************************************/
 double ModelWorker::StdExecute(double viol) {
     //IroncladString dirName = &workerDirectory[0];
 
@@ -1370,10 +1486,10 @@ double ModelWorker::StdExecute(double viol) {
 
 
 
-/*****************************************************************************
+/**************************************************************************************************************************************************************
 DisklessExecute()
    Executes an inernal model without using I/O.
-******************************************************************************/
+**************************************************************************************************************************************************************/
 /*double ModelWorker::DisklessExecute(void) {
     //inc. number of times model has been executed
     m_NumSolves++;
@@ -1394,96 +1510,12 @@ DisklessExecute()
     return (val);
 } */
 
-/*****************************************************************************
-GetObjFuncCategory()
-   Determine the obj. func. category argument to pass to the PreserveModel
-   script.
-******************************************************************************/
-/*IroncladString ModelWorker::GetObjFuncCategory(double* pF, int nObj)
-{
-    switch (GetProgramType())
-    {
-        
-    case(GA_PROGRAM):
-    case(BGA_PROGRAM):
-    case(SA_PROGRAM):
-    case(CSA_PROGRAM):
-    case(VSA_PROGRAM):
-    case(PSO_PROGRAM):
-    case(PSO_LEV_PROGRAM):
-    case(LEV_PROGRAM):
-    case(POWL_PROGRAM):
-    case(BIS_PROGRAM):
-    case(STEEP_PROGRAM):
-    case(FLRV_PROGRAM):
-    case(DDS_PROGRAM):
-    case(GMLMS_PROGRAM):
-    case(SCEUA_PROGRAM):
-    case(DDDS_PROGRAM):
-    case(SMP_PROGRAM):
-    case(PDDS_PROGRAM):
-    case(APPSO_PROGRAM):
-    case(BEERS_PROGRAM):
-    {
-        if ((m_NumSolves <= 1) || (pF[0] < GetBestObjFunc(m_pParamGroup->GetNumParams())))
-        {
-            return(ObjFuncBest);
-        }
-        return ObjFuncOther;
-    }
 
-    // rejection samplers
-    case(RJSMP_PROGRAM):
-    case(METRO_PROGRAM):
-    {
-        return ObjFuncOther;
-    }
-
-    // behaviorial samplers
-    case(GLUE_PROGRAM):
-    case(DDSAU_PROGRAM):
-    {
-        if (pF[0] < GetObjFuncThreshold())
-        {
-            return(ObjFuncBehavioral);
-        }
-        return ObjFuncNonBehavioral;
-    }
-
-    // multi-objective optimizers
-    case(SMOOTH_PROGRAM):
-    case(PADDS_PROGRAM):
-    case(PARA_PADDS_PROGRAM):
-    {
-        if ((m_NumSolves <= 1) || IsNonDominated(pF, nObj))
-        {
-            return ObjFuncNonDominated;
-        }
-        return ObjFuncDominated;
-    }
-
-    // miscellaneous
-    case(SET_INFILE):
-    case(STATS_PROGRAM):
-    case(UTIL_PROGRAM):
-    case(GRID_PROGRAM):
-    case(EVAL_PROGRAM):
-    case(JACOBIAN_PROGRAM):
-    case(HESSIAN_PROGRAM):
-    case(GRADIENT_PROGRAM):
-    case(QUIT_PROGRAM):
-    default:
-    {
-        return ObjFuncOther;
-    }
-    }
-    return ObjFuncOther;
-}*/
-
-/******************************************************************************
+/**************************************************************************************************************************************************************
 Write()
-   Store parameter and objective function value to model output file.
-******************************************************************************/
+
+Store parameter and objective function value to model output file.
+**************************************************************************************************************************************************************/
 void ModelWorker::Write(double objFuncVal) {
     //ResponseVarGroup* pRespVarGroup;
     FILE* pFile;

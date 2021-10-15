@@ -209,7 +209,7 @@ void ModelBackup::Store(void)
    StoreParamVals();
    if(m_pObs != NULL){ StoreObsVals();}
    StorePredictedVals();
-   m_ObjFuncVal = m_pModel->GetObjFuncVal();
+   m_ObjFuncVal = m_pModel->GetObjectiveFunctionValue();
 }/* end Store() */
 
 /******************************************************************************

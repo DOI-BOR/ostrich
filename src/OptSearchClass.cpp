@@ -202,7 +202,7 @@ double OptSearchClass::CalcF(double alpha, double * fmin, double * xmin)
    //backup initial location of design point
    pGroup = m_pModel->GetParamGroupPtr();
    pGroup->ReadParams(m_pStartPoint);
-   Finit = m_pModel->GetObjFuncVal();
+   Finit = m_pModel->GetObjectiveFunctionValue();
    pGroup->ReadParams(m_pAlphaPoint);
    
    /*---------------------------------------------------------
@@ -262,7 +262,7 @@ double OptSearchClass::CalcStepSize(Unchangeable1DArray pDir, double * fmin, dou
 
    //store current setting
    m_pModel->GetParamGroupPtr()->ReadParams(m_pStepPoint);
-   Finit = m_pModel->GetObjFuncVal();
+   Finit = m_pModel->GetObjectiveFunctionValue();
 
    //store direction
    for(i = 0; i < m_NumParams; i++)
@@ -310,7 +310,7 @@ MinBracketStruct * OptSearchClass::BracketMinimum(double a, double b, double * f
    double fa, fb, c, fc;
 
    //initial values
-   Fcur = m_pModel->GetObjFuncVal();
+   Fcur = m_pModel->GetObjectiveFunctionValue();
 
    a = LimitStepSize(a, m_pDir);
    fa = CalcF(a, fmin, xmin);

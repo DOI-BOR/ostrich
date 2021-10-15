@@ -13,121 +13,133 @@ these groups.
 #ifndef ALGORITHM_H
 #define ALGORITHM_H
 
-#include "MyHeaderInc.h"
-#include "MyTypes.h"
+// Include C classes
 #include <mpi.h>
+#include <math.h>
+
+// Include C++ classes
+#include <string>
+#include <iostream>
+#include <chrono>
+#include <thread>
 #include <filesystem>
-#include "WriteUtility2.h"
 #include <cstring>
 #include <vector>
 #include <algorithm>
+
+// Include custom classes
+#include "MyHeaderInc.h"
+#include "MyTypes.h"
+#include "WriteUtility2.h"
 #include "ModelWorker.h"
+#include "ObservationGroup.h"
+#include "Observation.h"
+#include "ResponseVarGroup.h"
+#include "SurrogateParameterGroup.h"
+#include "ParameterGroup.h"
+#include "ParameterABC.h"
+#include "TiedParamABC.h"
+#include "GeomParamABC.h"
+#include "FilePair.h"
+#include "FileList.h"
+#include "AccessConverter.h"
+#include "NetCDFConverter.h"
+#include "PumpAndTreat.h"
+#include "DecisionModule.h"
+#include "SuperMUSE.h"
+#include "ParameterCorrection.h"
+#include "GenConstrainedOpt.h"
 
-//forward decs
-class ObservationGroup;
-class ParameterGroup;
-class ObjectiveFunction;
-class DecisionModule;
-class SuperMUSE;
-class FilePair;
-class FileList;
-class DatabaseABC;
-class SurrogateParameterGroup;
-class ParameterCorrection;
+#include "IsoParse.h"
+#include "BoxCoxModel.h"
+#include "Utility.h"
+#include "Exception.h"
+#include "SuperMuseUtility.h"
 
 
-
-/******************************************************************************
-class Algorthm
-
-******************************************************************************/
 class Algorithm {
 public:
+    // Define constructors and destructors
     Algorithm(void);
     ~Algorithm(void) { DBG_PRINT("AlgorithmABC2::DTOR"); Destroy(); }
     void Destroy(void);
 
-    //retrieve member variables
-    ObservationGroup* GetObsGroupPtr(void);
-    ParameterGroup* GetParamGroupPtr(void);
+    // Solution variables
+    bool m_bWarmStart = false;                                                      // Start the solution from a previously terminated run
+    StringType  m_ExecCmd = NULL;                                                   // Command used to solve the model
+
+    // Objective variables
+    double m_BestObjective = INFINITY;                                              // Best objective
+    std::vector<double> m_BestAlternative;                                          // Best alternative
+
+    // Defiine objective functions
     ObjectiveFunction* GetObjFuncPtr(void);
-    //double GetObjFuncVal(void) { return m_CurObjFuncVal; }
-    //void SetObjFuncVal(double curVal) { m_CurObjFuncVal = curVal; }
-    int GetCounter(void);
-    void SetCounter(int count);
-    ObjFuncType GetObjFuncId(void) { return m_ObjFuncId; }
-    UnchangeableString GetObjFuncStr(void);
-    UnchangeableString GetModelStr(void) { return m_ExecCmd; }
-    void PerformParameterCorrections(void);
-    //misc. member functions     
-    //void   CheckGlobalSensitivity(void);
-    
-    //void   WriteMetrics(FILE* pFile);
-    //void   Bookkeep(bool bFinal);
-    int GetNumDigitsOfPrecision(void) { return m_Precision; }
-    //bool CheckWarmStart(void) { return m_bWarmStart; }
+    double GetObjectiveFunctionValue(void) { return m_BestObjective; }              // Gets the current best objective function value
+    void SetObjectiveFunctionValue(double curVal) { m_BestObjective = curVal; }     // Sets the current best objective function value
+    ObjFuncType GetObjectiveFunctionType(void) { return m_ObjFuncId; }              // Gets the current object function type
+    UnchangeableString GetObjectiveFunctionString(void);                            // Gets the string describing the current objective function
 
-    // Solution information
-    bool m_bWarmStart = false;                                          // Start the solution from a previously terminated run
-    StringType  m_ExecCmd = NULL;                                       // Command used to solve the model
-
-    // Objective information
-    double m_BestObjective = INFINITY;                                  // Best objective
-    std::vector<double> m_BestAlternative;                              // Best alternative
+    // Define public functions
+    ObservationGroup* GetObsGroupPtr(void);                                         // Function to get the observation group pointer
+    ParameterGroup* GetParamGroupPtr(void);                                         // Function to get the parameter group pointer
+    void PerformParameterCorrections(void);                                         // Function to correct any parameters
+    //void   CheckGlobalSensitivity(void);                                          // Function to check the gobal sensitivity
+    int GetNumDigitsOfPrecision(void) { return m_Precision; }                       // Function to get the number of model precision digits
     
-    // Expose function to inheriting subclasses
-    void ConfigureWorkers(void);
-    void ManageSingleObjectiveIterations(std::vector<std::vector<double>> parameters, int startingIndex, int numberOfParameters, std::vector<double>& objectives);
-    void TerminateWorkers();
+    // Expose functions to inheriting subclasses
+    void ConfigureWorkers(void);                                                    // Configure the workders for the solution
+    void ManageSingleObjectiveIterations(std::vector<std::vector<double>> parameters, int startingIndex, int numberOfParameters, 
+                                         std::vector<double>& objectives);          // Solve using a single objective function
+    void TerminateWorkers();                                                        // Terminate all workers
 
 private:
-    // Working directorty information
-    char pDirName[DEF_STR_SZ];                                          // Stem of the worker path without the rank
-    char m_DirPrefix[DEF_STR_SZ];
+    // Working directory information
+    char pDirName[DEF_STR_SZ];                                                      // Working directory for the analysis
+    char m_DirPrefix[DEF_STR_SZ];                                                   // Stem of the worker path without the rank
 
     // File information
-    std::vector<std::vector<std::string>> fileListPairs;
-    FileList* m_pFileCleanupList = NULL;
+    std::vector<std::vector<std::string>> fileListPairs;                            // File template/output pairs
+    FileList* m_pFileCleanupList = NULL;                                            // Files to cleanup after a run
 
     // Caching setup information
-    bool m_bCaching = false;                                            // Flag to indicate if caching should be enabled
-    int m_NumCacheHits = 0;                                             // Counter for the number of cache hits
-    std::vector<std::vector<double>> m_CacheMembers;                    // Vector to keep track of the previously calculated alternatives
+    bool m_bCaching = false;                                                        // Flag to indicate if caching should be enabled
+    int m_NumCacheHits = 0;                                                         // Counter for the number of cache hits
+    std::vector<std::vector<double>> m_CacheMembers;                                // Vector to keep track of the previously calculated alternatives
 
     // Solution information
-    int m_Precision = 6;                                                // Precision that should be used unless otherwise specified
-    int m_NumSolves = 0;                                                // Number of times the model has been solved
+    int m_Precision = 6;                                                            // Precision that should be used unless otherwise specified
+    int m_NumSolves = 0;                                                            // Number of times the model has been solved
+    bool m_bSolveOnPrimary = false;                                                 // Solve on the primary worker in addition to the secondary workers
+    ModelWorker m_primaryWorker;                                                    // ModelWorker slot if using solve on primary
+    
+    // Sensitivity information
+    bool m_bCheckGlobalSens = false;                                                // Flag to indicate if sensitivity information should be calculated
 
-    bool m_bSolveOnPrimary = false;                                     // Solve on the primary worker in addition to the secondary workers
-    ModelWorker m_primaryWorker;                                 // ModelWorker slot if using solve on primary
-    
-    
-    bool m_bCheckGlobalSens = false;
-    bool m_bUseSurrogates = false;
+    // Surrogate model information
+    bool m_bUseSurrogates = false;                                                  // Flag to indicate if surrogate information should be used
     
     // Model preservation options
-    bool m_bPreserveModelOutput = false;                                // Preserve the output from each of the model runs
-    std::filesystem::path  m_PreserveOutputCmd;                         // Custom command to preserve the output from each model run
-    bool m_bPreserveModelBest = false;                                  // Preserve the best solution from the analysis
-    std::filesystem::path  m_PreserveBestCmd;                           // Custom command to preserve best solution from the analysis
+    bool m_bPreserveModelOutput = false;                                            // Preserve the output from each of the model runs
+    std::filesystem::path  m_PreserveOutputCmd;                                     // Custom command to preserve the output from each model run
+    
+    bool m_bPreserveModelBest = false;                                              // Preserve the best solution from the analysis
+    std::filesystem::path  m_PreserveBestCmd;                                       // Custom command to preserve best solution from the analysis
 
     // Model solution options
-    bool m_bDiskless = false;
-    bool m_bMultiObjProblem = false;
+    bool m_bDiskless = false;                                                       // Flag  to indicate if diskless solution should be done
+    
+    // Objective information    
+    bool m_bMultiObjProblem = false;                                                // Flag to indicate if multi-objective optimization should be used
     double* m_CurMultiObjF = NULL;
 
     // Solution functions
-    std::vector<std::vector<double>> CreateInitialSample(int sampleSize);
-    std::vector<std::vector<double>> CreateSample(int sampleSize);
-    void Optimize(void);
-    void Calibrate(void);
-    void WriteMetrics(FILE* pFile);
-    void WarmStart(void);
-    int  GetCurrentIteration(void);   
-    
-    void AddDatabase(DatabaseABC* pDbase);
-
-    void ManagePreserveBest(double& solutionObjective, double alternativeObjective, MPI_Status mpiStatus);
+    std::vector<std::vector<double>> CreateInitialSample(int sampleSize);           // Function to create an initial sample
+    std::vector<std::vector<double>> CreateSample(int sampleSize);                  // Function to create a sample for subsquent iterations
+    void Optimize(void);                                                            // Function to call the algorithm in optimization mode
+    void Calibrate(void);                                                           // Function to call the algorithm in LS fitting mode                                              
+    void WarmStart(void);                                                           // Function to warm start from a previous solution
+    void AddDatabase(DatabaseABC* pDbase);                                          // Function to output to a database
+    void ManagePreserveBest(double& solutionObjective, double alternativeObjective, MPI_Status mpiStatus); // Function to preserve model solves
 
     // MPI communication functions
     void ConfigureWorkerDirectory(int workerRank);
@@ -146,13 +158,14 @@ private:
 
 protected:
     // Set the default groups for the class
-    ObjFuncType m_ObjFuncId = OBJ_FUNC_WSSE;                            // Objective function type
-    ObservationGroup* m_pObsGroup = NULL;
-    ObjectiveFunction* m_pObjFunc = NULL;
-    ParameterGroup* m_pParamGroup = NULL;
-    DecisionModule* m_pDecision = NULL;
-    ParameterCorrection* m_pParameterCorrection = NULL;
-    //TelescopeType m_Telescope;                                          // Telescoping bounds strategy
+    ObjFuncType m_ObjFuncId = OBJ_FUNC_WSSE;                                        // Objective function type
+    ObservationGroup* m_pObsGroup = NULL;                                           // Observation group
+    ObjectiveFunction* m_pObjFunc = NULL;                                           // Objective function
+    ParameterGroup* m_pParamGroup = NULL;                                           // Parameter group
+    DecisionModule* m_pDecision = NULL;                                             // Decision module
+    ParameterCorrection* m_pParameterCorrection = NULL;                             // Parameter correction
+    //TelescopeType m_Telescope;                                                    // Telescoping bounds strategy
+
 
 //protected: //can be called by DecisionModule
 //    double StdExecute(double viol);
@@ -177,15 +190,14 @@ public:
     ObservationGroup* GetObsGroupPtr(void);
     ParameterGroup* GetParamGroupPtr(void) { return NULL; }
     ObjectiveFunction* GetObjFuncPtr(void);
-    double GetObjFuncVal(void) { return m_CurObjFuncVal; }
-    void SetObjFuncVal(double curVal) { m_CurObjFuncVal = curVal; }
+    double GetObjectiveFunctionValue(void) { return m_CurObjFuncVal; }
+    void SetObjectiveFunctionValue(double curVal) { m_CurObjFuncVal = curVal; }
     int                 GetCounter(void);
-    ObjFuncType GetObjFuncId(void) { return m_ObjFuncId; }
-    UnchangeableString GetObjFuncStr(void);
+    ObjFuncType GetObjectiveFunctionType(void) { return m_ObjFuncId; }
+    UnchangeableString GetObjectiveFunctionString(void);
     UnchangeableString GetModelStr(void) { return m_ExecCmd; }
 
     SurrogateParameterGroup* GetSurrogateParamGroupPtr(void);
-    void Bookkeep(bool bFinal) { return; }
     int GetNumDigitsOfPrecision(void) { return 6; }
     bool CheckWarmStart(void) { return false; }
 
@@ -193,7 +205,6 @@ public:
     double Execute(void);
     void Execute(double* pF, int nObj) { return; }
     void Write(double objFuncVal);
-    void WriteMetrics(FILE* pFile);
     void SaveBest(int id) { return; }
     TelescopeType GetTelescopingStrategy(void) { return TSCOPE_NONE; }
     void PerformParameterCorrections(void) { return; }
@@ -213,5 +224,5 @@ private:
     void SetCmdToExecModel(IroncladString cmd);
     void AddFilePair(FilePair* pFilePair);
 }; /* end class SurrogateModel */
-#endif /* MODEL_H */
+#endif 
 

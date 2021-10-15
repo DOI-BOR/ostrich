@@ -57,7 +57,7 @@ class Model : public ModelABC
      ObservationGroup *  GetObsGroupPtr(void);
      ParameterGroup   *  GetParamGroupPtr(void);     
      ObjectiveFunction * GetObjFuncPtr(void);
-     double GetObjFuncVal(void) { return m_CurObjFuncVal;}
+     double GetObjectiveFunctionValue(void) { return m_CurObjFuncVal;}
      void SetObjFuncVal(double curVal) { m_CurObjFuncVal = curVal;}
      int GetCounter(void);
      void SetCounter(int count);
@@ -142,7 +142,7 @@ class SurrogateModel : public ModelABC
      ObservationGroup *  GetObsGroupPtr(void);
      ParameterGroup   *  GetParamGroupPtr(void) { return NULL;}
      ObjectiveFunction * GetObjFuncPtr(void);
-     double GetObjFuncVal(void) { return m_CurObjFuncVal;}
+     double GetObjectiveFunctionValue(void) { return m_CurObjFuncVal;}
      void SetObjFuncVal(double curVal) { m_CurObjFuncVal = curVal;}
      int                 GetCounter(void);
      ObjFuncType GetObjFuncId(void) {return m_ObjFuncId;}

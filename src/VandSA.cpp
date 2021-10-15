@@ -791,7 +791,7 @@ double VandSA::Melt(double initVal)
       m_TempFactor = pow((1.00/m_InitTemp), 1.00/(double)m_MaxOuter);
    }
 
-   return (m_pModel->GetObjFuncVal());
+   return (m_pModel->GetObjectiveFunctionValue());
 }/* end Melt() */
 
 /******************************************************************************

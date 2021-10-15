@@ -1,37 +1,20 @@
-/******************************************************************************
+/**************************************************************************************************************************************************************
 
-A Genetic Algorithm applies concepts (namely survival of the fittest and 
-natural selection) from evolutionary theory to optimization problems. The 
-Genetic Algorithm starts with a population of coded solutions (ChromosomePool) 
-and evolves this population using the processes of Selection, Crossover and 
-Mutation such that each successive genration of solutions is an improvement 
-(on average) over previous generations.
+A Genetic Algorithm applies concepts (namely survival of the fittest and natural selection) from evolutionary theory to optimization problems. The 
+Genetic Algorithm starts with a population of coded solutions and evolves this population using the processes of Crossover and  Mutation such that each 
+successive genration of solutions is an improvement  (on average) over previous generations.
 
-******************************************************************************/
-#include <mpi.h>
-#include <math.h>
-#include <time.h>
-#include <stdlib.h>
-#include <algorithm>
-#include <numeric>      
+**************************************************************************************************************************************************************/
 
+// Include the class header
 #include "GeneticAlgorithm2.h"
-#include "LatinHypercube.h"
-#include "ParameterGroup.h"
-#include <ParameterABC.h>
-//#include "StatsClass.h"
-
-#include "Exception.h"
-#include "Utility.h"
-
-#include <iostream>
 
 
-/******************************************************************************
+/**************************************************************************************************************************************************************
 WarmStart()
 
 Read the best solution from a previous run.
-******************************************************************************/
+**************************************************************************************************************************************************************/
 /*void GeneticAlgorithm::WarmStart(void) {
    int np = m_pModel->GetParamGroupPtr()->GetNumParams();
    double * pbest = new double[np+1];
@@ -41,14 +24,12 @@ Read the best solution from a previous run.
    delete [] pbest;
 } */
 
-/*
-*****************************************************************************
+/**************************************************************************************************************************************************************
 CTOR
 
 Initializes the population. First, all parameters are assigned default values
 and then the user input file is checked for overriding values.
-*****************************************************************************
-*/
+**************************************************************************************************************************************************************/
 GeneticAlgorithm::GeneticAlgorithm() {
 
     FILE* pFile;
@@ -126,12 +107,9 @@ GeneticAlgorithm::GeneticAlgorithm() {
         }
 
         fclose(pFile);
-    }/* end if() */
+    }
 
-
-    /* 
-    Perform setup checks of the configuration file
-    */ 
+    //Perform setup checks of the configuration file 
     // Check that the population size is greater than zero
     if (m_NumPopulation <= 0) {
         LogError(ERR_FILE_IO, "Invalid population size");
@@ -156,9 +134,7 @@ GeneticAlgorithm::GeneticAlgorithm() {
         ExitProgram(1);
     }
 
-    /*
-    Create the genes for the algorithm
-    */
+    // Create the genes for the algorithm
     m_pGenes = new RealEncodedGene[m_pParamGroup->GetNumParams()];
     MEM_CHECK(m_pGenes);
 
@@ -177,11 +153,11 @@ GeneticAlgorithm::GeneticAlgorithm() {
    IncCtorCount();
 }
 
-/******************************************************************************
+/**************************************************************************************************************************************************************
 Destroy()
 
-Free up memory used by the GA and it's member variables.
-******************************************************************************/
+Free up memory used by the GA and it's member variables
+**************************************************************************************************************************************************************/
 void GeneticAlgorithm::Destroy(void) {                                                 
                        
     delete m_pGenes;
@@ -189,9 +165,11 @@ void GeneticAlgorithm::Destroy(void) {
     IncDtorCount();
 }
 
-/*
-Initialize()
-*/
+/**************************************************************************************************************************************************************
+CreateInitialSample()
+
+Creates an initial sample for use in the genetic algorithm
+**************************************************************************************************************************************************************/
 std::vector<std::vector<double>> GeneticAlgorithm::CreateInitialSample(int sampleSize) {
 
     // Create the holder for the samples
@@ -223,8 +201,7 @@ std::vector<std::vector<double>> GeneticAlgorithm::CreateInitialSample(int sampl
         delete[] lowerBounds;
         delete[] upperBounds;
 
-    }
-    else if (m_InitType == RANDOM_INIT){
+    } else if (m_InitType == RANDOM_INIT){
         // Use random values to initialize the space
 
         // Loop on each chromosome/gene and draw a random value for each.
@@ -241,6 +218,7 @@ std::vector<std::vector<double>> GeneticAlgorithm::CreateInitialSample(int sampl
             samples.push_back(temp);
         }
     }
+    // todo: reenable 
     //else if (m_InitType == QUAD_TREE_INIT) {
     //    // Use quad trees to initialize the space
     //    // Create the sample holder
@@ -293,87 +271,12 @@ std::vector<std::vector<double>> GeneticAlgorithm::CreateInitialSample(int sampl
 }
 
 
-
-
-/*
-*****************************************************************************
-TourneySelection()
-
-Determines the mating pool by randomly selecting two chromosomes and comparing
-their fitness values. The chromosome with the better fitness gains the right
-to pass its genes into the next generation. The configuration variable
-m_NumSurvivors is used to guarantee that the top chromosomes survive unchanged
-into the next generation.
-
-The input argument specifies the number of combatants in the tournament. For
-'standard' GA this is set equal to 2. For computation constrained, the number
-of combatants increases as number of generations increases.
-*****************************************************************************
-*/
-void GeneticAlgorithm::TourneySelection(int nCombatants, double* objectives, int numberOfObjectives, double** samples, double** scratch) {
-    int r1, r2;
-    double* pMax;   //chromosome with max. fitness
-    double fit1;
-    double fit2;
-    double maxFit;
-    double lastMax;
-
-
-    /*-------------------------------------------
-    Reserve the top m_NumSurvivors chromosomes.
-    --------------------------------------------*/
-    lastMax = NEARLY_HUGE;
-    pMax = NULL;
-    for (int i = 0; i < m_NumSurvivors; i++) {
-        maxFit = -NEARLY_HUGE;
-
-        for (int j = 0; j < m_NumPopulation; j++) {
-            fit1 = objectives[j];
-
-            if ((fit1 > maxFit) && (fit1 <= lastMax) && (pMax != scratch[i])) {
-                pMax = samples[j];
-                maxFit = fit1;
-            }
-        }
-
-        //propagate nth max. to next generation
-        lastMax = maxFit;
-        scratch[i] = pMax;
-    }
-
-    /*-------------------------------------------
-    Use n-member tourney to select the remaining chromosomes.
-    --------------------------------------------*/
-    for (int i = m_NumSurvivors; i < m_NumPopulation; i++) {
-        // pick random chromosomes 
-        r1 = MyRand() % m_NumPopulation;
-        fit1 = objectives[r1];
-
-        for (int j = 0; j < (nCombatants - 1); j++) {
-            r2 = MyRand() % m_NumPopulation;
-
-            //evaluate their fitness
-            fit2 = objectives[r1];
-
-            //the better one gets to go to the nextGeneration
-            if (fit2 > fit1) {
-                fit1 = fit2;
-            }
-        }
-
-        scratch[i] = samples[r1];
-    } 
-} 
-
-/*
-*****************************************************************************
+/**************************************************************************************************************************************************************
 Crossover()
 
-Crosses over each chromsome of the population with the next one in the
-population, except those that are in the top <m_NumSurvivors>. Simplified compared 
+Crosses over each chromsome of the population with the next one in the population, except those that are in the top <m_NumSurvivors>. Simplified compared 
 to the original processes
-*****************************************************************************
-*/
+**************************************************************************************************************************************************************/
 void GeneticAlgorithm::Crossover(std::vector<double>& objectives, std::vector<double>& objectivesScratch, std::vector<std::vector<double>>& samples, 
                                  std::vector<std::vector<double>>& samplesScratch) {
 
@@ -459,19 +362,19 @@ void GeneticAlgorithm::Crossover(std::vector<double>& objectives, std::vector<do
     }
 }
 
-/*
-*****************************************************************************
+/**************************************************************************************************************************************************************
 Mutate()
 
-Mutates individual chromsomes of the population according to a
-pre-established mutation rate.
-*****************************************************************************
-*/
+Mutates individual chromsomes of the population according to a pre-established mutation rate.
+**************************************************************************************************************************************************************/
 void GeneticAlgorithm::Mutate(std::vector<std::vector<double>>& samplesScratch) {
 
+    // Define the variables
     double r, range, value;
 
+    // Loop on each alternative
     for (int entryAlternative = m_NumSurvivors; entryAlternative < m_NumPopulation; entryAlternative++) {
+        // Loop on each parameter
         for (int entryParam = 0; entryParam < m_pParamGroup->GetNumParams(); entryParam++) {
             
             // Calculate the range of the value
@@ -482,9 +385,13 @@ void GeneticAlgorithm::Mutate(std::vector<std::vector<double>>& samplesScratch) 
 
             // Mutate if the value is less than the mutation rate
             if (r < m_MutationRate) {
+                // Draw a random value
                 r = (double)MyRand() / (double)MY_RAND_MAX;
+
+                // Adjust the current value by the random value
                 value = (r * range) + m_pGenes[entryParam].GetLwr();
 
+                // Update the solution values
                 m_pGenes[entryParam].SetValue(value);
                 samplesScratch[entryAlternative][entryParam] = value;
             }
@@ -493,33 +400,28 @@ void GeneticAlgorithm::Mutate(std::vector<std::vector<double>>& samplesScratch) 
 }
 
 
-/*
-*****************************************************************************
+/**************************************************************************************************************************************************************
 CreateSample()
 
-Creates the next generation of the chromosome population using tourney selection,
-crossover, and mutation.
-*****************************************************************************
-*/
-void GeneticAlgorithm::CreateSample(std::vector<double>& objectives, std::vector<double>& objectivesScratch, 
-                                    std::vector<std::vector<double>>& samples, std::vector<std::vector<double>>& samplesScratch) {
+Creates the next generation of the chromosome population using tourney selection, crossover, and mutation.
+**************************************************************************************************************************************************************/
+void GeneticAlgorithm::CreateSample(std::vector<double>& objectives, std::vector<double>& objectivesScratch, std::vector<std::vector<double>>& samples, 
+                                    std::vector<std::vector<double>>& samplesScratch) {
 
-    // Go through the genetic sampling process
-    //TourneySelection(2, objectives, numberOfObjectives, samples, scratch);
+    // Crossover the alternatives
     Crossover(objectives, objectivesScratch, samples, samplesScratch);
+
+    // Mutate the alternatives
     Mutate(samplesScratch);
 
 }
 
 
-/*
-*****************************************************************************
+/**************************************************************************************************************************************************************
 FreezeGenes()
 
-For each chromosome, randomly freeze the given number of genes so that they
-are at the current global optimal.
-*****************************************************************************
-*/
+For each chromosome, randomly freeze the given number of genes so that they are at the current global optimal.
+**************************************************************************************************************************************************************/
 /*void GeneticAlgorithm::FreezeGenes(int numFreeze) {
     int np = m_pComm->GetParamGroupPtr()->GetNumParams();
 
@@ -532,14 +434,11 @@ are at the current global optimal.
     }
 }*/
 
-/*
-*****************************************************************************
+/**************************************************************************************************************************************************************
 CalcAvgFitness()
 
-Calculates and returns the average fitness of the population. This parameter
-is used in the termination criteria of the genetic algorithm.
-*****************************************************************************
-*/
+Calculates and returns the average fitness of the population. This parameter is used in the termination criteria of the genetic algorithm.
+**************************************************************************************************************************************************************/
 double GeneticAlgorithm::CalcMeanFitness(std::vector<double> objectives) {
 
     double avg = std::accumulate(objectives.begin(), objectives.end(), 0);
@@ -548,14 +447,11 @@ double GeneticAlgorithm::CalcMeanFitness(std::vector<double> objectives) {
     return avg;
 } 
 
-/*
-*****************************************************************************
+/**************************************************************************************************************************************************************
 CalcMedianFitness()
 
-Calculates and returns the median fitness of the population. This parameter
-is used in the termination criteria of the genetic algorithm.
-*****************************************************************************
-*/
+Calculates and returns the median fitness of the population. This parameter is used in the termination criteria of the genetic algorithm.
+**************************************************************************************************************************************************************/
 double GeneticAlgorithm::CalcMedianFitness(std::vector<double> objectives) {
     
     double med = CalcMedian(objectives.data(), objectives.size());
@@ -563,13 +459,11 @@ double GeneticAlgorithm::CalcMedianFitness(std::vector<double> objectives) {
     return med;
 } 
 
-/*
-*****************************************************************************
+/**************************************************************************************************************************************************************
 GetBestFit()
 
 Retrieves the chromosome value and index that has the best fitness value.
-*****************************************************************************
-*/
+**************************************************************************************************************************************************************/
 void GeneticAlgorithm::GetBestObjective(std::vector<double> objectives) {
 
     m_BestObjectiveIndexIteration = std::min_element(objectives.begin(), objectives.end()) - objectives.begin();
@@ -578,13 +472,12 @@ void GeneticAlgorithm::GetBestObjective(std::vector<double> objectives) {
 }
 
 
-/******************************************************************************
+/**************************************************************************************************************************************************************
 EvalFitSuperMUSE()
 
-Compute fitness of entire population using SuperMUSE. This routine interfaces
-with the RepeatTasker SuperMUSE program, which assigns model evaluations to
+Compute fitness of entire population using SuperMUSE. This routine interfaces with the RepeatTasker SuperMUSE program, which assigns model evaluations to
 SuperMUSE clients on a first-come-first-served basis.
-******************************************************************************/
+**************************************************************************************************************************************************************/
 //void ChromosomePool::EvalFitSuperMUSE(void) {
 //    double val;
 //    bool bOk;
@@ -646,11 +539,11 @@ SuperMUSE clients on a first-come-first-served basis.
 
 
 
-/******************************************************************************
+/**************************************************************************************************************************************************************
 Initialize()
 
 Initializes the population so that it is on a budget.
-******************************************************************************/
+**************************************************************************************************************************************************************/
 //void ChromosomePool::Initialize(int* budget)
 //{
 //    FILE* pFile;
@@ -840,13 +733,14 @@ Initializes the population so that it is on a budget.
 
 
 
-/******************************************************************************
+/**************************************************************************************************************************************************************
 WriteMetrics()
 
 Write out setup and metrics for the pool.
-******************************************************************************/
+**************************************************************************************************************************************************************/
 void GeneticAlgorithm::WriteStartingMetrics(void) {
     // TODO: Move to the write utility class
+    // TODO: Update to C++
 
     // Open the log file
     char fileName[DEF_STR_SZ];
@@ -877,13 +771,14 @@ void GeneticAlgorithm::WriteStartingMetrics(void) {
 
 }
 
-/******************************************************************************
+/**************************************************************************************************************************************************************
 WriteEndingMetrics()
 
 Write out setup and metrics for the algorithm.
-******************************************************************************/
+**************************************************************************************************************************************************************/
 void GeneticAlgorithm::WriteEndingMetrics(void) {
-    //TODO: Move htis to the write utility class
+    // TODO: Move htis to the write utility class
+    // TODO: Update to C++
     
     // Open the log file
     char fileName[DEF_STR_SZ];
@@ -914,11 +809,11 @@ void GeneticAlgorithm::WriteEndingMetrics(void) {
 }
 
 
-/******************************************************************************
+/**************************************************************************************************************************************************************
 Calibrate()
 
 Solve the Least-Squares minimization problem using the GA.
-******************************************************************************/
+**************************************************************************************************************************************************************/
 /*void GeneticAlgorithm::Calibrate(void) { 
    int id;
    char fileName[DEF_STR_SZ];
@@ -949,11 +844,11 @@ Solve the Least-Squares minimization problem using the GA.
    }
 }*/
 
-/******************************************************************************
+/**************************************************************************************************************************************************************
 Optimize()
 
 Minimize the objective function using the GA.
-******************************************************************************/
+**************************************************************************************************************************************************************/
 void GeneticAlgorithm::Optimize(void) {
 
     // Write the information to the primary log file
@@ -1027,14 +922,14 @@ void GeneticAlgorithm::Optimize(void) {
         // Write iterationr result to the log file
         WriteRecord2(m_Generation, m_BestObjective, m_CurStop, m_pObsGroup, m_pObjFunc, m_pParamGroup);
 
-
         // Increment the generation variable
         m_Generation++;
 
         // Generate another set of samples if solution will continue
         if (m_Generation < m_NumGenerationsMaximum && m_CurStop >= m_StopVal) {
             // Create a scratch arrays to hold the updated data
-            std::vector<std::vector<double>> samplesScratch = std::vector<std::vector<double>>(m_NumPopulation, std::vector<double>(m_pParamGroup->GetNumParams(), 0));
+            std::vector<std::vector<double>> samplesScratch = \
+                std::vector<std::vector<double>>(m_NumPopulation, std::vector<double>(m_pParamGroup->GetNumParams(), 0));
             std::vector<double> objectivesScratch = std::vector<double>(m_NumPopulation, INFINITY);
 
             // Update the scratch array
@@ -1054,11 +949,11 @@ void GeneticAlgorithm::Optimize(void) {
 
 } 
 
-/******************************************************************************
+/**************************************************************************************************************************************************************
 GA_Program()
 
 Calibrate the model using the GA.
-******************************************************************************/
+**************************************************************************************************************************************************************/
 void GA_Program(int argC, StringType argV[]) {
 
    // Get the rank of the process
@@ -1083,7 +978,7 @@ void GA_Program(int argC, StringType argV[]) {
        // Start the work in the processor 
        worker.WorkMPI();
 
-       // Tear-down is triggered by the primary worker. Perform any cleanup actions
+       // Tear-down is triggered by the primary worker. Perform any additional cleanup actions
    }
 } 
 

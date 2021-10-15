@@ -538,7 +538,7 @@ Write out PATO cost breakdown.
 /*void WriteCostToFile2(FILE* pFile)
 {
    PATO * pPATO;
-   if(algo->GetObjFuncId() != OBJ_FUNC_PATO){ return;}
+   if(algo->GetObjectiveFunctionType() != OBJ_FUNC_PATO){ return;}
    fprintf(pFile, "\nCost Breakdown\n");
    pPATO = (PATO *)(algo->GetObjFuncPtr());
    pPATO->WriteCost(pFile, WRITE_DEC);
@@ -553,14 +553,14 @@ Write out PATO constraint information.
 {
    PATO * pPATO;
    GCOP * pGCOP;
-   if(algo->GetObjFuncId() == OBJ_FUNC_PATO)
+   if(algo->GetObjectiveFunctionType() == OBJ_FUNC_PATO)
    { 
       fprintf(pFile, "\nSummary of Constraints\n");
       pPATO = (PATO *)(algo->GetObjFuncPtr());
       pPATO->WriteConstraints(pFile, WRITE_BNR);
       pPATO->WriteConstraints(pFile, WRITE_SCI);
    }
-   else if (algo->GetObjFuncId() == OBJ_FUNC_GCOP)
+   else if (algo->GetObjectiveFunctionType() == OBJ_FUNC_GCOP)
    { 
       fprintf(pFile, "\nSummary of Constraints\n");
       pGCOP = (GCOP *)(algo->GetObjFuncPtr());
@@ -578,7 +578,7 @@ Write out PATO well information.
 /*void WriteWellsToFile2(FILE* pFile, Algorithm* algo)
 {
    PATO * pPATO;
-   if(algo->GetObjFuncId() != OBJ_FUNC_PATO){ return;}
+   if(algo->GetObjectiveFunctionType() != OBJ_FUNC_PATO){ return;}
    fprintf(pFile, "\nSummary of Optimal Wells\n");
    pPATO = (PATO *)(algo->GetObjFuncPtr());
    pPATO->WriteWells(pFile, WRITE_BNR);

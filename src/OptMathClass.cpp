@@ -455,7 +455,7 @@ retry:
    //read in current point
    pGroup->ReadParams(m_pDiffPoint);
    //assign middle obj. function 
-   midObj = m_pModel->GetObjFuncVal();
+   midObj = m_pModel->GetObjectiveFunctionValue();
 
    /*----------------------------------- 
    compute left-hand side and right-hand 
@@ -664,7 +664,7 @@ double OptMathClass::CalcOptimalStepSize(int idx)
    //read in the point at which the optimal step size will be calculated
    m_pModel->GetParamGroupPtr()->ReadParams(m_pStepPoint);
    bMid = m_pStepPoint[idx];
-   Fmid = m_pModel->GetObjFuncVal();
+   Fmid = m_pModel->GetObjectiveFunctionValue();
 
    /*------------------------------------------------------------
    This loop iterates on the step size db, until Yager's criteria
@@ -727,7 +727,7 @@ Unchangeable1DArray OptMathClass::CalcGradient(double * fmin, double * pmin)
    //save the design point at which the gradient is to be calculated
    pParamGroup = m_pModel->GetParamGroupPtr();
    pParamGroup->ReadParams(m_pGradPoint);
-   Finit = m_pModel->GetObjFuncVal();
+   Finit = m_pModel->GetObjectiveFunctionValue();
 
    //compute partial derivatives, filling gradient matrix
    MPI_Comm_size(MPI_COMM_WORLD, &np);

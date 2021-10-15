@@ -1222,7 +1222,7 @@ void StatsClass::BcastJacobian(void)
    }
 
    //first element is objective function value
-   m_pBuf[0] = m_pModel->GetObjFuncVal();
+   m_pBuf[0] = m_pModel->GetObjectiveFunctionValue();
    //next elements are the parameter settings
    m_pModel->GetParamGroupPtr()->ReadParams(&(m_pBuf[1]));
    //final elements are the simulated observation values
@@ -1319,7 +1319,7 @@ void StatsClass::EvalJacParallel(void)
    Intialize the min. Jacobian
    ------------------------------------------ */
    //first element is objective function value
-   m_pMinJac[0] = m_pModel->GetObjFuncVal();
+   m_pMinJac[0] = m_pModel->GetObjectiveFunctionValue();
    //next elements are the parameter settings
    m_pModel->GetParamGroupPtr()->ReadParams(&(m_pMinJac[1]));
    //final elements are the simulated observation values
@@ -1620,7 +1620,7 @@ void StatsClass::EvalJacSuperMUSE(void)
    Intialize the min. Jacobian
    ------------------------------------------ */
    //first element is objective function value
-   m_pMinJac[0] = m_pModel->GetObjFuncVal();
+   m_pMinJac[0] = m_pModel->GetObjectiveFunctionValue();
    //next elements are the parameter settings
    m_pModel->GetParamGroupPtr()->ReadParams(&(m_pMinJac[1]));
    //final elements are the simulated observation values
@@ -1939,7 +1939,7 @@ void StatsClass::EvalJacSerial(double * pBestSavedF)
    Intialize the min. Jacobian
    ------------------------------------------ */
    //first element is objective function value
-   m_pMinJac[0] = m_pModel->GetObjFuncVal();
+   m_pMinJac[0] = m_pModel->GetObjectiveFunctionValue();
    //next elements are the parameter settings
    m_pModel->GetParamGroupPtr()->ReadParams(&(m_pMinJac[1]));
    //final elements are the simulated observation values
@@ -4182,7 +4182,7 @@ void StatsClass::WriteResiduals(int step, char * prefix)
 
    fcurbest = HUGE_VAL;
    fprevbest = HUGE_VAL;
-   fcur = m_pModel->GetObjFuncVal();
+   fcur = m_pModel->GetObjectiveFunctionValue();
 
    //extract current best if file already exists
    if (pFile != NULL)

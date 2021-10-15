@@ -1,45 +1,11 @@
-/******************************************************************************
+/**************************************************************************************************************************************************************
+The algorithm class is the base class from which all other algorithms inheirit. It provides core functionality shared across all other algorithms.
 
-The Model class encapsulates the interaction of the Ostrich optimization tools
-with the externally executed modeling program. The class divides
-model components into three groups: the parameter group, the observation group
-and the objective function group. In addition to being able to execute the
-model, the Model class provides Ostrich algorithms with access to
-these groups.
+**************************************************************************************************************************************************************/
 
-******************************************************************************/
-// TODO: updaate doc string
-#include <mpi.h>
-#include <math.h>
-#include <string>
-#include <iostream>
-#include <chrono>
-#include <thread>
 
 #include "Algorithm.h"
-#include "ObservationGroup.h"
-#include "Observation.h"
-#include "ResponseVarGroup.h"
-#include "SurrogateParameterGroup.h"
-#include "ParameterGroup.h"
-#include "ParameterABC.h"
-#include "TiedParamABC.h"
-#include "GeomParamABC.h"
-#include "FilePair.h"
-#include "FileList.h"
-#include "AccessConverter.h"
-#include "NetCDFConverter.h"
-#include "PumpAndTreat.h"
-#include "DecisionModule.h"
-#include "SuperMUSE.h"
-#include "ParameterCorrection.h"
-#include "GenConstrainedOpt.h"
 
-#include "IsoParse.h"
-#include "BoxCoxModel.h"
-#include "Utility.h"
-#include "Exception.h"
-#include "SuperMuseUtility.h"
 
 #define JOB_SUCCEDDED (0)
 #define JOB_FAILED    (1)
@@ -54,9 +20,9 @@ IroncladString ObjFuncNonDominated = "non-dominated";
 IroncladString ObjFuncOther = "other";
 
 
-/******************************************************************************
+/**************************************************************************************************************************************************************
  default CTOR
-******************************************************************************/
+**************************************************************************************************************************************************************/
 Algorithm::Algorithm(void) {
     FilePair* pFilePair;
     char* line;
@@ -594,11 +560,9 @@ Algorithm::Algorithm(void) {
 
 } 
 
-/*
-------------------------------------------------------------------------------------------------------------------------------
+/***************************************************************************************************************************************************************
 Free up memory.
-------------------------------------------------------------------------------------------------------------------------------
-*/
+**************************************************************************************************************************************************************/
 void Algorithm::Destroy(void) {
     delete m_pObsGroup;
     delete m_pParamGroup;
@@ -625,93 +589,67 @@ void Algorithm::Destroy(void) {
 }
 
 
-/*
-------------------------------------------------------------------------------------------------------------------------------
+/**************************************************************************************************************************************************************
 PerformParameterCorrections()
-------------------------------------------------------------------------------------------------------------------------------
-*/
+**************************************************************************************************************************************************************/
 void Algorithm::PerformParameterCorrections(void) {
     if (m_pParameterCorrection != NULL) m_pParameterCorrection->Execute();
 }/* end PerformParameterCorrections() */
 
 
-/*
-------------------------------------------------------------------------------------------------------------------------------
-GetObjFuncStr()
-------------------------------------------------------------------------------------------------------------------------------
-*/
-UnchangeableString Algorithm::GetObjFuncStr(void) {
+/**************************************************************************************************************************************************************
+GetObjectiveFunctionString()
+
+Returns the objective function string indicating its type
+**************************************************************************************************************************************************************/
+UnchangeableString Algorithm::GetObjectiveFunctionString(void) {
     return m_pObjFunc->GetObjFuncStr();
 }
 
-/*
-------------------------------------------------------------------------------------------------------------------------------
+/**************************************************************************************************************************************************************
 GetObjFuncPtr()
-   Returns a pointer to the objective function.
-------------------------------------------------------------------------------------------------------------------------------
-*/
+
+Returns a pointer to the objective function.
+**************************************************************************************************************************************************************/
 ObjectiveFunction* Algorithm::GetObjFuncPtr(void) {
     return m_pObjFunc;
-} /* end GetObjFuncPtr() */
-
-/*
-------------------------------------------------------------------------------------------------------------------------------
-GetCounter()
-   Returns the number of times the model has been executed
-------------------------------------------------------------------------------------------------------------------------------
-*/
-int Algorithm::GetCounter(void) {
-    return m_NumSolves;
-}
-
-/*
-------------------------------------------------------------------------------------------------------------------------------
-SetCounter()
-------------------------------------------------------------------------------------------------------------------------------
-*/
-void Algorithm::SetCounter(int count) {
-    m_NumSolves = count;
 } 
 
-/*
-------------------------------------------------------------------------------------------------------------------------------
+/**************************************************************************************************************************************************************
 GetObsGroupPtr()
-   Returns the observation group pointer
-------------------------------------------------------------------------------------------------------------------------------
-*/
+
+Returns the observation group pointer
+**************************************************************************************************************************************************************/
 ObservationGroup* Algorithm::GetObsGroupPtr(void) {
     return m_pObsGroup;
 }
 
-/*
-------------------------------------------------------------------------------------------------------------------------------
+/**************************************************************************************************************************************************************
 GetParamGroupPtr()
-   Returns the parameter group pointer.
-------------------------------------------------------------------------------------------------------------------------------
-*/
+
+Returns the parameter group pointer.
+**************************************************************************************************************************************************************/
 ParameterGroup* Algorithm::GetParamGroupPtr(void) {
     return m_pParamGroup;
 }
 
 
-/*
-------------------------------------------------------------------------------------------------------------------------------
+/**************************************************************************************************************************************************************
 MPI Communication - ConfigureWorkerDirectory()
-   Transfers the worker subdirectory stem from the primary to the secondary worker
-------------------------------------------------------------------------------------------------------------------------------
-*/
+
+Sends the worker subdirectory stem from the primary to the secondary worker
+**************************************************************************************************************************************************************/
 void Algorithm::ConfigureWorkerDirectory(int workerRank) {
     
     // Send the worker file stem to the secondary worker
     MPI_Send(m_DirPrefix, strlen(m_DirPrefix) + 1, MPI_CHAR, workerRank, tag_directory, MPI_COMM_WORLD);
 }
 
-/*
-------------------------------------------------------------------------------------------------------------------------------
+/**************************************************************************************************************************************************************
 MPI Communication - ConfigureWorkerSolveCommand()
-   Transfers the worker solve command from the primary to the secondary worker
-------------------------------------------------------------------------------------------------------------------------------
-*/
+
+Sends the worker solve command from the primary to the secondary worker
+**************************************************************************************************************************************************************/
 void Algorithm::ConfigureWorkerSolveCommand(int workerRank) {
 
     // Send the worker file stem to the secondary worker
@@ -719,12 +657,11 @@ void Algorithm::ConfigureWorkerSolveCommand(int workerRank) {
     
 }
 
-/*
-------------------------------------------------------------------------------------------------------------------------------
+/**************************************************************************************************************************************************************
 MPI Communication - ConfigureWorkerArchiveCommand()
-   Transfers the worker archive command from the primary to the secondary worker
-------------------------------------------------------------------------------------------------------------------------------
-*/
+
+Sends the worker archive command from the primary to the secondary worker
+**************************************************************************************************************************************************************/
 void Algorithm::ConfigureWorkerArchiveCommand(int workerRank, bool bMPI) {
 
     // Define the variable that will be sent to the workers
@@ -787,9 +724,7 @@ void Algorithm::ConfigureWorkerArchiveCommand(int workerRank, bool bMPI) {
             m_primaryWorker.SetWorkerPreserveBestCommand(sendValue, m_PreserveBestCmd.string());
         }
         
-
-    }
-    else if (m_bPreserveModelBest && m_PreserveBestCmd.string().length() == 0) {
+    } else if (m_bPreserveModelBest && m_PreserveBestCmd.string().length() == 0) {
         // Model will be preserved with the the standard full archive method
         sendValue = 1;
 
@@ -802,8 +737,7 @@ void Algorithm::ConfigureWorkerArchiveCommand(int workerRank, bool bMPI) {
             m_primaryWorker.SetWorkerPreserveBestCommand(sendValue, m_PreserveBestCmd.string());
         }
         
-    }
-    else if (m_bPreserveModelBest && m_PreserveBestCmd.string().length() > 0) {
+    } else if (m_bPreserveModelBest && m_PreserveBestCmd.string().length() > 0) {
         // Model will be preserved with a custom archive command
         sendValue = 2;
 
@@ -821,12 +755,11 @@ void Algorithm::ConfigureWorkerArchiveCommand(int workerRank, bool bMPI) {
     }
 }
 
-/*
-------------------------------------------------------------------------------------------------------------------------------
+/**************************************************************************************************************************************************************
 MPI Communication - ConfigureWorkerExtraFiles()
-   Transfers the extra filenames for the model from the primary to the secondary worker
-------------------------------------------------------------------------------------------------------------------------------
-*/
+
+Sends the extra filenames for the model from the primary to the secondary worker
+**************************************************************************************************************************************************************/
 void  Algorithm::ConfigureWorkerExtraFiles(int workerRank, bool bMPI) {
 
     if (bMPI) {
@@ -873,12 +806,11 @@ void  Algorithm::ConfigureWorkerExtraFiles(int workerRank, bool bMPI) {
 }
 
 
-/*
-------------------------------------------------------------------------------------------------------------------------------
+/**************************************************************************************************************************************************************
 MPI Communication - ConfigureWorkerFilePairs()
-   Transfers the file pairs from the primary to the secondary worker
-------------------------------------------------------------------------------------------------------------------------------
-*/
+
+Sends the file pairs from the primary to the secondary worker
+**************************************************************************************************************************************************************/
 void Algorithm::ConfigureWorkerFilePairs(int workerRank, bool bMPI) {
 
     if (bMPI) {
@@ -906,12 +838,11 @@ void Algorithm::ConfigureWorkerFilePairs(int workerRank, bool bMPI) {
     }
 };
 
-/*
-------------------------------------------------------------------------------------------------------------------------------
+/**************************************************************************************************************************************************************
 MPI Communication - ConfigureWorkerObservations()
-   Transfers the observations from from the primary to the secondary worker
-------------------------------------------------------------------------------------------------------------------------------
-*/
+
+Sends the observations from from the primary to the secondary worker
+**************************************************************************************************************************************************************/
 void Algorithm::ConfigureWorkerObservations(int workerRank, bool bMPI) {
 
     if (bMPI) {
@@ -959,6 +890,7 @@ void Algorithm::ConfigureWorkerObservations(int workerRank, bool bMPI) {
             MPI_Send(&obsGroup[0], obsGroup.length() + 1, MPI_CHAR, workerRank, tag_obsGroup, MPI_COMM_WORLD);
 
         }
+
     } else {
         // Set the observation group into the workder
         m_primaryWorker.SetWorkerObservations(m_pObsGroup);
@@ -966,12 +898,11 @@ void Algorithm::ConfigureWorkerObservations(int workerRank, bool bMPI) {
     
 }
 
-/*
-------------------------------------------------------------------------------------------------------------------------------
+/**************************************************************************************************************************************************************
 MPI Communication - ConfigureWorkerParameterGroups()
-   Transfers the parameters from from the primary to the secondary worker
-------------------------------------------------------------------------------------------------------------------------------
-*/
+
+Sends the parameters from from the primary to the secondary worker
+**************************************************************************************************************************************************************/
 void Algorithm::ConfigureWorkerParameterGroups(int workerRank, bool bMPI) {
 
     if (bMPI) {
@@ -1062,15 +993,13 @@ void Algorithm::ConfigureWorkerParameterGroups(int workerRank, bool bMPI) {
         m_primaryWorker.SetWorkerParameters(m_pParamGroup);
     }
     
-
 }
 
-/*
-------------------------------------------------------------------------------------------------------------------------------
+/**************************************************************************************************************************************************************
 MPI Communication - ConfigureWorkers()
-   Transfers all necessary information from the primary to the secondary workers
-------------------------------------------------------------------------------------------------------------------------------
-*/
+
+Sends all necessary information from the primary to the secondary workers
+**************************************************************************************************************************************************************/
 void Algorithm::ConfigureWorkers() {
 
     // Get the number of workers in the MPI space
@@ -1135,12 +1064,11 @@ void Algorithm::ConfigureWorkers() {
     
 }
 
-/*
-------------------------------------------------------------------------------------------------------------------------------
+/**************************************************************************************************************************************************************
 MPI Communication - SendWorkerParameters()
-   Transfers parameters from the primary to the secondary workers
-------------------------------------------------------------------------------------------------------------------------------
-*/
+
+Sends parameters from the primary to the secondary workers
+**************************************************************************************************************************************************************/
 void Algorithm::SendWorkerParameters(int workerRank, int alternativeIndex, std::vector<double> parametersRegular) {
 
     // Create a vector to hold the parameters
@@ -1177,54 +1105,49 @@ void Algorithm::SendWorkerParameters(int workerRank, int alternativeIndex, std::
     //MPI_Send(&parametersTemp[0], numberOfParamters + 1, MPI_DOUBLE, workerRank, tag_data, MPI_COMM_WORLD);
     MPI_Ssend(parametersTemp.data(), numberOfParamters + 1, MPI_DOUBLE, workerRank, tag_data, MPI_COMM_WORLD);
 
-    // Cleanup memory
-
 }
 
-/*
-------------------------------------------------------------------------------------------------------------------------------
+/**************************************************************************************************************************************************************
 MPI Communication - SendWorkerContinue()
-   Transfers parameters from the primary to the secondary workers
-------------------------------------------------------------------------------------------------------------------------------
-*/
+
+Sends parameters from the primary to the secondary workers
+**************************************************************************************************************************************************************/
 void Algorithm::SendWorkerContinue(int workerRank, bool workerContinue) {
 
     int transferValue = 1;
     if (workerContinue) {
         MPI_Ssend(&transferValue, 1, MPI_INT, workerRank, tag_continue, MPI_COMM_WORLD);
-    }
-    else {
+
+    } else {
         transferValue = 0;
         MPI_Ssend(&transferValue, 1, MPI_INT, workerRank, tag_continue, MPI_COMM_WORLD);
     }
 
 }
 
-/*
-------------------------------------------------------------------------------------------------------------------------------
+/**************************************************************************************************************************************************************
 MPI Communication - SendWorkerPreservebest()
-   Transfers parameters from the primary to the secondary workers
-------------------------------------------------------------------------------------------------------------------------------
-*/
+
+Sends parameters from the primary to the secondary workers
+**************************************************************************************************************************************************************/
 void Algorithm::SendWorkerPreserveBest(int workerRank, bool preserveModel) {
 
     int transferValue = 1;
     if (preserveModel) {
         MPI_Ssend(&transferValue, 1, MPI_INT, workerRank, tag_preserveBest, MPI_COMM_WORLD);
-    }
-    else {
+
+    } else {
         transferValue = 0;
         MPI_Ssend(&transferValue, 1, MPI_INT, workerRank, tag_preserveBest, MPI_COMM_WORLD);
     }
 }
 
 
-/*
-------------------------------------------------------------------------------------------------------------------------------
+/**************************************************************************************************************************************************************
 MPI Communication - ReceiveWorkerPreserveBest()
-   Receives from worker that the model preserve is complete
-------------------------------------------------------------------------------------------------------------------------------
-*/
+
+Sends from worker that the model preserve is complete
+**************************************************************************************************************************************************************/
 void Algorithm::ReceiveWorkerPreserveBest() {
 
     int transferValue;
@@ -1232,12 +1155,11 @@ void Algorithm::ReceiveWorkerPreserveBest() {
 }
 
 
-/*
-------------------------------------------------------------------------------------------------------------------------------
+/**************************************************************************************************************************************************************
 MPI Communication - ManagePreserveBest()
-   Manages the process for preserving the best model
-------------------------------------------------------------------------------------------------------------------------------
-*/
+
+Manages the process for preserving the best model
+**************************************************************************************************************************************************************/
 void Algorithm::ManagePreserveBest(double &solutionObjective, double alternativeObjective, MPI_Status mpiStatus) {
 
 
@@ -1263,13 +1185,13 @@ void Algorithm::ManagePreserveBest(double &solutionObjective, double alternative
 }
 
 
-/*
-------------------------------------------------------------------------------------------------------------------------------
+/**************************************************************************************************************************************************************
 MPI Communication - ManageSingleObjectiveIterations()
-   Manages the solution of a set of parameter alternatives
-------------------------------------------------------------------------------------------------------------------------------
-*/
-void Algorithm::ManageSingleObjectiveIterations(std::vector<std::vector<double>> parameters, int startingIndex, int numberOfParameters, std::vector<double>& returnArray) {
+
+Manages the solution of a set of parameter alternatives when using a single objective function
+**************************************************************************************************************************************************************/
+void Algorithm::ManageSingleObjectiveIterations(std::vector<std::vector<double>> parameters, int startingIndex, int numberOfParameters, 
+                                                std::vector<double>& returnArray) {
 
     // Get the number of workers in the MPI space
     int numberOfMpiProcesses;
@@ -1450,12 +1372,11 @@ void Algorithm::ManageSingleObjectiveIterations(std::vector<std::vector<double>>
 }
 
 
-/*
-------------------------------------------------------------------------------------------------------------------------------
+/**************************************************************************************************************************************************************
 MPI Communication - TerminateWorkers()
-   Tells the workers to stop and begin cleanup
-------------------------------------------------------------------------------------------------------------------------------
-*/
+
+Kills the secondary workers to stop and begin cleanup
+**************************************************************************************************************************************************************/
 void Algorithm::TerminateWorkers() {
 
     // Get the number of workers in the MPI space
@@ -1467,120 +1388,15 @@ void Algorithm::TerminateWorkers() {
     }
 }
 
-
-
-
-
-/*****************************************************************************
-Bookkeep()
-   Performs bookkeeping operations related to parallel executing.
-   if bFinal == true, iteration is complete so collect metrics
-   if bFinal == false, in the middle of iteration, share information between
-    processors
-******************************************************************************/
-/*void Algorithm::Bookkeep(bool bFinal)
-{
-    int id, nprocs, temp, i;
-
-    MPI_Comm_rank(MPI_COMM_WORLD, &id);
-    MPI_Comm_size(MPI_COMM_WORLD, &nprocs);
-
-    if (nprocs == 1) return;
-
-    if (m_bUseSurrogates == true)
-    {
-        m_pDecision->Bookkeep(bFinal);
-    }
-
-    /* ---------------------------------------------------------------
-    Collect total evals
-    --------------------------------------------------------------- 
-    if (bFinal == true)
-    {
-        for (i = 1; i < nprocs; i++)
-        {
-            temp = m_NumSolves;
-            MPI_Bcast(&temp, 1, MPI_INTEGER, i, MPI_COMM_WORLD);
-            if (id == 0) m_NumSolves += temp;
-        }
-    }
-} /* end Bookkeep() */
-
-
-/******************************************************************************
-GatherTask()
-   Read output file of a SuperMUSE task (stored in pDir directory) and compute
-   the associated objective function.
-******************************************************************************/
-/*double Algorithm::GatherTask(char* pDir)
-{
-    double val;
-
-    //inc. number of times model has been executed
-    m_NumSolves++;
-
-    //cd to task subdirectory
-    MY_CHDIR(pDir);
-
-    //extract computed observations from model output file(s)
-    if (m_pObsGroup != NULL) { m_pObsGroup->ExtractVals(); }
-
-    //compute obj. func.
-    val = m_pObjFunc->CalcObjFunc();
-
-    //cd out of task subdirectory
-    MY_CHDIR("..");
-
-    //ouput results
-    Write(val);
-
-    m_CurObjFuncVal = val;
-
-    return (val);
-}/* end GatherTask() */
-
-
-/******************************************************************************
-WriteMetrics()
-******************************************************************************/
-/*void Algorithm::WriteMetrics(FILE* pFile)
-{
-    if (m_bUseSurrogates == true)
-    {
-        m_pDecision->WriteMetrics(pFile);
-    }
-    else
-    {
-        fprintf(pFile, "Total Evals             : %d\n", m_NumSolves);
-        fprintf(pFile, "Telescoping Strategy    : ");
-        switch (m_Telescope)
-        {
-        case(TSCOPE_PVEX): fprintf(pFile, "convex-power\n"); break;
-        case(TSCOPE_CVEX): fprintf(pFile, "convex\n"); break;
-        case(TSCOPE_LINR): fprintf(pFile, "linear\n"); break;
-        case(TSCOPE_CAVE): fprintf(pFile, "concave\n"); break;
-        case(TSCOPE_DCVE): fprintf(pFile, "delayed-concave\n"); break;
-        default: fprintf(pFile, "none\n"); break;
-        }
-        if (m_bCaching == true)
-            fprintf(pFile, "Cache Hits              : %d\n", m_NumCacheHits);
-        if (m_pParameterCorrection != NULL)
-            m_pParameterCorrection->WriteMetrics(pFile);
-    }
-} /* end WriteMetrics() */
-
-/******************************************************************************
+/**************************************************************************************************************************************************************
 CheckGlobalSensitivity()
 
-Checks that each observation is sensitive to at least one parameter over the
-range of possible parameter values. If an observation is not sensitive to any
-parameters, a warning will be reported and the observation will be ignored in
-the calibration.
+Checks that each observation is sensitive to at least one parameter over the range of possible parameter values. If an observation is not sensitive to any
+parameters, a warning will be reported and the observation will be ignored in the calibration.
 
-Also checks the sensitivity of each parameter. If a given parameter does not
-affect the objective function over the entire parameter range, a warning will
+Also checks the sensitivity of each parameter. If a given parameter does not affect the objective function over the entire parameter range, a warning will
 be reported and the parameter will be ignored in the calibration.
-******************************************************************************/
+**************************************************************************************************************************************************************/
 /*void Algorithm::CheckGlobalSensitivity(void)
 {
     if ((m_pObsGroup == NULL) || (m_pParamGroup == NULL)) return;
