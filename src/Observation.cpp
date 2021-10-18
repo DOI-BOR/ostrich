@@ -15,6 +15,7 @@ Version History
 ******************************************************************************/
 #include <stdio.h>
 #include <string.h>
+#include <iostream>
 
 #include "Observation.h"
 #include "ObjectiveFunction.h"
@@ -119,6 +120,17 @@ UnchangeableString Observation::GetFileName(void)
 } /* end GetFileName() */
 
 /******************************************************************************
+GetWeightFactor()
+
+Returns the weight associated with the observation. 
+******************************************************************************/
+double Observation::GetWeightFactor(void)
+{
+    return m_Weight;
+} /* end GetKeyword() */
+
+
+/******************************************************************************
 GetKeyword()
 
 Returns the key word associated with the observation. The extraction of the 
@@ -212,20 +224,9 @@ CTOR
 
 Constructor for the class
 ******************************************************************************/
-Observation::Observation
-(
-   IroncladString name,
-   double measuredVal,
-   double weight, 
-	IroncladString fileName, 
-   IroncladString keyword, 
-   int line,
-	int column,
-   char tok,
-   bool bAug,
-   IroncladString group
-)
-{   
+Observation::Observation (IroncladString name, double measuredVal, double weight, 
+	                      IroncladString fileName,  IroncladString keyword, 
+                          int line, int column, char tok, bool bAug, IroncladString group) {   
    int len;
 
    len = (int)strlen(name) + 1;
@@ -298,8 +299,8 @@ Observation::Observation(Observation * pCopy)
    MEM_CHECK(m_FileName);
 
    strcpy(m_Name, pCopy->GetName());
-   strcpy(m_Keyword, pCopy->GetName());
-   strcpy(m_FileName, OST_OBS_FILE);
+   strcpy(m_Keyword, pCopy->GetKeyword());
+   strcpy(m_FileName, pCopy->GetFileName());
    strcpy(m_Group, pCopy->GetGroup());
 
    m_MeasuredVal = pCopy->GetMeasuredVal(false, false);

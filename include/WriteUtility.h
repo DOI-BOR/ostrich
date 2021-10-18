@@ -18,10 +18,12 @@ Version History
 #define WRITE_UTILITY_H
 
 #include "MyHeaderInc.h"
+#include "ParameterGroup.h"
 
 // forward decs
 class ModelABC;
 class AlgorithmABC;
+class AlgorithmABC2;
 
 extern "C" {
 void WritePreciseNumber(FILE * pOut, double x);
@@ -45,6 +47,7 @@ void WriteMultiObjOptimalToFile(FILE * pFile, ModelABC * pModel, ArchiveStruct *
 
 void WriteOptimal(ModelABC * pModel, double fx);
 void WriteOptimalToFile(FILE * pFile, ModelABC * pModel, double fx);
+void WriteOptimalToFileWithGroup(FILE* pFile, ParameterGroup *paramGroup, double fx);
 
 void WriteAlgMetrics(AlgorithmABC * pAlg);
 void WriteMelt(int count, int max, char c);

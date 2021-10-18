@@ -33,6 +33,7 @@ Version History
 #include <math.h>
 #include <stdio.h>
 #include <string.h>
+#include <iostream>
 
 #include "TiedParamABC.h"
 #include "ParameterABC.h"
@@ -54,8 +55,11 @@ double GetMetaVal(MetaParameter * mp)
 {
    if(mp == NULL) return 0.00;
    if(mp->pParam == NULL) return 0.00;
-   if(mp->type == RGLR_PARAMETER) return (((ParameterABC *)(mp->pParam))->GetTransformedVal());
-   return (((TiedParamABC *)(mp->pParam))->GetEstVal());
+   if (mp->type == RGLR_PARAMETER) {
+       double value = ((ParameterABC*)(mp->pParam))->GetTransformedVal();
+       return value;
+   }
+   return (((TiedParamABC *)(mp->pParam))->GetEstimatedValueTransformed());
    return 0.00;
 }/* end GetMetaVal() */
 
@@ -129,7 +133,7 @@ GetEstVal()
 
 Computes the value of the tied parameter.
 ******************************************************************************/
-double TiedParamLin1::GetEstVal(void)
+double TiedParamLin1::GetEstimatedValueTransformed(void)
 {
    double y, x;
    x = GetMetaVal(&m_Tie);
@@ -143,7 +147,7 @@ TiedParamLin1::GetValAsStr()
 void TiedParamLin1::GetValAsStr(UnmoveableString valStr)
 {
    bool bOk;
-   double val = GetEstVal();
+   double val = GetEstimatedValueTransformed();
    char * fmt = m_pFixFmt;
    if(strcmp(fmt, "free") == 0)
    {
@@ -168,7 +172,7 @@ void TiedParamLin1::Write(FILE * pFile, int type)
 {
    double val;
 
-   val = GetEstVal();
+   val = GetEstimatedValueTransformed();
 
    if(type == WRITE_SCI)
    {
@@ -284,7 +288,7 @@ TiedParamLin2::GetValAsStr()
 void TiedParamLin2::GetValAsStr(UnmoveableString valStr)
 {
    bool bOk;
-   double val = GetEstVal();
+   double val = GetEstimatedValueTransformed();
    char * fmt = m_pFixFmt;
    if(strcmp(fmt, "free") == 0)
    {
@@ -305,7 +309,7 @@ GetEstVal()
 
 Computes the value of the tied parameter.
 ******************************************************************************/
-double TiedParamLin2::GetEstVal(void)
+double TiedParamLin2::GetEstimatedValueTransformed(void)
 {
    double y, x1, x2;
    x1 = GetMetaVal(&m_Tie1);
@@ -323,7 +327,7 @@ void TiedParamLin2::Write(FILE * pFile, int type)
 {
    double val;
 
-   val = GetEstVal();
+   val = GetEstimatedValueTransformed();
 
    if(type == WRITE_SCI)
    {
@@ -356,6 +360,178 @@ void TiedParamLin2::Write(FILE * pFile, int type)
    {
       fprintf(pFile,"%-12s  ", m_pName);
    }/* end else() */
+} /* end TiedParamLin2::WriteToFile() */
+
+
+
+/******************************************************************************
+TiedParamLin3::Destroy()
+******************************************************************************/
+void TiedParamLinMax::Destroy(void) {
+    delete[] m_pName;
+    delete[] m_pFixFmt;
+    IncDtorCount();
+} /* end Destroy() */
+
+/******************************************************************************
+CTOR (TiedParamLin3)
+******************************************************************************/
+TiedParamLinMax::TiedParamLinMax(void) {
+    m_pName = NULL;
+    m_pFixFmt = NULL;
+    m_Tie1.pParam = NULL;
+    m_Tie2.pParam = NULL;
+    m_C0 = 0.00;
+    m_C1 = 0.00;
+    m_C2 = 0.00;
+    m_C3 = 0.00;
+    m_max = 0.00;
+    IncCtorCount();
+} /* end default CTOR */
+
+/******************************************************************************
+CTOR (TiedParamLin3)
+******************************************************************************/
+TiedParamLinMax::TiedParamLinMax(IroncladString name, MetaParameter* p1, MetaParameter* p2, UnmoveableString configStr) {
+    int j, len;
+    char* pTok;
+    char tmpStr[DEF_STR_SZ];
+    char valStr[DEF_STR_SZ];
+    bool bOk;
+
+    len = (int)strlen(name) + 10;
+    NEW_PRINT("char", len);
+    m_pName = new char[len];
+    m_pFixFmt = new char[len];
+    MEM_CHECK(m_pFixFmt);
+
+    strcpy(m_pName, name);
+
+    m_Tie1.pParam = p1->pParam;
+    m_Tie2.pParam = p2->pParam;
+    m_Tie1.type = p1->type;
+    m_Tie2.type = p2->type;
+
+    //parse the config string to determin valuese for C0, C1, C2 and C3
+    pTok = configStr;
+    j = ExtractString(pTok, tmpStr);
+    j = ValidateExtraction(j, 1, 1, "TiedParamLinMax()");
+    m_C3 = atof(tmpStr);
+    pTok += j;
+    j = ExtractString(pTok, tmpStr);
+    j = ValidateExtraction(j, 1, 1, "TiedParamLinMax()");
+    m_C2 = atof(tmpStr);
+    pTok += j;
+    j = ExtractString(pTok, tmpStr);
+    j = ValidateExtraction(j, 1, 1, "TiedParamLinMax()");
+    m_C1 = atof(tmpStr);
+    pTok += j;
+    j = ExtractString(pTok, tmpStr);
+    j = ValidateExtraction(j, 1, 1, "TiedParamLinMax()");
+    m_C0 = atof(tmpStr);
+    pTok += j;
+    j = ExtractString(pTok, tmpStr);
+    j = ValidateExtraction(j, 1, 1, "TiedParamLinMax()");
+    m_max = atof(tmpStr);
+    //extract fortran formatting
+    pTok += j;
+    strcpy(m_pFixFmt, pTok);
+    MyTrim(m_pFixFmt);
+    //check fixed format setting
+    bOk = GetFixedFormatValAsStr(valStr, 0.00, m_pFixFmt);
+    if (!bOk) strcpy(m_pFixFmt, "free");
+
+    IncCtorCount();
+} /* end CTOR */
+
+/******************************************************************************
+TiedParamLin3::GetValAsStr()
+******************************************************************************/
+void TiedParamLinMax::GetValAsStr(UnmoveableString valStr) {
+    bool bOk;
+    double val = GetEstimatedValueTransformed();
+    char* fmt = m_pFixFmt;
+    if (strcmp(fmt, "free") == 0)
+    {
+        GetPreciseValAsStr(valStr, val);
+    }
+    else
+    {
+        bOk = GetFixedFormatValAsStr(valStr, val, fmt);
+        if (!bOk)
+        {
+            GetPreciseValAsStr(valStr, val);
+        }
+    }
+}/* end TiedParamLin2::GetValAsStr() */
+
+/******************************************************************************
+GetEstVal()
+
+Computes the value of the tied parameter.
+******************************************************************************/
+double TiedParamLinMax::GetEstimatedValueTransformed(void) {
+    double y, x1, x2;
+    x1 = GetMetaVal(&m_Tie1);
+    x2 = GetMetaVal(&m_Tie2);
+    
+    // Calculate value
+    y = m_C3 * x1 * x2 + m_C2 * x2 + m_C1 * x1 + m_C0;
+
+    // Compare the the min x1 and replace if necessary
+    if (y <= m_max) {
+        y = y - x1;
+    }
+    
+    if (y > m_max) {
+        y = m_max - x1;
+    }
+
+    return y;
+} /* end GetEstVal() */
+
+/******************************************************************************
+TiedParamLinMax::Write()
+
+Writes formatted output to pFile argument.
+******************************************************************************/
+void TiedParamLinMax::Write(FILE* pFile, int type) {
+    double val;
+
+    val = GetEstimatedValueTransformed();
+
+    if (type == WRITE_SCI)
+    {
+        fprintf(pFile, "%E  ", val);
+    }
+    else if (type == WRITE_DEC)
+    {
+        fprintf(pFile, "%.6lf  ", val);
+    }
+    else if (type == WRITE_DBG)
+    {
+        fprintf(pFile, "Name = %s\n", m_pName);
+        fprintf(pFile, "Tied Param #1 = %s\n", GetMetaName(&m_Tie1));
+        fprintf(pFile, "Tied Param #2 = %s\n", GetMetaName(&m_Tie2));
+        fprintf(pFile, "Mine = %s\n", GetMetaName(&m_Tie2));
+        fprintf(pFile, "C0 = %lf\n", m_C0);
+        fprintf(pFile, "C1 = %lf\n", m_C1);
+        fprintf(pFile, "C2 = %lf\n", m_C2);
+        fprintf(pFile, "C3 = %lf\n", m_C3);
+        fprintf(pFile, "value = %lf\n", val);
+    }/* end else if() */
+    else if (type == WRITE_TX_BNR)
+    {
+        fprintf(pFile, "%-12s  ", m_pName);
+    }/* end else() */
+    else if (type == WRITE_OPT)
+    {
+        fprintf(pFile, "%-18s : %E\n", m_pName, val);
+    }
+    else // assuming (type == WRITE_BNR)
+    {
+        fprintf(pFile, "%-12s  ", m_pName);
+    }/* end else() */
 } /* end TiedParamLin2::WriteToFile() */
 
 /******************************************************************************
@@ -439,7 +615,7 @@ GetEstVal()
 
 Computes the value of the tied parameter.
 ******************************************************************************/
-double TiedParamExp::GetEstVal(void)
+double TiedParamExp::GetEstimatedValueTransformed(void)
 {
    double y, x;
 
@@ -463,7 +639,7 @@ TiedParamExp::GetValAsStr()
 void TiedParamExp::GetValAsStr(UnmoveableString valStr)
 {
    bool bOk;
-   double val = GetEstVal();
+   double val = GetEstimatedValueTransformed();
    char * fmt = m_pFixFmt;
    if(strcmp(fmt, "free") == 0)
    {
@@ -488,7 +664,7 @@ void TiedParamExp::Write(FILE * pFile, int type)
 {
    double val;
 
-   val = GetEstVal();
+   val = GetEstimatedValueTransformed();
 
    if(type == WRITE_SCI)
    {
@@ -609,7 +785,7 @@ TiedParamLog::GetValAsStr()
 void TiedParamLog::GetValAsStr(UnmoveableString valStr)
 {
    bool bOk;
-   double val = GetEstVal();
+   double val = GetEstimatedValueTransformed();
    char * fmt = m_pFixFmt;
    if(strcmp(fmt, "free") == 0)
    {
@@ -630,7 +806,7 @@ GetEstVal()
 
 Computes the value of the tied parameter.
 ******************************************************************************/
-double TiedParamLog::GetEstVal(void)
+double TiedParamLog::GetEstimatedValueTransformed(void)
 {
    double y, x, N;
 
@@ -662,7 +838,7 @@ void TiedParamLog::Write(FILE * pFile, int type)
 {
    double val;
 
-   val = GetEstVal();
+   val = GetEstimatedValueTransformed();
 
    if(type == WRITE_SCI)
    {
@@ -769,7 +945,7 @@ TiedDistXY::GetValAsStr()
 void TiedDistXY::GetValAsStr(UnmoveableString valStr)
 {
    bool bOk;
-   double val = GetEstVal();
+   double val = GetEstimatedValueTransformed();
    char * fmt = m_pFixFmt;
    if(strcmp(fmt, "free") == 0)
    {
@@ -790,7 +966,7 @@ GetEstVal()
 
 Computes the value of the tied parameter.
 ******************************************************************************/
-double TiedDistXY::GetEstVal(void)
+double TiedDistXY::GetEstimatedValueTransformed(void)
 {
    double d, x1, x2, y1, y2;
 
@@ -813,7 +989,7 @@ void TiedDistXY::Write(FILE * pFile, int type)
 {
    double val;
 
-   val = GetEstVal();
+   val = GetEstimatedValueTransformed();
 
    if(type == WRITE_SCI)
    {
@@ -930,7 +1106,7 @@ TiedParamSimpleRatio::GetValAsStr()
 void TiedParamSimpleRatio::GetValAsStr(UnmoveableString valStr)
 {
    bool bOk;
-   double val = GetEstVal();
+   double val = GetEstimatedValueTransformed();
    char * fmt = m_pFixFmt;
    if(strcmp(fmt, "free") == 0)
    {
@@ -951,7 +1127,7 @@ GetEstVal()
 
 Computes the value of the tied parameter.
 ******************************************************************************/
-double TiedParamSimpleRatio::GetEstVal(void)
+double TiedParamSimpleRatio::GetEstimatedValueTransformed(void)
 {
    double y, x1, x2;
 
@@ -971,7 +1147,7 @@ void TiedParamSimpleRatio::Write(FILE * pFile, int type)
 {
    double val;
 
-   val = GetEstVal();
+   val = GetEstimatedValueTransformed();
 
    if(type == WRITE_SCI)
    {
@@ -1096,7 +1272,7 @@ TiedParamComplexRatio::GetValAsStr()
 void TiedParamComplexRatio::GetValAsStr(UnmoveableString valStr)
 {
    bool bOk;
-   double val = GetEstVal();
+   double val = GetEstimatedValueTransformed();
    char * fmt = m_pFixFmt;
    if(strcmp(fmt, "free") == 0)
    {
@@ -1117,7 +1293,7 @@ GetEstVal()
 
 Computes the value of the tied parameter.
 ******************************************************************************/
-double TiedParamComplexRatio::GetEstVal(void)
+double TiedParamComplexRatio::GetEstimatedValueTransformed(void)
 {
    double x, y, z, num, den, val;
 
@@ -1144,7 +1320,7 @@ void TiedParamComplexRatio::Write(FILE * pFile, int type)
 {
    double val;
 
-   val = GetEstVal();
+   val = GetEstimatedValueTransformed();
 
    if(type == WRITE_SCI)
    {
@@ -1255,7 +1431,7 @@ TiedParamConstant::GetValAsStr()
 void TiedParamConstant::GetValAsStr(UnmoveableString valStr)
 {
    bool bOk;
-   double val = GetEstVal();
+   double val = GetEstimatedValueTransformed();
    char * fmt = m_pFixFmt;
    if(strcmp(fmt, "free") == 0)
    {
@@ -1276,7 +1452,7 @@ GetEstVal()
 
 Computes the value of the tied parameter.
 ******************************************************************************/
-double TiedParamConstant::GetEstVal(void)
+double TiedParamConstant::GetEstimatedValueTransformed(void)
 {
    return m_val;
 } /* end GetEstVal() */
@@ -1290,7 +1466,7 @@ void TiedParamConstant::Write(FILE * pFile, int type)
 {
    double val;
 
-   val = GetEstVal();
+   val = GetEstimatedValueTransformed();
 
    if(type == WRITE_SCI)
    {
@@ -1406,7 +1582,7 @@ TiedParamWsum::GetValAsStr()
 void TiedParamWsum::GetValAsStr(UnmoveableString valStr)
 {
    bool bOk;
-   double val = GetEstVal();
+   double val = GetEstimatedValueTransformed();
    char * fmt = m_pFixFmt;
    if(strcmp(fmt, "free") == 0)
    {
@@ -1427,7 +1603,7 @@ GetEstVal()
 
 Computes the value of the tied parameter.
 ******************************************************************************/
-double TiedParamWsum::GetEstVal(void)
+double TiedParamWsum::GetEstimatedValueTransformed(void)
 {
    int i;
    double wsum, val, wgt;
@@ -1453,7 +1629,7 @@ void TiedParamWsum::Write(FILE * pFile, int type)
    int i;
    double val;
 
-   val = GetEstVal();
+   val = GetEstimatedValueTransformed();
 
    if(type == WRITE_SCI)
    {

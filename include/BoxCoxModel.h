@@ -17,7 +17,8 @@ Version History
 #define BOX_OUT_FILE  "BoxCoxOut.txt"
 
 extern "C" {
-int BoxCoxModel(void);
+	int BoxCoxModel(void);
+	double ExtractBoxCoxValue(void);
 }
 
 #endif /* BOX_COX_MODEL_H */

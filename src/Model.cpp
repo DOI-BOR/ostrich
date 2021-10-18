@@ -923,7 +923,7 @@ Model::Model(void)
 	}
 
    NEW_PRINT("ParameterGroup", 1);
-   m_pParamGroup = new ParameterGroup();
+   m_pParamGroup = new ParameterGroup(true);
    MEM_CHECK(m_pParamGroup);
 
    //check bounds on parameter group
@@ -972,20 +972,20 @@ Model::Model(void)
    /*-----------------------------------------------------------------------
    Read in special parameters.
    ------------------------------------------------------------------------*/
-   m_pParamGroup->InitSpecialParams(inFileName);
+   //m_pParamGroup->InitSpecialParams(inFileName);
 
    /*-----------------------------------------------------------------------
    Check template files against parameters, each parameter should appear in
    at least one template file or at least one database entry.
    ------------------------------------------------------------------------*/
-   m_pParamGroup->CheckTemplateFiles(m_FileList);
+   //m_pParamGroup->CheckTemplateFiles(m_FileList);
    //m_pParamGroup->CheckDbaseFiles(m_DbaseList);
 
    /*-----------------------------------------------------------------------
    Check parameters for uniqueness, each parameter should be unique and 
    should not be a substring of another parameter.
    ------------------------------------------------------------------------*/
-   m_pParamGroup->CheckMnemonics();
+   //m_pParamGroup->CheckMnemonics();
 
    /*-----------------------------------------------------------------------
    Initialize surrogate models, if the surrogate-based approach is enabled.
@@ -1010,46 +1010,6 @@ Model::Model(void)
 
    IncCtorCount();
 } /* end default CTOR */
-
-/******************************************************************************
-ExtractBoxCoxValue()
-
-Retrieve optimal BoxCox transformation from previous OstOutput0.txt file.
-******************************************************************************/
-double ExtractBoxCoxValue(void)
-{
-   FILE * pOut;
-   char * line;
-   int max_line_size;
-   const char * pTok = "Estimated Optimal Box-Cox Transformation";
-   double b;
-
-   max_line_size = GetMaxLineSizeInFile((char *)"OstOutput0.txt");
-   line = new char[max_line_size + 1];
-   pOut = fopen("OstOutput0.txt", "r");
-   if(pOut == NULL)
-   {
-      LogError(ERR_FILE_IO, "Unable to extract Box-Cox transformation value. Defaulting to 1.00.");
-      delete [] line;
-      return 1.00;
-   }
-   while(!feof(pOut))
-   {
-      fgets(line, max_line_size, pOut);
-      if(strncmp(line, pTok, strlen(pTok)) == 0)
-      {
-         fgets(line, max_line_size, pOut);
-         sscanf(line, "Lambda : %lf\n", &b);
-         fclose(pOut);
-         delete [] line;
-         return b;
-      }
-   }/* end while() */
-   fclose(pOut);
-   LogError(ERR_FILE_IO, "Unable to extract Box-Cox transformation value. Defaulting to 1.00.");
-   delete [] line;
-   return 1.00;   
-}/* end ExtractBoxCoxValue() */
 
 /******************************************************************************
 Free up memory.
@@ -1637,7 +1597,7 @@ bool Model::CheckCache(double * val)
          pParam = pGroup->GetParamPtr(i);
          j = ExtractColString(pTmp, valStr, ' ');
          paramVal = pParam->ConvertInVal(atof(valStr));
-         if(fabs(paramVal - pParam->GetEstVal()) > 1E-10)
+         if(fabs(paramVal - pParam->GetEstimatedValueTransformed()) > 1E-10)
          {
             bFound = false;
             break;
@@ -1841,8 +1801,8 @@ void Model::CheckGlobalSensitivity(void)
    for(j = 0; j < nprm; j++)
    {
       prm_names[j] = m_pParamGroup->GetParamPtr(j)->GetName();
-      upr = m_pParamGroup->GetParamPtr(j)->GetUprBnd();
-      m_pParamGroup->GetParamPtr(j)->SetEstVal(upr);
+      upr = m_pParamGroup->GetParamPtr(j)->GetUpperBoundTransformed();
+      m_pParamGroup->GetParamPtr(j)->SetEstimatedValueTransformed(upr);
       Fupr = Execute();
 
       //store computed observation values
@@ -1851,8 +1811,8 @@ void Model::CheckGlobalSensitivity(void)
          ObsUpr[i] = m_pObsGroup->GetObsPtr(i)->GetComputedVal(true, true);
       }
 
-      lwr = m_pParamGroup->GetParamPtr(j)->GetLwrBnd();
-      m_pParamGroup->GetParamPtr(j)->SetEstVal(lwr);
+      lwr = m_pParamGroup->GetParamPtr(j)->GetLowerBoundTransformed();
+      m_pParamGroup->GetParamPtr(j)->SetEstimatedValueTransformed(lwr);
       Flwr = Execute();
 
       //store computed observation values

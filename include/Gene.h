@@ -35,8 +35,8 @@ class Gene
       virtual ~Gene(void){ DBG_PRINT("Gene::DTOR"); }
       virtual void Destroy(void)=0;
 
-      virtual void Crossover(Gene * pMate, double F1, double F2, int np)=0;
-      virtual int  Mutate   (void)        =0;
+      double Crossover(Gene* pMate, double selfValue, double mateVal, double F1, double F2, int np);
+      double Mutate (double inputValue);
 
       virtual double GetValue(void)       = 0;
       virtual void   SetValue(double val) = 0;
@@ -48,11 +48,6 @@ class Gene
       virtual double GetUpr(void) = 0;
       virtual double GetLwr(void) = 0;
 
-      virtual double GetMutationRate(void) = 0;
-      virtual void   SetMutationRate(double rate) = 0;
-
-      virtual double GetCrossoverRate(void) = 0;
-      virtual void   SetCrossoverRate(double rate) = 0;
 }; /* end class Gene */
 
 /******************************************************************************
@@ -71,14 +66,12 @@ to an infeasible one.
 class  RealEncodedGene : public Gene
 {   
    public:
-      RealEncodedGene(double val, double lwr, double upr, double rate, double xover);
+      RealEncodedGene(void);
+      RealEncodedGene(double val, double lwr, double upr);
      ~RealEncodedGene(void){ DBG_PRINT("RealEncodedGene::DTOR"); Destroy(); }
 
      void Destroy(void) { IncDtorCount();}
      
-     void Crossover(Gene * pMate, double F1, double F2, int np);
-     int Mutate    (void);
-
      void Copy              (Gene * pCopy);
      Gene * CreateRandomGene(void);
      Gene * CreateGene      (double val);
@@ -86,22 +79,17 @@ class  RealEncodedGene : public Gene
      void   SetValue(double val) { m_Value = val;}
      double GetValue(void)       { return m_Value;}    
      double GetUpr  (void)       { return m_UpperBound;}
+     void SetUpr(double val) { m_UpperBound = val; }
      double GetLwr  (void)       { return m_LowerBound;}
+     void SetLwr(double val) { m_LowerBound = val; }
 
-     double GetMutationRate(void)       { return m_MutationRate;}
-     void   SetMutationRate(double rate){ m_MutationRate = rate;}
+     double GetRandomValue(void);
 
-     double GetCrossoverRate(void)       { return m_CrossoverRate;}
-     void   SetCrossoverRate(double rate){ m_CrossoverRate = rate;}
 
    private:      
       double m_Value;
       double m_LowerBound;
       double m_UpperBound;
-
-   protected:                                    
-      double m_MutationRate;
-      double m_CrossoverRate;
 
 }; /* end class RealEncodedGene */
 
@@ -121,7 +109,7 @@ to an infeasible one.
 class  BinaryEncodedGene : public Gene
 {   
    public:
-      BinaryEncodedGene(double val, double lwr, double upr, double rate, double xover);
+      BinaryEncodedGene(double val, double lwr, double upr);
      ~BinaryEncodedGene(void){ DBG_PRINT("BinaryEncodedGene::DTOR"); Destroy(); }
 
      void Destroy(void) { IncDtorCount();}
@@ -137,10 +125,7 @@ class  BinaryEncodedGene : public Gene
      double GetValue(void)       { return (double)(m_Value+m_Offset);}
      double GetUpr  (void)       { return m_UpperBound;}
      double GetLwr  (void)       { return m_LowerBound;}
-     double GetMutationRate(void)       { return m_MutationRate;}
-     void   SetMutationRate(double rate){ m_MutationRate = rate;}
-     double GetCrossoverRate(void)       { return m_CrossoverRate;}
-     void   SetCrossoverRate(double rate){ m_CrossoverRate = rate;}
+
 
    private:      
       int GetCodedValue(void) { return m_Value;}
@@ -154,11 +139,8 @@ class  BinaryEncodedGene : public Gene
       int m_NumBits; //bits required to represent full range
       int m_BitMask; //mask that zeros unused bits
 
-   protected:                                    
-      double m_MutationRate;
-      double m_CrossoverRate;
-}; /* end class BinaryEncodedGene */
+}; 
 
-#endif /* GENE_H */
+#endif 
 
 

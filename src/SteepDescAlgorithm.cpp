@@ -204,7 +204,7 @@ void SteepDescAlgorithm::Optimize(void)
      {
         for(j = 0; j < m_NumParams; j++)
         {
-           pGroup->GetParamPtr(j)->SetEstVal(pmin[j]);
+           pGroup->GetParamPtr(j)->SetEstimatedValueTransformed(pmin[j]);
 	    }
 	    curVal = fmin;
 	    m_pModel->SetObjFuncVal(fmin);
@@ -237,14 +237,14 @@ void SteepDescAlgorithm::Optimize(void)
       for(j = 0; j < m_NumParams; j++)
       {
          pParam = pGroup->GetParamPtr(j);
-         tmp = pParam->GetEstVal();
-         upr = pParam->GetUprBnd();
-         lwr = pParam->GetLwrBnd();
+         tmp = pParam->GetEstimatedValueTransformed();
+         upr = pParam->GetUpperBoundTransformed();
+         lwr = pParam->GetLowerBoundTransformed();
 
          tst = tmp + m_pSearchDir[j];
          if(tst > upr){ tst = (tmp + upr)/2.00; m_NumUprViols++;}
          if(tst < lwr){ tst = (tmp + lwr)/2.00; m_NumLwrViols++;}
-         pParam->SetEstVal(tst);
+         pParam->SetEstimatedValueTransformed(tst);
       }/* end for() */
       curVal = m_pModel->Execute();
       m_AlgCount++;
@@ -253,7 +253,7 @@ void SteepDescAlgorithm::Optimize(void)
       {
          for(j = 0; j < m_NumParams; j++)
          {
-            pGroup->GetParamPtr(j)->SetEstVal(pmin[j]);
+            pGroup->GetParamPtr(j)->SetEstimatedValueTransformed(pmin[j]);
 		 }
 		 m_pModel->SetObjFuncVal(fmin);
 	     curVal = fmin;

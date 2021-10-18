@@ -523,8 +523,8 @@ double SAAlgorithm::InitMaster(int nprocs)
       for(j = 0; j < np; j++)
       {
          //bounds
-         lwr = pGroup->GetParamPtr(j)->GetLwrBnd();
-         upr = pGroup->GetParamPtr(j)->GetUprBnd();
+         lwr = pGroup->GetParamPtr(j)->GetLowerBoundTransformed();
+         upr = pGroup->GetParamPtr(j)->GetUpperBoundTransformed();
          //10% of range
          range = 0.1*(upr - lwr);
          //random number from -0.5 to +0.5
@@ -532,7 +532,7 @@ double SAAlgorithm::InitMaster(int nprocs)
          //-5% to +5% of range
          r *= range;
          //tack on initial guess
-         r += pGroup->GetParamPtr(j)->GetEstVal();
+         r += pGroup->GetParamPtr(j)->GetEstimatedValueTransformed();
          //enforce bounds
          if(r > upr) r = upr;
          if(r < lwr) r = lwr;
@@ -808,7 +808,7 @@ step2:
    
    delete [] pdE;
 
-   return (m_pModel->GetObjFuncVal());
+   return (m_pModel->GetObjectiveFunctionValue());
 }/* end Melt() */
 
 /******************************************************************************
@@ -1403,9 +1403,9 @@ double SAAlgorithm::Transition(double initVal)
    {
       //perterb the parameter to a neighboring state (+/- 10% of range)
       pParam = pGroup->GetParamPtr(i);
-      curval = pParam->GetEstVal();
-      upr = pParam->GetUprBnd();
-      lwr = pParam->GetLwrBnd();
+      curval = pParam->GetEstimatedValueTransformed();
+      upr = pParam->GetUpperBoundTransformed();
+      lwr = pParam->GetLowerBoundTransformed();
       if(rangeType == 0) //absolute range
       {
          range = upr - lwr;
@@ -1451,7 +1451,7 @@ double SAAlgorithm::Transition(double initVal)
       if(val < lwr){val = (curval+lwr)/2.00; m_NumLwrViols++;}
       double bst = m_pTransBackup->GetParam(i);
       val = TelescopicCorrection(lwr, upr, bst, a, val);
-      pParam->SetEstVal(val);
+      pParam->SetEstimatedValueTransformed(val);
    }
    m_pModel->PerformParameterCorrections();
 	fcur = m_pModel->Execute();
@@ -1525,9 +1525,9 @@ void SAAlgorithm::TransitionSend(double finit, int whichProc)
    {
       //perterb the parameter to a neighboring state (+/- 10% of range)
       pParam = pGroup->GetParamPtr(i);
-      curval = pParam->GetEstVal();
-      upr = pParam->GetUprBnd();
-      lwr = pParam->GetLwrBnd();
+      curval = pParam->GetEstimatedValueTransformed();
+      upr = pParam->GetUpperBoundTransformed();
+      lwr = pParam->GetLowerBoundTransformed();
       if(rangeType == 0) //absolute range
       {
          range = upr - lwr;
@@ -1573,7 +1573,7 @@ void SAAlgorithm::TransitionSend(double finit, int whichProc)
       if(val < lwr){printf("val = %E is too small\n", val); val = (curval+lwr)/2.00; m_NumLwrViols++;}
       double bst = m_pBest[i];
       val = TelescopicCorrection(lwr, upr, bst, a, val);
-      pParam->SetEstVal(val);
+      pParam->SetEstimatedValueTransformed(val);
    }
    m_pModel->PerformParameterCorrections();
    pGroup->ReadParams(newParams);
@@ -1696,9 +1696,9 @@ double SAAlgorithm::GaussTransition(double initVal)
    {
       //perterb the parameter to a neighboring state (+/- 10% of range)
       pParam = pGroup->GetParamPtr(i);
-      upr = pParam->GetUprBnd();
-      lwr = pParam->GetLwrBnd();
-      val = curVal = pParam->GetEstVal();
+      upr = pParam->GetUpperBoundTransformed();
+      lwr = pParam->GetLowerBoundTransformed();
+      val = curVal = pParam->GetEstimatedValueTransformed();
 
       //1 std. dev. should not cover more than 68% of the range
       range = upr - lwr;
@@ -1706,7 +1706,7 @@ double SAAlgorithm::GaussTransition(double initVal)
       if(sd > sdmax) sdi = sdmax;
       else sdi = sd;
 
-      val = curVal = pParam->GetEstVal();
+      val = curVal = pParam->GetEstimatedValueTransformed();
 
       // epsilon perturbation using normal distribution
       // centered on childVal with standard deviation estimated 
@@ -1722,7 +1722,7 @@ double SAAlgorithm::GaussTransition(double initVal)
 
       double bst = m_pBest[i];
       val = TelescopicCorrection(lwr, upr, bst, a, val);
-      pParam->SetEstVal(val);
+      pParam->SetEstimatedValueTransformed(val);
    }
    m_pModel->PerformParameterCorrections();
 	curVal = m_pModel->Execute();
@@ -1795,8 +1795,8 @@ void SAAlgorithm::GaussTransitionSend(double finit, int whichProc)
    {
       //perterb the parameter to a neighboring state (+/- 10% of range)
       pParam = pGroup->GetParamPtr(i);
-      upr = pParam->GetUprBnd();
-      lwr = pParam->GetLwrBnd();
+      upr = pParam->GetUpperBoundTransformed();
+      lwr = pParam->GetLowerBoundTransformed();
 
       //1 std. dev. should not cover more than 68% of the range
       range = upr - lwr;
@@ -1804,7 +1804,7 @@ void SAAlgorithm::GaussTransitionSend(double finit, int whichProc)
       if(sd > sdmax) sdi = sdmax;
       else sdi = sd;
 
-      val = curVal = pParam->GetEstVal();
+      val = curVal = pParam->GetEstimatedValueTransformed();
 
       // epsilon perturbation using normal distribution
       // centered on childVal with standard deviation estimated 
@@ -1821,7 +1821,7 @@ void SAAlgorithm::GaussTransitionSend(double finit, int whichProc)
       double bst = m_pBest[i];
       val = TelescopicCorrection(lwr, upr, bst, a, val);
 
-      pParam->SetEstVal(val);
+      pParam->SetEstimatedValueTransformed(val);
    }/* end for() */
    m_pModel->PerformParameterCorrections();
    pGroup->ReadParams(newParams);
@@ -1953,9 +1953,9 @@ void SAAlgorithm::GenerateRandomMove(ParameterABC * pParam)
    double adjVal; //adjusted value 
    double vmin, vmax, vavg;
 
-   curVal = pParam->GetEstVal();
-   upr = pParam->GetUprBnd();
-   lwr = pParam->GetLwrBnd();
+   curVal = pParam->GetEstimatedValueTransformed();
+   upr = pParam->GetUpperBoundTransformed();
+   lwr = pParam->GetLowerBoundTransformed();
    range = upr - lwr;
       
    if((range >= 1.00) && (range < 10.00) && 
@@ -1989,7 +1989,7 @@ void SAAlgorithm::GenerateRandomMove(ParameterABC * pParam)
    if(adjVal > upr){adjVal = (upr+curVal)/2.00; m_NumUprViols++;}
    if(adjVal < lwr){adjVal = (curVal+lwr)/2.00; m_NumLwrViols++;}
    
-   pParam->SetEstVal(adjVal);
+   pParam->SetEstimatedValueTransformed(adjVal);
 } /* end GenerateRandomMove() */
 
 /******************************************************************************

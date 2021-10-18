@@ -202,7 +202,7 @@ double OptSearchClass::CalcF(double alpha, double * fmin, double * xmin)
    //backup initial location of design point
    pGroup = m_pModel->GetParamGroupPtr();
    pGroup->ReadParams(m_pStartPoint);
-   Finit = m_pModel->GetObjFuncVal();
+   Finit = m_pModel->GetObjectiveFunctionValue();
    pGroup->ReadParams(m_pAlphaPoint);
    
    /*---------------------------------------------------------
@@ -217,8 +217,8 @@ double OptSearchClass::CalcF(double alpha, double * fmin, double * xmin)
       m_pAlphaPoint[i] = m_pAlphaPoint[i] + alpha * m_pDir[i];
 
       //if it's out of bounds, move half the distance to upr/lwr
-      upr = pGroup->GetParamPtr(i)->GetUprBnd();
-      lwr = pGroup->GetParamPtr(i)->GetLwrBnd();
+      upr = pGroup->GetParamPtr(i)->GetUpperBoundTransformed();
+      lwr = pGroup->GetParamPtr(i)->GetLowerBoundTransformed();
       if(m_pAlphaPoint[i] > upr)
 	  {
 		  m_pAlphaPoint[i] = (upr+old_pi)/2.00;
@@ -262,7 +262,7 @@ double OptSearchClass::CalcStepSize(Unchangeable1DArray pDir, double * fmin, dou
 
    //store current setting
    m_pModel->GetParamGroupPtr()->ReadParams(m_pStepPoint);
-   Finit = m_pModel->GetObjFuncVal();
+   Finit = m_pModel->GetObjectiveFunctionValue();
 
    //store direction
    for(i = 0; i < m_NumParams; i++)
@@ -310,7 +310,7 @@ MinBracketStruct * OptSearchClass::BracketMinimum(double a, double b, double * f
    double fa, fb, c, fc;
 
    //initial values
-   Fcur = m_pModel->GetObjFuncVal();
+   Fcur = m_pModel->GetObjectiveFunctionValue();
 
    a = LimitStepSize(a, m_pDir);
    fa = CalcF(a, fmin, xmin);
@@ -674,11 +674,11 @@ double OptSearchClass::LimitStepSize(double alpha, double * pDir)
    ---------------------------------------------------------*/
    for(i = 0; i < m_NumParams; i++)
    {
-      opi = m_pModel->GetParamGroupPtr()->GetParamPtr(i)->GetEstVal();
+      opi = m_pModel->GetParamGroupPtr()->GetParamPtr(i)->GetEstimatedValueTransformed();
 	  pi = opi + alpha * pDir[i];
       //if it's out of bounds, move half the distance to upr/lwr
-      upr = m_pModel->GetParamGroupPtr()->GetParamPtr(i)->GetUprBnd();
-      lwr = m_pModel->GetParamGroupPtr()->GetParamPtr(i)->GetLwrBnd();
+      upr = m_pModel->GetParamGroupPtr()->GetParamPtr(i)->GetUpperBoundTransformed();
+      lwr = m_pModel->GetParamGroupPtr()->GetParamPtr(i)->GetLowerBoundTransformed();
       if(pi > upr)
 	  {
          alpha = (upr - opi)/pDir[i];

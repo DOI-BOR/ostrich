@@ -292,5 +292,15 @@ typedef struct GLUE_SAMPLE_STRUCT
 	int n;      //number of parameters
 }SampleStruct;
 
+
+enum MPI_TAGS {
+	tag_directory, tag_solve, tag_archive, tag_textLength, tag_textFile, tag_fileLength, tag_filePairs, tag_obsLengthNum, 
+	tag_obsLengthGroup, tag_obsName, tag_obsValue, tag_obsWeight, tag_obsFile, tag_obsKeyword, tag_obsLine, tag_obsColumn,
+	tag_obsToken, tag_obsAugmented, tag_obsGroup, tag_paramTotalNum, tag_paramTotalReal,
+	tag_paramRealName, tag_paramRealInit, tag_paramRealLower, tag_paramRealUpper, tag_paramRealIn, tag_paramRealOst,
+	tag_paramRealOut, tag_paramRealFmt, tag_paramTotalInt, tag_paramInitName, tag_paramIntInit,
+	tag_paramIntLower, tag_paramIntUpper, tag_data, tag_continue, tag_preserveBest
+};
+
 #endif /* MY_TYPES_H */
 

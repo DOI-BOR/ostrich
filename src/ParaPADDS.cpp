@@ -379,8 +379,8 @@ void ParaPADDS::Optimize(void)
 
    for (int i = 0; i < m_num_dec; i++)
    { 
-      S_min[i] = pGroup->GetParamPtr(i)->GetLwrBnd();
-      S_max[i] = pGroup->GetParamPtr(i)->GetUprBnd();
+      S_min[i] = pGroup->GetParamPtr(i)->GetLowerBoundTransformed();
+      S_max[i] = pGroup->GetParamPtr(i)->GetUpperBoundTransformed();
    }
 
    #if(PARA_PADDS_DEBUG == 1)

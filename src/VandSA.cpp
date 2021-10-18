@@ -593,8 +593,8 @@ double VandSA::InitMaster(int nprocs)
       for(j = 0; j < np; j++)
       {
          //bounds
-         lwr = pGroup->GetParamPtr(j)->GetLwrBnd();
-         upr = pGroup->GetParamPtr(j)->GetUprBnd();
+         lwr = pGroup->GetParamPtr(j)->GetLowerBoundTransformed();
+         upr = pGroup->GetParamPtr(j)->GetUpperBoundTransformed();
          //10% of range
          range = 0.1*(upr - lwr);
          //random number from -0.5 to +0.5
@@ -602,7 +602,7 @@ double VandSA::InitMaster(int nprocs)
          //-5% to +5% of range
          r *= range;
          //tack on initial guess
-         r += pGroup->GetParamPtr(j)->GetEstVal();
+         r += pGroup->GetParamPtr(j)->GetEstimatedValueTransformed();
          //enforce bounds
          if(r > upr) r = upr;
          if(r < lwr) r = lwr;
@@ -791,7 +791,7 @@ double VandSA::Melt(double initVal)
       m_TempFactor = pow((1.00/m_InitTemp), 1.00/(double)m_MaxOuter);
    }
 
-   return (m_pModel->GetObjFuncVal());
+   return (m_pModel->GetObjectiveFunctionValue());
 }/* end Melt() */
 
 /******************************************************************************
@@ -1080,7 +1080,7 @@ double VandSA::Equilibrate(double initVal)
       for(i = 0; i < n; i++)
       {
          pParam    = pGroup->GetParamPtr(i);
-         m_x[i][m] = pParam->GetEstVal();
+         m_x[i][m] = pParam->GetEstimatedValueTransformed();
       }
 
       //update current best
@@ -1249,7 +1249,7 @@ double VandSA::EquilibrateMaster(double fbest, int nprocs)
       for(i = 0; i < n; i++)
       {
          pParam = pGroup->GetParamPtr(i);
-         m_x[i][num_recv] = pParam->GetEstVal();
+         m_x[i][num_recv] = pParam->GetEstimatedValueTransformed();
       }
 
       //update current best
@@ -1425,16 +1425,16 @@ double VandSA::Transition(double initVal)
    for(i = 0; i < n; i++)
    {
       pParam = pGroup->GetParamPtr(i);
-      upr = pParam->GetUprBnd();
-      lwr = pParam->GetLwrBnd();
-      val = pParam->GetEstVal();
+      upr = pParam->GetUpperBoundTransformed();
+      lwr = pParam->GetLowerBoundTransformed();
+      val = pParam->GetEstimatedValueTransformed();
       adj = val + m_dx[i];
       //if out of bounds, move half the distance
       if(adj > upr){adj = (upr+val)/2.00; m_NumUprViols++;}
       if(adj < lwr){adj = (val+lwr)/2.00; m_NumLwrViols++;}
       double bst = m_pTransBackup->GetParam(i);
       adj = TelescopicCorrection(lwr, upr, bst, a, adj);
-      pParam->SetEstVal(adj);      
+      pParam->SetEstimatedValueTransformed(adj);      
    }
    m_pModel->PerformParameterCorrections();
 	curVal = m_pModel->Execute();
@@ -1517,9 +1517,9 @@ void VandSA::TransitionSend(double finit, int whichProc)
    for(i = 0; i < n; i++)
    {
       pParam = pGroup->GetParamPtr(i);
-      upr = pParam->GetUprBnd();
-      lwr = pParam->GetLwrBnd();
-      val = pParam->GetEstVal();
+      upr = pParam->GetUpperBoundTransformed();
+      lwr = pParam->GetLowerBoundTransformed();
+      val = pParam->GetEstimatedValueTransformed();
       adj = val + m_dx[i];
       //if out of bounds, move half the distance
       if(adj > upr){adj = (upr+val)/2.00; m_NumUprViols++;}
@@ -1650,9 +1650,9 @@ double VandSA::GaussTransition(double initVal)
    {
       //perterb the parameter to a neighboring state (+/- 10% of range)
       pParam = pGroup->GetParamPtr(i);
-      upr = pParam->GetUprBnd();
-      lwr = pParam->GetLwrBnd();
-      val = curVal = pParam->GetEstVal();
+      upr = pParam->GetUpperBoundTransformed();
+      lwr = pParam->GetLowerBoundTransformed();
+      val = curVal = pParam->GetEstimatedValueTransformed();
 
       //1 std. dev. should not cover more than 68% of the range
       range = upr - lwr;
@@ -1660,7 +1660,7 @@ double VandSA::GaussTransition(double initVal)
       if(sd > sdmax) sdi = sdmax;
       else sdi = sd;
 
-      val = curVal = pParam->GetEstVal();
+      val = curVal = pParam->GetEstimatedValueTransformed();
 
       // epsilon perturbation using normal distribution
       // centered on childVal with standard deviation estimated 
@@ -1676,7 +1676,7 @@ double VandSA::GaussTransition(double initVal)
 
       double bst = m_pBest[i];
       val = TelescopicCorrection(lwr, upr, bst, a, val);
-      pParam->SetEstVal(val);
+      pParam->SetEstimatedValueTransformed(val);
    }
    m_pModel->PerformParameterCorrections();
 	curVal = m_pModel->Execute();
@@ -1749,8 +1749,8 @@ void VandSA::GaussTransitionSend(double finit, int whichProc)
    {
       //perterb the parameter to a neighboring state (+/- 10% of range)
       pParam = pGroup->GetParamPtr(i);
-      upr = pParam->GetUprBnd();
-      lwr = pParam->GetLwrBnd();
+      upr = pParam->GetUpperBoundTransformed();
+      lwr = pParam->GetLowerBoundTransformed();
 
       //1 std. dev. should not cover more than 68% of the range
       range = upr - lwr;
@@ -1758,7 +1758,7 @@ void VandSA::GaussTransitionSend(double finit, int whichProc)
       if(sd > sdmax) sdi = sdmax;
       else sdi = sd;
 
-      val = curVal = pParam->GetEstVal();
+      val = curVal = pParam->GetEstimatedValueTransformed();
 
       // epsilon perturbation using normal distribution
       // centered on childVal with standard deviation estimated 
@@ -1775,7 +1775,7 @@ void VandSA::GaussTransitionSend(double finit, int whichProc)
       double bst = m_pBest[i];
       val = TelescopicCorrection(lwr, upr, bst, a, val);
 
-      pParam->SetEstVal(val);
+      pParam->SetEstimatedValueTransformed(val);
    }/* end for() */
    m_pModel->PerformParameterCorrections();
    pGroup->ReadParams(newParams);
@@ -1906,9 +1906,9 @@ void VandSA::GenerateRandomMove(ParameterABC * pParam)
    double lwr; //lower limit of current move
    double adjVal; //adjusted value 
 
-   upr = pParam->GetUprBnd();
-   lwr = pParam->GetLwrBnd();
-   curVal = pParam->GetEstVal();
+   upr = pParam->GetUpperBoundTransformed();
+   lwr = pParam->GetLowerBoundTransformed();
+   curVal = pParam->GetEstimatedValueTransformed();
    width  = (upr - lwr);
    if((width >= 1.00) && (width < 10.00) && 
       (strcmp(pParam->GetType(), "real") != 0)) width = 10.00;
@@ -1923,7 +1923,7 @@ void VandSA::GenerateRandomMove(ParameterABC * pParam)
    if(adjVal > upr){adjVal = (upr+curVal)/2.00; m_NumUprViols++;}
    if(adjVal < lwr){adjVal = (curVal+lwr)/2.00; m_NumLwrViols++;}
    
-   pParam->SetEstVal(adjVal);
+   pParam->SetEstimatedValueTransformed(adjVal);
 } /* end GenerateRandomMove() */
 
 /******************************************************************************

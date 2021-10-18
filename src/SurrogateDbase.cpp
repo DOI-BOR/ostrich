@@ -301,7 +301,7 @@ void SurrogateDbase::Insert
             
          for(k = 0; k < m_NumParams; k++)
          {
-            val = pGroup->GetParamPtr(k)->GetEstVal();
+            val = pGroup->GetParamPtr(k)->GetEstimatedValueTransformed();
             if(m_pDbase[i].pParams[k] != val)
             {
                found = false;
@@ -328,7 +328,7 @@ void SurrogateDbase::Insert
 
    for(i = 0; i < m_NumParams; i++)
    {
-      m_pDbase[j].pParams[i] = pGroup->GetParamPtr(i)->GetEstVal();
+      m_pDbase[j].pParams[i] = pGroup->GetParamPtr(i)->GetEstimatedValueTransformed();
    }/* end for() */
    m_pDbase[j].F = F;
    m_pDbase[j].id = id;

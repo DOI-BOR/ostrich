@@ -109,7 +109,7 @@ Returns the line number associated with the response variable.
 int ResponseVar::GetLine(void)
 {
    if(m_pLine != NULL){ m_Line = (int)(m_pLine->GetTransformedVal());}
-   if(m_pTiedLine != NULL){ m_Line = (int)(m_pTiedLine->GetEstVal());}
+   if(m_pTiedLine != NULL){ m_Line = (int)(m_pTiedLine->GetEstimatedValueTransformed());}
    return m_Line;
 } /* end GetLine() */
 
@@ -121,7 +121,7 @@ Returns the column associated with the response variable
 int ResponseVar::GetColumn(void)
 {
    if(m_pCol != NULL){ m_Column = (int)(m_pCol->GetTransformedVal());}
-   if(m_pTiedCol != NULL){ m_Column= (int)(m_pTiedCol->GetEstVal());}
+   if(m_pTiedCol != NULL){ m_Column= (int)(m_pTiedCol->GetEstimatedValueTransformed());}
 
   return m_Column;
 } /* end GetColumn() */

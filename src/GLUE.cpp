@@ -207,8 +207,8 @@ void GLUE::Optimize(void)
       {
          for(j = 0; j < num; j++) //for each parameter
          {
-            lwr = pGroup->GetParamPtr(j)->GetLwrBnd();
-            upr = pGroup->GetParamPtr(j)->GetUprBnd();
+            lwr = pGroup->GetParamPtr(j)->GetLowerBoundTransformed();
+            upr = pGroup->GetParamPtr(j)->GetUpperBoundTransformed();
 
             range = upr - lwr;
             r = (double)MyRand() / (double)MY_RAND_MAX;

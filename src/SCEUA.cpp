@@ -790,7 +790,7 @@ void SCEUA::sceua
       m_pModel->PerformParameterCorrections();
       for(j = 0; j < nopt; j++)
       {
-         xx[j] = m_pModel->GetParamGroupPtr()->GetParamPtr(j)->GetEstVal();
+         xx[j] = m_pModel->GetParamGroupPtr()->GetParamPtr(j)->GetEstimatedValueTransformed();
          x[0][j] = xx[j];
       }
       xf[0] = m_pModel->Execute();
@@ -832,7 +832,7 @@ label_restart:
       m_pModel->PerformParameterCorrections();
       for(j = 0; j < nopt; j++)
       {
-         xx[j] = m_pModel->GetParamGroupPtr()->GetParamPtr(j)->GetEstVal();
+         xx[j] = m_pModel->GetParamGroupPtr()->GetParamPtr(j)->GetEstimatedValueTransformed();
          x[i][j] = xx[j];
       }
       xf[i] = m_pModel->Execute();
@@ -1284,7 +1284,7 @@ void SCEUA::cce
    for(j = 0; j < m; j++) snew[j] = TelescopicCorrection(bl[j], bu[j], sb[j], eb, snew[j]);
    m_pModel->GetParamGroupPtr()->WriteParams(snew);
    m_pModel->PerformParameterCorrections();
-   for(j = 0; j < m; j++) snew[j] = m_pModel->GetParamGroupPtr()->GetParamPtr(j)->GetEstVal();
+   for(j = 0; j < m; j++) snew[j] = m_pModel->GetParamGroupPtr()->GetParamPtr(j)->GetEstimatedValueTransformed();
    fnew = m_pModel->Execute(); 
    if (fnew < m_fSaved)
    {
@@ -1311,7 +1311,7 @@ void SCEUA::cce
    WriteInnerEval(*icall+1, m_NumEvoSteps, '.');
    m_pModel->GetParamGroupPtr()->WriteParams(snew);
    m_pModel->PerformParameterCorrections();
-   for(j = 0; j < m; j++) snew[j] = m_pModel->GetParamGroupPtr()->GetParamPtr(j)->GetEstVal();
+   for(j = 0; j < m; j++) snew[j] = m_pModel->GetParamGroupPtr()->GetParamPtr(j)->GetEstimatedValueTransformed();
    fnew = m_pModel->Execute();
    if (fnew < m_fSaved)
    {
@@ -1339,7 +1339,7 @@ void SCEUA::cce
    WriteInnerEval(*icall+1, m_NumEvoSteps, '.');
    m_pModel->GetParamGroupPtr()->WriteParams(snew);
    m_pModel->PerformParameterCorrections();
-   for(j = 0; j < m; j++) snew[j] = m_pModel->GetParamGroupPtr()->GetParamPtr(j)->GetEstVal();
+   for(j = 0; j < m; j++) snew[j] = m_pModel->GetParamGroupPtr()->GetParamPtr(j)->GetEstimatedValueTransformed();
    fnew = m_pModel->Execute();
    if (fnew < m_fSaved)
    {
@@ -1711,9 +1711,9 @@ void SCEUA::InitFromFile(IroncladString pFileName)
 
    for(i = 0; i < m_np; i++)
    {
-      m_pParams[i] = pGroup->GetParamPtr(i)->GetEstVal();
-      m_pLower[i] = pGroup->GetParamPtr(i)->GetLwrBnd();
-      m_pUpper[i] = pGroup->GetParamPtr(i)->GetUprBnd();
+      m_pParams[i] = pGroup->GetParamPtr(i)->GetEstimatedValueTransformed();
+      m_pLower[i] = pGroup->GetParamPtr(i)->GetLowerBoundTransformed();
+      m_pUpper[i] = pGroup->GetParamPtr(i)->GetUpperBoundTransformed();
    }/* end for() */
 
    //read in SCEUA configuration

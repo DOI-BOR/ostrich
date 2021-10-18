@@ -304,7 +304,7 @@ Unchangeable2DArray OptMathClass::CalcHessian(void)
       }
       else if(m_DiffIncType == FD_RANGE_REL)
       {
-         double range = pParamGroup->GetParamPtr(i)->GetUprBnd() - pParamGroup->GetParamPtr(i)->GetLwrBnd();
+         double range = pParamGroup->GetParamPtr(i)->GetUpperBoundTransformed() - pParamGroup->GetParamPtr(i)->GetLowerBoundTransformed();
          dxi = fabs(m_pDiffInc[i])*range;
       }
       else //value-relative
@@ -317,7 +317,7 @@ Unchangeable2DArray OptMathClass::CalcHessian(void)
       next = x[i] + dxi;
       dxi = next - x[i];
       pdx[i] = dxi;
-      if((x[i]+2*dxi) > pParamGroup->GetParamPtr(i)->GetUprBnd())
+      if((x[i]+2*dxi) > pParamGroup->GetParamPtr(i)->GetUpperBoundTransformed())
             pdx[i] = -dxi;      
    }/* end for() */
 
@@ -455,7 +455,7 @@ retry:
    //read in current point
    pGroup->ReadParams(m_pDiffPoint);
    //assign middle obj. function 
-   midObj = m_pModel->GetObjFuncVal();
+   midObj = m_pModel->GetObjectiveFunctionValue();
 
    /*----------------------------------- 
    compute left-hand side and right-hand 
@@ -464,9 +464,9 @@ retry:
    ------------------------------------*/   
    //retrieve parameter limits
    pParam = pGroup->GetParamPtr(parmIdx);
-   cur = pParam->GetEstVal();
-   upr = pParam->GetUprBnd();
-   lwr = pParam->GetLwrBnd();
+   cur = pParam->GetEstimatedValueTransformed();
+   upr = pParam->GetUpperBoundTransformed();
+   lwr = pParam->GetLowerBoundTransformed();
    //setup step size
    midParm = m_pDiffPoint[parmIdx];
 
@@ -664,7 +664,7 @@ double OptMathClass::CalcOptimalStepSize(int idx)
    //read in the point at which the optimal step size will be calculated
    m_pModel->GetParamGroupPtr()->ReadParams(m_pStepPoint);
    bMid = m_pStepPoint[idx];
-   Fmid = m_pModel->GetObjFuncVal();
+   Fmid = m_pModel->GetObjectiveFunctionValue();
 
    /*------------------------------------------------------------
    This loop iterates on the step size db, until Yager's criteria
@@ -727,7 +727,7 @@ Unchangeable1DArray OptMathClass::CalcGradient(double * fmin, double * pmin)
    //save the design point at which the gradient is to be calculated
    pParamGroup = m_pModel->GetParamGroupPtr();
    pParamGroup->ReadParams(m_pGradPoint);
-   Finit = m_pModel->GetObjFuncVal();
+   Finit = m_pModel->GetObjectiveFunctionValue();
 
    //compute partial derivatives, filling gradient matrix
    MPI_Comm_size(MPI_COMM_WORLD, &np);

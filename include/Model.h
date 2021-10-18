@@ -21,6 +21,7 @@ Version History
                   Model class and the SurrogateModel class.
 07-16-07    lsm   Added support for the EPA SuperMUSE cluster
 ******************************************************************************/
+
 #ifndef MODEL_H
 #define MODEL_H
 
@@ -41,10 +42,6 @@ class DatabaseABC;
 class SurrogateParameterGroup;
 class ParameterCorrection;
 
-extern "C" {
-   double ExtractBoxCoxValue(void);
-}
-
 /******************************************************************************
 class Model
 
@@ -60,7 +57,7 @@ class Model : public ModelABC
      ObservationGroup *  GetObsGroupPtr(void);
      ParameterGroup   *  GetParamGroupPtr(void);     
      ObjectiveFunction * GetObjFuncPtr(void);
-     double GetObjFuncVal(void) { return m_CurObjFuncVal;}
+     double GetObjectiveFunctionValue(void) { return m_CurObjFuncVal;}
      void SetObjFuncVal(double curVal) { m_CurObjFuncVal = curVal;}
      int GetCounter(void);
      void SetCounter(int count);
@@ -105,10 +102,10 @@ class Model : public ModelABC
       bool m_InternalModel;
       bool m_bCheckGlobalSens;
       bool m_bUseSurrogates;
-      bool m_bPreserveModelOutput;
+      bool m_bSave;
       bool m_bWarmStart;
       bool m_bCaching;
-      bool m_bSave;
+      bool m_bPreserveModelOutput;
       bool m_bDiskless;
       bool m_bMultiObjProblem;
       bool m_firstCall;
@@ -145,7 +142,7 @@ class SurrogateModel : public ModelABC
      ObservationGroup *  GetObsGroupPtr(void);
      ParameterGroup   *  GetParamGroupPtr(void) { return NULL;}
      ObjectiveFunction * GetObjFuncPtr(void);
-     double GetObjFuncVal(void) { return m_CurObjFuncVal;}
+     double GetObjectiveFunctionValue(void) { return m_CurObjFuncVal;}
      void SetObjFuncVal(double curVal) { m_CurObjFuncVal = curVal;}
      int                 GetCounter(void);
      ObjFuncType GetObjFuncId(void) {return m_ObjFuncId;}

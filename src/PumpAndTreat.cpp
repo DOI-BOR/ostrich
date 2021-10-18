@@ -983,7 +983,8 @@ void PATO::InitWells(void)
             LogError(ERR_FILE_IO, msg);
             ExitProgram(1);         
          }/* end if() */
-         m_pWells[i].pQ->SetThreshVal(-m_RateThresh, m_RateThresh, 0.00);
+         // TODO: renable this behavior
+         //m_pWells[i].pQ->SetThreshVal(-m_RateThresh, m_RateThresh, 0.00);
          
          if(m_ObjType != PATO_OBJ_RATE)
          {
@@ -1332,7 +1333,7 @@ double PATO::CalcPumpingRate(void)
    pump_sum = inj_sum = 0.00;
    for(i = 0; i < m_MaxNumWells; i++)
    {
-      Qi = m_pWells[i].pQ->GetEstVal();
+      Qi = m_pWells[i].pQ->GetEstimatedValueTransformed();
       //pumping wells
       if(Qi > m_RateThresh)
       {
@@ -1376,7 +1377,7 @@ double PATO::CalcOperationCost(void)
    sum1 = 0.00;
    for(i = 0; i < m_MaxNumWells; i++)
    {
-      Qk = m_pWells[i].pQ->GetEstVal();
+      Qk = m_pWells[i].pQ->GetEstimatedValueTransformed();
       //injection wells
       if(Qk < -m_RateThresh)
       { 
@@ -1397,7 +1398,7 @@ double PATO::CalcOperationCost(void)
    sum2 = 0.00;   
    for(i = 0; i < m_MaxNumWells; i++)
    {
-      Qk = m_pWells[i].pQ->GetEstVal();
+      Qk = m_pWells[i].pQ->GetEstimatedValueTransformed();
       //only compute lift for pumping wells
       if(Qk > m_RateThresh)
       {
@@ -1464,7 +1465,7 @@ double PATO::CalcCapitalCost(void)
    //construction costs for active wells (depends on depth to well)
    for(i = 0; i < m_MaxNumWells; i++)
    {
-      Qi = m_pWells[i].pQ->GetEstVal();
+      Qi = m_pWells[i].pQ->GetEstimatedValueTransformed();
       if((Qi > m_RateThresh) || (Qi < -m_RateThresh))
       { 
          /* Depth of the well is from surface to aquifer base */
@@ -1487,7 +1488,7 @@ double PATO::CalcCapitalCost(void)
    //pump costs (depends on rate and depth to well)
    for(i = 0; i < m_MaxNumWells; i++)
    {
-      Qi = m_pWells[i].pQ->GetEstVal();
+      Qi = m_pWells[i].pQ->GetEstimatedValueTransformed();
       if(Qi > m_RateThresh) //extraction wells only
       { 
          Hi = m_pWells[i].pHead->GetCurrentVal();
@@ -1523,7 +1524,7 @@ double PATO::CalcMayerCost(void)
    //drlling costs for active wells (depends on depth to well)
    for(i = 0; i < m_MaxNumWells; i++)
    {
-      Qi = m_pWells[i].pQ->GetEstVal();
+      Qi = m_pWells[i].pQ->GetEstimatedValueTransformed();
       if((Qi > m_RateThresh) || (Qi < -m_RateThresh))
       { 
          sum1 += m_MayerDrillCF;
@@ -1534,7 +1535,7 @@ double PATO::CalcMayerCost(void)
    //pump costs (depends on number of pumping wells)
    for(i = 0; i < m_MaxNumWells; i++)
    {
-      Qi = m_pWells[i].pQ->GetEstVal();
+      Qi = m_pWells[i].pQ->GetEstimatedValueTransformed();
       if(Qi > m_RateThresh) //extraction wells only
       {             
          m_pWells[i].Cpump = m_MayerPumpCF;
@@ -1563,7 +1564,7 @@ double PATO::CalcTreatmentCost(void)
    //compute total extraction rate
    for(i = 0; i < m_MaxNumWells; i++)
    {
-      Qi = m_pWells[i].pQ->GetEstVal();
+      Qi = m_pWells[i].pQ->GetEstimatedValueTransformed();
       if(Qi > m_RateThresh){ Qtot += Qi;}
    }/* end for() */
 
@@ -1759,9 +1760,9 @@ void PATO::WriteWells(FILE * pFile, int type)
       {
          for(i = 0; i < m_MaxNumWells; i++)
          {
-            x = m_pWells[i].pXloc->GetEstVal();
-            y = m_pWells[i].pYloc->GetEstVal();
-            q = m_pWells[i].pQ->GetEstVal();
+            x = m_pWells[i].pXloc->GetEstimatedValueTransformed();
+            y = m_pWells[i].pYloc->GetEstimatedValueTransformed();
+            q = m_pWells[i].pQ->GetEstimatedValueTransformed();
             if((q < -m_RateThresh) || (q > m_RateThresh)){strcpy(activeStr, "YES");}
             else{strcpy(activeStr, "NO");}
             if(m_pWells[i].pHead != NULL)
@@ -1808,9 +1809,9 @@ void PATO::WriteWells(FILE * pFile, int type)
       {
          for(i = 0; i < m_MaxNumWells; i++)
          {
-            x = m_pWells[i].pXloc->GetEstVal();
-            y = m_pWells[i].pYloc->GetEstVal();
-            q = m_pWells[i].pQ->GetEstVal();
+            x = m_pWells[i].pXloc->GetEstimatedValueTransformed();
+            y = m_pWells[i].pYloc->GetEstimatedValueTransformed();
+            q = m_pWells[i].pQ->GetEstimatedValueTransformed();
             if((q < -m_RateThresh) || (q > m_RateThresh)){strcpy(activeStr, "YES");}
             else{strcpy(activeStr, "NO");}
             if(m_pWells[i].pHead != NULL)
@@ -1869,7 +1870,7 @@ void PATO::WriteWells(FILE * pFile, int type)
       {
          for(i = 0; i < m_MaxNumWells; i++)
          {
-            q = m_pWells[i].pQ->GetEstVal();
+            q = m_pWells[i].pQ->GetEstimatedValueTransformed();
             if((q < -m_RateThresh) || (q > m_RateThresh)){strcpy(activeStr, "YES");}
             else{strcpy(activeStr, "NO");}
             fprintf(pFile, "\n***** Well[%d] Information *****\n", i);

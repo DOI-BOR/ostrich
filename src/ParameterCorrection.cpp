@@ -233,12 +233,12 @@ void ParameterCorrection::Execute(void)
          pParam = GetParameterByName(pResp->GetName());
          if(pParam != NULL)
          {
-            a = pParam->GetEstVal();
+            a = pParam->GetEstimatedValueTransformed();
             b = pResp->GetCurrentVal();
             if(NearlyEqual(a, b) == false)
             {
 	       //printf("%s %E --> %E\n", pResp->GetName(), a, b);
-               pParam->SetEstVal(b);
+               pParam->SetEstimatedValueTransformed(b);
                m_NumCorrections++;
             }/* end if() */
          }/* end if() */

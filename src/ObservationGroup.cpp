@@ -20,6 +20,7 @@ Version History
 #include <string.h>
 #include <stdlib.h>
 #include <math.h>
+#include <iostream>
 
 #include "ObservationGroup.h"
 #include "Observation.h"
@@ -205,8 +206,7 @@ void ObservationGroup::ExtractVals(void)
    //read output files into memory
    m_pObsFiles->ReadOutputFiles();
    
-   for(i = 0; i < m_NumObs; i++)
-   {     
+   for(i = 0; i < m_NumObs; i++) { 
       name = m_pObsList[i]->GetFileName();
       line = m_pObsList[i]->GetLine();
       col = m_pObsList[i]->GetColumn();
@@ -251,6 +251,21 @@ ObservationGroup::ObservationGroup(void)
 
    IncCtorCount();
 }/* end CTOR */
+
+/******************************************************************************
+CTOR
+
+Associates the object with an input file containing the details of each
+observation for the secondary worker
+******************************************************************************/
+ObservationGroup::ObservationGroup(Observation** m_pObsListInput, ValueExtractor* m_pObsFilesInput, int m_NumObsInput, int m_NumGroupsInput) {
+
+    m_pObsList = m_pObsListInput;
+    m_pObsFiles =  m_pObsFilesInput;
+    m_NumObs = m_NumObsInput;
+    m_NumGroups = m_NumGroupsInput;
+
+}
 
 /******************************************************************************
 Copy CTOR

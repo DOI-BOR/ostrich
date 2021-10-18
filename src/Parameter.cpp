@@ -55,35 +55,27 @@ RealParam::SetEstVal()
 Sets the estimated value of the parameter. If the resquested estVal exceeds the
 parameter bounds, the amount of violation is returned.
 ******************************************************************************/
-double RealParam::SetEstVal(double estVal)
-{
+double RealParam::SetEstimatedValueTransformed(double estVal) {
    double viol = 0.00;
    char msg[80];
 
-   if(estVal < m_LwrBnd) 
-   {            
-      sprintf(msg, "%E < lower bound (%E)", estVal, m_LwrBnd);      
+   if(estVal < m_lowerBoundTransformed) {            
+      sprintf(msg, "%E < lower bound (%E)", estVal, m_lowerBoundTransformed);      
       LogError(ERR_PRM_BNDS, msg);
-	  viol = m_LwrBnd - estVal;
-      estVal = m_LwrBnd;
-   }/* end if() */
-   if(estVal > m_UprBnd) 
-   {      
-      sprintf(msg, "%E > upper bound (%E)", estVal, m_UprBnd);
-      LogError(ERR_PRM_BNDS, msg);
-	  viol = estVal - m_UprBnd;
-      estVal = m_UprBnd;
-   }/* end if() */
-
-   //handle parameter threshold
-   if((estVal < m_ThreshUpr) && (estVal > m_ThreshLwr))
-   {
-      estVal = m_ThreshOff;
+	  viol = m_lowerBoundTransformed - estVal;
+      estVal = m_lowerBoundTransformed;
    }
 
-   m_EstVal = estVal;
+   if(estVal > m_upperBoundTransformed) {      
+      sprintf(msg, "%E > upper bound (%E)", estVal, m_upperBoundTransformed);
+      LogError(ERR_PRM_BNDS, msg);
+	  viol = estVal - m_upperBoundTransformed;
+      estVal = m_upperBoundTransformed;
+   }
+
+   m_estimatedValueTransformed = estVal;
    return viol;
-} /* end RealParam::SetEstVal() */
+} 
 
 /******************************************************************************
 RealParam::GetTransformedVal()
@@ -95,9 +87,9 @@ double RealParam::GetTransformedVal(void)
 {
    switch(m_TransID[TX_OST])
    {
-      case(TX_NONE)  : return m_EstVal;
-      case(TX_LOG10) : return pow(10, m_EstVal);
-      case(TX_LN)    : return exp(m_EstVal);
+      case(TX_NONE)  : return m_estimatedValueTransformed;
+      case(TX_LOG10) : return pow(10, m_estimatedValueTransformed);
+      case(TX_LN)    : return exp(m_estimatedValueTransformed);
       default        : return 0.00;
    }/* end switch () */
 } /* end RealParam::GetTransformedVal() */
@@ -107,37 +99,32 @@ RealParam::ConvertOutVal()
 
 Converts the input value based on users choice of output style.
 ******************************************************************************/
-double RealParam::ConvertOutVal(double val)
-{
-   switch(m_TransID[TX_OST])
-   {
+double RealParam::ConvertOutVal(double val) {
+   switch(m_TransID[TX_OST]) {
       case(TX_NONE)  : 
-         switch(m_TransID[TX_OUT])
-         {
+         switch(m_TransID[TX_OUT]) {
             case(TX_NONE)  : return val;
             case(TX_LOG10) : return log10(val);
             case(TX_LN)    : return log(val);
             default        : return 0.00;
-         }/* end switch () */
+         }
       case(TX_LOG10) :          
-         switch(m_TransID[TX_OUT])
-         {
+         switch(m_TransID[TX_OUT]) {
             case(TX_NONE)  : return pow(10, val);
             case(TX_LOG10) : return val;
             case(TX_LN)    : return log(pow(10,val));
             default        : return 0.00;
-         }/* end switch () */
+         }
       case(TX_LN)    : 
-         switch(m_TransID[TX_OUT])
-         {
+         switch(m_TransID[TX_OUT]) {
             case(TX_NONE)  : return exp(val);
             case(TX_LOG10) : return log10(exp(val));
             case(TX_LN)    : return val;
             default        : return 0.00;
-         }/* end switch () */
+         }
       default        : return 0.00;
-   }/* end switch () */
-} /* end RealParam::ConvertOutVal() */
+   }
+} 
 
 /******************************************************************************
 RealParam::ConvertInVal()
@@ -145,21 +132,18 @@ RealParam::ConvertInVal()
 Converts the input value based on users choice of Ostrich style. The resulting
 value will be consistent with the transformation used by the Ostrich program.
 ******************************************************************************/
-double RealParam::ConvertInVal(double val)
-{
+double RealParam::ConvertInVal(double val) {
    switch(m_TransID[TX_OST])
    {
       case(TX_NONE)  : 
-         switch(m_TransID[TX_IN])
-         {
+         switch(m_TransID[TX_IN]) {
             case(TX_NONE)  : return val;
             case(TX_LOG10) : return pow(10, val);
             case(TX_LN)    : return exp(val);
             default        : return 0.00;
-         }/* end switch () */
+         }
       case(TX_LOG10) :      
-         switch(m_TransID[TX_IN])
-         {
+         switch(m_TransID[TX_IN]){
             case(TX_NONE)  : 
             {
                 if (val <= 0.00) { val = NEARLY_ZERO;}
@@ -168,10 +152,9 @@ double RealParam::ConvertInVal(double val)
             case(TX_LOG10) : return val;
             case(TX_LN)    : return log10(exp(val));
             default        : return 0.00;
-         }/* end switch () */
+         }
       case(TX_LN)    : 
-         switch(m_TransID[TX_IN])
-         {
+         switch(m_TransID[TX_IN]) {
             case(TX_NONE)  : 
             {
                if (val <= 0.00) { val = NEARLY_ZERO;}
@@ -180,18 +163,16 @@ double RealParam::ConvertInVal(double val)
             case(TX_LOG10) : return log(pow(10,val));
             case(TX_LN)    : return val;
             default        : return 0.00;
-         }/* end switch () */
+         }
       default        : return 0.00;
-   }/* end switch () */
-} /* end RealParam::ConvertInVal() */
+   }
+} 
 
 /******************************************************************************
 CTOR (RealParam)
 ******************************************************************************/
-RealParam::RealParam(IroncladString name, double initialValue, 
-                     double lowerBound, double upperBound, IroncladString txIn, 
-                     IroncladString txOst, IroncladString txOut, IroncladString fixFmt)
-{
+RealParam::RealParam(IroncladString name, double initialValue, double lowerBound, double upperBound, IroncladString txIn, 
+                     IroncladString txOst, IroncladString txOut, IroncladString fixFmt) {
    int len;
 
    len = (int)strlen(name) + 10;  
@@ -205,10 +186,10 @@ RealParam::RealParam(IroncladString name, double initialValue,
    SetTransformation(TX_OST, txOst);
    SetTransformation(TX_OUT, txOut);
 
-   m_InitVal = ConvertInVal(initialValue);
-   m_ThreshLwr = m_ThreshUpr = m_ThreshOff = m_LwrBnd = ConvertInVal(lowerBound);
-   m_UprBnd = ConvertInVal(upperBound);
-   m_EstVal = ConvertInVal(initialValue);
+   m_InitialValueTransformed = ConvertInVal(initialValue);
+   m_lowerBoundTransformed = ConvertInVal(lowerBound);
+   m_upperBoundTransformed = ConvertInVal(upperBound);
+   m_estimatedValueTransformed = ConvertInVal(initialValue);
 
    len = (int)strlen(fixFmt) + 10;  
    NEW_PRINT("char", len);
@@ -251,7 +232,7 @@ void RealParam::Write(FILE * pFile, int type)
 {
    double val;
 
-   val = ConvertOutVal(m_EstVal);
+   val = ConvertOutVal(m_estimatedValueTransformed);
 
    if(type == WRITE_SCI)
    {
@@ -265,13 +246,10 @@ void RealParam::Write(FILE * pFile, int type)
    {
       fprintf(pFile, "Name = %s  ", m_pName);
       fprintf(pFile, "Transformation= %d\n", m_TransID[TX_OST]);
-      fprintf(pFile, "Initial Value %E\n", m_InitVal);
-      fprintf(pFile, "Lower Bound %E\n", m_LwrBnd);
-      fprintf(pFile, "Upper Bound %E\n", m_UprBnd);
-      fprintf(pFile, "Lower Threshold %E\n", m_ThreshLwr);
-      fprintf(pFile, "Upper Threshold %E\n", m_ThreshUpr);
-      fprintf(pFile, "Off Threshold %E\n", m_ThreshOff);
-      fprintf(pFile, "Est Value = %E\n", m_EstVal);
+      fprintf(pFile, "Initial Value %E\n", m_InitialValueTransformed);
+      fprintf(pFile, "Lower Bound %E\n", m_lowerBoundTransformed);
+      fprintf(pFile, "Upper Bound %E\n", m_upperBoundTransformed);
+      fprintf(pFile, "Est Value = %E\n", m_estimatedValueTransformed);
    }/* end else if() */
    else if (type == WRITE_TX_BNR)
    {
@@ -293,7 +271,7 @@ RealParam::GetValAsStr()
 void RealParam::GetValAsStr(UnmoveableString valStr)
 {
    bool bOk;
-   double val = GetTransformedVal();
+   double val = GetEstimatedValueTransformed();
    char * fmt = m_pFixFmt;
    if(strcmp(fmt, "free") == 0)
    {
@@ -333,7 +311,7 @@ IntParam::SetEstVal()
 Sets the estimated value of the parameter. If the resquested estVal exceeds the
 parameter bounds, the amount of violation is returned.
 ******************************************************************************/
-double IntParam::SetEstVal(double estVal)
+double IntParam::SetEstimatedValueTransformed(double estVal)
 {
    double viol = 0.00;
    int tmp;
@@ -341,28 +319,22 @@ double IntParam::SetEstVal(double estVal)
 
    tmp = (int)(estVal + 0.5); //round up real value
 
-   if(tmp < m_LwrBnd) 
+   if(tmp < m_lowerBoundTransformed) 
    {            
-      sprintf(msg, "%d < lower bound (%d)", tmp, m_LwrBnd);      
+      sprintf(msg, "%d < lower bound (%d)", tmp, m_lowerBoundTransformed);      
       LogError(ERR_PRM_BNDS, msg);
-	  viol = (double)(m_LwrBnd - tmp);
-      tmp = m_LwrBnd;
+	  viol = (double)(m_lowerBoundTransformed - tmp);
+      tmp = m_lowerBoundTransformed;
    }/* end if() */
-   if(tmp > m_UprBnd) 
+   if(tmp > m_upperBoundTransformed) 
    {      
-      sprintf(msg, "%d > upper bound (%d)", tmp, m_UprBnd);
+      sprintf(msg, "%d > upper bound (%d)", tmp, m_upperBoundTransformed);
       LogError(ERR_PRM_BNDS, msg);
-	  viol = (double)(tmp - m_UprBnd);
-      tmp = m_UprBnd;
+	  viol = (double)(tmp - m_upperBoundTransformed);
+      tmp = m_upperBoundTransformed;
    }/* end if() */
 
-   //handle parameter threshold
-   if((tmp < m_ThreshUpr) && (tmp > m_ThreshLwr))
-   {
-      tmp = m_ThreshOff;
-   }
-
-   m_EstVal = tmp;
+   m_estimatedValueTransformed = tmp;
    return viol;
 } /* end IntParam::SetEstVal() */
 
@@ -381,10 +353,10 @@ IntParam::IntParam(IroncladString name, int initialValue, int lowerBound,
 
    strcpy(m_pName, name);
   
-   m_InitVal = initialValue;
-   m_ThreshLwr = m_ThreshUpr = m_ThreshOff = m_LwrBnd = lowerBound;
-   m_UprBnd = upperBound;
-   m_EstVal = initialValue;
+   m_InitialValueTransformed = initialValue;
+   m_lowerBoundTransformed = lowerBound;
+   m_upperBoundTransformed = upperBound;
+   m_estimatedValueTransformed = initialValue;
       
    IncCtorCount();
 } /* end CTOR (IntParam) */
@@ -398,7 +370,7 @@ void IntParam::Write(FILE * pFile, int type)
 {
    int val;
 
-   val = m_EstVal;
+   val = m_estimatedValueTransformed;
 
    if(type == WRITE_SCI)
    {
@@ -411,13 +383,10 @@ void IntParam::Write(FILE * pFile, int type)
    else if (type == WRITE_DBG)
    {
       fprintf(pFile, "Name = %s  ", m_pName);
-      fprintf(pFile, "Initial Value %d\n", m_InitVal);
-      fprintf(pFile, "Lower Bound  %d\n", m_LwrBnd);
-      fprintf(pFile, "Upper Bound  %d\n", m_UprBnd);
-      fprintf(pFile, "Lower Threshold %d\n", m_ThreshLwr);
-      fprintf(pFile, "Upper Threshold %d\n", m_ThreshUpr);
-      fprintf(pFile, "Threshold Off %d\n", m_ThreshOff);
-      fprintf(pFile, "Est Value =  %d\n", m_EstVal);
+      fprintf(pFile, "Initial Value %d\n", m_InitialValueTransformed);
+      fprintf(pFile, "Lower Bound  %d\n", m_lowerBoundTransformed);
+      fprintf(pFile, "Upper Bound  %d\n", m_upperBoundTransformed);
+      fprintf(pFile, "Est Value =  %d\n", m_estimatedValueTransformed);
    }/* end else if() */
    else if (type == WRITE_TX_BNR)
    {
@@ -432,3 +401,41 @@ void IntParam::Write(FILE * pFile, int type)
       fprintf(pFile,"%-12s  ", m_pName);
    }/* end else() */
 } /* end IntParam::WriteToFile() */
+
+
+/******************************************************************************
+IntParam::ConvertOutVal()
+
+Converts the input value based on users choice of output style.
+******************************************************************************/
+double IntParam::ConvertOutVal(double val)
+{
+    switch (m_TransID[TX_OST])
+    {
+    case(TX_NONE):
+        switch (m_TransID[TX_OUT])
+        {
+        case(TX_NONE): return val;
+        case(TX_LOG10): return log10(val);
+        case(TX_LN): return log(val);
+        default: return 0.00;
+        }/* end switch () */
+    case(TX_LOG10):
+        switch (m_TransID[TX_OUT])
+        {
+        case(TX_NONE): return pow(10, val);
+        case(TX_LOG10): return val;
+        case(TX_LN): return log(pow(10, val));
+        default: return 0.00;
+        }/* end switch () */
+    case(TX_LN):
+        switch (m_TransID[TX_OUT])
+        {
+        case(TX_NONE): return exp(val);
+        case(TX_LOG10): return log10(exp(val));
+        case(TX_LN): return val;
+        default: return 0.00;
+        }/* end switch () */
+    default: return 0.00;
+    }/* end switch () */
+} /* end RealParam::ConvertOutVal() */

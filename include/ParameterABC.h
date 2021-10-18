@@ -18,6 +18,7 @@ Version History
 #define PARAMETER_ABC_H
 
 #include "MyHeaderInc.h"
+#include "string"
 
 // forward decs
 class ConstraintABC;
@@ -55,18 +56,20 @@ class ParameterABC
       virtual void Destroy(void) = 0;
       virtual void   GetValAsStr(UnmoveableString valStr) = 0;
       virtual void   Write(FILE * pFile, int type) = 0;
-      virtual double GetLwrBnd(void) = 0;
-      virtual double GetUprBnd(void) = 0;
-      virtual void SetLwrBnd(double val) = 0;
-      virtual void SetUprBnd(double val) = 0;
-      virtual double GetEstVal(void) = 0;
-      virtual double SetEstVal(double estVal) = 0;
+      virtual double GetInitialValueTransformed(void) = 0;
+      virtual double GetLowerBoundTransformed(void) = 0;
+      virtual double GetUpperBoundTransformed(void) = 0;
+      virtual void SetLowerBoundTransformed(double val) = 0;
+      virtual void SetUpperBoundTransformed(double val) = 0;
+      virtual double GetEstimatedValueTransformed(void) = 0;
+      virtual double SetEstimatedValueTransformed(double estVal) = 0;
 
       //threshold values (allow for implicit on/off of parameters)
-      virtual void SetThreshVal(double lwr, double upr, double off) = 0;
+      //virtual void SetThreshVal(double lwr, double upr, double off) = 0;
 
       virtual UnchangeableString GetName(void) = 0;
       virtual double GetTransformedVal(void) = 0;
+      virtual std::string GetFixFmt(void) = 0;
       virtual double ConvertOutVal(double val) = 0;
       virtual double ConvertInVal(double val) = 0;      
       virtual const char * GetType(void) = 0;
@@ -89,29 +92,33 @@ class RealParam : public ParameterABC
 
       void   GetValAsStr(UnmoveableString valStr);
       void   Write(FILE * pFile, int type);
-      double GetLwrBnd(void){ return m_LwrBnd;}
-      double GetUprBnd(void){ return m_UprBnd;}
-      void SetLwrBnd(double val){ m_LwrBnd = val;}
-      void SetUprBnd(double val){ m_UprBnd = val;}
 
-      double GetEstVal(void){ return m_EstVal;}
-      double SetEstVal(double estVal);
+      // Declare functions for transformed values
+      double GetInitialValueTransformed(void) { return m_InitialValueTransformed; };
+      double GetLowerBoundTransformed(void){ return m_lowerBoundTransformed;}
+      double GetUpperBoundTransformed(void){ return m_upperBoundTransformed;}
+      void SetLowerBoundTransformed(double val){ m_lowerBoundTransformed = val;}
+      void SetUpperBoundTransformed(double val){ m_upperBoundTransformed = val;}
+      double GetEstimatedValueTransformed(void){ return m_estimatedValueTransformed;}
+      double SetEstimatedValueTransformed(double estVal);
+
       UnchangeableString GetName(void){ return m_pName;}
+      std::string GetFixFmt(void) { return m_pFixFmt; }
       double GetTransformedVal(void);
       double ConvertOutVal(double val);
       double ConvertInVal(double val);
       //threshold values (allow for implicit on/off of parameters)
-      void SetThreshVal(double lwr, double upr, double off){ m_ThreshLwr = lwr; m_ThreshUpr = upr; m_ThreshOff = off;}
-      const char * GetType(void) {return "real";}
+      //void SetThreshVal(double lwr, double upr, double off){ m_ThreshLwr = lwr; m_ThreshUpr = upr; m_ThreshOff = off;}
+      const char* GetType(void) { return "real"; };
             
    private:
       StringType m_pName;
       StringType m_pFixFmt;
-      double m_InitVal;
-      double m_LwrBnd;
-      double m_UprBnd;
-      double m_EstVal;      
-      double m_ThreshLwr, m_ThreshUpr, m_ThreshOff;
+      double m_InitialValueTransformed;
+      double m_lowerBoundTransformed;
+      double m_upperBoundTransformed;
+      double m_estimatedValueTransformed;      
+      //double m_ThreshLwr, m_ThreshUpr, m_ThreshOff;
 
       TransformTypeEnum m_TransID[NUM_STAGES];      
       void SetTransformation(TransformStageEnum which, IroncladString tx);
@@ -131,28 +138,35 @@ class IntParam : public ParameterABC
       ~IntParam(void){ DBG_PRINT("IntParam::DTOR"); Destroy();}
       void Destroy(void);
 
-      void   GetValAsStr(UnmoveableString valStr){sprintf(valStr, "%d", m_EstVal);}
-      double GetEstVal(void){ return (double)m_EstVal;}
-      double SetEstVal(double estVal);
-      double GetLwrBnd(void){ return (double)m_LwrBnd;}
-      double GetUprBnd(void){ return (double)m_UprBnd;}
-      void SetLwrBnd(double val){ m_LwrBnd = (int)val;}
-      void SetUprBnd(double val){ m_UprBnd = (int)val;}
-      double GetTransformedVal(void){ return (double)m_EstVal;}
-      double ConvertOutVal(double val){ return val;}
+      void   GetValAsStr(UnmoveableString valStr){sprintf(valStr, "%d", m_estimatedValueTransformed);}
+      std::string GetFixFmt(void) { return m_pFixFmt; }
+      double GetEstimatedValueTransformed(void){ return (double)m_estimatedValueTransformed;}
+      double SetEstimatedValueTransformed(double estVal);
+      double GetInitialValueTransformed(void) { return m_InitialValueTransformed; };
+      double GetLowerBoundTransformed(void){ return (double)m_lowerBoundTransformed;}
+      double GetUpperBoundTransformed(void){ return (double)m_upperBoundTransformed;}
+      void SetLowerBoundTransformed(double val){ m_lowerBoundTransformed = (int)val;}
+      void SetUpperBoundTransformed(double val){ m_upperBoundTransformed = (int)val;}
+      double GetTransformedVal(void){ return (double)m_estimatedValueTransformed;}
+      double ConvertOutVal(double val);
       double ConvertInVal(double val){ return val;}
       UnchangeableString GetName(void){ return m_pName;}
       void Write(FILE * pFile, int type);      
-      void SetThreshVal(double lwr, double upr, double off){ m_ThreshLwr = (int)lwr; m_ThreshUpr = (int)upr; m_ThreshOff = (int)off;}
+      //void SetThreshVal(double lwr, double upr, double off){ m_ThreshLwr = (int)lwr; m_ThreshUpr = (int)upr; m_ThreshOff = (int)off;}
       const char * GetType(void) {return "integer";}
 
    private:
       StringType m_pName;
-      int m_InitVal;
-      int m_LwrBnd;
-      int m_UprBnd;
-      int m_EstVal;            
-      int m_ThreshLwr, m_ThreshUpr, m_ThreshOff;
+      StringType m_pFixFmt;
+      int m_InitialValueTransformed;
+      int m_lowerBoundTransformed;
+      int m_upperBoundTransformed;
+      int m_estimatedValueTransformed;            
+      //int m_ThreshLwr, m_ThreshUpr, m_ThreshOff;
+
+      TransformTypeEnum m_TransID[NUM_STAGES];
+
+
 }; /* end class IntParam */
 
 /******************************************************************************
@@ -170,12 +184,12 @@ class ComboIntParam : public ParameterABC
 
       void GetValAsStr(UnmoveableString valStr){sprintf(valStr, "%d", m_pCombos[m_CurIdx]);}
       void Write(FILE * pFile, int type);
-      double GetLwrBnd(void){ return 0.00;}
-      double GetUprBnd(void){ return (double)(m_NumCombos - 1);}
-      void SetLwrBnd(double val){ return;}
-      void SetUprBnd(double val){ return;}
-      double GetEstVal(void){ return (double)m_CurIdx;}
-      double SetEstVal(double Idx);
+      double GetLowerBoundTransformed(void){ return 0.00;}
+      double GetUpperBoundTransformed(void){ return (double)(m_NumCombos - 1);}
+      void SetLowerBoundTransformed(double val){ return;}
+      void SetUpperBoundTransformed(double val){ return;}
+      double GetEstimatedValueTransformed(void){ return (double)m_CurIdx;}
+      double SetEstimatedValueTransformed(double Idx);
       UnchangeableString GetName(void){ return m_pName;}
       double GetTransformedVal(void){ return (double)(m_pCombos[m_CurIdx]);}
       double ConvertOutVal(double val){ return val;}
@@ -207,12 +221,12 @@ class ComboDblParam : public ParameterABC
 
 	  void GetValAsStr(UnmoveableString valStr);
       void Write(FILE * pFile, int type);
-      double GetLwrBnd(void){ return 0.00;}
-      double GetUprBnd(void){ return (double)(m_NumCombos - 1);}
-      void SetLwrBnd(double val){ return;}
-      void SetUprBnd(double val){ return;}
-      double GetEstVal(void){ return (double)m_CurIdx;}
-      double SetEstVal(double Idx);
+      double GetLowerBoundTransformed(void){ return 0.00;}
+      double GetUpperBoundTransformed(void){ return (double)(m_NumCombos - 1);}
+      void SetLowerBoundTransformed(double val){ return;}
+      void SetUpperBoundTransformed(double val){ return;}
+      double GetEstimatedValueTransformed(void){ return (double)m_CurIdx;}
+      double SetEstimatedValueTransformed(double Idx);
       UnchangeableString GetName(void){ return m_pName;}
       double GetTransformedVal(void){ return m_pCombos[m_CurIdx];}
       double ConvertOutVal(double val){ return val;}
@@ -244,12 +258,12 @@ class ComboStrParam : public ParameterABC
 
       void GetValAsStr(UnmoveableString valStr);
       void Write(FILE * pFile, int type);
-      double GetLwrBnd(void){ return 0.00;}
-      double GetUprBnd(void){ return (double)(m_NumCombos - 1);}
-      double GetEstVal(void){ return (double)m_CurIdx;}
-      void SetLwrBnd(double val){ return;}
-      void SetUprBnd(double val){ return;}
-      double SetEstVal(double Idx);
+      double GetLowerBoundTransformed(void){ return 0.00;}
+      double GetUpperBoundTransformed(void){ return (double)(m_NumCombos - 1);}
+      double GetEstimatedValueTransformed(void){ return (double)m_CurIdx;}
+      void SetLowerBoundTransformed(double val){ return;}
+      void SetUpperBoundTransformed(double val){ return;}
+      double SetEstimatedValueTransformed(double Idx);
       UnchangeableString GetName(void){ return m_pName;}
       double GetTransformedVal(void){ return atof(m_pCombos[m_CurIdx]);}
       double ConvertOutVal(double val){ return val;}
@@ -266,53 +280,5 @@ class ComboStrParam : public ParameterABC
       char ** m_pCombos;
 }; /* end class ComboStrParam */
 
-/******************************************************************************
-class SpecialParam
 
-Special Ostrich parameters. These correspond to 'optimal' cost and constraint
-values at any given stage of Ostrich. Can be used for linking Ostrich with
-the model pre-emption capabilities of a given model.
-******************************************************************************/
-class SpecialParam
-{
-   public:      
-      SpecialParam(void);
-      SpecialParam(IroncladString name,  IroncladString type, 
-                   IroncladString limit, IroncladString constraint, 
-				   double init); 
-      ~SpecialParam(void){ DBG_PRINT("SpecialParam::DTOR"); Destroy();}
-      void Destroy(void);
-
-	  void   GetValAsStr(UnmoveableString valStr);
-      void   Write(FILE * pFile, int type);
-	  //treat special parameters as unbounded
-      double GetLwrBnd(void){ return NEARLY_ZERO;}
-      double GetUprBnd(void){ return NEARLY_HUGE;}
-      void SetLwrBnd(double val){ return;}
-      void SetUprBnd(double val){ return;}
-      double GetEstVal(void){ return m_EstVal;}
-	  double SetEstVal(double estVal){ m_EstVal = estVal; return 0.00;}
-	  void   SetEstVal(double minObj, double minCon);
-	  void   SetMinObj(double minObj){ m_MinObj = minObj;}
-      UnchangeableString GetName(void){ return m_pName;}
-      double GetTransformedVal(void){ return m_EstVal;}
-      double ConvertOutVal(double val){ return val;}
-      double ConvertInVal(double val){ return val;}
-	  void   Enable(void){ m_bSet = true;}
-      //threshold values (allow for implicit on/off of parameters)
-      void SetThreshVal(double lwr, double upr, double off){ return;}
-      const char * GetType(void) {return "special";}
-	  ConstraintABC * GetConstraint(void);
-            
-   private:
-      StringType m_pName;
-	  StringType m_pType; 
-      StringType m_pLimit;
-	  StringType m_pConstraint;
-	  double m_MinObj;
-      double m_EstVal;
-	  bool m_bSet;
-}; /* end class SpecialParam */
-
-
-#endif /* PARAMETER_H */
+#endif /* PARAMETER_ABC_H */

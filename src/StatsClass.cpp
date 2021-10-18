@@ -1222,7 +1222,7 @@ void StatsClass::BcastJacobian(void)
    }
 
    //first element is objective function value
-   m_pBuf[0] = m_pModel->GetObjFuncVal();
+   m_pBuf[0] = m_pModel->GetObjectiveFunctionValue();
    //next elements are the parameter settings
    m_pModel->GetParamGroupPtr()->ReadParams(&(m_pBuf[1]));
    //final elements are the simulated observation values
@@ -1319,7 +1319,7 @@ void StatsClass::EvalJacParallel(void)
    Intialize the min. Jacobian
    ------------------------------------------ */
    //first element is objective function value
-   m_pMinJac[0] = m_pModel->GetObjFuncVal();
+   m_pMinJac[0] = m_pModel->GetObjectiveFunctionValue();
    //next elements are the parameter settings
    m_pModel->GetParamGroupPtr()->ReadParams(&(m_pMinJac[1]));
    //final elements are the simulated observation values
@@ -1353,9 +1353,9 @@ void StatsClass::EvalJacParallel(void)
 retry:
       pParam = pParamGroup->GetParamPtr(j);
 
-      cur = pParam->GetEstVal();
-      upr = pParam->GetUprBnd();
-      lwr = pParam->GetLwrBnd();
+      cur = pParam->GetEstimatedValueTransformed();
+      upr = pParam->GetUpperBoundTransformed();
+      lwr = pParam->GetLowerBoundTransformed();
       if(dIncType == FD_OPTIMAL)
       {
          NEW_PRINT("double", m_NumParams);
@@ -1387,7 +1387,7 @@ retry:
       dx = next - cur;
 
       //perterb parameter      
-      midParam = pParam->GetEstVal();
+      midParam = pParam->GetEstimatedValueTransformed();
       hiParam = midParam  + dx;
       lowParam = midParam - dx;
 
@@ -1442,7 +1442,7 @@ retry:
       Perform required model executions, saving 
       results into the appropriate model backup.
       -----------------------------------------*/      
-      pParam->SetEstVal(hiParam);
+      pParam->SetEstimatedValueTransformed(hiParam);
       F = m_pModel->Execute();
       m_DiffCount++;
       m_pHiBkup->Store();
@@ -1462,7 +1462,7 @@ retry:
 
       if(dType != FD_FORWARD)
       {
-         pParam->SetEstVal(lowParam);
+         pParam->SetEstimatedValueTransformed(lowParam);
          F = m_pModel->Execute();
          m_DiffCount++;
          m_pLowBkup->Store();
@@ -1620,7 +1620,7 @@ void StatsClass::EvalJacSuperMUSE(void)
    Intialize the min. Jacobian
    ------------------------------------------ */
    //first element is objective function value
-   m_pMinJac[0] = m_pModel->GetObjFuncVal();
+   m_pMinJac[0] = m_pModel->GetObjectiveFunctionValue();
    //next elements are the parameter settings
    m_pModel->GetParamGroupPtr()->ReadParams(&(m_pMinJac[1]));
    //final elements are the simulated observation values
@@ -1636,9 +1636,9 @@ void StatsClass::EvalJacSuperMUSE(void)
       dIncType = m_DiffIncType;
       pParam = pParamGroup->GetParamPtr(j);
 
-      cur = pParam->GetEstVal();
-      upr = pParam->GetUprBnd();
-      lwr = pParam->GetLwrBnd();
+      cur = pParam->GetEstimatedValueTransformed();
+      upr = pParam->GetUpperBoundTransformed();
+      lwr = pParam->GetLowerBoundTransformed();
       if(dIncType == FD_OPTIMAL)
       {
          NEW_PRINT("double", m_NumParams);
@@ -1670,7 +1670,7 @@ void StatsClass::EvalJacSuperMUSE(void)
       dx = next - cur;
 
       //perterb parameter      
-      midParam = pParam->GetEstVal();
+      midParam = pParam->GetEstimatedValueTransformed();
       hiParam = midParam  + dx;
       lowParam = midParam - dx;
  
@@ -1721,13 +1721,13 @@ void StatsClass::EvalJacSuperMUSE(void)
       is the high parameter first and the low
       parameter (if needed) second.
       -----------------------------------------*/      
-      pParam->SetEstVal(hiParam);
+      pParam->SetEstimatedValueTransformed(hiParam);
       //pass group to supermuse
       pSMUSE->WriteTask(pParamGroup);
 
       if(dType != FD_FORWARD)
       {
-         pParam->SetEstVal(lowParam);
+         pParam->SetEstimatedValueTransformed(lowParam);
         //pass group to supermuse
         pSMUSE->WriteTask(pParamGroup);
       }
@@ -1791,7 +1791,7 @@ void StatsClass::EvalJacSuperMUSE(void)
          saving results into the appropriate model 
          backup.
          -----------------------------------------*/      
-         pParam->SetEstVal(hiParam);
+         pParam->SetEstimatedValueTransformed(hiParam);
          F = pSMUSE->GatherResult(task);
          task++;
          m_DiffCount++;
@@ -1812,7 +1812,7 @@ void StatsClass::EvalJacSuperMUSE(void)
 
          if(dType != FD_FORWARD)
          {
-            pParam->SetEstVal(lowParam);
+            pParam->SetEstimatedValueTransformed(lowParam);
             F = pSMUSE->GatherResult(task);
             task++;
             m_DiffCount++;
@@ -1939,7 +1939,7 @@ void StatsClass::EvalJacSerial(double * pBestSavedF)
    Intialize the min. Jacobian
    ------------------------------------------ */
    //first element is objective function value
-   m_pMinJac[0] = m_pModel->GetObjFuncVal();
+   m_pMinJac[0] = m_pModel->GetObjectiveFunctionValue();
    //next elements are the parameter settings
    m_pModel->GetParamGroupPtr()->ReadParams(&(m_pMinJac[1]));
    //final elements are the simulated observation values
@@ -1959,9 +1959,9 @@ void StatsClass::EvalJacSerial(double * pBestSavedF)
 retry:
       pParam = pParamGroup->GetParamPtr(j);
 
-      cur = pParam->GetEstVal();
-      upr = pParam->GetUprBnd();
-      lwr = pParam->GetLwrBnd();
+      cur = pParam->GetEstimatedValueTransformed();
+      upr = pParam->GetUpperBoundTransformed();
+      lwr = pParam->GetLowerBoundTransformed();
       if(dIncType == FD_OPTIMAL)
       {
          NEW_PRINT("double", m_NumParams);
@@ -1994,7 +1994,7 @@ retry:
       dx = next - cur;
 
       //perterb parameter      
-      midParam = pParam->GetEstVal();
+      midParam = pParam->GetEstimatedValueTransformed();
       hiParam = midParam  + dx;
       lowParam = midParam - dx;
  
@@ -2049,7 +2049,7 @@ retry:
       Perform required model executions, saving 
       results into the appropriate model backup.
       -----------------------------------------*/      
-      pParam->SetEstVal(hiParam);
+      pParam->SetEstimatedValueTransformed(hiParam);
       F = m_pModel->Execute();
       if(F < (*pBestSavedF))
       {
@@ -2074,7 +2074,7 @@ retry:
 
       if(dType != FD_FORWARD)
       {
-         pParam->SetEstVal(lowParam);
+         pParam->SetEstimatedValueTransformed(lowParam);
          F = m_pModel->Execute();
          if(F < (*pBestSavedF))
          {
@@ -2682,7 +2682,7 @@ void StatsClass::CalcCI(void)
       pParam = pGroup->GetParamPtr(i);
       if(m_bHoldParam[i] == false)
       {
-         est = pParam->GetEstVal();
+         est = pParam->GetEstimatedValueTransformed();
 
          stdErr = sqrt(m_pCovar[j][j]);
          m_pCIupr[j] = est + (tStat * stdErr);
@@ -2857,7 +2857,7 @@ void StatsClass::CalcBealeAndLinssen(void)
    j = 0;
    for(i = 0; i < m_NumParams; i++){
       if(m_bHoldParam[i] == false){
-         pParams[j] = pGroup->GetParamPtr(i)->GetEstVal(); 
+         pParams[j] = pGroup->GetParamPtr(i)->GetEstimatedValueTransformed(); 
          j++; }
    }/* end for() */
    j = 0;
@@ -2897,7 +2897,7 @@ void StatsClass::CalcBealeAndLinssen(void)
       k = 0;
       for(i = 0; i < m_NumParams; i++){
          if(m_bHoldParam[i] == false){
-            pGroup->GetParamPtr(i)->SetEstVal(pParamSet[k]); 
+            pGroup->GetParamPtr(i)->SetEstimatedValueTransformed(pParamSet[k]); 
             k++; }
       }/* end for() */
       
@@ -3450,7 +3450,7 @@ void StatsClass::CalcSensitivities(void)
             m_pScaledSens[i][jj] = 0.00;
 
             pParam = pGroup->GetParamPtr(j);
-            bj = pParam->GetEstVal();
+            bj = pParam->GetEstimatedValueTransformed();
 
             for(k = 0; k < n; k++)
             {                  
@@ -3498,7 +3498,7 @@ void StatsClass::CalcSensitivities(void)
             m_pPctScaledSens[i][jj] = 0.00;
 
             pParam = pGroup->GetParamPtr(j);
-            bj = pParam->GetEstVal();
+            bj = pParam->GetEstimatedValueTransformed();
             diff = m_pJacobUW[i][jj];
 
             m_pPctScaledSens[i][jj] += (diff * bj / 100.00);
@@ -4182,7 +4182,7 @@ void StatsClass::WriteResiduals(int step, char * prefix)
 
    fcurbest = HUGE_VAL;
    fprevbest = HUGE_VAL;
-   fcur = m_pModel->GetObjFuncVal();
+   fcur = m_pModel->GetObjectiveFunctionValue();
 
    //extract current best if file already exists
    if (pFile != NULL)

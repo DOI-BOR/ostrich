@@ -13,6 +13,7 @@ Version History
 #include <time.h>
 #include <stdlib.h>
 #include <string.h>
+#include <vector>
 
 #include "SamplingAlgorithm.h"
 #include "Model.h"
@@ -138,8 +139,8 @@ SamplingAlgorithm::SamplingAlgorithm(ModelABC * pModel)
    
    for(i = 0; i < m_NumParams; i++)
    { 
-      m_pLwr[i] = m_pModel->GetParamGroupPtr()->GetParamPtr(i)->GetLwrBnd();
-      m_pUpr[i] = m_pModel->GetParamGroupPtr()->GetParamPtr(i)->GetUprBnd();
+      m_pLwr[i] = m_pModel->GetParamGroupPtr()->GetParamPtr(i)->GetLowerBoundTransformed();
+      m_pUpr[i] = m_pModel->GetParamGroupPtr()->GetParamPtr(i)->GetUpperBoundTransformed();
    }/* end for() */
 
    NEW_PRINT("double", m_NumParams);
@@ -412,30 +413,25 @@ GenerateInitialSamples()
 
 Create a set of LHS samples.
 ******************************************************************************/
-void SamplingAlgorithm::GenerateInitialSamples(int num)
-{
-   int i, k;
+void SamplingAlgorithm::GenerateInitialSamples(int num) {
+  
    LatinHypercube * pLHS;
-   pLHS = new LatinHypercube(m_NumParams, num);
+   pLHS = new LatinHypercube(num, m_NumParams, num);
 
-   //prepare LHS sampler
-   for(k = 0; k < m_NumParams; k++)
-   { 
-      pLHS->InitRow(k, m_pLwr[k], m_pUpr[k]);
-   }/* end for() */
+   // Create the uniform sample matrix
+   pLHS->CreateUniformSample(m_pLwr, m_pUpr);
 
-   //generate LHS samples
-   for(i = 0; i < num; i++)
-   {
-      for(k = 0; k < m_NumParams; k++)
-      {
-         m_pSamples[i].v[k] = pLHS->SampleRow(k);
-      }
+   // Get the sample matrix from the LHS object
+   std::vector<std::vector<double>> samples = pLHS->GetSampleMatrix();
+
+   // Fill back into the sampling objects
+   for(int i = 0; i < num; i++) {
+       m_pSamples[i].v = samples[i].data();
    }
 
    //free up sampler
    delete pLHS;
-}/* end GenerateInitialSamples() */
+}
 
 /******************************************************************************
 WriteMetrics()

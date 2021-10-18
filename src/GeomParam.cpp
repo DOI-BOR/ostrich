@@ -182,11 +182,11 @@ bool GeomParamLine3::Reorder(void)
       else //check if same bounds for all
       {
          //first time?
-         if(xupr < xlwr){ xupr = pCurAug->px->GetUprBnd(); xlwr = pCurAug->px->GetLwrBnd();}
-         if(yupr < ylwr){ yupr = pCurAug->py->GetUprBnd(); ylwr = pCurAug->py->GetLwrBnd();}
+         if(xupr < xlwr){ xupr = pCurAug->px->GetUpperBoundTransformed(); xlwr = pCurAug->px->GetLowerBoundTransformed();}
+         if(yupr < ylwr){ yupr = pCurAug->py->GetUpperBoundTransformed(); ylwr = pCurAug->py->GetLowerBoundTransformed();}
 
-         if((pCurAug->px->GetUprBnd() != xupr) || (pCurAug->px->GetLwrBnd() != xlwr)){ backProp = false;}
-         if((pCurAug->py->GetUprBnd() != yupr) || (pCurAug->py->GetLwrBnd() != ylwr)){ backProp = false;}
+         if((pCurAug->px->GetUpperBoundTransformed() != xupr) || (pCurAug->px->GetLowerBoundTransformed() != xlwr)){ backProp = false;}
+         if((pCurAug->py->GetUpperBoundTransformed() != yupr) || (pCurAug->py->GetLowerBoundTransformed() != ylwr)){ backProp = false;}
       }
       pCurAug = pCurAug->pNxt;   
    }/* end while() */
@@ -259,8 +259,8 @@ bool GeomParamLine3::Reorder(void)
       pCur = m_pFixed;
       while(pCurAug != NULL)
       {
-         pCurAug->px->SetEstVal(pCur->x);
-         pCurAug->py->SetEstVal(pCur->y);
+         pCurAug->px->SetEstimatedValueTransformed(pCur->x);
+         pCurAug->py->SetEstimatedValueTransformed(pCur->y);
          pCurAug = pCurAug->pNxt;
          pCur = pCur->pNxt;
       }/* end while() */
@@ -662,11 +662,11 @@ bool GeomParamPoly3::Reorder(void)
       else //check if same bounds for all
       {
          //first time?
-         if(xupr < xlwr){ xupr = pCurAug->px->GetUprBnd(); xlwr = pCurAug->px->GetLwrBnd();}
-         if(yupr < ylwr){ yupr = pCurAug->py->GetUprBnd(); ylwr = pCurAug->py->GetLwrBnd();}
+         if(xupr < xlwr){ xupr = pCurAug->px->GetUpperBoundTransformed(); xlwr = pCurAug->px->GetLowerBoundTransformed();}
+         if(yupr < ylwr){ yupr = pCurAug->py->GetUpperBoundTransformed(); ylwr = pCurAug->py->GetLowerBoundTransformed();}
 
-         if((pCurAug->px->GetUprBnd() != xupr) || (pCurAug->px->GetLwrBnd() != xlwr)){ backProp = false;}
-         if((pCurAug->py->GetUprBnd() != yupr) || (pCurAug->py->GetLwrBnd() != ylwr)){ backProp = false;}
+         if((pCurAug->px->GetUpperBoundTransformed() != xupr) || (pCurAug->px->GetLowerBoundTransformed() != xlwr)){ backProp = false;}
+         if((pCurAug->py->GetUpperBoundTransformed() != yupr) || (pCurAug->py->GetLowerBoundTransformed() != ylwr)){ backProp = false;}
       }
       pCurAug = pCurAug->pNxt;   
    }/* end while() */
@@ -744,8 +744,8 @@ bool GeomParamPoly3::Reorder(void)
       pCur = m_pFixed;
       while(pCurAug != NULL)
       {
-         pCurAug->px->SetEstVal(pCur->x);
-         pCurAug->py->SetEstVal(pCur->y);
+         pCurAug->px->SetEstimatedValueTransformed(pCur->x);
+         pCurAug->py->SetEstimatedValueTransformed(pCur->y);
          pCurAug = pCurAug->pNxt;
          pCur = pCur->pNxt;
       }/* end while() */
@@ -1163,11 +1163,11 @@ bool GeomParamPoly2::Reorder(void)
       else //check if same bounds for all
       {
          //first time?
-         if(xupr < xlwr){ xupr = pCurAug->px->GetUprBnd(); xlwr = pCurAug->px->GetLwrBnd();}
-         if(yupr < ylwr){ yupr = pCurAug->py->GetUprBnd(); ylwr = pCurAug->py->GetLwrBnd();}
+         if(xupr < xlwr){ xupr = pCurAug->px->GetUpperBoundTransformed(); xlwr = pCurAug->px->GetLowerBoundTransformed();}
+         if(yupr < ylwr){ yupr = pCurAug->py->GetUpperBoundTransformed(); ylwr = pCurAug->py->GetLowerBoundTransformed();}
 
-         if((pCurAug->px->GetUprBnd() != xupr) || (pCurAug->px->GetLwrBnd() != xlwr)){ backProp = false;}
-         if((pCurAug->py->GetUprBnd() != yupr) || (pCurAug->py->GetLwrBnd() != ylwr)){ backProp = false;}
+         if((pCurAug->px->GetUpperBoundTransformed() != xupr) || (pCurAug->px->GetLowerBoundTransformed() != xlwr)){ backProp = false;}
+         if((pCurAug->py->GetUpperBoundTransformed() != yupr) || (pCurAug->py->GetLowerBoundTransformed() != ylwr)){ backProp = false;}
       }
       pCurAug = pCurAug->pNxt;   
    }/* end while() */
@@ -1245,8 +1245,8 @@ bool GeomParamPoly2::Reorder(void)
       pCur = m_pFixed;
       while(pCurAug != NULL)
       {
-         pCurAug->px->SetEstVal(pCur->x);
-         pCurAug->py->SetEstVal(pCur->y);
+         pCurAug->px->SetEstimatedValueTransformed(pCur->x);
+         pCurAug->py->SetEstimatedValueTransformed(pCur->y);
          pCurAug = pCurAug->pNxt;
          pCur = pCur->pNxt;
       }/* end while() */
@@ -1610,7 +1610,7 @@ bool GeomParamCirc4::FixVertices(GeomParamABC * pOther)
             {
                m_Fixed.r = rmin;
                //back-propagate
-               if(m_pInit->pr != NULL){ m_pInit->pr->SetEstVal(m_Fixed.r);}
+               if(m_pInit->pr != NULL){ m_pInit->pr->SetEstimatedValueTransformed(m_Fixed.r);}
             }/* end if() */
          }/* end for() */
          break;
@@ -1629,7 +1629,7 @@ bool GeomParamCirc4::FixVertices(GeomParamABC * pOther)
             {
                m_Fixed.r = rmin;
                //back-propagate
-               if(m_pInit->pr != NULL){ m_pInit->pr->SetEstVal(m_Fixed.r);}
+               if(m_pInit->pr != NULL){ m_pInit->pr->SetEstimatedValueTransformed(m_Fixed.r);}
             }/* end if() */
          }/* end for() */
          break;
@@ -1648,7 +1648,7 @@ bool GeomParamCirc4::FixVertices(GeomParamABC * pOther)
          if(d > (r1+r2+eps)){ return true;}
          m_Fixed.r = MyMax(eps, d - r2 - eps);
          //back-propagate
-         if(m_pInit->pr != NULL){ m_pInit->pr->SetEstVal(m_Fixed.r);}
+         if(m_pInit->pr != NULL){ m_pInit->pr->SetEstimatedValueTransformed(m_Fixed.r);}
          break;
       }/* end case() */
       default :
@@ -1674,7 +1674,7 @@ VertexList * GeomParamCirc4::FixVertex(Segment2D * pSeg)
    {
       m_Fixed.r = rmin;
       //back-propagate
-      if(m_pInit->pr != NULL){ m_pInit->pr->SetEstVal(m_Fixed.r);}
+      if(m_pInit->pr != NULL){ m_pInit->pr->SetEstimatedValueTransformed(m_Fixed.r);}
    }/* end if() */
 
    return NULL;

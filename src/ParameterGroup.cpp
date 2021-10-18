@@ -26,6 +26,7 @@ Version History
 #include <string.h>
 #include <time.h>
 #include <stdlib.h>
+#include <iostream>
 
 #include "ParameterGroup.h"
 #include "ParameterABC.h"
@@ -61,7 +62,7 @@ void ParameterGroup::ReadParams(double * p)
 {
    for(int j = 0; j < m_NumParams; j++)
    {
-      p[j] = m_pList[j]->GetEstVal();
+      p[j] = m_pList[j]->GetEstimatedValueTransformed();
    }
 }/* end ReadParams() */
 
@@ -80,7 +81,7 @@ double ParameterGroup::WriteParams(Ironclad1DArray p)
    double viol = 0.00;
    for(int j = 0; j < m_NumParams; j++)
    {
-      viol += m_pList[j]->SetEstVal(p[j]); 
+      viol += m_pList[j]->SetEstimatedValueTransformed(p[j]); 
    }
    return viol;
 }/* end WriteParams() */
@@ -161,132 +162,44 @@ TiedParamABC * ParameterGroup::GetTiedParamPtr(IroncladString name)
 } /* end GetTiedParamPtr() */
 
 /******************************************************************************
-ConfigureSpecialParams()
+GetTiedParamPtr()
 
-Set the objective function threshold criteria for pre-emption of model
+Retrieves a pointer to the ith parameter.
 ******************************************************************************/
-void ParameterGroup::ConfigureSpecialParams(double minObj, double * minCon)
+TiedParamABC* ParameterGroup::GetTiedParamPtr(int i)
 {
-   int j;
-
-   for(j = 0; j < m_NumSpecial; j++)
-   {
-      m_pSpecial[j]->SetEstVal(minObj, minCon[j]);
-   }/* end for() */
-} /* end ConfigureSpecialParams() */
+    return m_pTied[i];
+}
 
 /******************************************************************************
-GetSpecialConstraints()
+GetGeomParamPtr()
 
-Retrieve the current values of the response variable associated with each 
-constraint. These canbe used in conjunction with ConfigureSpecialParams()
-to update pre-emption thresholds.
+Retrieves a pointer to the tied parameter with matching name.
 ******************************************************************************/
-void ParameterGroup::GetSpecialConstraints(double * pSC)
+GeomParamABC* ParameterGroup::GetGeomParamPtr(IroncladString name)
 {
-   ConstraintABC * pCon;
-   double rv = 0.00;
+    int j;
 
-   int j;
-
-   for(j = 0; j < m_NumSpecial; j++)
-   {
-      pCon = m_pSpecial[j]->GetConstraint();
-	   if(pCon != NULL)
-	   {
-         rv = pCon->GetResponseVar();
-         pSC[j] = rv;
-      }
-      else
-      {
-         pSC[j] = 0.00;
-      }
-   }/* end for() */
-}/* end GetSpecialConstraint() */
+    //determine indices by examing parameter names
+    for (j = 0; j < m_NumGeom; j++)
+    {
+        if (m_pGeom[j] != NULL)
+        {
+            if (strcmp(m_pGeom[j]->GetName(), name) == 0) { return m_pGeom[j]; }
+        }
+    }
+    return NULL;
+} 
 
 /******************************************************************************
-EnableSpecialParams()
+GetGeomParamPtr()
 
-Enable model pre-emption.
+Retrieves a pointer to the ith parameter.
 ******************************************************************************/
-void ParameterGroup::EnableSpecialParams(void)
+GeomParamABC* ParameterGroup::GetGeomParamPtr(int i)
 {
-	int j;
-
-   for(j = 0; j < m_NumSpecial; j++)
-   {
-      m_pSpecial[j]->Enable();
-   }/* end for() */
-}/* end EnableSpecialParams() */
-
-/******************************************************************************
-InitSpecialParams()
-
-Example syntax:
-	BeginSpecialParams
-		#template   initial    special       upper or  cons-
-		#mnemonic   value     parameter      lower?    traint
-		OST_COST    1E60       BestCost	     n/a      n/a      
-		OST_MASS    1E60     BestConstraint  upper    MyPen    
-	EndSpecialParams
-******************************************************************************/
-void ParameterGroup::InitSpecialParams(IroncladString pFileName)
-{
-   int i;   
-   FILE * pFile;
-   char pName[DEF_STR_SZ];
-   double initialValue;
-   char pType[DEF_STR_SZ];
-   char pLimit[DEF_STR_SZ];
-   char pConstraint[DEF_STR_SZ];
-   char * line;
-      
-   pFile = fopen(pFileName, "r");
-
-   //check that file could be opened
-   if(pFile == NULL){ FileOpenFailure("InitSpecialParams()", pFileName);}
-
-   //check for parameter token
-   if(CheckToken(pFile, "BeginSpecialParams", pFileName) == false)
-   { 
-      fclose(pFile);
-      return;
-   }
-   FindToken(pFile, "EndSpecialParams", pFileName);
-   rewind(pFile);
-   
-   //count number of parameters
-   m_NumSpecial = 0;
-   FindToken(pFile, "BeginSpecialParams", pFileName);
-   line = GetNxtDataLine(pFile, pFileName);
-   while(strstr(line, "EndSpecialParams") == NULL)
-   {            
-      m_NumSpecial++;
-      line = GetNxtDataLine(pFile, pFileName);
-   }/* end while() */
-
-   NEW_PRINT("SpecialParam *", m_NumSpecial);
-   m_pSpecial = new SpecialParam *[m_NumSpecial];
-   MEM_CHECK(m_pSpecial);
-
-   rewind(pFile);
-   FindToken(pFile, "BeginSpecialParams", pFileName);
-   line = GetNxtDataLine(pFile, pFileName);
-   i = 0;
-   while(strstr(line, "EndSpecialParams") == NULL)
-   {            
-      sscanf(line, "%s %lf %s %s %s", pName, &initialValue, pType, pLimit, pConstraint);
-
-      NEW_PRINT("SpecialParam", 1);
-      m_pSpecial[i] = new SpecialParam(pName, pType, pLimit, pConstraint, initialValue);
-      MEM_CHECK(m_pSpecial[i]);
-
-      line = GetNxtDataLine(pFile, pFileName);
-	  i++;
-   }/* end while() */
-
-   fclose(pFile);
-} /* end InitSpecialParams() */
+    return m_pGeom[i];
+}
 
 /******************************************************************************
 Destroy()
@@ -320,12 +233,6 @@ void ParameterGroup::Destroy(void)
    }
    delete [] m_pGeom;
 
-   for(j = 0; j < m_NumSpecial; j++)
-   {
-      delete m_pSpecial[j];
-   }
-   delete [] m_pSpecial;
-
    for(j = 0; j < m_NumParams; j++)
    {
       delete [] m_ParamNameList[j];
@@ -340,20 +247,21 @@ CTOR
 
 Initializes parameter group from user-specified input file.
 ******************************************************************************/
-ParameterGroup::ParameterGroup(void)
-{
+ParameterGroup::ParameterGroup(bool initialize) {
    m_pList = NULL;
    m_pExcl = NULL;
    m_pTied = NULL;
    m_pGeom = NULL;
-   m_pSpecial = NULL;
    m_ParamNameList = NULL;
    m_NumParams = 0;
    m_NumExcl = 0;
    m_NumTied = 0;
    m_NumGeom = 0;
-   m_NumSpecial = 0;
-   InitFromFile(GetInFileName());
+
+   // Initialize the 
+   if (initialize) {
+       InitFromFile(GetInFileName());
+   }
    IncCtorCount();
 } /* end CTOR */
 
@@ -362,8 +270,7 @@ SubIntoFile()
 
 Substitutes the estimated value of the parameter into the model input file.
 ******************************************************************************/
-void ParameterGroup::SubIntoFile(FilePipe * pPipe)
-{ 
+void ParameterGroup::SubIntoFile(FilePipe * pPipe) { 
    int i, size;
    char find[DEF_STR_SZ];
    char replace[DEF_STR_SZ];
@@ -371,7 +278,6 @@ void ParameterGroup::SubIntoFile(FilePipe * pPipe)
    ParameterABC * pParam;
    TiedParamABC * pTied;
    GeomParamABC * pGeom;
-   SpecialParam * pSpecial;
 
    //Adjustable parameters
    for(i = 0; i < m_NumParams; i++)
@@ -416,15 +322,6 @@ void ParameterGroup::SubIntoFile(FilePipe * pPipe)
       delete [] pRep;
    } /* end for() */
 
-   //special parameters
-   for(i = 0; i < m_NumSpecial; i++)
-   {     
-      pSpecial = m_pSpecial[i];
-      strcpy(find, pSpecial->GetName());
-      pSpecial->GetValAsStr(replace);
-      pPipe->FindAndReplace(find,replace);
-   } /* end for() */
-
    pPipe->StringToFile();
 } /* end SubIntoFile() */
 
@@ -465,7 +362,6 @@ void ParameterGroup::SubIntoDbase(DatabaseABC * pDbase)
    ParameterABC * pParam;
    TiedParamABC * pTied;
    GeomParamABC * pGeom;
-   SpecialParam * pSpecial;
 
    //Adjustable parameters
    for(i = 0; i < m_NumParams; i++)
@@ -510,14 +406,6 @@ void ParameterGroup::SubIntoDbase(DatabaseABC * pDbase)
       delete [] pRep;
    } /* end for() */
 
-   //special parameters
-   for(i = 0; i < m_NumSpecial; i++)
-   {     
-      pSpecial = m_pSpecial[i];
-      strcpy(find, pSpecial->GetName());
-      pSpecial->GetValAsStr(replace);
-      WriteDatabaseParameter(pDbase, find, replace);
-   } /* end for() */
 } /* end SubIntoDbase() */
 
 /******************************************************************************
@@ -640,6 +528,9 @@ int ParameterGroup::CountParams(IroncladString pFileName)
    char * line;
    int count = 0;
 
+   int realParams = 0;
+   int intParams = 0;
+
    pFile = fopen(pFileName, "r");
 
    //check that file could be opened
@@ -655,7 +546,8 @@ int ParameterGroup::CountParams(IroncladString pFileName)
       line = GetNxtDataLine(pFile, pFileName);   
       while(strstr(line, "EndParams") == NULL)
       {            
-         count++;      
+         count++;
+         realParams++;
          line = GetNxtDataLine(pFile, pFileName);
       }/* end while() */
       rewind(pFile);
@@ -671,7 +563,8 @@ int ParameterGroup::CountParams(IroncladString pFileName)
       line = GetNxtDataLine(pFile, pFileName);   
       while(strstr(line, "EndIntegerParams") == NULL)
       {            
-         count++;      
+         count++;
+         intParams++;
          line = GetNxtDataLine(pFile, pFileName);
       }/* end while() */
       rewind(pFile);
@@ -694,6 +587,10 @@ int ParameterGroup::CountParams(IroncladString pFileName)
    }
 
    fclose(pFile);
+
+   // Set the values
+   m_NumRealParams = realParams;
+   m_NumIntParams = intParams;
 
    return count;   
 } /* end CountParams() */
@@ -816,26 +713,24 @@ void ParameterGroup::InitRealParams(IroncladString pFileName)
    if(pFile == NULL){ FileOpenFailure("InitRealParams()", pFileName);}
 
    //check for parameter token
-   if(CheckToken(pFile, "BeginParams", pFileName) == false)
-   { 
+   if(CheckToken(pFile, "BeginParams", pFileName) == false) { 
       fclose(pFile);
       return;
    }
+
    FindToken(pFile, "EndParams", pFileName);
    rewind(pFile);
    
    FindToken(pFile, "BeginParams", pFileName);
    line = GetNxtDataLine(pFile, pFileName);
    m_bExtracted = false;
-   while(strstr(line, "EndParams") == NULL)
-   {            
+   while(strstr(line, "EndParams") == NULL) {            
       strcpy(tmpTrans1, "none");
       strcpy(tmpTrans2, "none");
       strcpy(tmpTrans3, "none");
       strcpy(tmpFixFmt, "free");
 
-      sscanf(line, "%s %s %lf %lf %s %s %s %s", tmpName, tmpInitVal, &lowerBound,
-             &upperBound, tmpTrans1, tmpTrans2, tmpTrans3, tmpFixFmt);
+      sscanf(line, "%s %s %lf %lf %s %s %s %s", tmpName, tmpInitVal, &lowerBound, &upperBound, tmpTrans1, tmpTrans2, tmpTrans3, tmpFixFmt);
 
       if(strcmp(tmpFixFmt, "free") == 0) bFixFmt = false;
       else bFixFmt = true;
@@ -861,23 +756,25 @@ void ParameterGroup::InitRealParams(IroncladString pFileName)
       i = GetNextEmptyParamIdx();
 
       NEW_PRINT("RealParam", 1);
-      m_pList[i] = new RealParam(tmpName, initialValue, lowerBound, upperBound,
-                                 tmpTrans1, tmpTrans2, tmpTrans3, tmpFixFmt);
+      ParameterABC *temp = new RealParam(tmpName, initialValue, lowerBound, upperBound,
+          tmpTrans1, tmpTrans2, tmpTrans3, tmpFixFmt);
+      m_pList[i] = temp;
       MEM_CHECK(m_pList[i]);
 
-       //assign random values from within transformed space
+      // todo: document these features
+      //assign random values from within transformed space
       if(strcmp(tmpInitVal, "random") == 0)
       { 
-         upperBound = m_pList[i]->GetUprBnd();
-         lowerBound = m_pList[i]->GetLwrBnd();
+         upperBound = m_pList[i]->GetUpperBoundTransformed();
+         lowerBound = m_pList[i]->GetLowerBoundTransformed();
          initialValue = (((double)MyRand() / (double)MY_RAND_MAX) * (upperBound - lowerBound)) + lowerBound;
-         m_pList[i]->SetEstVal(initialValue);
+         m_pList[i]->SetEstimatedValueTransformed(initialValue);
       }
 
       //assign extracted values from within transformed space
       if(strcmp(tmpInitVal, "extract") == 0)
       { 
-         m_pList[i]->SetEstVal(initialValue);
+         m_pList[i]->SetEstimatedValueTransformed(initialValue);
          m_bExtracted = true;
       }
       line = GetNxtDataLine(pFile, pFileName);
@@ -994,47 +891,49 @@ void ParameterGroup::InitComboParams(IroncladString pFileName)
    FindToken(pFile, "EndCombinatorialParams",   pFileName);
    rewind(pFile);
    
-   FindToken(pFile, "BeginCombinatorialParams", pFileName);
-   lineStr = GetNxtDataLine(pFile, pFileName);
-   while(strstr(lineStr, "EndCombinatorialParams") == NULL)
-   {      
-      pTok = lineStr;
-      //extract name of parameter (no spaces allowed)
-      j = ExtractString(pTok, nameStr);
-      j = ValidateExtraction(j, 1, 1, "InitComboParams()");
-      pTok += j;
-      //extract type      
-      j = ExtractString(pTok, typeStr);
-      j = ValidateExtraction(j, 1, 1, "InitComboParams()");
-      pTok += j;
-            
-      i = GetNextEmptyParamIdx();      
-      //pass the entire parameter line to the appropriate CTOR
-      if(strcmp(typeStr, "real") == 0)
-      { 
-         NEW_PRINT("ComboDblParam", 1);
-         m_pList[i] = new ComboDblParam(nameStr, pTok);
-      }
-      else if(strcmp(typeStr, "integer") == 0)
-      { 
-         NEW_PRINT("ComboIntParam", 1);
-         m_pList[i] = new ComboIntParam(nameStr, pTok);
-      }
-      else if(strcmp(typeStr, "string") == 0)
-      { 
-         NEW_PRINT("ComboStrParam", 1);
-         m_pList[i] = new ComboStrParam(nameStr, pTok);
-      }
-      else
-      {
-         sprintf(lineStr, "InitComboParams(): unknown combinatorial type |%s|", typeStr);
-         LogError(ERR_FILE_IO, lineStr);
-         ExitProgram(1);
-      }
-      MEM_CHECK(m_pList[i]);
+   // TODO: Reimplement these capabilities
+   //FindToken(pFile, "BeginCombinatorialParams", pFileName);
+   //lineStr = GetNxtDataLine(pFile, pFileName);
+   //while(strstr(lineStr, "EndCombinatorialParams") == NULL)
+   //{      
+   //   pTok = lineStr;
+   //   //extract name of parameter (no spaces allowed)
+   //   j = ExtractString(pTok, nameStr);
+   //   j = ValidateExtraction(j, 1, 1, "InitComboParams()");
+   //   pTok += j;
+   //   //extract type      
+   //   j = ExtractString(pTok, typeStr);
+   //   j = ValidateExtraction(j, 1, 1, "InitComboParams()");
+   //   pTok += j;
+   //         
+   //   i = GetNextEmptyParamIdx();      
+   //   //pass the entire parameter line to the appropriate CTOR
 
-      lineStr = GetNxtDataLine(pFile, pFileName);
-   }/* end while() */
+   //   if(strcmp(typeStr, "real") == 0)
+   //   { 
+   //      NEW_PRINT("ComboDblParam", 1);
+   //      m_pList[i] = new ComboDblParam(nameStr, pTok);
+   //   }
+   //   else if(strcmp(typeStr, "integer") == 0)
+   //   { 
+   //      NEW_PRINT("ComboIntParam", 1);
+   //      m_pList[i] = new ComboIntParam(nameStr, pTok);
+   //   }
+   //   else if(strcmp(typeStr, "string") == 0)
+   //   { 
+   //      NEW_PRINT("ComboStrParam", 1);
+   //      m_pList[i] = new ComboStrParam(nameStr, pTok);
+   //   }
+   //   else
+   //   {
+   //      sprintf(lineStr, "InitComboParams(): unknown combinatorial type |%s|", typeStr);
+   //      LogError(ERR_FILE_IO, lineStr);
+   //      ExitProgram(1);
+   //   }
+   //   MEM_CHECK(m_pList[i]);
+
+   //   lineStr = GetNxtDataLine(pFile, pFileName);
+   //}/* end while() */
 
    fclose(pFile);
 } /* end InitComboParams() */
@@ -1148,6 +1047,11 @@ void ParameterGroup::InitTiedParams(IroncladString pFileName)
                m_pTied[i] = new TiedParamLin2(nameStr, &(pParams[0]), &(pParams[1]), pTok);
             }
             else{ invalidNumParams = true;}
+         }
+         else if (strcmp(typeStr, "linearmax") == 0)
+         {
+             NEW_PRINT("TiedParamLinMax", 1);
+             m_pTied[i] = new TiedParamLinMax(nameStr, &(pParams[0]), &(pParams[1]), pTok);
          }
          else if(strcmp(typeStr, "wsum") == 0)
          { 
@@ -1394,6 +1298,7 @@ void ParameterGroup::InitGeomParams(IroncladString pFileName)
    fclose(pFile);
 } /* end InitGeomParams() */
 
+
 /******************************************************************************
 Write()
 
@@ -1424,248 +1329,6 @@ void ParameterGroup::Write(FILE * pFile, int type)
    }
 } /* end writeToFile() */
 
-/******************************************************************************
-CheckTemplateFiles()
-
-Checks to see if every parameter is included in at least one template file.
-Parameters not found in any template file will trigger a warning message but 
-will not halt the program.
-******************************************************************************/
-void ParameterGroup::CheckTemplateFiles(FilePair * pList)
-{
-   FilePair * pCur;
-   FilePipe * pPipe;
-   UnchangeableString name;
-   char msg[DEF_STR_SZ];
-   int i;
-   bool found;
-
-   //check adjustable parameters
-   for(i = 0; i < m_NumParams; i++)
-   {
-      name = m_pList[i]->GetName();
-      pCur = pList;
-      found = false;
-      while(pCur != NULL)
-      {
-         pPipe = pCur->GetPipe();
-         if(pPipe->FindAndReplace(name, "0.00") > 0)
-         {
-            found = true;
-            break;
-         }         
-         pCur = pCur->GetNext();
-      }
-      if(found == false)
-      {
-         sprintf(msg, "Parameter |%s| not found in any template file", name);
-         LogError(ERR_FILE_IO, msg);
-      }
-   }
-   //check tied parameters
-   for(i = 0; i < m_NumTied; i++)
-   {
-      name = m_pTied[i]->GetName();
-      pCur = pList;
-      found = false;
-      while(pCur != NULL)
-      {
-         pPipe = pCur->GetPipe();
-         if(pPipe->FindAndReplace(name, "0.00") > 0)
-         {
-            found = true;
-            break;
-         }
-         pCur = pCur->GetNext();
-      }
-      if(found == false)
-      {
-         sprintf(msg, "Parameter |%s| not found in any template file", name);
-         LogError(ERR_FILE_IO, msg);
-      }
-   }
-
-   //check geometry parameters
-   for(i = 0; i < m_NumGeom; i++)
-   {
-      name = m_pGeom[i]->GetName();
-      pCur = pList;
-      found = false;
-      while(pCur != NULL)
-      {
-         pPipe = pCur->GetPipe();
-         if(pPipe->FindAndReplace(name, "0.00") > 0)
-         {
-            found = true;
-            break;
-         }
-         pCur = pCur->GetNext();
-      }
-      if(found == false)
-      {
-         sprintf(msg, "Parameter |%s| not found in any template file", name);
-         LogError(ERR_FILE_IO, msg);
-      }
-   }
-
-   //this will cause reset of replacement string....
-   pCur = pList;
-   while(pCur != NULL)
-   {
-      pPipe = pCur->GetPipe();
-      pPipe->StringToFile();
-      pCur = pCur->GetNext();
-   }
-}/* end CheckTemplateFiles() */
-
-/******************************************************************************
-CheckMnemonics()
-
-Checks to see if and parameter name is nested within another parameter name 
-(e.g. Kback is nested within Kbackground). Since the parameter substitution 
-routine uses strstr() such nesting can cause undesirable behavior and should 
-be reported as an error to the user.
-******************************************************************************/
-void ParameterGroup::CheckMnemonics(void)
-{
-   UnchangeableString name;
-   UnchangeableString comp;
-   char msg[DEF_STR_SZ];
-   int i, j;
-   bool found = false;
-
-   //check adjustable parameters
-   for(i = 0; i < m_NumParams; i++)
-   {
-      name = m_pList[i]->GetName();      
-
-      //check adjustable parameters
-      for(j = 0; j < m_NumParams; j++)
-      {
-         comp = m_pList[j]->GetName();
-         if((i != j) && (strstr(comp, name) != NULL))
-         {
-            sprintf(msg, "|%s| is a substring of |%s|", name, comp);
-            LogError(ERR_PRM_NEST, msg);
-            found = true;
-         }
-      }
-
-      //check tied parameters
-      for(j = 0; j < m_NumTied; j++)
-      {
-         comp = m_pTied[j]->GetName();
-         if(strstr(comp, name) != NULL)
-         {
-            sprintf(msg, "|%s| is a substring of |%s|", name, comp);
-            LogError(ERR_PRM_NEST, msg);
-            found = true;
-         }
-      }
-
-      //check geom. parameters
-      for(j = 0; j < m_NumGeom; j++)
-      {
-         comp = m_pGeom[j]->GetName();
-         if(strstr(comp, name) != NULL)
-         {
-            sprintf(msg, "|%s| is a substring of |%s|", name, comp);
-            LogError(ERR_PRM_NEST, msg);
-            found = true;
-         }
-      }
-   }/* end check adjustable parameters */
-
-   //check tied parameters
-   for(i = 0; i < m_NumTied; i++)
-   {
-      name = m_pTied[i]->GetName();
-
-
-      //check adjustable parameters
-      for(j = 0; j < m_NumParams; j++)
-      {
-         comp = m_pList[j]->GetName();
-         if(strstr(comp, name) != NULL)
-         {
-            sprintf(msg, "|%s| is a substring of |%s|", name, comp);
-            LogError(ERR_PRM_NEST, msg);
-            found = true;
-         }
-      }
-
-      //check tied parameters
-      for(j = 0; j < m_NumTied; j++)
-      {
-         comp = m_pTied[j]->GetName();
-         if((i != j) && (strstr(comp, name) != NULL))
-         {
-            sprintf(msg, "|%s| is a substring of |%s|", name, comp);
-            LogError(ERR_PRM_NEST, msg);
-            found = true;
-         }
-      }
-
-      //check geom. parameters
-      for(j = 0; j < m_NumGeom; j++)
-      {
-         comp = m_pGeom[j]->GetName();
-         if(strstr(comp, name) != NULL)
-         {
-            sprintf(msg, "|%s| is a substring of |%s|", name, comp);
-            LogError(ERR_PRM_NEST, msg);
-            found = true;
-         }
-      }
-   }/* end check tied parameters */
-
-   //check geometry parameters
-   for(i = 0; i < m_NumGeom; i++)
-   {
-      name = m_pGeom[i]->GetName();
-
-      //check adjustable parameters
-      for(j = 0; j < m_NumParams; j++)
-      {
-         comp = m_pList[j]->GetName();
-         if(strstr(comp, name) != NULL)
-         {
-            sprintf(msg, "|%s| is a substring of |%s|", name, comp);
-            LogError(ERR_PRM_NEST, msg);
-            found = true;
-         }
-      }
-
-      //check tied parameters
-      for(j = 0; j < m_NumTied; j++)
-      {
-         comp = m_pTied[j]->GetName();
-         if(strstr(comp, name) != NULL)
-         {
-            sprintf(msg, "|%s| is a substring of |%s|", name, comp);
-            LogError(ERR_PRM_NEST, msg);
-            found = true;
-         }
-      }
-
-      //check geom. parameters
-      for(j = 0; j < m_NumGeom; j++)
-      {
-         comp = m_pGeom[j]->GetName();
-         if((i != j) && (strstr(comp, name) != NULL))
-         {
-            sprintf(msg, "|%s| is a substring of |%s|", name, comp);
-            LogError(ERR_PRM_NEST, msg);
-            found = true;
-         }
-      }
-   }/* end check gemo. parameters */
-
-   if(found == true)
-   {
-      ExitProgram(1);
-   }
-}/* end CheckMnemonics() */
 
 /******************************************************************************
 FixGeometry()
@@ -1787,7 +1450,7 @@ void ParameterGroup::CheckBounds(void)
    char msg[DEF_STR_SZ];
    for(i = 0; i < m_NumParams; i++)
    {     
-      if(m_pList[i]->GetUprBnd() < m_pList[i]->GetLwrBnd())
+      if(m_pList[i]->GetUpperBoundTransformed() < m_pList[i]->GetLowerBoundTransformed())
       {
          sprintf(msg, "Parameter (%s) has incorrect bounds (upper bound less than lower bound)\n", m_pList[i]->GetName());
          LogError(ERR_FILE_IO, msg);
@@ -1815,8 +1478,8 @@ void ParameterGroup::ExcludeParam(UnchangeableString prm)
    if(i == m_NumParams) return; //no match
 
    //fix value at midpoint of range
-   val = 0.5 * (m_pList[i]->GetUprBnd() + m_pList[i]->GetLwrBnd());
-   m_pList[i]->SetEstVal(val);
+   val = 0.5 * (m_pList[i]->GetUpperBoundTransformed() + m_pList[i]->GetLowerBoundTransformed());
+   m_pList[i]->SetEstimatedValueTransformed(val);
 
    //move parameter to excluded list
    m_pExcl[m_NumExcl] = m_pList[i];

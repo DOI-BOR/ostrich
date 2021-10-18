@@ -38,7 +38,6 @@ class ObservationGroup
       ObservationGroup(void);
       //copy CTOR, used by surrogate models
       ObservationGroup(ObservationGroup * pCopy, UnmoveableString pFileName); 
-      ObservationGroup(Observation** m_pObsList, ValueExtractor* m_pObsFiles, int m_NumObs, int m_NumGroups);
       ~ObservationGroup(void){ DBG_PRINT("ObservationGroup::DTOR"); Destroy(); }
       void Destroy(void);
 

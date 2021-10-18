@@ -136,8 +136,8 @@ void BEERS::Optimize(void)
    for(int i = 0; i < num; i++)
    {
       //generate a random between lower and upper bound
-      lwr = pGroup->GetParamPtr(i)->GetLwrBnd();
-      upr = pGroup->GetParamPtr(i)->GetUprBnd();
+      lwr = pGroup->GetParamPtr(i)->GetLowerBoundTransformed();
+      upr = pGroup->GetParamPtr(i)->GetUpperBoundTransformed();
       range = upr - lwr;
       r = (double)MyRand() / (double)MY_RAND_MAX;
       rval = (r * range) + lwr;

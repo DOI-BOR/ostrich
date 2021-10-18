@@ -20,6 +20,7 @@ Version History
 #include "MyDebug.h"  // debug print statements --- inlined in many class functions
 #include "GeometryUtility.h" // Point, Circle, etc. data structs
 
+
 /* macros for access and chdir */
 #ifdef _WIN32
   #include <direct.h>
