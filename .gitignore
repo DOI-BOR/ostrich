@@ -31,6 +31,10 @@
 *.out
 *.app
 make/Ostrich
+make/OstrichMPI
+
+# make logs
+make/my_make*.log
 
 # MacOS files
 **.DS_Store
