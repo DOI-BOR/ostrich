@@ -53,7 +53,7 @@ class Model : public ModelABC
 {
    public:
      Model(void);
-	 ~Model(void){ DBG_PRINT("Model::DTOR"); Destroy(); }
+     ~Model(void){ DBG_PRINT("Model::DTOR"); Destroy(); }
      void Destroy(void);
           
      //retrieve member variables
@@ -65,14 +65,15 @@ class Model : public ModelABC
      int GetCounter(void);
      void SetCounter(int count);
      ObjFuncType GetObjFuncId(void) {return m_ObjFuncId;}
-	 UnchangeableString GetObjFuncStr(void);
+     UnchangeableString GetObjFuncStr(void);
      UnchangeableString GetModelStr(void){return m_ExecCmd;}
-	 void PerformParameterCorrections(void);
+     void PerformParameterCorrections(void);
      //misc. member functions     
      double Execute(void);
      double Execute(double viol); //include parameter bounds violations in the objective function
      void Execute(double * pF, int nObj);
      void   CheckGlobalSensitivity(void);
+     void   ExcludeConstantParameters(void);
      void   Write(double objFuncVal);
      void   WriteMetrics(FILE * pFile);
      void   Bookkeep(bool bFinal);
@@ -92,7 +93,7 @@ class Model : public ModelABC
       ParameterCorrection * m_pParameterCorrection;
       TelescopeType m_Telescope; //telescoping bounds strategy
 
-	   DatabaseABC * m_DbaseList;
+      DatabaseABC * m_DbaseList;
       FilePair * m_FileList;
       int m_Counter;
       int m_NumCacheHits;
