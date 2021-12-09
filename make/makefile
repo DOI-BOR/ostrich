@@ -26,6 +26,9 @@ all:
 	-@ echo "   ICC_DB : Serial compile with Intel compiler stack with disk based MPI"
 	-@ echo ""
 
+GCC_DBG:    $(SRC_FILES_CPP) $(SRC_FILES_C)
+	g++ -g -std=c++17 -I$(INCLUDE_DIR) -I$(MPI_MEM_INCLUDE) $(SRC_FILES_CPP) $(MEM_FILES_C) -lstdc++fs -o Ostrich
+	rm -f *.o
 
 ICC_MPI:	$(SRC_FILES_CPP) $(SRC_FILES_C)
 	mpiicpc -std=c++17 -I$(INCLUDE_DIR) $(SRC_FILES_CPP) -lstdc++fs -o OstrichMPI

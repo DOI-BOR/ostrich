@@ -692,6 +692,23 @@ Model::Model(void)
 
    /*
    --------------------------------------------------------------------
+   Read in flag to attempt file cleanup - seems to be rather buggy at
+   the moment so lets give users the ability to opt out
+   --------------------------------------------------------------------
+   */
+   m_bTryFileCleanup = false;
+   rewind(pInFile);
+   if(CheckToken(pInFile, "AttemptFileCleanup", inFileName) == true)
+   {   
+      line = GetCurDataLine();
+      sscanf(line, "%s %s", tmp1, tmp2);
+      MyStrLwr(tmp2);
+      if(strncmp(tmp2, "yes", 3) == 0) {m_bTryFileCleanup = true;}
+   }/* end if() */
+
+
+   /*
+   --------------------------------------------------------------------
    Read in flag to use SuperMUSE
    --------------------------------------------------------------------
    */   
@@ -1071,17 +1088,13 @@ void Model::Destroy(void)
    m_bSave = false;
    delete m_pDecision;
 
-   if(m_pFileCleanupList != NULL)
+   if((m_pFileCleanupList != NULL) && (m_bTryFileCleanup == true))
    {
-       // Create the directories
-       std::filesystem::path directory = GetExeDirName();
-       std::filesystem::path cutoff = ".";
-
-       // If directory is not the cuffoff value, clean up the remaining files in the folder
-       if(~directory.compare(cutoff)) {
-          m_pFileCleanupList->Cleanup(directory);
-       }
-
+      IroncladString dirName = GetExeDirName(); 
+      if(dirName[0] != '.')
+      {
+         m_pFileCleanupList->Cleanup(dirName);         
+      }
       delete m_pFileCleanupList;
    }
 

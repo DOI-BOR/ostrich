@@ -11,6 +11,13 @@ module load gcc/8.3.0
 # GCC_DB : Serial compile with GCC compiler stack with disk based MPI
 # ICC_DB : Serial compile with Intel compiler stack with disk based MPI
 
+make GCC_DBG 2>&1 | tee my_make_GCC_DBG.log
+if [ -f Ostrich ]; then
+  mv Ostrich ../../bin/Ostrich_GCC_DBG
+fi
+
+exit
+
 make ICC 2>&1 | tee my_make_ICC.log
 if [ -f Ostrich ]; then
   mv Ostrich ../../bin/Ostrich_ICC

@@ -101,6 +101,4 @@ void FileList::Cleanup(std::filesystem::path dir)
             std::filesystem::remove(*rit);
         }
     }
-
-
 }/* end Cleanup() */

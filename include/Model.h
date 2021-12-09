@@ -106,6 +106,7 @@ class Model : public ModelABC
       bool m_InternalModel;
       bool m_bCheckGlobalSens;
       bool m_bUseSurrogates;
+      bool m_bTryFileCleanup;
       bool m_bPreserveModelOutput;
       bool m_bWarmStart;
       bool m_bCaching;
