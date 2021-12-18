@@ -116,6 +116,7 @@ SAAlgorithm::SAAlgorithm(ModelABC * pModel)
    m_NumLwrViols = 0;
    m_NumUphill = 0;
    m_NumDownhill = 0;
+   m_bUserInitTemp = false;
 
    m_pModel = pModel;
    pGroup = m_pModel->GetParamGroupPtr();
@@ -152,6 +153,11 @@ SAAlgorithm::SAAlgorithm(ModelABC * pModel)
          else if(strstr(line, "TemperatureScaleFactor") != NULL)
          {
             sscanf(line, "%s %lf", tmp, &m_TempFactor);
+         }
+         else if (strstr(line, "InitialTemperature") != NULL)
+         {
+            sscanf(line, "%s %lf", tmp, &m_InitTemp);
+            m_bUserInitTemp = true;
          }
          else if(strstr(line, "FinalTemperature") != NULL)
          {
@@ -725,9 +731,17 @@ double SAAlgorithm::Melt(double initVal)
 
    //assign initial temperatue
    dEmax = dEavg + 3.00*CalcStdDev(pdE, m_NumMelts,CENTRAL_TEND_PCTILE);
-   m_CurTemp = m_InitTemp = 100.00*dEmax;
-   m_dEavg = dEavg; //store average energy change as a metric   
 
+   if(m_bUserInitTemp == false)
+   {
+     m_CurTemp = m_InitTemp = 100.00*dEmax;
+   }
+   else
+   {
+      m_CurTemp = m_InitTemp;
+   }
+   m_dEavg = dEavg; //store average energy change as a metric   
+ 
    //if user supplied final temp, compute corresponding reduction factor
    if(m_FinalTempMethod == TMETHD_USER)
    {
@@ -793,7 +807,10 @@ step2:
    }/* end else if() */
    else if(m_FinalTempMethod == TMETHD_VNDR)
    {
-      m_InitTemp = -m_dEavg/log(0.99); 
+      if (m_bUserInitTemp == false)
+      {
+        m_InitTemp = -m_dEavg/log(0.99);
+      } 
       m_FinalTemp = -m_dEavg/log(0.01);
       m_TempFactor = pow((m_FinalTemp/m_InitTemp), 1.00/(double)m_MaxOuter);
       m_CurTemp = m_InitTemp;
@@ -990,7 +1007,14 @@ double SAAlgorithm::MeltMaster(double fbest, int nprocs)
 
    //assign initial temperatue --- shoot for 95th percentile of energy change
    dEmax = dEavg + 2.00*CalcStdDev(pdE, m_NumMelts,CENTRAL_TEND_PCTILE);
-   m_CurTemp = m_InitTemp = 100.00*dEmax;
+   if(m_bUserInitTemp == false)
+   {
+     m_CurTemp = m_InitTemp = 100.00*dEmax;
+   }
+   else
+   {
+      m_CurTemp = m_InitTemp;
+   }
    m_dEavg = dEavg; //store average energy change as a metric   
 
    //if user supplied final temp, compute corresponding reduction factor
@@ -1058,7 +1082,10 @@ step2:
    }/* end else if() */
    else if(m_FinalTempMethod == TMETHD_VNDR)
    {
-      m_InitTemp = -m_dEavg/log(0.99); 
+      if(m_bUserInitTemp == false)
+      {
+         m_InitTemp = -m_dEavg/log(0.99); 
+      }
       m_FinalTemp = -m_dEavg/log(0.01);
       m_TempFactor = pow((m_FinalTemp/m_InitTemp), 1.00/(double)m_MaxOuter);
       m_CurTemp = m_InitTemp;

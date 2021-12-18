@@ -67,6 +67,8 @@ class ParaPADDS : public AlgorithmABC
       int m_CurIter;
       int m_nprocessors;
       int m_rank;
+      int m_NumInit; //number of user-specified initial guesses
+      double ** m_pInit; //list of user-specified initial guesses
       double * m_stest_flat; //params and objectives
 
       /* ==================================================================

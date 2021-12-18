@@ -1413,9 +1413,12 @@ IroncladString Model::GetObjFuncCategory(double * pF, int nObj)
 
       /* multi-objective optimizers */
       case(SMOOTH_PROGRAM):
+      case(MOPSOCD_PROGRAM):
+      case(NSGAII_PROGRAM):
+      case(PAES_PROGRAM):
       case(PADDS_PROGRAM):
       case(PARA_PADDS_PROGRAM):
-      {
+     {
          if((m_Counter <= 1) || IsNonDominated(pF, nObj))
          {
             return ObjFuncNonDominated;

@@ -76,6 +76,7 @@ class VandSA : public AlgorithmABC
       double m_InitTemp; //Initial temperature
       double m_FinalTemp; //final temperature
       bool m_bUserFinalTemp; //if true, user has specified the desired final temperature
+      bool m_bUserInitTemp; //if true, user has specified the desired initial temperature
       double m_CurTemp;  //Current temperature
       double m_TempFactor; //Temperature reduction factor
       double m_StopVal;  //convergence criteria

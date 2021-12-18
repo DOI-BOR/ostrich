@@ -87,7 +87,11 @@ typedef enum PROGRAM_TYPE
    PARA_PADDS_PROGRAM = 39,
    BEERS_PROGRAM    = 40,
    DDSAU_PROGRAM    = 41,
-   QUIT_PROGRAM     = 42
+   MOPSOCD_PROGRAM  = 42,
+   PAES_PROGRAM     = 43,
+   NSGAII_PROGRAM   = 44,
+   VARS_PROGRAM     = 45,
+   QUIT_PROGRAM     = 46
 }ProgramType;
 
 typedef enum TELESCOPE_TYPE

@@ -98,6 +98,7 @@ class SAAlgorithm : public AlgorithmABC
       ModelBackup * m_pTransBackup;
       double * m_pMelts;
       double * m_Finner;
+      bool m_bUserInitTemp;
      
       int m_NumMelts; //num. of obj. func. evals. used to determine initial temperature
 
