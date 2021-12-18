@@ -16,8 +16,6 @@ if [ -f Ostrich ]; then
   mv Ostrich ../../bin/Ostrich_GCC_DBG
 fi
 
-exit
-
 make ICC 2>&1 | tee my_make_ICC.log
 if [ -f Ostrich ]; then
   mv Ostrich ../../bin/Ostrich_ICC
