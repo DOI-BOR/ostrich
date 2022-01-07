@@ -19,34 +19,48 @@ Version History
 01-11-05    lsm   Added algorithm metrics
 01-01-07    lsm   Algorithm now uses abstract model base class (ModelABC).
 ******************************************************************************/
+
 #ifndef LEVENBERG_ALGORITHM_H
 #define LEVENBERG_ALGORITHM_H
 
 #include "MyHeaderInc.h"
 
-//parent class
-#include "AlgorithmABC.h"
+// Include C classes
+#include <mpi.h>
+#include <math.h>
+#include <string.h>
+#include <stdlib.h>
 
-//forward decs
-class ModelABC;
-class ModelBackup;
-class StatsClass;
+// Include custom classes
+#include "Algorithm.h"
+#include "ParameterGroup.h"
+#include "ParameterABC.h"
+#include "ObservationGroup.h"
+#include "Observation.h"
+#include "StatsClass2.h"
+#include "Exception.h"
+#include "Utility.h"
+#include "WriteUtility2.h"
 
-/******************************************************************************
-class LevenbergAlgorithm
 
-******************************************************************************/
-class LevenbergAlgorithm : public AlgorithmABC
-{
+
+class LevenbergAlgorithm : public Algorithm {
    public:
-      LevenbergAlgorithm(ModelABC * pModel, bool bMulti);
+      LevenbergAlgorithm(void);
       ~LevenbergAlgorithm(void){ DBG_PRINT("LevenbergAlgorithm::DTOR"); Destroy(); }
       void Destroy(void);            
+
+      // Define the sampling function used by the LM algorithm
+      void WarmStart(void);
+
+      // Solution funcitons
       void Optimize(void);
       void Calibrate(void);
-      void WriteMetrics(FILE * pFile);
-      void WarmStart(void);
-      int  GetCurrentIteration(void) { return m_CurIter; }
+
+      // Output functions
+      void WriteStartingMetrics(void);
+      void WriteEndingMetrics(void);
+      //int  GetCurrentIteration(void) { return m_CurIter; }
 
   private:
       void InitFromFile(IroncladString pLevFileName); 
@@ -68,8 +82,23 @@ class LevenbergAlgorithm : public AlgorithmABC
       void CopyPoint(MyPoint * from, MyPoint * to, int np);
       void InsertParamSet(void);
 
+      std::vector<double> CreateInitialLambdas();
+      std::vector<double> CreateAdditionalLambdas(double lambda, int direction);
+
+      int m_Iteration = 0;
+      int m_NumIterationMaximum = 0;
+
+      double m_ObjectiveTolerance = INFINITY;
+      double m_ObjectiveToleranceMaximum = 0;
+     
+      double m_StepSize = INFINITY;
+      double m_StepSizeScaleFactor = 2;
+      double m_StepToleranceMaximum = 0;
+
+      int m_LambdasMinimum = 1;
+
       //Configuration variables (to be input by user)
-      double m_Lambda;    //Marquardt lambda
+      /*double m_Lambda;    //Marquardt lambda
       double m_LamSF;     //Marquardt lamdba scale factor
       double m_Converge;  //obj.func. convergence value
       double m_RatioConv;  //lambda convergence val. associated with m_PhiRatio
@@ -79,27 +108,27 @@ class LevenbergAlgorithm : public AlgorithmABC
       int m_CurIter;    
       double m_MoveLimit; //max. param. adj. (fraction of overall range)
       bool m_bMS; //true if using GML-MS
-      int m_NumMS; //number of multi-starts (for GML-MS)
+      int m_NumMS; //number of multi-starts (for GML-MS)*/
       ParameterList * m_pList;
   
-      double m_Alpha;     //Marquardt parameter
+      /*double m_Alpha;     //Marquardt parameter
       double m_Beta;      //SF for the optimal length of the upgrade vector      
       double m_Phi;       //objective function value
       double m_BestSavedPhi;
       double m_PhiRatio;  //ratio of old and cur obj. function vals
-      double m_PhiRelRed; //relative reduction in old and cur obj. func. vals      
+      double m_PhiRelRed; //relative reduction in old and cur obj. func. vals*/
       
       //need four model backups for lamdba trials
       //m_pInitBkup = original model (before lambda trials)
       //m_pNonBkup  = model after non-ajusted lambda
       //m_pDecBkup  = model after decreased lambda
       //m_pIncBkup  = model after increased lambda
-      ModelBackup * m_pInitBkup;
-      ModelBackup * m_pNonBkup;
-      ModelBackup * m_pDecBkup;
-      ModelBackup * m_pIncBkup;
+      //ModelBackup * m_pInitBkup;
+      //ModelBackup * m_pNonBkup;
+      //ModelBackup * m_pDecBkup;
+      //ModelBackup * m_pIncBkup;
                   
-      Unchangeable1DArray m_pResid; //vector of residuals (r)
+      /*Unchangeable1DArray m_pResid; //vector of residuals (r)
       double * m_pUpgrade;  //upgrade vector (u)
       double * m_pTmpVec;   //temp. upgrade/parameter vector
       double * m_pGamma;    //gamma = Ju
@@ -111,26 +140,25 @@ class LevenbergAlgorithm : public AlgorithmABC
       Unchangeable2DArray m_pJacobT;  //Transpose of Jacobian matrix (J)
       Unchangeable2DArray m_pJacobUW;  //Transpose of Jacobian matrix (J)
       double ** m_pScale;   //scaling matrix (S)      
-      Unchangeable2DArray m_pNormal;  //normal matrix (JQJ)
+      Unchangeable2DArray m_pNormal;  //normal matrix (JQJ)*/
 
       int m_NumParams;  //number of parameters
       int m_NumObs;     //number of observations
 
-      StatsClass * m_pStats; //statistics class
+      //StatsClass * m_pStats; //statistics class
 
-      ModelABC * m_pModel;
 
       //alg. metrics
-      int m_NumIters;
+      /*int m_NumIters;
       int m_NumEvals;
       int m_NumUprViols;
       int m_NumLwrViols;
-      int m_NumMoveViols; //move limit violations
-}; /* end class LevenbergAlgorithm */
+      int m_NumMoveViols;*/ //move limit violations
+}; 
 
 extern "C" {
 void LEV_Program(int argc, StringType argv[]);
-void GMLMS_Program(int argc, StringType argv[]);
+//void GMLMS_Program(int argc, StringType argv[]);
 }
 
 #endif /* LEVENBERG_ALGORITHM_H */

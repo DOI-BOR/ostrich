@@ -281,7 +281,7 @@ StatsClass::StatsClass(ModelABC * pModel)
    m_Phi = 0.00;
    m_CIpct = 95.00;
 
-   m_DiffType = FD_FORWARD;
+   m_DiffType = FIRST_FORWARD;
    m_MinInc = NEARLY_ZERO;
          
    m_bNoStats = false;
@@ -583,10 +583,10 @@ void StatsClass::InitFromFile(IroncladString pStatsFileName)
             sscanf(line, "%s %s", tmp, tmp2);
             strcpy(line, tmp2);
             MyStrLwr(line);
-            if(strstr(line, "forward") != NULL) {m_DiffType = FD_FORWARD;}
+            /*if(strstr(line, "forward") != NULL) {m_DiffType = FD_FORWARD;}
             else if(strstr(line, "outside") != NULL) {m_DiffType = FD_OUT_CEN;}
             else if(strstr(line, "parabolic") != NULL) {m_DiffType = FD_PAR_CEN;}
-            else if(strstr(line, "best-fit") != NULL) {m_DiffType = FD_FIT_CEN;}
+            else if(strstr(line, "best-fit") != NULL) {m_DiffType = FD_FIT_CEN;}*/
          }/*end if() */
          else if(strstr(line, "DiffIncType") != NULL)
          {
@@ -753,10 +753,10 @@ void StatsClass::InitFromFile(IroncladString pStatsFileName)
             sscanf(line, "%s %s", tmp, tmp2);
             strcpy(line, tmp2);
             MyStrLwr(line);
-            if(strstr(line, "forward") != NULL) {m_DiffType = FD_FORWARD;}
+            /*if(strstr(line, "forward") != NULL) {m_DiffType = FD_FORWARD;}
             else if(strstr(line, "outside") != NULL) {m_DiffType = FD_OUT_CEN;}
             else if(strstr(line, "parabolic") != NULL) {m_DiffType = FD_PAR_CEN;}
-            else if(strstr(line, "best-fit") != NULL) {m_DiffType = FD_FIT_CEN;}
+            else if(strstr(line, "best-fit") != NULL) {m_DiffType = FD_FIT_CEN;}*/
          }/*end if() */
          else if(strstr(line, "DiffIncType") != NULL)
          {
@@ -1084,7 +1084,7 @@ Unchangeable2DArray StatsClass::CalcJacobian(bool bOkToHoldParams, bool bOkToHol
       }
       else
       {
-         EvalJacSuperMUSE();
+         //EvalJacSuperMUSE();
       }
    }/* end if() */
    else /* parallel execution */
@@ -1392,51 +1392,51 @@ retry:
       lowParam = midParam - dx;
 
       //avoid exceeding parameter limits
-      if(hiParam > upr) 
-      { 
-         hiParam = lowParam; //move in opposite direction
-         flipSign = true;     //must reverse sign when done
-         dType = FD_FORWARD;  //only use forward difference
-      } /* end if() */
-      if(lowParam < lwr) 
-      { 
-         dType = FD_FORWARD; //only use forward difference
-      }/* end if() */
+      //if(hiParam > upr) 
+      //{ 
+      //   hiParam = lowParam; //move in opposite direction
+      //   flipSign = true;     //must reverse sign when done
+      //   dType = FD_FORWARD;  //only use forward difference
+      //} /* end if() */
+      //if(lowParam < lwr) 
+      //{ 
+      //   dType = FD_FORWARD; //only use forward difference
+      //}/* end if() */
 
-      //adjust change in parameter
-      switch(dType)
-      {
-         case(FD_FIT_CEN) :         
-         case(FD_OUT_CEN) :
-            hiParam  = midParam + (0.5 * dx);
-            lowParam = midParam - (0.5 * dx);
-            break;
-         case(FD_PAR_CEN) :
-            hiParam  = midParam + (0.5 * dx);
-            lowParam = midParam - (0.5 * dx);
+      ////adjust change in parameter
+      //switch(dType)
+      //{
+      //   case(FD_FIT_CEN) :         
+      //   case(FD_OUT_CEN) :
+      //      hiParam  = midParam + (0.5 * dx);
+      //      lowParam = midParam - (0.5 * dx);
+      //      break;
+      //   case(FD_PAR_CEN) :
+      //      hiParam  = midParam + (0.5 * dx);
+      //      lowParam = midParam - (0.5 * dx);
 
-            //prepare parabolic matrix            
-            m_ParaMat[0][2] = 1.00;
-            m_ParaMat[1][2] = 1.00;
-            m_ParaMat[2][2] = 1.00;
-            m_ParaMat[0][0] = lowParam * lowParam;
-            m_ParaMat[0][1] = lowParam;
-            m_ParaMat[1][0] = midParam * midParam;
-            m_ParaMat[1][1] = midParam;
-            m_ParaMat[2][0] = hiParam * hiParam;
-            m_ParaMat[2][1] = hiParam;
-            //compute inverse
-            MatInv(m_ParaMat, m_ParaInv, 3);
-            break;         
-         case(FD_FORWARD) :            
-         default:
-            if(flipSign == true) 
-            { 
-               flipSign = false; //clear flag, for next iteration
-               dx *= -1.0;
-            }/* end if() */
-            break;         
-      }/* end switch() */
+      //      //prepare parabolic matrix            
+      //      m_ParaMat[0][2] = 1.00;
+      //      m_ParaMat[1][2] = 1.00;
+      //      m_ParaMat[2][2] = 1.00;
+      //      m_ParaMat[0][0] = lowParam * lowParam;
+      //      m_ParaMat[0][1] = lowParam;
+      //      m_ParaMat[1][0] = midParam * midParam;
+      //      m_ParaMat[1][1] = midParam;
+      //      m_ParaMat[2][0] = hiParam * hiParam;
+      //      m_ParaMat[2][1] = hiParam;
+      //      //compute inverse
+      //      MatInv(m_ParaMat, m_ParaInv, 3);
+      //      break;         
+      //   case(FD_FORWARD) :            
+      //   default:
+      //      if(flipSign == true) 
+      //      { 
+      //         flipSign = false; //clear flag, for next iteration
+      //         dx *= -1.0;
+      //      }/* end if() */
+      //      break;         
+      //}/* end switch() */
 
       /*---------------------------------------
       Perform required model executions, saving 
@@ -1460,98 +1460,98 @@ retry:
          m_pModel->GetObsGroupPtr()->ReadObservations(&(m_pMinJac[1+m_NumParams]));
       }
 
-      if(dType != FD_FORWARD)
-      {
-         pParam->SetEstimatedValueTransformed(lowParam);
-         F = m_pModel->Execute();
-         m_DiffCount++;
-         m_pLowBkup->Store();
+      //if(dType != FD_FORWARD)
+      //{
+      //   pParam->SetEstimatedValueTransformed(lowParam);
+      //   F = m_pModel->Execute();
+      //   m_DiffCount++;
+      //   m_pLowBkup->Store();
 
-         /* ------------------------------------------
-         Update the min. Jacobian, if necessary
-         ------------------------------------------ */
-         if(F < m_pMinJac[0])
-         {
-            //first element is objective function value
-            m_pMinJac[0] = F;
-            //next elements are the parameter settings
-            m_pModel->GetParamGroupPtr()->ReadParams(&(m_pMinJac[1]));
-            //final elements are the simulated observation values
-            m_pModel->GetObsGroupPtr()->ReadObservations(&(m_pMinJac[1+m_NumParams]));
-         }/* end if() */
-      }/* end if() */
+      //   /* ------------------------------------------
+      //   Update the min. Jacobian, if necessary
+      //   ------------------------------------------ */
+      //   if(F < m_pMinJac[0])
+      //   {
+      //      //first element is objective function value
+      //      m_pMinJac[0] = F;
+      //      //next elements are the parameter settings
+      //      m_pModel->GetParamGroupPtr()->ReadParams(&(m_pMinJac[1]));
+      //      //final elements are the simulated observation values
+      //      m_pModel->GetObsGroupPtr()->ReadObservations(&(m_pMinJac[1+m_NumParams]));
+      //   }/* end if() */
+      //}/* end if() */
 
       //compute change of each observation
-      total_diff = 0.00;
-      for(i = 0; i < m_NumObs; i++)
-      {
-         midObs = m_pMidBkup->GetObs(i, true, true);
-         hiObs = m_pHiBkup->GetObs(i, true, true);
+   //   total_diff = 0.00;
+   //   for(i = 0; i < m_NumObs; i++)
+   //   {
+   //      midObs = m_pMidBkup->GetObs(i, true, true);
+   //      hiObs = m_pHiBkup->GetObs(i, true, true);
 
-         if(dType != FD_FORWARD)
-         {
-            lowObs = m_pLowBkup->GetObs(i, true, true);
-         }/* end if() */
-         
-         //computation method for derivative depends on dType
-         switch(dType)
-         {
-            case(FD_OUT_CEN) : //outside central
-               dObs = (hiObs - lowObs);
-               diff = (dObs / dx);
-               break;
-            case(FD_PAR_CEN) : //parabolic central
-               //fill obs. vector
-               paraObs[0] = lowObs;
-               paraObs[1] = midObs;
-               paraObs[2] = hiObs;
-               //compute coefficients
-               VectMult(m_ParaInv, paraObs, paraCof, 3, 3);
-               //compute derivative approx. (dy/dx = 2ax + b)
-               diff = (2.00 * paraCof[0] * midParam) + paraCof[1];
-               break;
-            case(FD_FIT_CEN) : //Least-Squares best-fit central
-               /*-------------------------------------------------------               
-               The derivative of (y = bx + a) using Least-Sqaures is: 
-                  dy/dx = b = (SSxy - SxSy)/(SSxx - (Sx)^2)
-                  where, 
-                  S = #points (3),
-                  Sxy = (x1y1 + x2y2 + x3y3),
-                  Sx = (x1 + x2 + x3),
-                  Sy = (y1 + y2 + y3),
-                  Sxx = (x1^2 + x2^2 + x3^2),
-                  x1,x2,x3 -> parameters, 
-                  y1,y2,y3 -> observations,
-                  and equal variance has been given to each data point.
-               -------------------------------------------------------*/       
-               Sxy = ((lowObs*lowParam)+(midObs*midParam)+(hiObs*hiParam));
-               Sx = (lowParam + midParam + hiParam);
-               Sy = (lowObs + midObs + hiObs);
-               Sxx=(lowParam*lowParam)+(midParam*midParam)+(hiParam*hiParam);
-               diff = ((3.00 * Sxy) - (Sx * Sy)) / ((3.00 * Sxx) - (Sx * Sx));
-               break;
-            case(FD_FORWARD) : //forward difference
-            default:
-               dObs = hiObs - midObs;
-               diff = (dObs / dx);
-               break;         
-         }/* end switch() */
+   //      if(dType != FD_FORWARD)
+   //      {
+   //         lowObs = m_pLowBkup->GetObs(i, true, true);
+   //      }/* end if() */
+   //      
+   //      //computation method for derivative depends on dType
+   //      switch(dType)
+   //      {
+   //         case(FD_OUT_CEN) : //outside central
+   //            dObs = (hiObs - lowObs);
+   //            diff = (dObs / dx);
+   //            break;
+   //         case(FD_PAR_CEN) : //parabolic central
+   //            //fill obs. vector
+   //            paraObs[0] = lowObs;
+   //            paraObs[1] = midObs;
+   //            paraObs[2] = hiObs;
+   //            //compute coefficients
+   //            VectMult(m_ParaInv, paraObs, paraCof, 3, 3);
+   //            //compute derivative approx. (dy/dx = 2ax + b)
+   //            diff = (2.00 * paraCof[0] * midParam) + paraCof[1];
+   //            break;
+   //         case(FD_FIT_CEN) : //Least-Squares best-fit central
+   //            /*-------------------------------------------------------               
+   //            The derivative of (y = bx + a) using Least-Sqaures is: 
+   //               dy/dx = b = (SSxy - SxSy)/(SSxx - (Sx)^2)
+   //               where, 
+   //               S = #points (3),
+   //               Sxy = (x1y1 + x2y2 + x3y3),
+   //               Sx = (x1 + x2 + x3),
+   //               Sy = (y1 + y2 + y3),
+   //               Sxx = (x1^2 + x2^2 + x3^2),
+   //               x1,x2,x3 -> parameters, 
+   //               y1,y2,y3 -> observations,
+   //               and equal variance has been given to each data point.
+   //            -------------------------------------------------------*/       
+   //            Sxy = ((lowObs*lowParam)+(midObs*midParam)+(hiObs*hiParam));
+   //            Sx = (lowParam + midParam + hiParam);
+   //            Sy = (lowObs + midObs + hiObs);
+   //            Sxx=(lowParam*lowParam)+(midParam*midParam)+(hiParam*hiParam);
+   //            diff = ((3.00 * Sxy) - (Sx * Sy)) / ((3.00 * Sxx) - (Sx * Sx));
+   //            break;
+   //         case(FD_FORWARD) : //forward difference
+   //         default:
+   //            dObs = hiObs - midObs;
+   //            diff = (dObs / dx);
+   //            break;         
+   //      }/* end switch() */
 
-         idx = (i*m_NumParams) + j;
-         m_pMyBuf[idx] = diff;
+   //      idx = (i*m_NumParams) + j;
+   //      m_pMyBuf[idx] = diff;
 
-         m_pJacob[i][j] = diff;
-         m_pJacobT[j][i] = diff;
-         total_diff += fabs(diff);
-      }/* end for(observations) */
-      m_pMidBkup->SemiRestore();
+   //      m_pJacob[i][j] = diff;
+   //      m_pJacobT[j][i] = diff;
+   //      total_diff += fabs(diff);
+   //   }/* end for(observations) */
+   //   m_pMidBkup->SemiRestore();
 
-      //if sensitivity of all observations is ~0.00, retry using an alternative increment type
-      if((total_diff <= NEARLY_ZERO) && (dIncType != FD_RANGE_REL) && (GetProgramType() != JACOBIAN_PROGRAM))
-      {
-         dIncType = FD_RANGE_REL;
-         goto retry;
-      }
+   //   //if sensitivity of all observations is ~0.00, retry using an alternative increment type
+   //   if((total_diff <= NEARLY_ZERO) && (dIncType != FD_RANGE_REL) && (GetProgramType() != JACOBIAN_PROGRAM))
+   //   {
+   //      dIncType = FD_RANGE_REL;
+   //      goto retry;
+   //   }
    } /* end for(parameters) */   
 
    //gather results
@@ -1581,322 +1581,322 @@ Compute the Jacobian entries using SuperMUSE. This routine interfaces with the
 RepeatTasker SuperMUSE program, which assigns model evaluations to SuperMUSE 
 clients on a first-come-first-served basis.
 ******************************************************************************/
-void StatsClass::EvalJacSuperMUSE(void)
-{  
-   bool flipSign, bOk;
-   double upr;    //upper bound of parameter
-   double lwr;    //lower bound of parameter
-   double F, dx, cur, next;     //parameter perterbation
-   int i;
-   int j;
-   int task;
-   //double Flwr, Fupr, range;
-   double diff; //derivative approximation, to be stored in Jacobian
-   double dObs;  //forward and outside central diff. numerator
-   double lowParam; //central diff. LHS
-   double hiParam; //central diff. RHS and forward diff. RHS
-   double midParam; //central diff middle parameter value, forward diff. LHS
-   double lowObs; //central diff. LHS
-   double hiObs; //central diff. RHS and forward diff.
-   double midObs; //current observation value
-   double paraCof[3];    //coeff. of parabolic solution
-   double paraObs[3];    //obs. vals. of parabolic solution
-   double Sxy, Sx, Sy, Sxx; //central diff. best-fit parameters   
-   ParameterGroup * pParamGroup;
-   ParameterABC * pParam;
-   double * pPoint;
-   FiniteDiffType dType;
-   FiniteDiffIncType dIncType;
-   double total_diff;
-   double negOne = -1.00;
-   SuperMUSE * pSMUSE = GetSuperMusePtr();
-   
-   pParamGroup = m_pModel->GetParamGroupPtr();
-
-   m_pMidBkup->Store();
-   flipSign = false;
-
-   /* ------------------------------------------
-   Intialize the min. Jacobian
-   ------------------------------------------ */
-   //first element is objective function value
-   m_pMinJac[0] = m_pModel->GetObjectiveFunctionValue();
-   //next elements are the parameter settings
-   m_pModel->GetParamGroupPtr()->ReadParams(&(m_pMinJac[1]));
-   //final elements are the simulated observation values
-   m_pModel->GetObsGroupPtr()->ReadObservations(&(m_pMinJac[1+m_NumParams]));
-
-   /*------------------------------------------------------
-   Perterb each parameter, one at a time, and assemble a 
-   list of the required model evaluations.
-   -------------------------------------------------------*/
-   for(j = 0; j < m_NumParams; j++)
-   {  
-      dType = m_DiffType;
-      dIncType = m_DiffIncType;
-      pParam = pParamGroup->GetParamPtr(j);
-
-      cur = pParam->GetEstimatedValueTransformed();
-      upr = pParam->GetUpperBoundTransformed();
-      lwr = pParam->GetLowerBoundTransformed();
-      if(dIncType == FD_OPTIMAL)
-      {
-         NEW_PRINT("double", m_NumParams);
-         pPoint = new double[m_NumParams];
-         MEM_CHECK(pPoint);
-
-         pParamGroup->ReadParams(pPoint);
-         dx = CalcOptimalStepSize(j, pPoint);
-         delete [] pPoint;      
-      }
-      else if(dIncType == FD_RANGE_REL)
-      {
-         dx = fabs(m_pDiffInc[j]*(upr-lwr));
-      }
-      else if(dIncType == FD_VALUE_REL)
-      {
-         dx = MyMax(fabs(m_pDiffInc[j]*cur), m_MinInc);
-      }
-      else if(dIncType == FD_ABSOLUTE)
-      {
-         dx = fabs(m_pDiffInc[j]);
-      }
-      else //default to range-relative increment
-      {
-         dx = fabs(m_pDiffInc[j]*(upr-lwr));
-      }
-      //trick from NR in C
-      next = cur + dx;
-      dx = next - cur;
-
-      //perterb parameter      
-      midParam = pParam->GetEstimatedValueTransformed();
-      hiParam = midParam  + dx;
-      lowParam = midParam - dx;
- 
-      //avoid exceeding parameter limits
-      if(hiParam > upr) 
-      { 
-         hiParam = lowParam; //move in opposite direction
-         flipSign = true;     //must reverse sign when done
-         dType = FD_FORWARD;  //only use forward difference
-      } /* end if() */
-      if(lowParam < lwr) 
-      { 
-         dType = FD_FORWARD; //only use forward difference
-      }/* end if() */
-
-      //adjust change in parameter
-      switch(dType)
-      {
-         case(FD_FIT_CEN) :         
-         case(FD_OUT_CEN) :
-         case(FD_PAR_CEN) :
-            hiParam  = midParam + (0.5 * dx);
-            lowParam = midParam - (0.5 * dx);
-            break;
-         case(FD_FORWARD) :            
-         default:
-            if(flipSign == true) 
-            { 
-               flipSign = false; //clear flag, for next iteration
-               dx *= -1.0;
-            }/* end if() */
-            break;         
-      }/* end switch() */
-
-      /* --------------------------------------
-      Save parameter vars (will need them again
-      when SuperMUSE finishes its work.
-      -------------------------------------- */
-      m_pDType[j] = dType;
-      m_pDx[j]    = dx;
-      m_pMid[j]   = midParam;
-      m_pHi[j]    = hiParam;
-      m_pLow[j]   = lowParam;
-
-      /*---------------------------------------
-      Store required model executions as items
-      in the SuperMUSE task list. The convention
-      is the high parameter first and the low
-      parameter (if needed) second.
-      -----------------------------------------*/      
-      pParam->SetEstimatedValueTransformed(hiParam);
-      //pass group to supermuse
-      pSMUSE->WriteTask(pParamGroup);
-
-      if(dType != FD_FORWARD)
-      {
-         pParam->SetEstimatedValueTransformed(lowParam);
-        //pass group to supermuse
-        pSMUSE->WriteTask(pParamGroup);
-      }
-      
-      m_pMidBkup->SemiRestore();
-   }/* end for() */
-
-   /* -------------------------------------------------
-   Now that a list of required evaluations has been 
-   assembled, signal SuperMUSE to begin processing the
-   job and then wait for SuperMUSE to complete.
-   ------------------------------------------------- */
-   //Finish task file (this will cause RepeatTasker to begin processing the job)
-   pSMUSE->FinishTaskFile();
-
-   //wait for SuperMUSE to report back (via the success or error files)
-   bOk = pSMUSE->WaitForTasker();
-
-   if(bOk == false) //SuperMUSE failed
-   {
-      LogError(ERR_SMUSE, "Reverting to serial execution.");
-      DisableSuperMUSE();
-      CalcJacobian(&negOne);
-   }
-   else //SuperMUSE was successful
-   {     
-      /* -------------------------------------------------
-      Now that SuperMUSE has completed all of the required
-      evaluations, compute the Jacobian entries.
-      ------------------------------------------------- */
-      task = 0;
-      for(j = 0; j < m_NumParams; j++)
-      {  
-         pParam = pParamGroup->GetParamPtr(j);
-
-         //retrieved stored vars for the given parameter
-         dType    = m_pDType[j];
-         dx       = m_pDx[j];
-         midParam = m_pMid[j];
-         hiParam  = m_pHi[j];
-         lowParam = m_pLow[j];
- 
-         //prepare parabolic matrix, if needed
-         if(dType == FD_PAR_CEN)
-         {
-            m_ParaMat[0][2] = 1.00;
-            m_ParaMat[1][2] = 1.00;
-            m_ParaMat[2][2] = 1.00;
-            m_ParaMat[0][0] = lowParam * lowParam;
-            m_ParaMat[0][1] = lowParam;
-            m_ParaMat[1][0] = midParam * midParam;
-            m_ParaMat[1][1] = midParam;
-            m_ParaMat[2][0] = hiParam * hiParam;
-            m_ParaMat[2][1] = hiParam;
-            //compute inverse
-            MatInv(m_ParaMat, m_ParaInv, 3);
-         }/* end if() */
-
-         /*---------------------------------------
-         Extract results from the model executions, 
-         saving results into the appropriate model 
-         backup.
-         -----------------------------------------*/      
-         pParam->SetEstimatedValueTransformed(hiParam);
-         F = pSMUSE->GatherResult(task);
-         task++;
-         m_DiffCount++;
-         m_pHiBkup->Store();
-
-         /* ------------------------------------------
-         Update the min. Jacobian, if necessary
-         ------------------------------------------ */
-         if(F < m_pMinJac[0])
-         {
-            //first element is objective function value
-            m_pMinJac[0] = F;
-            //next elements are the parameter settings
-            m_pModel->GetParamGroupPtr()->ReadParams(&(m_pMinJac[1]));
-            //final elements are the simulated observation values
-            m_pModel->GetObsGroupPtr()->ReadObservations(&(m_pMinJac[1+m_NumParams]));
-         }/* end if() */
-
-         if(dType != FD_FORWARD)
-         {
-            pParam->SetEstimatedValueTransformed(lowParam);
-            F = pSMUSE->GatherResult(task);
-            task++;
-            m_DiffCount++;
-            m_pLowBkup->Store();
-
-            /* ------------------------------------------
-            Update the min. Jacobian, if necessary
-            ------------------------------------------ */
-            if(F < m_pMinJac[0])
-            {
-               //first element is objective function value
-               m_pMinJac[0] = F;
-               //next elements are the parameter settings
-               m_pModel->GetParamGroupPtr()->ReadParams(&(m_pMinJac[1]));
-               //final elements are the simulated observation values
-               m_pModel->GetObsGroupPtr()->ReadObservations(&(m_pMinJac[1+m_NumParams]));
-            }/* end if() */
-         }/* end if() */
-
-         //compute change of each observation
-         total_diff = 0.00;
-         for(i = 0; i < m_NumObs; i++)
-         {
-            midObs = m_pMidBkup->GetObs(i, true, true);
-            hiObs = m_pHiBkup->GetObs(i, true, true);
-
-            if(dType != FD_FORWARD)
-            {
-               lowObs = m_pLowBkup->GetObs(i, true, true);
-            }/* end if() */
-         
-            //computation method for derivative depends on dType
-            switch(dType)
-            {
-               case(FD_OUT_CEN) : //outside central
-                 dObs = (hiObs - lowObs);
-                  diff = (dObs / dx);
-                  break;
-               case(FD_PAR_CEN) : //parabolic central
-                  //fill obs. vector
-                  paraObs[0] = lowObs;
-                  paraObs[1] = midObs;
-                  paraObs[2] = hiObs;
-                  //compute coefficients
-                  VectMult(m_ParaInv, paraObs, paraCof, 3, 3);
-                  //compute derivative approx. (dy/dx = 2ax + b)
-                  diff = (2.00 * paraCof[0] * midParam) + paraCof[1];
-                  break;
-               case(FD_FIT_CEN) : //Least-Squares best-fit central
-                  /*-------------------------------------------------------               
-                  The derivative of (y = bx + a) using Least-Sqaures is: 
-                     dy/dx = b = (SSxy - SxSy)/(SSxx - (Sx)^2)
-                     where, 
-                     S = #points (3),
-                     Sxy = (x1y1 + x2y2 + x3y3),
-                     Sx = (x1 + x2 + x3),
-                     Sy = (y1 + y2 + y3),
-                     Sxx = (x1^2 + x2^2 + x3^2),
-                     x1,x2,x3 -> parameters, 
-                     y1,y2,y3 -> observations,
-                     and equal variance has been given to each data point.
-                  -------------------------------------------------------*/       
-                  Sxy = ((lowObs*lowParam)+(midObs*midParam)+(hiObs*hiParam));
-                  Sx = (lowParam + midParam + hiParam);
-                  Sy = (lowObs + midObs + hiObs);
-                  Sxx=(lowParam*lowParam)+(midParam*midParam)+(hiParam*hiParam);
-                  diff = ((3.00 * Sxy) - (Sx * Sy)) / ((3.00 * Sxx) - (Sx * Sx));
-                  break;
-               case(FD_FORWARD) : //forward difference
-               default:
-                  dObs = hiObs - midObs;
-                  diff = (dObs / dx);
-                  break;         
-            }/* end switch() */
-         
-            m_pJacob[i][j] = diff;
-            m_pJacobT[j][i] = diff;         
-            total_diff += fabs(diff);
-         }/* end for(observations) */
-      
-         m_pMidBkup->SemiRestore();
-      } /* end for(parameters) */   
-   }/* end if() */
-}/* end EvalJacSuperMUSE() */
+//void StatsClass::EvalJacSuperMUSE(void)
+//{  
+//   bool flipSign, bOk;
+//   double upr;    //upper bound of parameter
+//   double lwr;    //lower bound of parameter
+//   double F, dx, cur, next;     //parameter perterbation
+//   int i;
+//   int j;
+//   int task;
+//   //double Flwr, Fupr, range;
+//   double diff; //derivative approximation, to be stored in Jacobian
+//   double dObs;  //forward and outside central diff. numerator
+//   double lowParam; //central diff. LHS
+//   double hiParam; //central diff. RHS and forward diff. RHS
+//   double midParam; //central diff middle parameter value, forward diff. LHS
+//   double lowObs; //central diff. LHS
+//   double hiObs; //central diff. RHS and forward diff.
+//   double midObs; //current observation value
+//   double paraCof[3];    //coeff. of parabolic solution
+//   double paraObs[3];    //obs. vals. of parabolic solution
+//   double Sxy, Sx, Sy, Sxx; //central diff. best-fit parameters   
+//   ParameterGroup * pParamGroup;
+//   ParameterABC * pParam;
+//   double * pPoint;
+//   FiniteDiffType dType;
+//   FiniteDiffIncType dIncType;
+//   double total_diff;
+//   double negOne = -1.00;
+//   SuperMUSE * pSMUSE = GetSuperMusePtr();
+//   
+//   pParamGroup = m_pModel->GetParamGroupPtr();
+//
+//   m_pMidBkup->Store();
+//   flipSign = false;
+//
+//   /* ------------------------------------------
+//   Intialize the min. Jacobian
+//   ------------------------------------------ */
+//   //first element is objective function value
+//   m_pMinJac[0] = m_pModel->GetObjectiveFunctionValue();
+//   //next elements are the parameter settings
+//   m_pModel->GetParamGroupPtr()->ReadParams(&(m_pMinJac[1]));
+//   //final elements are the simulated observation values
+//   m_pModel->GetObsGroupPtr()->ReadObservations(&(m_pMinJac[1+m_NumParams]));
+//
+//   /*------------------------------------------------------
+//   Perterb each parameter, one at a time, and assemble a 
+//   list of the required model evaluations.
+//   -------------------------------------------------------*/
+//   for(j = 0; j < m_NumParams; j++)
+//   {  
+//      dType = m_DiffType;
+//      dIncType = m_DiffIncType;
+//      pParam = pParamGroup->GetParamPtr(j);
+//
+//      cur = pParam->GetEstimatedValueTransformed();
+//      upr = pParam->GetUpperBoundTransformed();
+//      lwr = pParam->GetLowerBoundTransformed();
+//      if(dIncType == FD_OPTIMAL)
+//      {
+//         NEW_PRINT("double", m_NumParams);
+//         pPoint = new double[m_NumParams];
+//         MEM_CHECK(pPoint);
+//
+//         pParamGroup->ReadParams(pPoint);
+//         dx = CalcOptimalStepSize(j, pPoint);
+//         delete [] pPoint;      
+//      }
+//      else if(dIncType == FD_RANGE_REL)
+//      {
+//         dx = fabs(m_pDiffInc[j]*(upr-lwr));
+//      }
+//      else if(dIncType == FD_VALUE_REL)
+//      {
+//         dx = MyMax(fabs(m_pDiffInc[j]*cur), m_MinInc);
+//      }
+//      else if(dIncType == FD_ABSOLUTE)
+//      {
+//         dx = fabs(m_pDiffInc[j]);
+//      }
+//      else //default to range-relative increment
+//      {
+//         dx = fabs(m_pDiffInc[j]*(upr-lwr));
+//      }
+//      //trick from NR in C
+//      next = cur + dx;
+//      dx = next - cur;
+//
+//      //perterb parameter      
+//      midParam = pParam->GetEstimatedValueTransformed();
+//      hiParam = midParam  + dx;
+//      lowParam = midParam - dx;
+// 
+//      //avoid exceeding parameter limits
+//      //if(hiParam > upr) 
+//      //{ 
+//      //   hiParam = lowParam; //move in opposite direction
+//      //   flipSign = true;     //must reverse sign when done
+//      //   dType = FD_FORWARD;  //only use forward difference
+//      //} /* end if() */
+//      //if(lowParam < lwr) 
+//      //{ 
+//      //   dType = FD_FORWARD; //only use forward difference
+//      //}/* end if() */
+//
+//      ////adjust change in parameter
+//      //switch(dType)
+//      //{
+//      //   case(FD_FIT_CEN) :         
+//      //   case(FD_OUT_CEN) :
+//      //   case(FD_PAR_CEN) :
+//      //      hiParam  = midParam + (0.5 * dx);
+//      //      lowParam = midParam - (0.5 * dx);
+//      //      break;
+//      //   case(FD_FORWARD) :            
+//      //   default:
+//      //      if(flipSign == true) 
+//      //      { 
+//      //         flipSign = false; //clear flag, for next iteration
+//      //         dx *= -1.0;
+//      //      }/* end if() */
+//      //      break;         
+//      //}/* end switch() */
+//
+//      /* --------------------------------------
+//      Save parameter vars (will need them again
+//      when SuperMUSE finishes its work.
+//      -------------------------------------- */
+//      m_pDType[j] = dType;
+//      m_pDx[j]    = dx;
+//      m_pMid[j]   = midParam;
+//      m_pHi[j]    = hiParam;
+//      m_pLow[j]   = lowParam;
+//
+//      /*---------------------------------------
+//      Store required model executions as items
+//      in the SuperMUSE task list. The convention
+//      is the high parameter first and the low
+//      parameter (if needed) second.
+//      -----------------------------------------*/      
+//      pParam->SetEstimatedValueTransformed(hiParam);
+//      //pass group to supermuse
+//      pSMUSE->WriteTask(pParamGroup);
+//
+//      //if(dType != FD_FORWARD)
+//      //{
+//      //   pParam->SetEstimatedValueTransformed(lowParam);
+//      //  //pass group to supermuse
+//      //  pSMUSE->WriteTask(pParamGroup);
+//      //}
+//      
+//      m_pMidBkup->SemiRestore();
+//   }/* end for() */
+//
+//   /* -------------------------------------------------
+//   Now that a list of required evaluations has been 
+//   assembled, signal SuperMUSE to begin processing the
+//   job and then wait for SuperMUSE to complete.
+//   ------------------------------------------------- */
+//   //Finish task file (this will cause RepeatTasker to begin processing the job)
+//   pSMUSE->FinishTaskFile();
+//
+//   //wait for SuperMUSE to report back (via the success or error files)
+//   bOk = pSMUSE->WaitForTasker();
+//
+//   if(bOk == false) //SuperMUSE failed
+//   {
+//      LogError(ERR_SMUSE, "Reverting to serial execution.");
+//      DisableSuperMUSE();
+//      CalcJacobian(&negOne);
+//   }
+//   else //SuperMUSE was successful
+//   {     
+//      /* -------------------------------------------------
+//      Now that SuperMUSE has completed all of the required
+//      evaluations, compute the Jacobian entries.
+//      ------------------------------------------------- */
+//      task = 0;
+//      for(j = 0; j < m_NumParams; j++)
+//      {  
+//         pParam = pParamGroup->GetParamPtr(j);
+//
+//         //retrieved stored vars for the given parameter
+//         dType    = m_pDType[j];
+//         dx       = m_pDx[j];
+//         midParam = m_pMid[j];
+//         hiParam  = m_pHi[j];
+//         lowParam = m_pLow[j];
+// 
+//         //prepare parabolic matrix, if needed
+//         //if(dType == FD_PAR_CEN)
+//         //{
+//         //   m_ParaMat[0][2] = 1.00;
+//         //   m_ParaMat[1][2] = 1.00;
+//         //   m_ParaMat[2][2] = 1.00;
+//         //   m_ParaMat[0][0] = lowParam * lowParam;
+//         //   m_ParaMat[0][1] = lowParam;
+//         //   m_ParaMat[1][0] = midParam * midParam;
+//         //   m_ParaMat[1][1] = midParam;
+//         //   m_ParaMat[2][0] = hiParam * hiParam;
+//         //   m_ParaMat[2][1] = hiParam;
+//         //   //compute inverse
+//         //   MatInv(m_ParaMat, m_ParaInv, 3);
+//         //}/* end if() */
+//
+//         /*---------------------------------------
+//         Extract results from the model executions, 
+//         saving results into the appropriate model 
+//         backup.
+//         -----------------------------------------*/      
+//         pParam->SetEstimatedValueTransformed(hiParam);
+//         F = pSMUSE->GatherResult(task);
+//         task++;
+//         m_DiffCount++;
+//         m_pHiBkup->Store();
+//
+//         /* ------------------------------------------
+//         Update the min. Jacobian, if necessary
+//         ------------------------------------------ */
+//         if(F < m_pMinJac[0])
+//         {
+//            //first element is objective function value
+//            m_pMinJac[0] = F;
+//            //next elements are the parameter settings
+//            m_pModel->GetParamGroupPtr()->ReadParams(&(m_pMinJac[1]));
+//            //final elements are the simulated observation values
+//            m_pModel->GetObsGroupPtr()->ReadObservations(&(m_pMinJac[1+m_NumParams]));
+//         }/* end if() */
+//
+//         //if(dType != FD_FORWARD)
+//         //{
+//         //   pParam->SetEstimatedValueTransformed(lowParam);
+//         //   F = pSMUSE->GatherResult(task);
+//         //   task++;
+//         //   m_DiffCount++;
+//         //   m_pLowBkup->Store();
+//
+//         //   /* ------------------------------------------
+//         //   Update the min. Jacobian, if necessary
+//         //   ------------------------------------------ */
+//         //   if(F < m_pMinJac[0])
+//         //   {
+//         //      //first element is objective function value
+//         //      m_pMinJac[0] = F;
+//         //      //next elements are the parameter settings
+//         //      m_pModel->GetParamGroupPtr()->ReadParams(&(m_pMinJac[1]));
+//         //      //final elements are the simulated observation values
+//         //      m_pModel->GetObsGroupPtr()->ReadObservations(&(m_pMinJac[1+m_NumParams]));
+//         //   }/* end if() */
+//         //}/* end if() */
+//
+//         //compute change of each observation
+//         total_diff = 0.00;
+//         for(i = 0; i < m_NumObs; i++)
+//         {
+//            /*midObs = m_pMidBkup->GetObs(i, true, true);
+//            hiObs = m_pHiBkup->GetObs(i, true, true);
+//
+//            if(dType != FD_FORWARD)
+//            {
+//               lowObs = m_pLowBkup->GetObs(i, true, true);
+//            }*//* end if() */
+//         
+//            //computation method for derivative depends on dType
+//            //switch(dType)
+//            //{
+//            //   case(FD_OUT_CEN) : //outside central
+//            //     dObs = (hiObs - lowObs);
+//            //      diff = (dObs / dx);
+//            //      break;
+//            //   case(FD_PAR_CEN) : //parabolic central
+//            //      //fill obs. vector
+//            //      paraObs[0] = lowObs;
+//            //      paraObs[1] = midObs;
+//            //      paraObs[2] = hiObs;
+//            //      //compute coefficients
+//            //      VectMult(m_ParaInv, paraObs, paraCof, 3, 3);
+//            //      //compute derivative approx. (dy/dx = 2ax + b)
+//            //      diff = (2.00 * paraCof[0] * midParam) + paraCof[1];
+//            //      break;
+//            //   case(FD_FIT_CEN) : //Least-Squares best-fit central
+//            //      /*-------------------------------------------------------               
+//            //      The derivative of (y = bx + a) using Least-Sqaures is: 
+//            //         dy/dx = b = (SSxy - SxSy)/(SSxx - (Sx)^2)
+//            //         where, 
+//            //         S = #points (3),
+//            //         Sxy = (x1y1 + x2y2 + x3y3),
+//            //         Sx = (x1 + x2 + x3),
+//            //         Sy = (y1 + y2 + y3),
+//            //         Sxx = (x1^2 + x2^2 + x3^2),
+//            //         x1,x2,x3 -> parameters, 
+//            //         y1,y2,y3 -> observations,
+//            //         and equal variance has been given to each data point.
+//            //      -------------------------------------------------------*/       
+//            //      Sxy = ((lowObs*lowParam)+(midObs*midParam)+(hiObs*hiParam));
+//            //      Sx = (lowParam + midParam + hiParam);
+//            //      Sy = (lowObs + midObs + hiObs);
+//            //      Sxx=(lowParam*lowParam)+(midParam*midParam)+(hiParam*hiParam);
+//            //      diff = ((3.00 * Sxy) - (Sx * Sy)) / ((3.00 * Sxx) - (Sx * Sx));
+//            //      break;
+//            //   case(FD_FORWARD) : //forward difference
+//            //   default:
+//            //      dObs = hiObs - midObs;
+//            //      diff = (dObs / dx);
+//            //      break;         
+//            //}/* end switch() */
+//         
+//            m_pJacob[i][j] = diff;
+//            m_pJacobT[j][i] = diff;         
+//            total_diff += fabs(diff);
+//         }/* end for(observations) */
+//      
+//         m_pMidBkup->SemiRestore();
+//      } /* end for(parameters) */   
+//   }/* end if() */
+//}/* end EvalJacSuperMUSE() */
 
 /******************************************************************************
 EvalJacSerial()
@@ -1999,51 +1999,51 @@ retry:
       lowParam = midParam - dx;
  
       //avoid exceeding parameter limits
-      if(hiParam > upr) 
-      { 
-         hiParam = lowParam; //move in opposite direction
-         flipSign = true;     //must reverse sign when done
-         dType = FD_FORWARD;  //only use forward difference
-      } /* end if() */
-      if(lowParam < lwr) 
-      { 
-         dType = FD_FORWARD; //only use forward difference
-      }/* end if() */
+      //if(hiParam > upr) 
+      //{ 
+      //   hiParam = lowParam; //move in opposite direction
+      //   flipSign = true;     //must reverse sign when done
+      //   dType = FD_FORWARD;  //only use forward difference
+      //} /* end if() */
+      //if(lowParam < lwr) 
+      //{ 
+      //   dType = FD_FORWARD; //only use forward difference
+      //}/* end if() */
 
-      //adjust change in parameter
-      switch(dType)
-      {
-         case(FD_FIT_CEN) :         
-         case(FD_OUT_CEN) :
-            hiParam  = midParam + (0.5 * dx);
-            lowParam = midParam - (0.5 * dx);
-            break;
-         case(FD_PAR_CEN) :
-            hiParam  = midParam + (0.5 * dx);
-            lowParam = midParam - (0.5 * dx);
+      ////adjust change in parameter
+      //switch(dType)
+      //{
+      //   case(FD_FIT_CEN) :         
+      //   case(FD_OUT_CEN) :
+      //      hiParam  = midParam + (0.5 * dx);
+      //      lowParam = midParam - (0.5 * dx);
+      //      break;
+      //   case(FD_PAR_CEN) :
+      //      hiParam  = midParam + (0.5 * dx);
+      //      lowParam = midParam - (0.5 * dx);
 
-            //prepare parabolic matrix            
-            m_ParaMat[0][2] = 1.00;
-            m_ParaMat[1][2] = 1.00;
-            m_ParaMat[2][2] = 1.00;
-            m_ParaMat[0][0] = lowParam * lowParam;
-            m_ParaMat[0][1] = lowParam;
-            m_ParaMat[1][0] = midParam * midParam;
-            m_ParaMat[1][1] = midParam;
-            m_ParaMat[2][0] = hiParam * hiParam;
-            m_ParaMat[2][1] = hiParam;
-            //compute inverse
-            MatInv(m_ParaMat, m_ParaInv, 3);
-            break;         
-         case(FD_FORWARD) :            
-         default:
-            if(flipSign == true) 
-            { 
-               flipSign = false; //clear flag, for next iteration
-               dx *= -1.0;
-            }/* end if() */
-            break;         
-      }/* end switch() */
+      //      //prepare parabolic matrix            
+      //      m_ParaMat[0][2] = 1.00;
+      //      m_ParaMat[1][2] = 1.00;
+      //      m_ParaMat[2][2] = 1.00;
+      //      m_ParaMat[0][0] = lowParam * lowParam;
+      //      m_ParaMat[0][1] = lowParam;
+      //      m_ParaMat[1][0] = midParam * midParam;
+      //      m_ParaMat[1][1] = midParam;
+      //      m_ParaMat[2][0] = hiParam * hiParam;
+      //      m_ParaMat[2][1] = hiParam;
+      //      //compute inverse
+      //      MatInv(m_ParaMat, m_ParaInv, 3);
+      //      break;         
+      //   case(FD_FORWARD) :            
+      //   default:
+      //      if(flipSign == true) 
+      //      { 
+      //         flipSign = false; //clear flag, for next iteration
+      //         dx *= -1.0;
+      //      }/* end if() */
+      //      break;         
+      //}/* end switch() */
 
       /*---------------------------------------
       Perform required model executions, saving 
@@ -2072,32 +2072,32 @@ retry:
          m_pModel->GetObsGroupPtr()->ReadObservations(&(m_pMinJac[1+m_NumParams]));
       }/* end if() */
 
-      if(dType != FD_FORWARD)
-      {
-         pParam->SetEstimatedValueTransformed(lowParam);
-         F = m_pModel->Execute();
-         if(F < (*pBestSavedF))
-         {
-            m_pModel->SaveBest(0);
-            (*pBestSavedF) = F;
-         }
+      //if(dType != FD_FORWARD)
+      //{
+      //   pParam->SetEstimatedValueTransformed(lowParam);
+      //   F = m_pModel->Execute();
+      //   if(F < (*pBestSavedF))
+      //   {
+      //      m_pModel->SaveBest(0);
+      //      (*pBestSavedF) = F;
+      //   }
 
-         m_DiffCount++;
-         m_pLowBkup->Store();
+      //   m_DiffCount++;
+      //   m_pLowBkup->Store();
 
-         /* ------------------------------------------
-         Update the min. Jacobian, if necessary
-         ------------------------------------------ */
-         if(F < m_pMinJac[0])
-         {
-            //first element is objective function value
-            m_pMinJac[0] = F;
-            //next elements are the parameter settings
-            m_pModel->GetParamGroupPtr()->ReadParams(&(m_pMinJac[1]));
-            //final elements are the simulated observation values
-            m_pModel->GetObsGroupPtr()->ReadObservations(&(m_pMinJac[1+m_NumParams]));
-         }/* end if() */
-      }/* end if() */
+      //   /* ------------------------------------------
+      //   Update the min. Jacobian, if necessary
+      //   ------------------------------------------ */
+      //   if(F < m_pMinJac[0])
+      //   {
+      //      //first element is objective function value
+      //      m_pMinJac[0] = F;
+      //      //next elements are the parameter settings
+      //      m_pModel->GetParamGroupPtr()->ReadParams(&(m_pMinJac[1]));
+      //      //final elements are the simulated observation values
+      //      m_pModel->GetObsGroupPtr()->ReadObservations(&(m_pMinJac[1+m_NumParams]));
+      //   }/* end if() */
+      //}/* end if() */
 
       //compute change of each observation
       total_diff = 0.00;
@@ -2106,56 +2106,60 @@ retry:
          midObs = m_pMidBkup->GetObs(i, true, true);
          hiObs = m_pHiBkup->GetObs(i, true, true);
 
-         if(dType != FD_FORWARD)
-         {
-            lowObs = m_pLowBkup->GetObs(i, true, true);
-         }/* end if() */
-         
-         //computation method for derivative depends on dType
-         switch(dType)
-         {
-            case(FD_OUT_CEN) : //outside central
-               dObs = (hiObs - lowObs);
-               diff = (dObs / dx);
-               break;
-            case(FD_PAR_CEN) : //parabolic central
-               //fill obs. vector
-               paraObs[0] = lowObs;
-               paraObs[1] = midObs;
-               paraObs[2] = hiObs;
-               //compute coefficients
-               VectMult(m_ParaInv, paraObs, paraCof, 3, 3);
-               //compute derivative approx. (dy/dx = 2ax + b)
-               diff = (2.00 * paraCof[0] * midParam) + paraCof[1];
-               break;
-            case(FD_FIT_CEN) : //Least-Squares best-fit central
-               /*-------------------------------------------------------               
-               The derivative of (y = bx + a) using Least-Sqaures is: 
-                  dy/dx = b = (SSxy - SxSy)/(SSxx - (Sx)^2)
-                  where, 
-                  S = #points (3),
-                  Sxy = (x1y1 + x2y2 + x3y3),
-                  Sx = (x1 + x2 + x3),
-                  Sy = (y1 + y2 + y3),
-                  Sxx = (x1^2 + x2^2 + x3^2),
-                  x1,x2,x3 -> parameters, 
-                  y1,y2,y3 -> observations,
-                  and equal variance has been given to each data point.
-               -------------------------------------------------------*/       
-               Sxy = ((lowObs*lowParam)+(midObs*midParam)+(hiObs*hiParam));
-               Sx = (lowParam + midParam + hiParam);
-               Sy = (lowObs + midObs + hiObs);
-               Sxx=(lowParam*lowParam)+(midParam*midParam)+(hiParam*hiParam);
-               diff = ((3.00 * Sxy) - (Sx * Sy)) / ((3.00 * Sxx) - (Sx * Sx));
-               break;
-            case(FD_FORWARD) : //forward difference
-            default:
-               dObs = hiObs - midObs;
-               diff = (dObs / dx);
-               //printf("%E,%E,%E,%E\n", midObs, hiObs, midParam, hiParam);
+         //if(dType != FD_FORWARD)
+         //{
+         //   lowObs = m_pLowBkup->GetObs(i, true, true);
+         //}/* end if() */
+         //
+         ////computation method for derivative depends on dType
+         //switch(dType)
+         //{
+         //   case(FD_OUT_CEN) : //outside central
+         //      dObs = (hiObs - lowObs);
+         //      diff = (dObs / dx);
+         //      break;
+         //   case(FD_PAR_CEN) : //parabolic central
+         //      //fill obs. vector
+         //      paraObs[0] = lowObs;
+         //      paraObs[1] = midObs;
+         //      paraObs[2] = hiObs;
+         //      //compute coefficients
+         //      VectMult(m_ParaInv, paraObs, paraCof, 3, 3);
+         //      //compute derivative approx. (dy/dx = 2ax + b)
+         //      diff = (2.00 * paraCof[0] * midParam) + paraCof[1];
+         //      break;
+         //   case(FD_FIT_CEN) : //Least-Squares best-fit central
+         //      /*-------------------------------------------------------               
+         //      The derivative of (y = bx + a) using Least-Sqaures is: 
+         //         dy/dx = b = (SSxy - SxSy)/(SSxx - (Sx)^2)
+         //         where, 
+         //         S = #points (3),
+         //         Sxy = (x1y1 + x2y2 + x3y3),
+         //         Sx = (x1 + x2 + x3),
+         //         Sy = (y1 + y2 + y3),
+         //         Sxx = (x1^2 + x2^2 + x3^2),
+         //         x1,x2,x3 -> parameters, 
+         //         y1,y2,y3 -> observations,
+         //         and equal variance has been given to each data point.
+         //      -------------------------------------------------------*/       
+         //      Sxy = ((lowObs*lowParam)+(midObs*midParam)+(hiObs*hiParam));
+         //      Sx = (lowParam + midParam + hiParam);
+         //      Sy = (lowObs + midObs + hiObs);
+         //      Sxx=(lowParam*lowParam)+(midParam*midParam)+(hiParam*hiParam);
+         //      diff = ((3.00 * Sxy) - (Sx * Sy)) / ((3.00 * Sxx) - (Sx * Sx));
+         //      break;
+         //   case(FD_FORWARD) : //forward difference
+         //   default:
+         //      dObs = hiObs - midObs;
+         //      diff = (dObs / dx);
+         //      //printf("%E,%E,%E,%E\n", midObs, hiObs, midParam, hiParam);
                break;         
-         }/* end switch() */
+         //}/* end switch() */
          
+         dObs = hiObs - midObs;
+         diff = (dObs / dx);
+
+
          m_pJacob[i][j] = diff;
          m_pJacobT[j][i] = diff;
          total_diff += fabs(diff);
@@ -2169,55 +2173,58 @@ retry:
          midObs = m_pMidBkup->GetPred(i);
          hiObs = m_pHiBkup->GetPred(i);
 
-         if(dType != FD_FORWARD)
-         {
-            lowObs = m_pLowBkup->GetPred(i);
-         }/* end if() */
-         
-         //computation method for derivative depends on dType
-         switch(dType)
-         {
-            case(FD_OUT_CEN) : //outside central
-               dObs = (hiObs - lowObs);
-               diff = (dObs / dx);
-               break;
-            case(FD_PAR_CEN) : //parabolic central
-               //fill obs. vector
-               paraObs[0] = lowObs;
-               paraObs[1] = midObs;
-               paraObs[2] = hiObs;
-               //compute coefficients
-               VectMult(m_ParaInv, paraObs, paraCof, 3, 3);
-               //compute derivative approx. (dy/dx = 2ax + b)
-               diff = (2.00 * paraCof[0] * midParam) + paraCof[1];
-               break;
-            case(FD_FIT_CEN) : //Least-Squares best-fit central
-               /*-------------------------------------------------------               
-               The derivative of (y = bx + a) using Least-Sqaures is: 
-                  dy/dx = b = (SSxy - SxSy)/(SSxx - (Sx)^2)
-                  where, 
-                  S = #points (3),
-                  Sxy = (x1y1 + x2y2 + x3y3),
-                  Sx = (x1 + x2 + x3),
-                  Sy = (y1 + y2 + y3),
-                  Sxx = (x1^2 + x2^2 + x3^2),
-                  x1,x2,x3 -> parameters, 
-                  y1,y2,y3 -> observations,
-                  and equal variance has been given to each data point.
-               -------------------------------------------------------*/       
-               Sxy = ((lowObs*lowParam)+(midObs*midParam)+(hiObs*hiParam));
-               Sx = (lowParam + midParam + hiParam);
-               Sy = (lowObs + midObs + hiObs);
-               Sxx=(lowParam*lowParam)+(midParam*midParam)+(hiParam*hiParam);
-               diff = ((3.00 * Sxy) - (Sx * Sy)) / ((3.00 * Sxx) - (Sx * Sx));
-               break;
-            case(FD_FORWARD) : //forward difference
-            default:
-               dObs = hiObs - midObs;
-               diff = (dObs / dx);
-               //printf("%E,%E,%E,%E\n", midObs, hiObs, midParam, hiParam);
-               break;         
-         }/* end switch() */
+         //if(dType != FD_FORWARD)
+         //{
+         //   lowObs = m_pLowBkup->GetPred(i);
+         //}/* end if() */
+         //
+         ////computation method for derivative depends on dType
+         //switch(dType)
+         //{
+         //   case(FD_OUT_CEN) : //outside central
+         //      dObs = (hiObs - lowObs);
+         //      diff = (dObs / dx);
+         //      break;
+         //   case(FD_PAR_CEN) : //parabolic central
+         //      //fill obs. vector
+         //      paraObs[0] = lowObs;
+         //      paraObs[1] = midObs;
+         //      paraObs[2] = hiObs;
+         //      //compute coefficients
+         //      VectMult(m_ParaInv, paraObs, paraCof, 3, 3);
+         //      //compute derivative approx. (dy/dx = 2ax + b)
+         //      diff = (2.00 * paraCof[0] * midParam) + paraCof[1];
+         //      break;
+         //   case(FD_FIT_CEN) : //Least-Squares best-fit central
+         //      /*-------------------------------------------------------               
+         //      The derivative of (y = bx + a) using Least-Sqaures is: 
+         //         dy/dx = b = (SSxy - SxSy)/(SSxx - (Sx)^2)
+         //         where, 
+         //         S = #points (3),
+         //         Sxy = (x1y1 + x2y2 + x3y3),
+         //         Sx = (x1 + x2 + x3),
+         //         Sy = (y1 + y2 + y3),
+         //         Sxx = (x1^2 + x2^2 + x3^2),
+         //         x1,x2,x3 -> parameters, 
+         //         y1,y2,y3 -> observations,
+         //         and equal variance has been given to each data point.
+         //      -------------------------------------------------------*/       
+         //      Sxy = ((lowObs*lowParam)+(midObs*midParam)+(hiObs*hiParam));
+         //      Sx = (lowParam + midParam + hiParam);
+         //      Sy = (lowObs + midObs + hiObs);
+         //      Sxx=(lowParam*lowParam)+(midParam*midParam)+(hiParam*hiParam);
+         //      diff = ((3.00 * Sxy) - (Sx * Sy)) / ((3.00 * Sxx) - (Sx * Sx));
+         //      break;
+         //   case(FD_FORWARD) : //forward difference
+         //   default:
+         //      dObs = hiObs - midObs;
+         //      diff = (dObs / dx);
+         //      //printf("%E,%E,%E,%E\n", midObs, hiObs, midParam, hiParam);
+         //      break;         
+         //}/* end switch() */
+
+         dObs = hiObs - midObs;
+         diff = (dObs / dx);
          
          m_pJacPred[i][j] = diff;
       }/* end for(predictions) */
@@ -3570,11 +3577,11 @@ void StatsClass::WriteMetrics(FILE * pFile)
    fprintf(pFile, "\nFinite Difference Metrics\n");
    fprintf(pFile, "Difference Type    : ");
 
-   if     (m_DiffType == FD_FORWARD){ fprintf(pFile, "Forward\n");}   
+   /*if     (m_DiffType == FD_FORWARD){ fprintf(pFile, "Forward\n");}   
    else if(m_DiffType == FD_OUT_CEN){ fprintf(pFile, "Outside Central\n");}
    else if(m_DiffType == FD_PAR_CEN){ fprintf(pFile, "Parabolic Central\n");}
    else if(m_DiffType == FD_FIT_CEN){ fprintf(pFile, "Best-fit Central\n");}
-   else                             { fprintf(pFile, "Unknown\n");}
+   else            */                 { fprintf(pFile, "Unknown\n");}
 
    fprintf(pFile, "Increment Type    : ");
 
@@ -4321,289 +4328,289 @@ Jacobian_Program()
 
 Compute the jacobian of the parameter set defined in the input file.
 ******************************************************************************/
-void Jacobian_Program(int argc, StringType argv[])
-{
-   NEW_PRINT("Model", 1);
-   ModelABC * model = new Model;
-
-   NEW_PRINT("StatsClass", 1);
-   StatsClass * stats = new StatsClass(model);
-   MEM_CHECK(stats);
-   RegisterStatsPtr(stats);
-
-   FILE * pFile;
-   int id, j;
-   double negOne = -1.00;
-   char outName[DEF_STR_SZ];
-   char tmp[DEF_STR_SZ];
-   const char * inFile = GetOstFileName();
-   char * line, * pTok;
-
-   //allocate space for the parameter list
-   int num = model->GetParamGroupPtr()->GetNumParams();
-   double * pVals = new double[num];
-
-   /* read in user-specified parameter set */
-   pFile = fopen(inFile, "r");
-   FindToken(pFile, "BeginInitParams", inFile);
-   line = GetNxtDataLine(pFile, inFile);
-
-   pTok = line;
-   //extract values, one-by-one, making any necessary conversions
-   for(int k = 0; k < num; k++)
-   {
-      j = ExtractString(pTok, tmp);
-      j = ValidateExtraction(j, k, num, "Jacobian_Program()");
-      pTok += j;            
-      pVals[k] = model->GetParamGroupPtr()->GetParamPtr(k)->ConvertInVal(atof(tmp));
-   }/* end for() */
-   model->GetParamGroupPtr()->WriteParams(pVals);
-   delete [] pVals;
-
-   FindToken(pFile, "EndInitParams", inFile);
-   fclose(pFile);
-
-
-   MPI_Comm_rank(MPI_COMM_WORLD, &id);
-   sprintf(outName, "OstOutput%d.txt", id);
-
-   //write setup to file
-   pFile = fopen(outName, "w");
-   fprintf(pFile, "Ostrich Setup\n");
-   fprintf(pFile, "Model: %s\n", model->GetModelStr());
-   fprintf(pFile, "Algorithm: Jacobian Calculation\n");
-   fprintf(pFile, "Objective Function: %s\n", model->GetObjFuncStr());
-   fprintf(pFile, "Number of Parameters: %d\n", model->GetParamGroupPtr()->GetNumParams());
-   fprintf(pFile, "Number of Observations: ");
-   if(model->GetObsGroupPtr() == NULL){fprintf(pFile, "0\n");}
-   else {fprintf(pFile, "%d\n", model->GetObsGroupPtr()->GetNumObs());}
-   fprintf(pFile, "Jacobian Matrix written to OstJacobian.txt\n");
-   fclose(pFile);
-
-   //write setup to stdout
-   fprintf(stdout, "Ostrich Setup\n");
-   fprintf(stdout, "Model: %s\n", model->GetModelStr());
-   fprintf(stdout, "Algorithm: Jacobian Calculation\n");
-   fprintf(stdout, "Objective Function: %s\n", model->GetObjFuncStr());
-   fprintf(stdout, "Number of Parameters: %d\n", model->GetParamGroupPtr()->GetNumParams());
-   fprintf(stdout, "Number of Observations: ");
-   if(model->GetObsGroupPtr() == NULL){fprintf(stdout, "0\n");}
-   else {fprintf(stdout, "%d\n", model->GetObsGroupPtr()->GetNumObs());}
-   fprintf(stdout, "Jacobian Matrix written to OstJacobian.txt\n");
-
-   model->Execute();
-   Unchangeable2DArray pJ = stats->CalcJacobian(false, false, &negOne); //compute Jacobian, possibly in parallel
-
-   if(id == 0)
-   {
-     FILE * pOut = fopen("OstJacobian.txt", "w");
-     for(int i = 0; i < model->GetObsGroupPtr()->GetNumObs(); i++)
-     {
-       for(int j = 0; j < model->GetParamGroupPtr()->GetNumParams(); j++)
-       {
-         fprintf(pOut, "%.14E ", pJ[i][j]);
-       }/* end for() */
-       fprintf(pOut, "\n");
-     }/* end for() */
-     fclose(pOut);
-   }/* end if() */
-   
-   pFile = fopen(outName, "a");
-   stats->WriteMetrics(pFile);
-   fclose(pFile);
-   stats->WriteMetrics(stdout);
-   
-   delete stats;
-   delete model;
-}/* end Jacobian_Program() */
+//void Jacobian_Program(int argc, StringType argv[])
+//{
+//   NEW_PRINT("Model", 1);
+//   ModelABC * model = new Model;
+//
+//   NEW_PRINT("StatsClass", 1);
+//   StatsClass * stats = new StatsClass(model);
+//   MEM_CHECK(stats);
+//   RegisterStatsPtr(stats);
+//
+//   FILE * pFile;
+//   int id, j;
+//   double negOne = -1.00;
+//   char outName[DEF_STR_SZ];
+//   char tmp[DEF_STR_SZ];
+//   const char * inFile = GetOstFileName();
+//   char * line, * pTok;
+//
+//   //allocate space for the parameter list
+//   int num = model->GetParamGroupPtr()->GetNumParams();
+//   double * pVals = new double[num];
+//
+//   /* read in user-specified parameter set */
+//   pFile = fopen(inFile, "r");
+//   FindToken(pFile, "BeginInitParams", inFile);
+//   line = GetNxtDataLine(pFile, inFile);
+//
+//   pTok = line;
+//   //extract values, one-by-one, making any necessary conversions
+//   for(int k = 0; k < num; k++)
+//   {
+//      j = ExtractString(pTok, tmp);
+//      j = ValidateExtraction(j, k, num, "Jacobian_Program()");
+//      pTok += j;            
+//      pVals[k] = model->GetParamGroupPtr()->GetParamPtr(k)->ConvertInVal(atof(tmp));
+//   }/* end for() */
+//   model->GetParamGroupPtr()->WriteParams(pVals);
+//   delete [] pVals;
+//
+//   FindToken(pFile, "EndInitParams", inFile);
+//   fclose(pFile);
+//
+//
+//   MPI_Comm_rank(MPI_COMM_WORLD, &id);
+//   sprintf(outName, "OstOutput%d.txt", id);
+//
+//   //write setup to file
+//   pFile = fopen(outName, "w");
+//   fprintf(pFile, "Ostrich Setup\n");
+//   fprintf(pFile, "Model: %s\n", model->GetModelStr());
+//   fprintf(pFile, "Algorithm: Jacobian Calculation\n");
+//   fprintf(pFile, "Objective Function: %s\n", model->GetObjFuncStr());
+//   fprintf(pFile, "Number of Parameters: %d\n", model->GetParamGroupPtr()->GetNumParams());
+//   fprintf(pFile, "Number of Observations: ");
+//   if(model->GetObsGroupPtr() == NULL){fprintf(pFile, "0\n");}
+//   else {fprintf(pFile, "%d\n", model->GetObsGroupPtr()->GetNumObs());}
+//   fprintf(pFile, "Jacobian Matrix written to OstJacobian.txt\n");
+//   fclose(pFile);
+//
+//   //write setup to stdout
+//   fprintf(stdout, "Ostrich Setup\n");
+//   fprintf(stdout, "Model: %s\n", model->GetModelStr());
+//   fprintf(stdout, "Algorithm: Jacobian Calculation\n");
+//   fprintf(stdout, "Objective Function: %s\n", model->GetObjFuncStr());
+//   fprintf(stdout, "Number of Parameters: %d\n", model->GetParamGroupPtr()->GetNumParams());
+//   fprintf(stdout, "Number of Observations: ");
+//   if(model->GetObsGroupPtr() == NULL){fprintf(stdout, "0\n");}
+//   else {fprintf(stdout, "%d\n", model->GetObsGroupPtr()->GetNumObs());}
+//   fprintf(stdout, "Jacobian Matrix written to OstJacobian.txt\n");
+//
+//   model->Execute();
+//   Unchangeable2DArray pJ = stats->CalcJacobian(false, false, &negOne); //compute Jacobian, possibly in parallel
+//
+//   if(id == 0)
+//   {
+//     FILE * pOut = fopen("OstJacobian.txt", "w");
+//     for(int i = 0; i < model->GetObsGroupPtr()->GetNumObs(); i++)
+//     {
+//       for(int j = 0; j < model->GetParamGroupPtr()->GetNumParams(); j++)
+//       {
+//         fprintf(pOut, "%.14E ", pJ[i][j]);
+//       }/* end for() */
+//       fprintf(pOut, "\n");
+//     }/* end for() */
+//     fclose(pOut);
+//   }/* end if() */
+//   
+//   pFile = fopen(outName, "a");
+//   stats->WriteMetrics(pFile);
+//   fclose(pFile);
+//   stats->WriteMetrics(stdout);
+//   
+//   delete stats;
+//   delete model;
+//}/* end Jacobian_Program() */
 
 /******************************************************************************
 EVAL_Program()
 
 Evaluate objective function using a list of predefined parameter values.
 ******************************************************************************/
-void EVAL_Program(int argc, StringType argv[])
-{
-   int samples_per_iter, num_left, count;
-   double viol;
-   NEW_PRINT("Model", 1);
-   ModelABC * model = new Model;
-
-   FILE * pFile;
-   int i, j, k, id, size, num, bi, np;
-   double ** pList;
-   double val, best;
-   char tmp[DEF_STR_SZ];
-   const char * inFile = GetOstFileName();
-   char * line, * pTok;
-
-   /* initialize parameter sets to specied values */
-   pFile = fopen(inFile, "r");
-   FindToken(pFile, "BeginInitParams", inFile);
-   FindToken(pFile, "EndInitParams", inFile);
-   rewind(pFile);
-
-   //allocate space for the parameter list
-   num = model->GetParamGroupPtr()->GetNumParams();
-
-   //count the number of entries
-   FindToken(pFile, "BeginInitParams", inFile);
-   line = GetNxtDataLine(pFile, inFile);
-   size = 0;
-   while(strstr(line, "EndInitParams") == NULL)
-   {
-      size++;
-      line = GetNxtDataLine(pFile, inFile);
-   }/* end while() */
-
-   //allocate space for entries
-   if(size > 0)
-   {
-      NEW_PRINT("double *", size);
-      pList = new double * [size];
-      MEM_CHECK(pList);
-      for(i = 0; i < size; i++)
-      { 
-         NEW_PRINT("double", num+1);
-         pList[i] = new double[num+1];
-         MEM_CHECK(pList[i]);
-      }
-   }
-   else {
-       pList = NULL;
-   }
-
-   //read in entries
-   rewind(pFile);
-   FindToken(pFile, "BeginInitParams", inFile);
-   line = GetNxtDataLine(pFile, inFile);
-   i = 0;
-   while(strstr(line, "EndInitParams") == NULL)
-   {
-      pTok = line;
-      //extract values, one-by-one, making any necessary conversions
-      for(k = 0; k < num; k++)
-      {
-         j = ExtractString(pTok, tmp);
-         j = ValidateExtraction(j, k, num, "EVAL_Program()");
-         pTok += j;            
-         pList[i][k] = model->GetParamGroupPtr()->GetParamPtr(k)->ConvertInVal(atof(tmp));
-      }/* end for() */                  
-      i++;
-      line = GetNxtDataLine(pFile, inFile);
-   }/* end while() */
-
-   /*
-   ----------------------------------------------------------------------
-   Read in flag to use penalty function for infeasible parameter settings
-   ----------------------------------------------------------------------
-   */   
-   bool bUsePenalty = true; //default is to use the penalty
-   char tmp1[DEF_STR_SZ];
-   char tmp2[DEF_STR_SZ];
-   rewind(pFile);
-   double penalty = -1.00;
-   if(CheckToken(pFile, "PenalizeInfeasibleParameters", inFile) == true)
-   {   
-      line = GetCurDataLine();
-      sscanf(line, "%s %s %lf", tmp1, tmp2, &penalty);
-      MyStrLwr(tmp2);
-      if(strncmp(tmp2, "no", 2) == 0) {bUsePenalty = false;}
-   }/* end if() */
-   if(penalty < 0.00) penalty = 1.00;
-
-   fclose(pFile);
-   
-   MPI_Comm_rank(MPI_COMM_WORLD, &id);
-   MPI_Comm_size(MPI_COMM_WORLD, &np);
-
-   if(id == 0)
-   {
-      WriteSetup(model, "Model Evaluations");
-      //write banner
-      WriteBanner(model, "iter   best value     ", "Percent Complete");
-   }/* end if() */
-
-   //insert warm start solution, if desired
-   int istart = 0;
-   if (model->CheckWarmStart() == true)
-   {
-      istart = ResumeEvaluations(model, id, np, pList[0]);
-   }
-
-   if(np == 1) //serial execution
-   {      
-      //perform model evaluations
-      if(istart == 0)
-      {
-         bi = 0;
-         best = NEARLY_HUGE;
-      }
-      else
-      {
-         bi = 0;
-         best = pList[0][num];
-      }
-      
-      count = 0;
-      num_left = size - istart;
-      for(i = istart; i < size; i++)
-      {
-         if(count == 0)
-         {
-            if(num_left > 10) samples_per_iter = 10;
-            else samples_per_iter = num_left;
-            WriteInnerEval(WRITE_USR, samples_per_iter, '.');
-         }
-
-         viol = model->GetParamGroupPtr()->WriteParams(pList[i]);
-         if(!bUsePenalty) viol = 0.00;
-         else viol *= penalty;
-         val = ((Model *)model)->Execute(viol);
-         num_left--;
-         WriteInnerEval(++count, 0, '.');
-
-         if(val < best)
-         { 
-            best = val;
-            bi = i;
-         }
-
-         if(count == samples_per_iter)
-         {
-            count = 0;
-            WriteInnerEval(WRITE_ENDED, 0, '.');
-
-            model->GetParamGroupPtr()->WriteParams(pList[bi]);
-            WriteRecord(model, i+1, best, 100.00*(1.00 - (double)num_left/(double)size));
-         }
-      }
-   }/* end if() */
-   else /* parallel execution */
-   {
-      i = istart;
-      num_left = size - istart;
-      while(num_left > 0)
-      {
-         bi = EvalInitParamsParallel(np, id, pList, size, model, &num_left);
-         if(id == 0)
-         {
-            model->GetParamGroupPtr()->WriteParams(pList[bi]);
-            best = pList[bi][num];
-            WriteRecord(model, i+1, best, 100.00*(1.00 - (double)num_left/(double)size));
-         }
-         i++;
-      }
-   }/* end else() */
- 
-   for(i = 0; i < size; i++)
-   {
-      delete [] pList[i];
-   }
-   delete [] pList;
-
-   delete model;
-}/* end EVAL_Program() */
+//void EVAL_Program(int argc, StringType argv[])
+//{
+//   int samples_per_iter, num_left, count;
+//   double viol;
+//   NEW_PRINT("Model", 1);
+//   ModelABC * model = new Model;
+//
+//   FILE * pFile;
+//   int i, j, k, id, size, num, bi, np;
+//   double ** pList;
+//   double val, best;
+//   char tmp[DEF_STR_SZ];
+//   const char * inFile = GetOstFileName();
+//   char * line, * pTok;
+//
+//   /* initialize parameter sets to specied values */
+//   pFile = fopen(inFile, "r");
+//   FindToken(pFile, "BeginInitParams", inFile);
+//   FindToken(pFile, "EndInitParams", inFile);
+//   rewind(pFile);
+//
+//   //allocate space for the parameter list
+//   num = model->GetParamGroupPtr()->GetNumParams();
+//
+//   //count the number of entries
+//   FindToken(pFile, "BeginInitParams", inFile);
+//   line = GetNxtDataLine(pFile, inFile);
+//   size = 0;
+//   while(strstr(line, "EndInitParams") == NULL)
+//   {
+//      size++;
+//      line = GetNxtDataLine(pFile, inFile);
+//   }/* end while() */
+//
+//   //allocate space for entries
+//   if(size > 0)
+//   {
+//      NEW_PRINT("double *", size);
+//      pList = new double * [size];
+//      MEM_CHECK(pList);
+//      for(i = 0; i < size; i++)
+//      { 
+//         NEW_PRINT("double", num+1);
+//         pList[i] = new double[num+1];
+//         MEM_CHECK(pList[i]);
+//      }
+//   }
+//   else {
+//       pList = NULL;
+//   }
+//
+//   //read in entries
+//   rewind(pFile);
+//   FindToken(pFile, "BeginInitParams", inFile);
+//   line = GetNxtDataLine(pFile, inFile);
+//   i = 0;
+//   while(strstr(line, "EndInitParams") == NULL)
+//   {
+//      pTok = line;
+//      //extract values, one-by-one, making any necessary conversions
+//      for(k = 0; k < num; k++)
+//      {
+//         j = ExtractString(pTok, tmp);
+//         j = ValidateExtraction(j, k, num, "EVAL_Program()");
+//         pTok += j;            
+//         pList[i][k] = model->GetParamGroupPtr()->GetParamPtr(k)->ConvertInVal(atof(tmp));
+//      }/* end for() */                  
+//      i++;
+//      line = GetNxtDataLine(pFile, inFile);
+//   }/* end while() */
+//
+//   /*
+//   ----------------------------------------------------------------------
+//   Read in flag to use penalty function for infeasible parameter settings
+//   ----------------------------------------------------------------------
+//   */   
+//   bool bUsePenalty = true; //default is to use the penalty
+//   char tmp1[DEF_STR_SZ];
+//   char tmp2[DEF_STR_SZ];
+//   rewind(pFile);
+//   double penalty = -1.00;
+//   if(CheckToken(pFile, "PenalizeInfeasibleParameters", inFile) == true)
+//   {   
+//      line = GetCurDataLine();
+//      sscanf(line, "%s %s %lf", tmp1, tmp2, &penalty);
+//      MyStrLwr(tmp2);
+//      if(strncmp(tmp2, "no", 2) == 0) {bUsePenalty = false;}
+//   }/* end if() */
+//   if(penalty < 0.00) penalty = 1.00;
+//
+//   fclose(pFile);
+//   
+//   MPI_Comm_rank(MPI_COMM_WORLD, &id);
+//   MPI_Comm_size(MPI_COMM_WORLD, &np);
+//
+//   if(id == 0)
+//   {
+//      WriteSetup(model, "Model Evaluations");
+//      //write banner
+//      WriteBanner(model, "iter   best value     ", "Percent Complete");
+//   }/* end if() */
+//
+//   //insert warm start solution, if desired
+//   int istart = 0;
+//   if (model->CheckWarmStart() == true)
+//   {
+//      istart = ResumeEvaluations(model, id, np, pList[0]);
+//   }
+//
+//   if(np == 1) //serial execution
+//   {      
+//      //perform model evaluations
+//      if(istart == 0)
+//      {
+//         bi = 0;
+//         best = NEARLY_HUGE;
+//      }
+//      else
+//      {
+//         bi = 0;
+//         best = pList[0][num];
+//      }
+//      
+//      count = 0;
+//      num_left = size - istart;
+//      for(i = istart; i < size; i++)
+//      {
+//         if(count == 0)
+//         {
+//            if(num_left > 10) samples_per_iter = 10;
+//            else samples_per_iter = num_left;
+//            WriteInnerEval(WRITE_USR, samples_per_iter, '.');
+//         }
+//
+//         viol = model->GetParamGroupPtr()->WriteParams(pList[i]);
+//         if(!bUsePenalty) viol = 0.00;
+//         else viol *= penalty;
+//         val = ((Model *)model)->Execute(viol);
+//         num_left--;
+//         WriteInnerEval(++count, 0, '.');
+//
+//         if(val < best)
+//         { 
+//            best = val;
+//            bi = i;
+//         }
+//
+//         if(count == samples_per_iter)
+//         {
+//            count = 0;
+//            WriteInnerEval(WRITE_ENDED, 0, '.');
+//
+//            model->GetParamGroupPtr()->WriteParams(pList[bi]);
+//            WriteRecord(model, i+1, best, 100.00*(1.00 - (double)num_left/(double)size));
+//         }
+//      }
+//   }/* end if() */
+//   else /* parallel execution */
+//   {
+//      i = istart;
+//      num_left = size - istart;
+//      while(num_left > 0)
+//      {
+//         bi = EvalInitParamsParallel(np, id, pList, size, model, &num_left);
+//         if(id == 0)
+//         {
+//            model->GetParamGroupPtr()->WriteParams(pList[bi]);
+//            best = pList[bi][num];
+//            WriteRecord(model, i+1, best, 100.00*(1.00 - (double)num_left/(double)size));
+//         }
+//         i++;
+//      }
+//   }/* end else() */
+// 
+//   for(i = 0; i < size; i++)
+//   {
+//      delete [] pList[i];
+//   }
+//   delete [] pList;
+//
+//   delete model;
+//}/* end EVAL_Program() */
 
 /******************************************************************************
 EvalInitParamsParallel()
@@ -4613,65 +4620,65 @@ evaluates a predetermined number of samples, based on their processor id.
 
 Returns index of the best (i.e. lowest objective function) parameter set.
 ******************************************************************************/
-int EvalInitParamsParallel(int np, int id, double ** pList, int size, 
-                           ModelABC * pModel, int * num_left)
-{  
-   double * F = new double[np];
-   double Fx;
-   int i ,j, samples_per_iter;
-   int num = pModel->GetParamGroupPtr()->GetNumParams();
-   ParameterGroup * pGroup;
-  
-   if(*num_left > np) samples_per_iter = np;
-   else samples_per_iter = *num_left;
-
-   //perform parallel evaluations
-   j = size - *num_left;
-   pGroup = pModel->GetParamGroupPtr();
-   for(i = 0; i < samples_per_iter; i++) 
-   { 
-      if((i % np) == id)
-      {
-         pGroup->WriteParams(pList[i+j]);
-         F[i] = pList[i+j][num] = pModel->Execute();
-        }/* end if() */
-   }/* end for() */
-
-   *num_left = *num_left - samples_per_iter;
-
-   //gather results
-   for(i = 0; i < samples_per_iter; i++)
-   {
-      //receive someones F(x)
-      Fx = F[i];
-      MPI_Bcast((void *)(&Fx), 1, MPI_DOUBLE, i, MPI_COMM_WORLD);
-      pList[i+j][num] = Fx;
-   }/* end for() */
-
-   //determine the 'best'
-   int istart = j;
-   int bi = 0;
-   double best = pList[0][num];
-   j = size - *num_left;
-   for(i = istart; i < j; i++)
-   {
-      if(pList[i][num] < best) 
-      {
-         bi = i;
-         best = pList[i][num];
-      }
-   }/* end for() */
-
-   delete [] F;
-   return bi;
-}/* end EvalInitParamsParallel() */
+//int EvalInitParamsParallel(int np, int id, double ** pList, int size, 
+//                           ModelABC * pModel, int * num_left)
+//{  
+//   double * F = new double[np];
+//   double Fx;
+//   int i ,j, samples_per_iter;
+//   int num = pModel->GetParamGroupPtr()->GetNumParams();
+//   ParameterGroup * pGroup;
+//  
+//   if(*num_left > np) samples_per_iter = np;
+//   else samples_per_iter = *num_left;
+//
+//   //perform parallel evaluations
+//   j = size - *num_left;
+//   pGroup = pModel->GetParamGroupPtr();
+//   for(i = 0; i < samples_per_iter; i++) 
+//   { 
+//      if((i % np) == id)
+//      {
+//         pGroup->WriteParams(pList[i+j]);
+//         F[i] = pList[i+j][num] = pModel->Execute();
+//        }/* end if() */
+//   }/* end for() */
+//
+//   *num_left = *num_left - samples_per_iter;
+//
+//   //gather results
+//   for(i = 0; i < samples_per_iter; i++)
+//   {
+//      //receive someones F(x)
+//      Fx = F[i];
+//      MPI_Bcast((void *)(&Fx), 1, MPI_DOUBLE, i, MPI_COMM_WORLD);
+//      pList[i+j][num] = Fx;
+//   }/* end for() */
+//
+//   //determine the 'best'
+//   int istart = j;
+//   int bi = 0;
+//   double best = pList[0][num];
+//   j = size - *num_left;
+//   for(i = istart; i < j; i++)
+//   {
+//      if(pList[i][num] < best) 
+//      {
+//         bi = i;
+//         best = pList[i][num];
+//      }
+//   }/* end for() */
+//
+//   delete [] F;
+//   return bi;
+//}/* end EvalInitParamsParallel() */
 
 /******************************************************************************
 ResumeEvaluations()
 
 Read the solutions from a previous run. Returns index of next solution.
 ******************************************************************************/
-int ResumeEvaluations(ModelABC * pModel, int id, int nprocs, double * pbest)
+/*int ResumeEvaluations(ModelABC * pModel, int id, int nprocs, double * pbest)
 {
    int retval = 0;
    int np = pModel->GetParamGroupPtr()->GetNumParams();
@@ -4686,4 +4693,4 @@ int ResumeEvaluations(ModelABC * pModel, int id, int nprocs, double * pbest)
       MPI_Allreduce(&newcount, &retval, 1, MPI_INT, MPI_SUM, MPI_COMM_WORLD);
    }
    return retval;
-}/* end ResumeEvaluations() */
+}*//* end ResumeEvaluations() */

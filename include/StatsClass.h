@@ -104,7 +104,7 @@ class StatsClass
       void BcastJacobian(void);
       void EvalJacSerial(double * pBestSavedF);
       void EvalJacParallel(void);
-      void EvalJacSuperMUSE(void);
+      //void EvalJacSuperMUSE(void);
       void InitFromFile(IroncladString pStatsFileName); 
       void CalcBealeAndLinssen(void);
       void CalcCooksD(void);

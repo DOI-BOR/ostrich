@@ -658,6 +658,23 @@ void Algorithm::ConfigureWorkerSolveCommand(int workerRank) {
 }
 
 /**************************************************************************************************************************************************************
+MPI Communication - TerminateWorkers()
+
+Sends the worker solve command from the primary to the secondary worker
+**************************************************************************************************************************************************************/
+void  Algorithm::TerminateWorkers() {
+    // todo: build this function
+
+    // Get the number of workers in the MPI space
+    int numberOfMpiProcesses;
+    MPI_Comm_size(MPI_COMM_WORLD, &numberOfMpiProcesses);
+
+    for (int entryWorker = 1; entryWorker < numberOfMpiProcesses; entryWorker++) {
+        SendWorkerContinue(entryWorker, false);
+    }
+}
+
+/**************************************************************************************************************************************************************
 MPI Communication - ConfigureWorkerArchiveCommand()
 
 Sends the worker archive command from the primary to the secondary worker
@@ -1205,18 +1222,21 @@ void Algorithm::ManageSingleObjectiveIterations(std::vector<std::vector<double>>
     for (int entryAlternative = startingIndex; entryAlternative < parameters.size(); entryAlternative++) {
         if (m_bCaching) {
             // Caching is enabled. Check that the member is not in the cache
-            bool isPresent = std::find(m_CacheMembers.begin(), m_CacheMembers.end(), parameters[entryAlternative]) != m_CacheMembers.end();
+            std::vector<std::vector<double>> ::iterator itr = std::find(m_CacheMembers.begin(), m_CacheMembers.end(), parameters[entryAlternative]);
 
-            if (!isPresent) {
+            if (itr == m_CacheMembers.end()) {
                 // Alternative is not present in the cache. Add it to be solved.
                 indicesToSolve.push_back(entryAlternative);
             }
             else {
                 // Log the cache hit
                 m_NumCacheHits++;
+
+                // Add the objective to the result vector
+                returnArray[entryAlternative] = m_CacheObjectives[std::distance(m_CacheMembers.begin(), itr)];
             }
-        }
-        else {
+
+        } else {
             // Caching is not enabled. Add it to the solve list
             indicesToSolve.push_back(entryAlternative);
         }
@@ -1256,6 +1276,7 @@ void Algorithm::ManageSingleObjectiveIterations(std::vector<std::vector<double>>
                     // Store the alternative into the cache, if enabled
                     if (m_bCaching) {
                         m_CacheMembers.push_back(parameters[(int)data[0]]);
+                        m_CacheObjectives.push_back(data[1]);
                     }
 
                     // Check if the alternative should be preserved
@@ -1306,25 +1327,34 @@ void Algorithm::ManageSingleObjectiveIterations(std::vector<std::vector<double>>
         // Solve on the primary worker if enabled
         if (m_bSolveOnPrimary && sendCounter < indicesToSolve.size()) {
             // Set the parameters on the primary worker
-            std::cout << "Solving on primary" << std::endl;
             m_primaryWorker.SetStandardParameters(parameters[indicesToSolve[sendCounter]]);
 
             // Attempt to solve the model
             try {
                 // Solve the model
-                std::cout << "Conducting solve\t" << indicesToSolve[sendCounter] << std::endl;
                 double objective =  m_primaryWorker.StdExecute(0);
                 returnArray[indicesToSolve[sendCounter]] = objective;
-                std::cout << "Completed solve" << std::endl;
 
                 // Store the alternative into the cache, if enabled
                 if (m_bCaching) {
                     m_CacheMembers.push_back(parameters[indicesToSolve[sendCounter]]);
+                    m_CacheObjectives.push_back(objective);
                 }
 
                 // Check if the alternative should be preserved
-                std::cout << "Preserving model best" << std::endl;
-                ManagePreserveBest(bestObjectiveIteration, objective, mpiStatus);
+                if (m_bPreserveModelBest && objective < bestObjectiveIteration) {
+                    // Objective has improved. Swap with the current value
+                    bestObjectiveIteration = objective;
+
+                    // Preserve the best model
+                    m_primaryWorker.PreserveBestModel(true);
+                }
+              
+                if (m_bPreserveModelOutput){
+                    // Preserve the model
+                    m_primaryWorker.PreserveArchiveModel();
+                }
+                
             }
             catch (...){
                 // Solution failed. Fail by keeping the infinite value in the array
@@ -1372,20 +1402,17 @@ void Algorithm::ManageSingleObjectiveIterations(std::vector<std::vector<double>>
 }
 
 
+
 /**************************************************************************************************************************************************************
-MPI Communication - TerminateWorkers()
+GetBestSingleObjective()
 
-Kills the secondary workers to stop and begin cleanup
+Retrieves the chromosome value and index that has the best fitness value.
 **************************************************************************************************************************************************************/
-void Algorithm::TerminateWorkers() {
+void Algorithm::GetBestSingleObjective(std::vector<double> objectives, double& bestObjective, int& bestIndex) {
 
-    // Get the number of workers in the MPI space
-    int numberOfMpiProcesses;
-    MPI_Comm_size(MPI_COMM_WORLD, &numberOfMpiProcesses);
+    bestIndex = std::min_element(objectives.begin(), objectives.end()) - objectives.begin();
+    bestObjective = *std::min_element(objectives.begin(), objectives.end());
 
-    for (int entryWorker = 1; entryWorker < numberOfMpiProcesses; entryWorker++) {
-        SendWorkerContinue(entryWorker, false);
-    }
 }
 
 /**************************************************************************************************************************************************************

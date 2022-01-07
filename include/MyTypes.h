@@ -166,12 +166,14 @@ typedef enum LMT_PENALTY_TYPE
 }LmtPenType;
 #define NUM_PEN_METHS (3)
 
-typedef enum FINITE_DIFF_TYPE
-{
-   FD_FORWARD = 0, /* forward differences */
-   FD_OUT_CEN = 1, /* outside central differences */
-   FD_PAR_CEN = 2, /* parabolic central differences */
-   FD_FIT_CEN = 3  /* best-fit central differences */
+// Define the available finite difference types available
+typedef enum FINITE_DIFF_TYPE {
+	FIRST_FORWARD,			/* first order forward differences */
+	FIRST_BACKWARD,			/* first order backward differences */
+	FIRST_CENTRAL,			/* first order central differences */
+	SECOND_FORWARD,			/* second order forward differences */
+	SECOND_BACKWARD,		/* second order backward differences */
+	SECOND_CENTRAL,			/* second order central differences */
 }FiniteDiffType;
 
 typedef enum FINITE_DIFF_INC_TYPE

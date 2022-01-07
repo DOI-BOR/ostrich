@@ -43,7 +43,7 @@ OptMathClass::OptMathClass(ModelABC * pModel)
    int i;
    ParameterGroup * pParamGroup;
 
-   m_DiffType  = FD_FORWARD;
+   m_DiffType  = FIRST_FORWARD;  // todo: confirm that the adjustment works for the new type
    m_MinInc = NEARLY_ZERO;
             
    m_pModel = pModel;
@@ -100,11 +100,11 @@ void OptMathClass::WriteMetrics(FILE * pFile)
    fprintf(pFile, "\nFinite Difference Metrics\n");
    fprintf(pFile, "Difference Type    : ");
 
-   if     (m_DiffType == FD_FORWARD){ fprintf(pFile, "Forward\n");}   
+   /*if     (m_DiffType == FD_FORWARD){ fprintf(pFile, "Forward\n");}   
    else if(m_DiffType == FD_OUT_CEN){ fprintf(pFile, "Outside Central\n");}
    else if(m_DiffType == FD_PAR_CEN){ fprintf(pFile, "Parabolic Central\n");}
    else if(m_DiffType == FD_FIT_CEN){ fprintf(pFile, "Best-fit Central\n");}
-   else                             { fprintf(pFile, "Unknown\n");}
+   else      */                       { fprintf(pFile, "Unknown\n");}
 
    fprintf(pFile, "Increment Type    : ");
 
@@ -174,10 +174,10 @@ void OptMathClass::InitFromFile(IroncladString pMathFileName)
             sscanf(line, "%s %s", tmp, tmp2);
             strcpy(line, tmp2);
             MyStrLwr(line);
-            if(strstr(line, "forward") != NULL) {m_DiffType = FD_FORWARD;}
+            /*if (strstr(line, "forward") != NULL) { m_DiffType = FD_FORWARD; }
             else if(strstr(line, "outside") != NULL) {m_DiffType = FD_OUT_CEN;}
             else if(strstr(line, "parabolic") != NULL) {m_DiffType = FD_PAR_CEN;}
-            else if(strstr(line, "best-fit") != NULL) {m_DiffType = FD_FIT_CEN;}
+            else if(strstr(line, "best-fit") != NULL) {m_DiffType = FD_FIT_CEN;}*/
          }/*end if() */
          else if(strstr(line, "DiffIncType") != NULL)
          {
@@ -496,149 +496,149 @@ retry:
    dx = next - cur;
    
    //set perterbation steps
-   if(dType == FD_FORWARD)
-   {
-      rhsParm =  midParm + dx;
-      lhsParm = midParm - dx;
-   }
-   else //(dType != FD_FORWARD)
-   //only take half steps if not using forward diff.
-   {
-      rhsParm =  midParm + (0.5 * dx);
-      lhsParm = midParm - (0.5 * dx);
-   }/* end if() */
+   //if(dType == FD_FORWARD)
+   //{
+   //   rhsParm =  midParm + dx;
+   //   lhsParm = midParm - dx;
+   //}
+   //else //(dType != FD_FORWARD)
+   ////only take half steps if not using forward diff.
+   //{
+   //   rhsParm =  midParm + (0.5 * dx);
+   //   lhsParm = midParm - (0.5 * dx);
+   //}/* end if() */
 
    //avoid exceeding parameter limits
-   if(rhsParm > upr) 
-   { 
-      //switch direction and difference type
-      dType = FD_FORWARD;
-      dx *= -1;
-      rhsParm = midParm + dx;
-   } /* end if() */
-   if(lhsParm < lwr)
-   { 
-      //switch difference type
-      dType = FD_FORWARD;
-      rhsParm = midParm + dx;
-   }/* end if() */
-   
-   //compute rhs obj. func.
-   m_pDiffPoint[parmIdx] = rhsParm;
-   pGroup->WriteParams(m_pDiffPoint);
-   rhsObj = m_pModel->Execute();
-   /* update optimal, if appropriate */
-   if((fmin != NULL) && (rhsObj < *fmin))
-   {
-      *fmin = rhsObj;
-      pGroup->ReadParams(pmin);
-   }
-   m_DiffCount++;
-   
-   //compute lhs obj. func., if needed
-   if(dType != FD_FORWARD)
-   {
-      m_pDiffPoint[parmIdx] = lhsParm;
-      pGroup->WriteParams(m_pDiffPoint);
-      lhsObj = m_pModel->Execute();
-      /* update optimal, if appropriate */
-      if((fmin != NULL) && (lhsObj < *fmin))
-      {
-         *fmin = lhsObj;
-         pGroup->ReadParams(pmin);
-      }
-      m_DiffCount++;
-   }/* end if() */
+   //if(rhsParm > upr) 
+   //{ 
+   //   //switch direction and difference type
+   //   dType = FD_FORWARD;
+   //   dx *= -1;
+   //   rhsParm = midParm + dx;
+   //} /* end if() */
+   //if(lhsParm < lwr)
+   //{ 
+   //   //switch difference type
+   //   dType = FD_FORWARD;
+   //   rhsParm = midParm + dx;
+   //}/* end if() */
+   //
+   ////compute rhs obj. func.
+   //m_pDiffPoint[parmIdx] = rhsParm;
+   //pGroup->WriteParams(m_pDiffPoint);
+   //rhsObj = m_pModel->Execute();
+   ///* update optimal, if appropriate */
+   //if((fmin != NULL) && (rhsObj < *fmin))
+   //{
+   //   *fmin = rhsObj;
+   //   pGroup->ReadParams(pmin);
+   //}
+   //m_DiffCount++;
+   //
+   ////compute lhs obj. func., if needed
+   //if(dType != FD_FORWARD)
+   //{
+   //   m_pDiffPoint[parmIdx] = lhsParm;
+   //   pGroup->WriteParams(m_pDiffPoint);
+   //   lhsObj = m_pModel->Execute();
+   //   /* update optimal, if appropriate */
+   //   if((fmin != NULL) && (lhsObj < *fmin))
+   //   {
+   //      *fmin = lhsObj;
+   //      pGroup->ReadParams(pmin);
+   //   }
+   //   m_DiffCount++;
+   //}/* end if() */
 
    /*---------------------------------------
    Compute the partial derivative.
    ----------------------------------------*/
-   switch(dType)
-   {
-      case(FD_OUT_CEN) : //outside central
-         dx = (rhsParm - lhsParm);
-         diff = ((rhsObj - lhsObj) / dx);
-         break;
-      case(FD_PAR_CEN) : //parabolic central
-         dx = (rhsParm - lhsParm);
-         double x1,x2,x3,F1,F2,F3,denom;
-         double a, b, c, dF1, dF2, dx1, dx2;
+   //switch(dType)
+   //{
+   //   case(FD_OUT_CEN) : //outside central
+   //      dx = (rhsParm - lhsParm);
+   //      diff = ((rhsObj - lhsObj) / dx);
+   //      break;
+   //   case(FD_PAR_CEN) : //parabolic central
+   //      dx = (rhsParm - lhsParm);
+   //      double x1,x2,x3,F1,F2,F3,denom;
+   //      double a, b, c, dF1, dF2, dx1, dx2;
 
-         x1 = lhsParm; x2 = midParm; x3 = rhsParm;
-         F1 = lhsObj;  F2 = midObj;  F3 = rhsObj;
+   //      x1 = lhsParm; x2 = midParm; x3 = rhsParm;
+   //      F1 = lhsObj;  F2 = midObj;  F3 = rhsObj;
 
-         denom = (((x3*x3 - x1*x1))-((x2+x1)*(x3-x1)));
-         dF1 = F3-F1;
-         dF2 = F2-F1;
-         dx1 = x3-x1;
-         dx2 = x2-x1;
+   //      denom = (((x3*x3 - x1*x1))-((x2+x1)*(x3-x1)));
+   //      dF1 = F3-F1;
+   //      dF2 = F2-F1;
+   //      dx1 = x3-x1;
+   //      dx2 = x2-x1;
 
-         a = (dF1-(dF2*dx1)/dx2)/denom;
-         b = (dF2-a*((x2*x2)-(x1*x1)))/dx2;
-         c = F1-a*x1*x1-b*x1;
+   //      a = (dF1-(dF2*dx1)/dx2)/denom;
+   //      b = (dF2-a*((x2*x2)-(x1*x1)))/dx2;
+   //      c = F1-a*x1*x1-b*x1;
 
-         diff = 2*a*midParm + b;
+   //      diff = 2*a*midParm + b;
 
-         if(fabs(diff) < NEARLY_ZERO)
-         {
-            if(dIncType != FD_ABSOLUTE) //try switching increment type
-            {
-               dIncType = FD_ABSOLUTE;
+   //      if(fabs(diff) < NEARLY_ZERO)
+   //      {
+   //         if(dIncType != FD_ABSOLUTE) //try switching increment type
+   //         {
+   //            dIncType = FD_ABSOLUTE;
 
-               //semi-restore the model (for next time around)   
-               m_pDiffPoint[parmIdx] = midParm;
-               pGroup->WriteParams(m_pDiffPoint);   
-               m_pModel->SetObjFuncVal(midObj);
+   //            //semi-restore the model (for next time around)   
+   //            m_pDiffPoint[parmIdx] = midParm;
+   //            pGroup->WriteParams(m_pDiffPoint);   
+   //            m_pModel->SetObjFuncVal(midObj);
 
-               goto retry;
-            }
-            else //use outside central
-            {
-               diff = ((rhsObj - lhsObj) / dx);
-            }
-         }
-         break;
-      case(FD_FIT_CEN) : //Least-Squares best-fit central
-         /*-------------------------------------------------------               
-         The derivative of (y = bx + a) using Least-Sqaures is: 
-            dy/dx = b = (SSxy - SxSy)/(SSxx - (Sx)^2)
-            where, 
-            S = #points (3),
-            Sxy = (x1y1 + x2y2 + x3y3),
-            Sx = (x1 + x2 + x3),
-            Sy = (y1 + y2 + y3),
-            Sxx = (x1^2 + x2^2 + x3^2),
-            x1,x2,x3 -> parameters, 
-            y1,y2,y3 -> objective function values
-            and equal variance has been given to each data point.
-         -------------------------------------------------------*/
-         Sxy = ((lhsObj*lhsParm)+(midObj*midParm)+(rhsObj*rhsParm));
-         Sx = (lhsParm + midParm + rhsParm);
-         Sy = (lhsObj + midObj + rhsObj);
-         Sxx=(lhsParm*lhsParm)+(midParm*midParm)+(rhsParm*rhsParm);
-         diff = ((3.00 * Sxy) - (Sx * Sy)) / ((3.00 * Sxx) - (Sx * Sx));
-         break;
-      case(FD_FORWARD) : //forward difference
-      default:
-         diff = ((rhsObj - midObj) / dx);
-         break;         
-   }/* end switch() */     
+   //            goto retry;
+   //         }
+   //         else //use outside central
+   //         {
+   //            diff = ((rhsObj - lhsObj) / dx);
+   //         }
+   //      }
+   //      break;
+   //   case(FD_FIT_CEN) : //Least-Squares best-fit central
+   //      /*-------------------------------------------------------               
+   //      The derivative of (y = bx + a) using Least-Sqaures is: 
+   //         dy/dx = b = (SSxy - SxSy)/(SSxx - (Sx)^2)
+   //         where, 
+   //         S = #points (3),
+   //         Sxy = (x1y1 + x2y2 + x3y3),
+   //         Sx = (x1 + x2 + x3),
+   //         Sy = (y1 + y2 + y3),
+   //         Sxx = (x1^2 + x2^2 + x3^2),
+   //         x1,x2,x3 -> parameters, 
+   //         y1,y2,y3 -> objective function values
+   //         and equal variance has been given to each data point.
+   //      -------------------------------------------------------*/
+   //      Sxy = ((lhsObj*lhsParm)+(midObj*midParm)+(rhsObj*rhsParm));
+   //      Sx = (lhsParm + midParm + rhsParm);
+   //      Sy = (lhsObj + midObj + rhsObj);
+   //      Sxx=(lhsParm*lhsParm)+(midParm*midParm)+(rhsParm*rhsParm);
+   //      diff = ((3.00 * Sxy) - (Sx * Sy)) / ((3.00 * Sxx) - (Sx * Sx));
+   //      break;
+   //   case(FD_FORWARD) : //forward difference
+   //   default:
+   //      diff = ((rhsObj - midObj) / dx);
+   //      break;         
+   //}     
 
    //semi-restore the model (for next time around)   
-   m_pDiffPoint[parmIdx] = midParm;
-   pGroup->WriteParams(m_pDiffPoint);   
-   m_pModel->SetObjFuncVal(midObj);
+   //m_pDiffPoint[parmIdx] = midParm;
+   //pGroup->WriteParams(m_pDiffPoint);   
+   //m_pModel->SetObjFuncVal(midObj);
 
-   //if FD calculation is ~0.00, retry using an alternative increment type
-   if((fabs(diff) <= NEARLY_ZERO) && (dIncType != FD_RANGE_REL) && (GetProgramType() != GRADIENT_PROGRAM))
-   {
-      dType = FD_FORWARD;
-      dIncType = FD_RANGE_REL;
+   ////if FD calculation is ~0.00, retry using an alternative increment type
+   //if((fabs(diff) <= NEARLY_ZERO) && (dIncType != FD_RANGE_REL) && (GetProgramType() != GRADIENT_PROGRAM))
+   //{
+   //   dType = FD_FORWARD;
+   //   dIncType = FD_RANGE_REL;
 
-      goto retry;
-   }
+   //   goto retry;
+   //}
   
-   return diff;
+   return INFINITY;
 }/* end CalcDerivative() */
 
 /******************************************************************************

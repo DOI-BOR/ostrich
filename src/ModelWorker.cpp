@@ -727,7 +727,7 @@ void  ModelWorker::CommenceMPIWork() {
                     // Preserve the model if requested
                     if (preserveValue == 1) {
                         // Move the files
-                        PreserveModel(true);
+                        PreserveBestModel(true);
 
                         // Send the preserve is complete
                         SendInteger(tag_preserveBest, 1);
@@ -741,7 +741,7 @@ void  ModelWorker::CommenceMPIWork() {
 
             // Archive the model if it is enabled. Disable saving to the best directory.
             if (preserveModelOutput) {
-                PreserveModel(false);
+                PreserveArchiveModel();
             }
         }
     }
@@ -1086,40 +1086,32 @@ SetStandardParameters
 
 Sets the parameters prior to solve into the worker when using solve on primary
 **************************************************************************************************************************************************************/
-int ModelWorker::SetStandardParameters(std::vector<double> inputParameters) {
-
-    // Separate out the alternative index from the parameters
-    int alternativeIndex = (int)inputParameters[0];
-
-    // Erase the first element
-    inputParameters.erase(inputParameters.begin());
+void ModelWorker::SetStandardParameters(std::vector<double> inputParameters) {
 
     // Set the parameters into the the parameter group
     paramGroup->WriteParams(&inputParameters[0]);
-
-    // Return the alternative index to the calling function
-    return alternativeIndex;
 
 };
 
 
 /**************************************************************************************************************************************************************
-PreserveModel()
+PreserveBestModel()
 
-Preserves the model solution by moving it from the working directory.
+Preserves the best model solution by moving it from the working directory.
 **************************************************************************************************************************************************************/
-void ModelWorker::PreserveModel(bool preserveBest) {
+void ModelWorker::PreserveBestModel(bool preserveBest) {
 
     // Model preservation is disabled. Take no action.
     if (preserveModelOutput == false && preserveBest == false) {
         return;
     }
 
-    // Get the current path to the worker
-    std::filesystem::path directory = std::filesystem::current_path();
 
-    // Save everything in the working directory to either the model archive or the best folder.
-    if (preserveModelOutput || (preserveBest && preserveBestCommand.empty())) {
+    // Preserve the best model output
+    if (preserveBestCommand.empty()) {
+        // Get the current path to the worker
+        std::filesystem::path directory = std::filesystem::current_path();
+
         // Construct the archive folder
         directory /= std::string("archive");
         if (!std::filesystem::exists(directory)) {
@@ -1129,112 +1121,124 @@ void ModelWorker::PreserveModel(bool preserveBest) {
         // Construct the worker folder
         std::filesystem::path workerDirectoryPath = m_workerDirectory;
 
-        // Handle the initial setup
-        if (preserveBest) {
-            // Append the best into the archive path
-            directory /= "best";
+        // Append the best into the archive path
+        directory /= "best";
 
-            // Delete the current contents of the best directory
-            std::filesystem::remove_all(directory);
+        // Delete the current contents of the best directory
+        std::filesystem::remove_all(directory);
 
-            // Create the directory if it doesn't exist
-            if (!std::filesystem::exists(directory)) {
-                std::filesystem::create_directories(directory);
-            };
+        // Create the directory if it doesn't exist
+        if (!std::filesystem::exists(directory)) {
+            std::filesystem::create_directories(directory);
+        };
 
-        } else {
-            // Construct the worker folder
-            directory /= m_workerDirectory;
+        // Move the run
+        MoveModel(m_workerDirectory, directory);
 
-            if (!std::filesystem::exists(directory)) {
-                std::filesystem::create_directory(directory);
-            }
+    } else {
+        // Run user commands to save specific model files
+        // Construct the command
+        std::string preserveCommandActive = preserveBestCommand;
+        preserveCommandActive.append(' ' + std::to_string(rank));
+        preserveCommandActive.append(' ' + std::to_string(solveCounter));
+        std::cout << preserveCommandActive << std::endl;
 
-            // Construct the run folder 
-            directory /= "run_" + std::to_string(solveCounter - 1); // This adjusts by one to align with the model output files
+        // Send it to the system to execute
+        system(preserveCommandActive.c_str());
+
+    }
+}
+
+
+/**************************************************************************************************************************************************************
+PreserveArchiveModel()
+
+Preserves the model solution by moving it from the working directory.
+**************************************************************************************************************************************************************/
+void ModelWorker::PreserveArchiveModel(){
+
+    // Preserve all model output
+    if (preserveOutputCommand.empty()) {
+        // Get the current path to the worker
+        std::filesystem::path directory = std::filesystem::current_path();
+
+        // Construct the archive folder
+        directory /= std::string("archive");
+        if (!std::filesystem::exists(directory)) {
+            std::filesystem::create_directories(directory);
+        };
+
+        // Construct the worker folder
+        directory /= m_workerDirectory;
+
+        if (!std::filesystem::exists(directory)) {
             std::filesystem::create_directory(directory);
         }
 
-        // Move the files from the worker to the archive
+        // Construct the run folder 
+        directory /= "run_" + std::to_string(solveCounter - 1); // This adjusts by one to align with the model output files
+        std::filesystem::create_directory(directory);
+
+        // Move the run
+        MoveModel(m_workerDirectory, directory);
+
+    } else {
+        // Preserve to the archive folder for the run
+        // Construct the command
+        std::string preserveCommandActive = preserveOutputCommand;
+        preserveCommandActive.append(' ' + std::to_string(rank));
+        preserveCommandActive.append(' ' + std::to_string(solveCounter));
+        std::cout << preserveCommandActive << std::endl;
+
+        // Send it to the system to execute
+        system(preserveCommandActive.c_str());
+    }
+}
+
+/**************************************************************************************************************************************************************
+MoveModel()
+
+Moves the solution output to a target directory
+**************************************************************************************************************************************************************/
+void ModelWorker::MoveModel(std::filesystem::path workerDirectoryPath, std::filesystem::path archiveDestinationPath) {
+
+    // Move the files from the worker to the archive
         // Create the iterator over the files in the working directory
-        std::filesystem::recursive_directory_iterator iterator = std::filesystem::recursive_directory_iterator(workerDirectoryPath);
+    std::filesystem::recursive_directory_iterator iterator = std::filesystem::recursive_directory_iterator(workerDirectoryPath);
 
-        // Iterate over the directory contents
-        for (std::filesystem::path path : iterator) {
-            // Confirm that the path is to a file
-            if (!std::filesystem::is_directory(path)) {
-                // Check that the file is not an input file
-                bool archiveFlag = true;
-                for (int entry = 0; entry < m_fileCleanupList.size(); entry++) {
-                    // Construct the path to the file in the worker directory
-                    std::filesystem::path temp = m_workerDirectory;
-                    temp /= m_fileCleanupList[entry];
+    // Iterate over the directory contents
+    for (std::filesystem::path path : iterator) {
+        // Confirm that the path is to a file
+        if (!std::filesystem::is_directory(path)) {
+            // Check that the file is not an input file
+            bool archiveFlag = true;
 
-                    // Compare to the active path to the cleanup list value
-                    if (std::filesystem::equivalent(temp, path)) {
-                        archiveFlag = false;
-                        break;
-                    }
-                }
+            for (int entry = 0; entry < m_fileCleanupList.size(); entry++) {
+                // Construct the path to the file in the worker directory
+                std::filesystem::path temp = m_workerDirectory;
+                temp /= m_fileCleanupList[entry];
 
-                // If the file is not in the cleanup list, archive it
-                if (archiveFlag) {
-                    // Create the main path to the archive directory
-                    std::filesystem::path temp = "archive";
-
-                    // Add in the best path if enabled
-                    if (preserveBest) {
-                        temp /= "best";
-
-                    } else {
-                        // Append the model and run number
-                        temp /= m_workerDirectory;
-                        temp /= "run_" + std::to_string(solveCounter - 1);
-
-                    }
-
-                    // Remove the worker name from the active path
-                    int counter = 0;
-                    for (auto& part : path) {
-                        if (counter > 0) {
-                            temp /= part;
-                        }
-                        counter++;
-                    }
-
-                    // Confirm that the path to the file exists. If not, create it.
-                    if (!std::filesystem::is_directory(temp.remove_filename())) {
-                        std::filesystem::create_directories(temp.remove_filename());
-                    }
-
-                    // Copy the file
-                    std::filesystem::copy(path, temp);
+                // Compare to the active path to the cleanup list value
+                if (std::filesystem::equivalent(temp, path)) {
+                    archiveFlag = false;
+                    break;
                 }
             }
-        }
-    } else {
-        // Run user commands to save specific model files
-        if (preserveBest) {
-            // Preserve to the best folder
-            // Construct the command
-            std::string preserveCommandActive = preserveBestCommand;
-            preserveCommandActive.append(' ' + std::to_string(rank));
-            preserveCommandActive.append(' ' + std::to_string(solveCounter));
-            std::cout << preserveCommandActive << std::endl;
 
-            // Send it to the system to execute
-            system(preserveCommandActive.c_str());
+            // If the file is not in the cleanup list, archive it
+            if (archiveFlag) {
+                // 
+                std::filesystem::path copyPath = archiveDestinationPath;
+                for (auto it = path.begin(); it != path.end(); ++it) {
+                    if (*it != workerDirectoryPath) {
+                        copyPath /= *it;
+                    }
+                }
 
-        } else {
-            // Preserve to the archive folder for the run
-            // Construct the command
-            std::string preserveCommandActive = preserveOutputCommand;
-            preserveCommandActive.append(' ' + std::to_string(rank));
-            preserveCommandActive.append(' ' + std::to_string(solveCounter));
-            std::cout << preserveCommandActive << std::endl;
-
-            // Send it to the system to execute
-            system(preserveCommandActive.c_str());
+                // Copy the file
+                std::filesystem::create_directories(copyPath.parent_path());
+                std::filesystem::copy(path, copyPath);
+            }
         }
     }
 }
