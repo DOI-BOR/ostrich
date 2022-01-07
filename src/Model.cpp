@@ -692,6 +692,23 @@ Model::Model(void)
 
    /*
    --------------------------------------------------------------------
+   Read in flag to attempt file cleanup - seems to be rather buggy at
+   the moment so lets give users the ability to opt out
+   --------------------------------------------------------------------
+   */
+   m_bTryFileCleanup = false;
+   rewind(pInFile);
+   if(CheckToken(pInFile, "AttemptFileCleanup", inFileName) == true)
+   {   
+      line = GetCurDataLine();
+      sscanf(line, "%s %s", tmp1, tmp2);
+      MyStrLwr(tmp2);
+      if(strncmp(tmp2, "yes", 3) == 0) {m_bTryFileCleanup = true;}
+   }/* end if() */
+
+
+   /*
+   --------------------------------------------------------------------
    Read in flag to use SuperMUSE
    --------------------------------------------------------------------
    */   
@@ -995,6 +1012,8 @@ Model::Model(void)
       m_pDecision = new DecisionModule((ModelABC *)this);
    }
 
+   ExcludeConstantParameters();
+
    CheckGlobalSensitivity();
    
    pInFile = fopen(inFileName, "r");
@@ -1069,17 +1088,13 @@ void Model::Destroy(void)
    m_bSave = false;
    delete m_pDecision;
 
-   if(m_pFileCleanupList != NULL)
+   if((m_pFileCleanupList != NULL) && (m_bTryFileCleanup == true))
    {
-       // Create the directories
-       std::filesystem::path directory = GetExeDirName();
-       std::filesystem::path cutoff = ".";
-
-       // If directory is not the cuffoff value, clean up the remaining files in the folder
-       if(~directory.compare(cutoff)) {
-          m_pFileCleanupList->Cleanup(directory);
-       }
-
+      IroncladString dirName = GetExeDirName(); 
+      if(dirName[0] != '.')
+      {
+         m_pFileCleanupList->Cleanup(dirName);         
+      }
       delete m_pFileCleanupList;
    }
 
@@ -1398,9 +1413,12 @@ IroncladString Model::GetObjFuncCategory(double * pF, int nObj)
 
       /* multi-objective optimizers */
       case(SMOOTH_PROGRAM):
+      case(MOPSOCD_PROGRAM):
+      case(NSGAII_PROGRAM):
+      case(PAES_PROGRAM):
       case(PADDS_PROGRAM):
       case(PARA_PADDS_PROGRAM):
-      {
+     {
          if((m_Counter <= 1) || IsNonDominated(pF, nObj))
          {
             return ObjFuncNonDominated;
@@ -1793,6 +1811,41 @@ void Model::WriteMetrics(FILE * pFile)
          m_pParameterCorrection->WriteMetrics(pFile);
    }
 } /* end WriteMetrics() */
+
+/******************************************************************************
+ * ExcludeConstantParameters()
+ *
+ * Checks that each parameter can take on multiple values. If not, a warning will
+ * be reported and the parameter will be ignored by the optimizer..
+ * ******************************************************************************/
+void Model::ExcludeConstantParameters(void)
+{
+   if(m_pParamGroup == NULL) return;
+
+   int i, j, nprm;
+   double upr, lwr;
+   char tmp1[DEF_STR_SZ];
+   UnchangeableString prm_name;
+
+   nprm = m_pParamGroup->GetNumParams();
+
+   for(j = 0; j < nprm; j++)
+   {
+      prm_name = m_pParamGroup->GetParamPtr(j)->GetName();
+      upr = m_pParamGroup->GetParamPtr(j)->GetUprBnd();
+      lwr = m_pParamGroup->GetParamPtr(j)->GetLwrBnd();
+
+      if(upr == lwr)
+      {
+         sprintf(tmp1, "%s will be treated as a constant", prm_name);
+         LogError(ERR_INS_PARM, tmp1);
+         m_pParamGroup->ExcludeParam(prm_name);
+         // ExcludeParam() modifies m_pParamGroup so restart the iterator
+         j=0;
+         nprm = m_pParamGroup->GetNumParams();
+      }
+   }
+} /* end ExcludeConstantParameters() */
 
 /******************************************************************************
 CheckGlobalSensitivity()

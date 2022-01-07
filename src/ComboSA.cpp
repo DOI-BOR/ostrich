@@ -82,6 +82,7 @@ ComboSA::ComboSA(ModelABC * pModel)
    m_NumLwrViols = 0;
    m_NumUphill = 0;
    m_NumDownhill = 0;
+   m_bUserInitTemp = false;
 
    m_pModel = pModel;
    pGroup = m_pModel->GetParamGroupPtr();
@@ -130,6 +131,11 @@ ComboSA::ComboSA(ModelABC * pModel)
          else if(strstr(line, "ConvergenceVal") != NULL)
          {
             sscanf(line, "%s %lf", tmp, &m_StopVal);
+         }
+         else if (strstr(line, "InitialTemperature") != NULL)
+         {
+            sscanf(line, "%s %lf", tmp, &m_InitTemp);
+            m_bUserInitTemp = true;
          }
          line = GetNxtDataLine(inFile, pFileName);
       }/* end while() */
@@ -308,8 +314,15 @@ double ComboSA::Melt(double initVal)
 
    //assign initial temperatue
    dEmax = dEavg + 3.00*CalcStdDev(pdE, m_NumMelts,CENTRAL_TEND_PCTILE);
-   m_CurTemp = m_InitTemp = 100.00*dEmax;
-   m_dEavg = dEavg; //store average energy change as a metric   
+   m_dEavg = dEavg; //store average energy change as a metric
+   if(m_bUserInitTemp == false)
+   {
+      m_CurTemp = m_InitTemp = 100.00*dEmax;
+   }
+   else
+   {
+      m_CurTemp = m_InitTemp;
+   }
 
    //if user-supplied reduction rate is not valid, compute internally
    if((m_TempFactor >= 1.00) || (m_TempFactor <= 0.00))

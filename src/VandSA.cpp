@@ -111,6 +111,7 @@ VandSA::VandSA(ModelABC * pModel)
    m_NumMelts = 100;
    m_InitTemp = m_CurTemp = m_FinalTemp = 10.00;
    m_bUserFinalTemp = false;
+   m_bUserInitTemp = false;
    m_TempFactor = 0.9;
    m_MeltCount = 0;
    m_TransCount = 0;
@@ -216,6 +217,11 @@ VandSA::VandSA(ModelABC * pModel)
          else if(strstr(line, "TemperatureScaleFactor") != NULL)
          {
             sscanf(line, "%s %lf", tmp, &m_TempFactor);
+         }
+         else if (strstr(line, "InitialTemperature") != NULL)
+         {
+            sscanf(line, "%s %lf", tmp, &m_InitTemp);
+            m_bUserInitTemp = true;
          }
          else if(strstr(line, "FinalTemperature") != NULL)
          {
@@ -763,7 +769,14 @@ double VandSA::Melt(double initVal)
    If these constraints are violated, suggest user
    adjust the 'OuterIterations' parameter.
    ---------------------------------------------*/
-   m_CurTemp = m_InitTemp = CalcStdDev(m_pMelts, m_NumMelts,CENTRAL_TEND_PCTILE);
+   if(m_bUserInitTemp ==false)
+   {
+      m_CurTemp = m_InitTemp = CalcStdDev(m_pMelts, m_NumMelts,CENTRAL_TEND_PCTILE);
+   }
+   else
+   {
+      m_CurTemp = m_InitTemp;
+   }
 
    //if user supplied final temp, compute corresponding reduction factor
    if(m_bUserFinalTemp == true)
@@ -943,7 +956,14 @@ double VandSA::MeltMaster(double fbest, int nprocs)
    If these constraints are violated, suggest user
    adjust the 'OuterIterations' parameter.
    ---------------------------------------------*/
-   m_CurTemp = m_InitTemp = CalcStdDev(m_pMelts, m_NumMelts,CENTRAL_TEND_PCTILE);
+   if(m_bUserInitTemp == false)
+   {
+      m_CurTemp = m_InitTemp = CalcStdDev(m_pMelts, m_NumMelts,CENTRAL_TEND_PCTILE);
+   }
+   else
+   {
+      m_CurTemp = m_InitTemp;
+   }
 
    //if user supplied final temp, compute corresponding reduction factor
    if(m_bUserFinalTemp == true)

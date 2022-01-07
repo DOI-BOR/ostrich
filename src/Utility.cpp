@@ -429,6 +429,21 @@ bool AlgIsMultiObjective(void)
          gAlgIsMO = true;
          break; 
       }
+      case (MOPSOCD_PROGRAM) :
+      {
+         gAlgIsMO = true;
+         break;
+      }
+      case (NSGAII_PROGRAM) :
+      {
+         gAlgIsMO = true;
+         break;
+      }
+      case (PAES_PROGRAM) :
+      {
+         gAlgIsMO = true;
+         break;
+      }
       case (PADDS_PROGRAM) :
       {
          gAlgIsMO = true;
@@ -791,12 +806,20 @@ ProgramType ReadProgramType(void)
       { gProgChoice = METRO_PROGRAM;}
       else if(strncmp(tmpType, "smooth", 6) == 0) 
       { gProgChoice = SMOOTH_PROGRAM;}
+      else if (strncmp(tmpType, "mopsocd", 7) == 0)
+      { gProgChoice = MOPSOCD_PROGRAM;}
+      else if (strncmp(tmpType, "paes", 4) == 0)
+      { gProgChoice = PAES_PROGRAM;}
+      else if (strncmp(tmpType, "nsgaii", 6) == 0)
+      { gProgChoice = NSGAII_PROGRAM;}
       else if(strncmp(tmpType, "padds", 5) == 0) 
       { gProgChoice = PADDS_PROGRAM;}
       else if(strncmp(tmpType, "parapadds", 9) == 0) 
       { gProgChoice = PARA_PADDS_PROGRAM;}
       else if(strncmp(tmpType, "beers", 5) == 0) 
       { gProgChoice = BEERS_PROGRAM;}
+      else if(strncmp(tmpType, "vars", 4) == 0)
+      { gProgChoice = VARS_PROGRAM;}
       else 
       { 
          LogError(ERR_FILE_IO, 

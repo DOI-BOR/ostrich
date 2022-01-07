@@ -53,6 +53,7 @@ ComboIntParam::ComboIntParam(IroncladString name, UnmoveableString configStr)
    int i, j, init, len;
    char * pTok;
    char tmpStr[DEF_STR_SZ];
+   char msgStr[DEF_STR_SZ];
    m_CurIdx = -1;
    m_NumCombos = 0;
    m_InitIdx = -1;
@@ -80,6 +81,13 @@ ComboIntParam::ComboIntParam(IroncladString name, UnmoveableString configStr)
       LogError(ERR_FILE_IO, "ComboIntParam(): Invalid number of combinations");
       ExitProgram(1);
    }
+   /*
+   else if(m_NumCombos == 1)
+   {
+      sprintf(msgStr, "ComboIntParam(): %s has only one combination - OSTRICH will treat as a constant", m_pName);
+      LogError(ERR_FILE_IO, msgStr);
+   }
+   */
    pTok += j;
    NEW_PRINT("int", m_NumCombos);
    m_pCombos = new int[m_NumCombos];   
@@ -202,6 +210,7 @@ ComboDblParam::ComboDblParam(IroncladString name, UnmoveableString configStr)
    double init;
    char * pTok;
    char tmpStr[DEF_STR_SZ];
+   char msgStr[DEF_STR_SZ];
    m_CurIdx = -1;
    m_NumCombos = 0;
    m_InitIdx = -1;
@@ -228,6 +237,13 @@ ComboDblParam::ComboDblParam(IroncladString name, UnmoveableString configStr)
       LogError(ERR_FILE_IO, "ComboDblParam(): Invalid number of combinations");
       ExitProgram(1);
    }
+   /*
+   else if(m_NumCombos == 1)
+   {
+      sprintf(msgStr, "ComboDblParam(): %s has only one combination - OSTRICH will treat as a constant", m_pName);
+      LogError(ERR_FILE_IO, msgStr);
+   }
+   */
    pTok += j;
    NEW_PRINT("double", m_NumCombos);
    m_pCombos = new double[m_NumCombos];   
@@ -349,6 +365,7 @@ ComboStrParam::ComboStrParam(IroncladString name, UnmoveableString configStr)
    char * init;
    char * pTok;
    char tmpStr[DEF_STR_SZ];
+   char msgStr[DEF_STR_SZ];
    m_CurIdx = -1;
    m_NumCombos = 0;
    m_InitIdx = -1;
@@ -379,6 +396,13 @@ ComboStrParam::ComboStrParam(IroncladString name, UnmoveableString configStr)
       LogError(ERR_FILE_IO, "ComboStrParam(): Invalid number of combinations");
       ExitProgram(1);
    }
+   /*
+   else if(m_NumCombos == 1)
+   {
+      sprintf(msgStr, "ComboStrParam(): %s has only one combination - OSTRICH will treat as a constant", m_pName);
+      LogError(ERR_FILE_IO, msgStr);
+   }
+   */
    pTok += j;
    NEW_PRINT("char *", m_NumCombos);
    m_pCombos = new char *[m_NumCombos];   

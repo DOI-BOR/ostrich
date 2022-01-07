@@ -226,6 +226,11 @@ bool ValueExtractor::ExtractValue
    int i, j;
 
    int max_msg_size = GetMaxLineSizeInString(m_DataStr);
+   // enforce a lower bound on string size
+   if(max_msg_size < DEF_STR_SZ)
+   {
+      max_msg_size = DEF_STR_SZ;
+   }    
    msg = new char[max_msg_size];
 
    if(strcmp(search, "OST_NULL") == 0)

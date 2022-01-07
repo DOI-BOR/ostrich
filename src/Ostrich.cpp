@@ -36,6 +36,9 @@ Version History
 #include "GeneticAlgorithm.h"
 #include "BinaryGA.h"
 #include "ParticleSwarm.h"
+#include "MOPSOCD_Algorithm.h"
+#include "NSGAII_Algorithm.h"
+#include "PAES_Algorithm.h"
 #include "DDSAlgorithm.h"/*JRC*/
 #include "PDDSAlgorithm.h"
 #include "DiscreteDDSAlgorithm.h"
@@ -48,6 +51,7 @@ Version History
 #include "ParaPADDS.h"
 #include "BEERS.h"
 #include "DDSAU.h"
+#include "VARS_Algorithm.h"
 
 #include "Exception.h"
 #include "Utility.h"
@@ -250,6 +254,21 @@ int main(int argc, StringType argv[])
          SMOOTH_Program(argc, argv);
          break;
       }/* end case(SMOOTH_PROGRAM) */
+      case(MOPSOCD_PROGRAM) :
+      {
+        MOPSOCD_Program(argc, argv);
+         break;
+      }/* end case(MOPSOCD_PROGRAM) */
+      case(NSGAII_PROGRAM) :
+      {
+         NSGAII_Program(argc, argv);
+         break;
+      }/* end case(NSGAII_PROGRAM) */
+      case(PAES_PROGRAM) :
+      {
+         PAES_Program(argc, argv);
+         break;
+      }/* end case(PAES_PROGRAM) */
       case(PADDS_PROGRAM) : 
       {
          PADDS_Program(argc, argv);
@@ -265,6 +284,11 @@ int main(int argc, StringType argv[])
          BEERS_Program(argc, argv);
          break;
       }/* end case(BEERS_PROGRAM) */
+      case(VARS_PROGRAM) :
+      {
+         VARS_Program(argc, argv);
+         break;
+      }/* end case(VARS_PROGRAM) */
       case(QUIT_PROGRAM) : 
       default:
       {            

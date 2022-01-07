@@ -248,6 +248,7 @@ PDDSAlgorithm::PDDSAlgorithm(ModelABC *pModel)
       //allocate space for entries
       if(m_NumInit > 0)
       {
+         m_UserSuppliedInit = true;
          NEW_PRINT("double *", m_NumInit);
          m_pInit = new double * [m_NumInit];
          MEM_CHECK(m_pInit);
@@ -295,11 +296,14 @@ void PDDSAlgorithm::Destroy()
 
    delete m_pStats;
 
-   for(i = 0; i < m_NumInit; i++)
+   if(m_pInit != NULL)
    {
-      delete [] m_pInit[i];
-   }
-   delete [] m_pInit;
+     for(i = 0; i < m_NumInit; i++)
+     {
+        delete [] m_pInit[i];
+     }
+     delete [] m_pInit;
+  }
 
    DestroyDdsDataMembers();
    IncDtorCount();
@@ -361,6 +365,10 @@ void PDDSAlgorithm::Optimize(void)
    const int stopwork=102;
    
    bWarmStart = m_pModel->CheckWarmStart();
+   if(bWarmStart == true)
+   {
+      m_NumInit = 1;
+   }
 
    // maximum number of slaves, increase if needed
    int maxslaves = m_nprocessors+1;
