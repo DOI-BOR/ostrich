@@ -67,6 +67,7 @@ public:
     // Solution variables
     bool m_bWarmStart = false;                                                      // Start the solution from a previously terminated run
     StringType  m_ExecCmd = NULL;                                                   // Command used to solve the model
+    bool m_bSolveOnPrimary = false;                                                 // Solve on the primary worker in addition to the secondary workers
 
     // Objective variables
     double m_BestObjective = INFINITY;                                              // Best objective
@@ -78,6 +79,8 @@ public:
     void SetObjectiveFunctionValue(double curVal) { m_BestObjective = curVal; }     // Sets the current best objective function value
     ObjFuncType GetObjectiveFunctionType(void) { return m_ObjFuncId; }              // Gets the current object function type
     UnchangeableString GetObjectiveFunctionString(void);                            // Gets the string describing the current objective function
+    
+    void GetBestSingleObjective(std::vector<double> objectives, double& bestObjective, int& bestIndex); //  Gets the best objective function and index from a vector
 
     // Define public functions
     ObservationGroup* GetObsGroupPtr(void);                                         // Function to get the observation group pointer
@@ -105,11 +108,11 @@ private:
     bool m_bCaching = false;                                                        // Flag to indicate if caching should be enabled
     int m_NumCacheHits = 0;                                                         // Counter for the number of cache hits
     std::vector<std::vector<double>> m_CacheMembers;                                // Vector to keep track of the previously calculated alternatives
+    std::vector<double> m_CacheObjectives;                                          // Objectives associated with each chace member
 
     // Solution information
     int m_Precision = 6;                                                            // Precision that should be used unless otherwise specified
     int m_NumSolves = 0;                                                            // Number of times the model has been solved
-    bool m_bSolveOnPrimary = false;                                                 // Solve on the primary worker in addition to the secondary workers
     ModelWorker m_primaryWorker;                                                    // ModelWorker slot if using solve on primary
     
     // Sensitivity information

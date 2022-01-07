@@ -45,7 +45,8 @@ public:
 	double ExecuteSingle(void);
 	//void ExecuteMulti(double* pF, int nObj);		// Todo: reimplement this
 	//double DisklessExecute(void);					// Todo: reimplement this
-	void PreserveModel(bool preserveBest);
+	void PreserveBestModel(bool preserveBest);
+	void PreserveArchiveModel();
 	void Write(double objFuncVal);
 
 	// Solution functions
@@ -62,7 +63,7 @@ public:
 	void SetWorkerFilePairs(std::vector<std::vector<std::string>> filePairs);
 	void SetWorkerObservations(ObservationGroup* m_pObsGroup);
 	void SetWorkerParameters(ParameterGroup* m_pParamGroup);
-	int SetStandardParameters(std::vector<double> inputParameters);
+	void SetStandardParameters(std::vector<double> inputParameters);
 
 
 private:
@@ -118,6 +119,8 @@ private:
 
 	int RequestParameters(void);
 	bool RequestContinue(void);
+
+	void MoveModel(std::filesystem::path workerDirectoryPath, std::filesystem::path archiveDestinationPath);
 
 };
 

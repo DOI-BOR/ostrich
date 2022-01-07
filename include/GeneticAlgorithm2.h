@@ -35,7 +35,7 @@ successive genration of solutions is an improvement  (on average) over previous 
 
 
 
-class GeneticAlgorithm : Algorithm {
+class GeneticAlgorithm : public Algorithm {
    public:
         // Define constructors and destructors
         GeneticAlgorithm();      
@@ -83,9 +83,6 @@ class GeneticAlgorithm : Algorithm {
         void Crossover(std::vector<double>& objectives, std::vector<double>& objectivesScratch, std::vector<std::vector<double>>& samples,
                       std::vector<std::vector<double>>& samplesScratch);    // Function to crossover the population to generate a new population
         void Mutate(std::vector<std::vector<double>>& scratch);             // Function to mutate the population to generate a new population
-
-       //StatsClass m_pStats;
-
       
 }; 
 

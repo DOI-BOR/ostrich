@@ -1,25 +1,8 @@
-/******************************************************************************
-File     : Ostrich.cpp
-Author   : L. Shawn Matott
-Copyright: 2003, L. Shawn Matott
 
-Main program execution. Provides a text interface for the set of optimization
-and gridding algorithms that make up the Ostrich program.
-
-Version History
-03-09-03    lsm   added copyright information and initial comments.
-08-20-03    lsm   created version history field and updated comments.
-03-05-04    lsm   added PSO
-03-24-04    lsm   added PSO-LevMar hybrid, added ISOFIT_BUILD option
-11-07-05    lsm   added support for BGA, GRID, VSA and CSA programs
-03-03-07    jrc   added DDS program
-******************************************************************************/
 #include <mpi.h>
 #include <stdio.h>
 #include <string.h>
 
-#include "OptMathClass.h"
-#include "OptSearchClass.h"
 #include "SAAlgorithm.h"
 #include "VandSA.h"
 //#include "APPSO.h"
@@ -30,9 +13,8 @@ Version History
 #include "SamplingAlgorithm.h"
 #include "SteepDescAlgorithm.h"
 #include "FletchReevesAlgorithm.h"
-#include "LevenbergAlgorithm.h"
+#include "LevenbergAlgorithm2.h"
 #include "GridAlgorithm.h"
-#include "StatsClass.h"
 #include "GeneticAlgorithm2.h"
 //#include "ParticleSwarm.h"
 //#include "DDSAlgorithm.h"/*JRC*/
@@ -90,8 +72,7 @@ int main(int argc, StringType argv[])
 
    //execute desired operation
    switch(program) {
-      case(GA_PROGRAM) : 
-      {
+      case(GA_PROGRAM) : {
          GA_Program(argc, argv);
          break;
       }/* end case(GA_PROGRAM) */
@@ -140,11 +121,10 @@ int main(int argc, StringType argv[])
    //      SCEUA_Program(argc, argv);
    //      break;
    //   }/* end case(SCEUA_PROGRAM) */
-   //   case(LEV_PROGRAM) : 
-   //   {
-   //      LEV_Program(argc, argv);
-   //      break;
-   //   }/* end case(LEV_PROGRAM) */
+		case(LEV_PROGRAM) : {
+         LEV_Program(argc, argv);
+         break;
+      }/* end case(LEV_PROGRAM) */
    //   case(GMLMS_PROGRAM) : 
    //   {
    //      GMLMS_Program(argc, argv);

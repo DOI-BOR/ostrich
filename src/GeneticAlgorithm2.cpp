@@ -27,8 +27,7 @@ Read the best solution from a previous run.
 /**************************************************************************************************************************************************************
 CTOR
 
-Initializes the population. First, all parameters are assigned default values
-and then the user input file is checked for overriding values.
+Initializes the population. First, all parameters are assigned default values and then the user input file is checked for overriding values.
 **************************************************************************************************************************************************************/
 GeneticAlgorithm::GeneticAlgorithm() {
 
@@ -40,20 +39,20 @@ GeneticAlgorithm::GeneticAlgorithm() {
     char tmp[DEF_STR_SZ];
     char tmp2[DEF_STR_SZ];
     int i, j, k, lvl, idx;
-    IroncladString name = GetInFileName();
+    IroncladString inputFilename = GetInFileName();
 
     // Read genetic algorithm information from the OSTRICH input file
-    pFile = fopen(name, "r");
+    pFile = fopen(inputFilename, "r");
     if (pFile != NULL) {
         // Identify the Genetic Algorithm block within the file
-        if (CheckToken(pFile, "BeginGeneticAlg", name) == true) {
+        if (CheckToken(pFile, "BeginGeneticAlg", inputFilename) == true) {
             // Identify the end of the algorithm parameter block
-            FindToken(pFile, "EndGeneticAlg", name);
+            FindToken(pFile, "EndGeneticAlg", inputFilename);
             rewind(pFile);
 
             // Import data starting from the beginning of the block
-            FindToken(pFile, "BeginGeneticAlg", name);
-            line = GetNxtDataLine(pFile, name);
+            FindToken(pFile, "BeginGeneticAlg", inputFilename);
+            line = GetNxtDataLine(pFile, inputFilename);
 
             while (strstr(line, "EndGeneticAlg") == NULL) {
                 
@@ -98,7 +97,7 @@ GeneticAlgorithm::GeneticAlgorithm() {
                 }
 
                 // Get the next line
-                line = GetNxtDataLine(pFile, name);
+                line = GetNxtDataLine(pFile, inputFilename);
             }
         }
         else {
@@ -460,19 +459,6 @@ double GeneticAlgorithm::CalcMedianFitness(std::vector<double> objectives) {
 } 
 
 /**************************************************************************************************************************************************************
-GetBestFit()
-
-Retrieves the chromosome value and index that has the best fitness value.
-**************************************************************************************************************************************************************/
-void GeneticAlgorithm::GetBestObjective(std::vector<double> objectives) {
-
-    m_BestObjectiveIndexIteration = std::min_element(objectives.begin(), objectives.end()) - objectives.begin();
-    m_BestObjectiveIteration = *std::min_element(objectives.begin(), objectives.end());
-    
-}
-
-
-/**************************************************************************************************************************************************************
 EvalFitSuperMUSE()
 
 Compute fitness of entire population using SuperMUSE. This routine interfaces with the RepeatTasker SuperMUSE program, which assigns model evaluations to
@@ -555,7 +541,7 @@ Initializes the population so that it is on a budget.
 //    char* line;
 //    char tmp[DEF_STR_SZ];
 //    int i, j, k, lvl, idx;
-//    IroncladString name = GetInFileName();
+//    IroncladString inputFilename = GetInFileName();
 //
 //    //assign default GA parameters
 //    np = m_pComm->GetParamGroupPtr()->GetNumParams();
@@ -568,16 +554,16 @@ Initializes the population so that it is on a budget.
 //    m_InitType = LHS_INIT;
 //    m_StopVal = -1.00;
 //
-//    pFile = fopen(name, "r");
+//    pFile = fopen(inputFilename, "r");
 //    if (pFile != NULL)
 //    {
-//        if (CheckToken(pFile, "BeginGeneticAlg", name) == true)
+//        if (CheckToken(pFile, "BeginGeneticAlg", inputFilename) == true)
 //        {
-//            FindToken(pFile, "EndGeneticAlg", name);
+//            FindToken(pFile, "EndGeneticAlg", inputFilename);
 //            rewind(pFile);
 //
-//            FindToken(pFile, "BeginGeneticAlg", name);
-//            line = GetNxtDataLine(pFile, name);
+//            FindToken(pFile, "BeginGeneticAlg", inputFilename);
+//            line = GetNxtDataLine(pFile, inputFilename);
 //
 //            while (strstr(line, "EndGeneticAlg") == NULL)
 //            {
@@ -586,7 +572,7 @@ Initializes the population so that it is on a budget.
 //                    sscanf(line, "%s %d", tmp, budget);
 //                    if (*budget <= 0) *budget = 1000;
 //                }
-//                line = GetNxtDataLine(pFile, name);
+//                line = GetNxtDataLine(pFile, inputFilename);
 //            }/* end while() */
 //        }/* end if() */
 //        else
@@ -596,22 +582,22 @@ Initializes the population so that it is on a budget.
 //
 //        /* initialize some or all pop. members to specied values */
 //        rewind(pFile);
-//        if (CheckToken(pFile, "BeginInitParams", name) == true)
+//        if (CheckToken(pFile, "BeginInitParams", inputFilename) == true)
 //        {
-//            FindToken(pFile, "EndInitParams", name);
+//            FindToken(pFile, "EndInitParams", inputFilename);
 //            rewind(pFile);
 //
 //            //allocate space for the parameter list
 //            num = m_pComm->GetParamGroupPtr()->GetNumParams();
 //
 //            //count the number of entries
-//            FindToken(pFile, "BeginInitParams", name);
-//            line = GetNxtDataLine(pFile, name);
+//            FindToken(pFile, "BeginInitParams", inputFilename);
+//            line = GetNxtDataLine(pFile, inputFilename);
 //            m_NumInit = 0;
 //            while (strstr(line, "EndInitParams") == NULL)
 //            {
 //                m_NumInit++;
-//                line = GetNxtDataLine(pFile, name);
+//                line = GetNxtDataLine(pFile, inputFilename);
 //            }/* end while() */
 //
 //            //allocate space for entries
@@ -630,8 +616,8 @@ Initializes the population so that it is on a budget.
 //
 //            //read in entries
 //            rewind(pFile);
-//            FindToken(pFile, "BeginInitParams", name);
-//            line = GetNxtDataLine(pFile, name);
+//            FindToken(pFile, "BeginInitParams", inputFilename);
+//            line = GetNxtDataLine(pFile, inputFilename);
 //            i = 0;
 //            while (strstr(line, "EndInitParams") == NULL)
 //            {
@@ -645,7 +631,7 @@ Initializes the population so that it is on a budget.
 //                    m_pInit[i][k] = m_pComm->GetParamGroupPtr()->GetParamPtr(k)->ConvertInVal(atof(tmp));
 //                }/* end for() */
 //                i++;
-//                line = GetNxtDataLine(pFile, name);
+//                line = GetNxtDataLine(pFile, inputFilename);
 //            }/* end while() */
 //        }/* end if() */
 //
@@ -734,12 +720,11 @@ Initializes the population so that it is on a budget.
 
 
 /**************************************************************************************************************************************************************
-WriteMetrics()
+WriteStartingMetrics()
 
 Write out setup and metrics for the pool.
 **************************************************************************************************************************************************************/
 void GeneticAlgorithm::WriteStartingMetrics(void) {
-    // TODO: Move to the write utility class
     // TODO: Update to C++
 
     // Open the log file
@@ -767,8 +752,6 @@ void GeneticAlgorithm::WriteStartingMetrics(void) {
 
     // Close the log file
     fclose(pFile);
-
-
 }
 
 /**************************************************************************************************************************************************************
@@ -851,10 +834,6 @@ Minimize the objective function using the GA.
 **************************************************************************************************************************************************************/
 void GeneticAlgorithm::Optimize(void) {
 
-    // Write the information to the primary log file
-    WriteSetup2("GeneticAlgorithm", m_ExecCmd, m_pObjFunc->GetObjFuncStr(), m_pParamGroup->GetNumParams(), m_pParamGroup->GetNumTiedParams());
-    WriteStartingMetrics();
-
     // Initialize the workers
     ConfigureWorkers();
 
@@ -868,6 +847,10 @@ void GeneticAlgorithm::Optimize(void) {
 
     } else {
         // Start a clean analysis
+        // Write the information to the primary log file
+        WriteSetup2("GeneticAlgorithm", m_ExecCmd, m_pObjFunc->GetObjFuncStr(), m_pParamGroup->GetNumParams(), m_pParamGroup->GetNumTiedParams());
+        WriteStartingMetrics();
+        
         // Initialize the sample matrix for the first solve
         std::vector<double> initialConditions;
         for (int entryParameter = 0; entryParameter < m_pParamGroup->GetNumParams(); entryParameter++) {
@@ -901,7 +884,7 @@ void GeneticAlgorithm::Optimize(void) {
         }
        
         // Compute the best and averages
-        GetBestObjective(objectives);
+        GetBestSingleObjective(objectives, m_BestObjectiveIteration, m_BestObjectiveIndexIteration);
         double meanObjective = CalcMeanFitness(objectives);
         double medianOBjective = CalcMedianFitness(objectives);
         m_CurStop = fabs((medianOBjective - m_BestObjectiveIteration) / medianOBjective);
