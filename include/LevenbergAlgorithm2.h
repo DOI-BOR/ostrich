@@ -37,7 +37,7 @@ Version History
 #include "ParameterABC.h"
 #include "ObservationGroup.h"
 #include "Observation.h"
-#include "StatsClass2.h"
+#include "MathClass2.h"
 #include "Exception.h"
 #include "Utility.h"
 #include "WriteUtility2.h"
@@ -96,6 +96,7 @@ class LevenbergAlgorithm : public Algorithm {
       double m_StepToleranceMaximum = 0;
 
       int m_LambdasMinimum = 1;
+      int m_DerivativeType = 2;
 
       //Configuration variables (to be input by user)
       /*double m_Lambda;    //Marquardt lambda
