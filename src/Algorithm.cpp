@@ -1311,8 +1311,11 @@ void Algorithm::ManageSingleObjectiveIterations(std::vector<std::vector<double>>
                 // Transmit a continue flag to the idle secondary worker
                 SendWorkerContinue(workerRank, true);
 
+                // Include the tied parameters
+                std::vector<double> parametersWithTied = AddTiedParametersToAlternative(parameters[indicesToSolve[sendCounter]]);
+
                 // Transmit the parameteres to the worker to solve
-                SendWorkerParameters(workerRank, indicesToSolve[sendCounter], parameters[indicesToSolve[sendCounter]]);
+                SendWorkerParameters(workerRank, indicesToSolve[sendCounter], parametersWithTied);
 
                 // Increment the send counter
                 sendCounter++;
@@ -1326,8 +1329,11 @@ void Algorithm::ManageSingleObjectiveIterations(std::vector<std::vector<double>>
 
         // Solve on the primary worker if enabled
         if (m_bSolveOnPrimary && sendCounter < indicesToSolve.size()) {
+            // Include the tied parameters
+            std::vector<double> parametersWithTied = AddTiedParametersToAlternative(parameters[indicesToSolve[sendCounter]]);
+
             // Set the parameters on the primary worker
-            m_primaryWorker.SetStandardParameters(parameters[indicesToSolve[sendCounter]]);
+            m_primaryWorker.SetStandardParameters(parametersWithTied);
 
             // Attempt to solve the model
             try {
@@ -1399,6 +1405,32 @@ void Algorithm::ManageSingleObjectiveIterations(std::vector<std::vector<double>>
             m_NumSolves++;
         }
     }    
+}
+
+std::vector<double> Algorithm::AddTiedParametersToAlternative(std::vector<double> parameters) {
+
+    // Need to introduce tied parameters here
+// Set the alternative values into the parameter object
+    for (int entryParameter = 0; entryParameter < m_pParamGroup->GetNumParams(); entryParameter++) {
+        // Get the parameter
+        ParameterABC* temp = m_pParamGroup->GetParamPtr(entryParameter);
+
+        // Set the value into the parameter
+        temp->SetEstimatedValueTransformed(parameters[entryParameter]);
+    }
+
+    // Get the tied parameter values
+    std::vector<double> parametersWithTied = parameters;
+    for (int entryParameterTied = 0; entryParameterTied < m_pParamGroup->GetNumTiedParams(); entryParameterTied++) {
+        // Get the pointer to the tied parameter
+        TiedParamABC* temp = m_pParamGroup->GetTiedParamPtr(entryParameterTied);
+
+        // Get the value and pust back to the 
+        parametersWithTied.push_back(temp->GetEstimatedValueTransformed());
+    }
+
+
+    return parametersWithTied;
 }
 
 

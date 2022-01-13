@@ -1259,7 +1259,7 @@ void LevenbergAlgorithm::WriteStartingMetrics(void) {
 
     fprintf(pFile, "Algorithm         : Levenberg-Marquardt\n");
     fprintf(pFile, "Max Iterations    : %d\n", m_NumIterationMaximum);
-    fprintf(pFile, "Objective Tolerance : %d\n", m_ObjectiveToleranceMaximum);
+    fprintf(pFile, "Objective Tolerance : %f\n", m_ObjectiveToleranceMaximum);
     fprintf(pFile, "Step Tolerance   : %lf\n", m_StepToleranceMaximum);
 
     // Write the parameter to the file

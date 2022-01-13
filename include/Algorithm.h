@@ -143,6 +143,7 @@ private:
     void WarmStart(void);                                                           // Function to warm start from a previous solution
     void AddDatabase(DatabaseABC* pDbase);                                          // Function to output to a database
     void ManagePreserveBest(double& solutionObjective, double alternativeObjective, MPI_Status mpiStatus); // Function to preserve model solves
+    std::vector<double> AddTiedParametersToAlternative(std::vector<double> parameters);                    // Appends tied parameters onto alternative vector
 
     // MPI communication functions
     void ConfigureWorkerDirectory(int workerRank);

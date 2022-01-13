@@ -88,6 +88,7 @@ class ParameterGroupWorker {
       int m_NumRealParams;
       int m_NumIntParams;
       char ** m_ParamNameList; //list of parameter names
+      std::vector<bool> m_ParamInTemplate;
 
       int m_NumExcl;
       void GetParameterNames(IroncladString pFileName);

@@ -96,7 +96,7 @@ class LevenbergAlgorithm : public Algorithm {
       double m_StepToleranceMaximum = 0;
 
       int m_LambdasMinimum = 1;
-      int m_DerivativeType = 2;
+      int m_DerivativeType = FIRST_FORWARD;
 
       //Configuration variables (to be input by user)
       /*double m_Lambda;    //Marquardt lambda
