@@ -44,6 +44,8 @@ class ObjectiveFunction
       virtual void WriteSetupToFile(FILE * pFile)=0;
       virtual ConstraintABC * GetConstraintPtr(IroncladString pName)=0;
       virtual void * GetResponseVarGroup(void)=0;
+      // for retrieving the names of multi-objective cost functions
+      virtual UnchangeableString GetCostFuncStr(int which) = 0;
 };/* end class ObjectiveFunction */
 
 /******************************************************************************
@@ -61,6 +63,8 @@ class WSSE : public ObjectiveFunction
 	   ConstraintABC * GetConstraintPtr(IroncladString pName){ return NULL;}
       double CalcUntransformedObjFunc(void);
       void * GetResponseVarGroup(void){ return NULL; }
+      UnchangeableString GetCostFuncStr(int which);
+
   private :
 }; /* end class WSSE */
 
@@ -78,6 +82,7 @@ class SAWE : public ObjectiveFunction
       void WriteSetupToFile(FILE * pFile) { return;}
 	   ConstraintABC * GetConstraintPtr(IroncladString pName){ return NULL;}
       void * GetResponseVarGroup(void){ return NULL; }
+      UnchangeableString GetCostFuncStr(int which) { return m_ObjFuncStr; }
 }; /* end class SAWE */
 
 /******************************************************************************
@@ -112,6 +117,7 @@ class UserObjFunc : public ObjectiveFunction
       void WriteSetupToFile(FILE * pFile) { return;}
 	   ConstraintABC * GetConstraintPtr(IroncladString pName){ return NULL;}
       void * GetResponseVarGroup(void){ return NULL; }
+      UnchangeableString GetCostFuncStr(int which) { return m_ObjFuncStr; }
 
    private:
       void FileToString(void);
@@ -121,9 +127,4 @@ class UserObjFunc : public ObjectiveFunction
 }; /* end class UserObjFunc */
 
 #endif /* OBJECTIVE_FUNCTION_H */
-
-
-
-
-
 

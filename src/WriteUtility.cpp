@@ -219,6 +219,7 @@ Write out iteration banner
 ******************************************************************************/
 void WriteBannerToFile(FILE * pFile, ModelABC * pModel, const char * pBef, const char * pAft)
 {
+   int i, nCosts;
    ObservationGroup * pObsGroup;
    ResponseVarGroup * pRespVarGroup;
    ObjectiveFunction * pObjFunc;
@@ -232,8 +233,19 @@ void WriteBannerToFile(FILE * pFile, ModelABC * pModel, const char * pBef, const
 
    fprintf(pFile, "Ostrich Run Record\n");
    fprintf(pFile, "%s", pBef);
-   if(pObsGroup != NULL) pObsGroup->Write(pFile, WRITE_BNR, NULL);
-   if(pRespVarGroup != NULL) pRespVarGroup->Write(pFile, WRITE_BNR);
+   if(AlgIsMultiObjective() == false)
+   {
+      if(pObsGroup != NULL) pObsGroup->Write(pFile, WRITE_BNR, NULL);
+      if(pRespVarGroup != NULL) pRespVarGroup->Write(pFile, WRITE_BNR);
+   }
+   else // with MO we only include cost functions in the banner
+   {
+      nCosts = pObjFunc->CalcMultiObjFunc(NULL, -1);
+      for(i = 0; i < nCosts; i++)
+      { 
+         fprintf(pFile, "%s  ", pObjFunc->GetCostFuncStr(i));
+      }
+   }
    pModel->GetParamGroupPtr()->Write(pFile, WRITE_BNR);   
    fprintf(pFile, "%s\n", pAft);
 }/* end WriteBannerToFile() */

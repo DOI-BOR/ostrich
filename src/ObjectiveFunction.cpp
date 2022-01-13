@@ -54,6 +54,16 @@ void WSSE::Destroy(void)
 }/* end Destroy() */
 
 /******************************************************************************
+WSSE::GetCostFuncStr()
+******************************************************************************/
+UnchangeableString WSSE::GetCostFuncStr(int which)
+{
+   int nGroups = m_pObsGroup->GetNumGroups();
+   if(nGroups <= 1) return m_ObjFuncStr;
+   return(m_pObsGroup->GetGroup(which));
+}/* end GetCostFuncStr() */
+
+/******************************************************************************
 WSSE::CalcMultiObjFunc()
 
 Compute WSSE of each observation group.

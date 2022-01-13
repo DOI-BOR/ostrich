@@ -45,7 +45,8 @@ class GCOP : public ObjectiveFunction
       void WriteSetupToFile(FILE * pFile);
       void WriteConstraints(FILE * pFile, int type);
       ConstraintABC * GetConstraintPtr(IroncladString pName);
-	  void * GetResponseVarGroup(void);
+      void * GetResponseVarGroup(void);
+      UnchangeableString GetCostFuncStr(int which);
 
    private :
       void InitFromFile(void);

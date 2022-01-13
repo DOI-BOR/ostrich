@@ -93,6 +93,16 @@ void GCOP::WriteSetupToFile(FILE * pFile)
 }/* end WriteSetupToFile() */
 
 /******************************************************************************
+GCOP::GetCostFuncStr()
+
+Retrieve the name of the given cost function index
+*****************************************************************************/
+UnchangeableString GCOP::GetCostFuncStr(int which)
+{
+   return m_pMultiObjCostFunc[which]->GetName(); 
+}
+
+/******************************************************************************
 GCOP::InitFromFile()
 
 Initialize the GCOP classes by parsing the information in the input file.

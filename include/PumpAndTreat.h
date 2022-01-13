@@ -92,7 +92,8 @@ class PATO : public ObjectiveFunction
       void WriteCost(FILE * pFile, int type);
       void WriteConstraints(FILE * pFile, int type);
       ConstraintABC * GetConstraintPtr(IroncladString pName);
-	  void * GetResponseVarGroup(void);
+      void * GetResponseVarGroup(void);
+      UnchangeableString GetCostFuncStr(int which){ return m_ObjFuncStr; }
 
    private :
       double CalcPumpingRate(void);
