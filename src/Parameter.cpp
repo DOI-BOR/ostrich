@@ -285,7 +285,7 @@ void RealParam::Write(FILE * pFile, int type)
    {
       fprintf(pFile,"%-12s  ", m_pName);
    }/* end else() */
-} /* end RealParam::WriteToFile() */
+} /* end RealParam::Write() */
 
 /******************************************************************************
 RealParam::GetValAsStr()
@@ -431,4 +431,4 @@ void IntParam::Write(FILE * pFile, int type)
    {
       fprintf(pFile,"%-12s  ", m_pName);
    }/* end else() */
-} /* end IntParam::WriteToFile() */
+} /* end IntParam::Write() */

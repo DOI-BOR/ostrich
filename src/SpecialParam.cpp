@@ -184,4 +184,4 @@ void SpecialParam::Write(FILE * pFile, int type)
    {
       fprintf(pFile,"%-12s  ", m_pName);
    }/* end else() */
-} /* end SpecialParam::WriteToFile() */
+} /* end SpecialParam::Write() */

@@ -148,7 +148,7 @@ void TiedRespVarLin1::Write(FILE * pFile, int type)
    {
       fprintf(pFile,"%-12s  ", m_pName);
    }/* end else() */
-} /* end TiedRespVarLin1::WriteToFile() */
+} /* end TiedRespVarLin1::Write() */
 
 /******************************************************************************
 TiedRespVarLin2::Destroy()
@@ -288,7 +288,7 @@ void TiedRespVarLin2::Write(FILE * pFile, int type)
    {
       fprintf(pFile,"%-12s  ", m_pName);
    }/* end else() */
-} /* end TiedRespVarLin2::WriteToFile() */
+} /* end TiedRespVarLin2::Write() */
 
 /******************************************************************************
 TiedRespVarWsum::Destroy()
@@ -439,4 +439,4 @@ void TiedRespVarWsum::Write(FILE * pFile, int type)
    {
       fprintf(pFile,"%-12s  ", m_pName);
    }/* end else() */
-} /* end TiedRespVarWsum::WriteToFile() */
+} /* end TiedRespVarWsum::Write() */

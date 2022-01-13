@@ -198,7 +198,7 @@ void TiedParamLin1::Write(FILE * pFile, int type)
    {
       fprintf(pFile,"%-12s  ", m_pName);
    }/* end else() */
-} /* end TiedParamLin1::WriteToFile() */
+} /* end TiedParamLin1::Write() */
 
 /******************************************************************************
 TiedParamLin2::Destroy()
@@ -356,7 +356,7 @@ void TiedParamLin2::Write(FILE * pFile, int type)
    {
       fprintf(pFile,"%-12s  ", m_pName);
    }/* end else() */
-} /* end TiedParamLin2::WriteToFile() */
+} /* end TiedParamLin2::Write() */
 
 /******************************************************************************
 TiedParamExp::Destroy()
@@ -520,7 +520,7 @@ void TiedParamExp::Write(FILE * pFile, int type)
    {
       fprintf(pFile,"%-12s  ", m_pName);
    }/* end else() */
-} /* end TiedParamExp::WriteToFile() */
+} /* end TiedParamExp::Write() */
 
 /******************************************************************************
 TiedParamLog::Destroy()
@@ -695,7 +695,7 @@ void TiedParamLog::Write(FILE * pFile, int type)
    {
       fprintf(pFile,"%-12s  ", m_pName);
    }/* end else() */
-} /* end TiedParamLog::WriteToFile() */
+} /* end TiedParamLog::Write() */
 
 /******************************************************************************
 TiedDistXY::Destroy()
@@ -844,7 +844,7 @@ void TiedDistXY::Write(FILE * pFile, int type)
    {
       fprintf(pFile,"%-12s  ", m_pName);
    }/* end else() */
-} /* end TiedDistXY::WriteToFile() */
+} /* end TiedDistXY::Write() */
 
 /******************************************************************************
 TiedParamSimpleRatio::Destroy()
@@ -1005,7 +1005,7 @@ void TiedParamSimpleRatio::Write(FILE * pFile, int type)
    {
       fprintf(pFile,"%-12s  ", m_pName);
    }/* end else() */
-} /* end TiedParamSimpleRatio::WriteToFile() */
+} /* end TiedParamSimpleRatio::Write() */
 
 /******************************************************************************
 TiedParamComplexRatio::Destroy()
@@ -1192,7 +1192,7 @@ void TiedParamComplexRatio::Write(FILE * pFile, int type)
    {
       fprintf(pFile,"%-12s  ", m_pName);
    }/* end else() */
-} /* end TiedParamComplexRatio::WriteToFile() */
+} /* end TiedParamComplexRatio::Write() */
 
 /******************************************************************************
 TiedParamConstant::Destroy()
@@ -1364,7 +1364,7 @@ void TiedParamConstant::Write(FILE * pFile, int type)
    {
       fprintf(pFile,"%-12s  ", m_pName);
    }/* end else() */
-} /* end TiedParamConstant::WriteToFile() */
+} /* end TiedParamConstant::Write() */
 
 /******************************************************************************
 TiedParamWsum::Destroy()
@@ -1531,4 +1531,4 @@ void TiedParamWsum::Write(FILE * pFile, int type)
    {
       fprintf(pFile,"%-12s  ", m_pName);
    }/* end else() */
-} /* end TiedParamWsum::WriteToFile() */
+} /* end TiedParamWsum::Write() */
