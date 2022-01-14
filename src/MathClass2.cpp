@@ -1,5 +1,5 @@
 
-#include "StatsClass2.h"
+#include "MathClass2.h"
 
 void FirstOrderBackwardDifference(double currentValue, double lowerValue, double stepSize, double &lowerAdjusted) {
     // todo: doc string
@@ -72,12 +72,11 @@ std::vector<std::vector<double>> Tranpose(std::vector<std::vector<double>> input
 
 }
 
-void CalculateJacobianParameters(std::vector<double> currentValues, std::vector<double> lowerValues, std::vector<double> upperValues, double stepSize, double tol,
+void CalculateJacobianParameters(std::vector<double> currentValues, std::vector<double> lowerValues, std::vector<double> upperValues, double stepSize, double tol, int order,
                                  std::vector<std::vector<double>> &jacobianLocations, std::vector<bool> &lockedParameter) {
     // todo: doc string
 
     // Loop on each parameter and perturb it
-    int order = FIRST_FORWARD;
     if (order == FIRST_BACKWARD) {
         // First order backward difference
         for (int entryParameter = 0; entryParameter < currentValues.size(); entryParameter++) {
@@ -155,10 +154,9 @@ void CalculateJacobianParameters(std::vector<double> currentValues, std::vector<
     // todo: add second order differences
 }
 
-void CalculateJacobian2(std::vector<double> currentValues, double currentObjective, std::vector<double> objectives, std::vector<std::vector<double>> jacobianLocations, std::vector<bool> lockedParameter, 
-                       std::vector<std::vector<double>> &jacobian) {
+void CalculateJacobian2(std::vector<double> currentValues, double currentObjective, std::vector<double> objectives, std::vector<std::vector<double>> jacobianLocations, int order, 
+                        std::vector<bool> &lockedParameter, std::vector<std::vector<double>> &jacobian) {
     
-    int order = FIRST_FORWARD;
     int indexPosition = 0;
 
     if (order == FIRST_BACKWARD) {
@@ -167,11 +165,16 @@ void CalculateJacobian2(std::vector<double> currentValues, double currentObjecti
 
         for (int entryParameter = 0; entryParameter < lockedParameter.size(); entryParameter++) {
             if (!lockedParameter[entryParameter]) {
-                // Get the partial derivative of the parameter
-                double partialDerivatives = (currentObjective - objectives[indexPosition]) / (currentValues[entryParameter] - jacobianLocations[indexPosition][entryParameter]);
+                // Get the partial derivative of the parameter. Order is swapped to implicitly introduce the negative direction.
+                double partialDerivatives = (objectives[indexPosition] - currentObjective) / (currentValues[entryParameter] - jacobianLocations[indexPosition][entryParameter]);
 
                 // Add to the derivative vector
                 functionDerivatives.push_back(partialDerivatives);
+
+                // If gradietn is zero, lock the parameter
+                if (partialDerivatives == 0) {
+                    lockedParameter[entryParameter] = true;
+                }
 
                 // Increment the index counter 
                 indexPosition++;
@@ -199,6 +202,11 @@ void CalculateJacobian2(std::vector<double> currentValues, double currentObjecti
                 // Add to the derivative vector
                 functionDerivatives.push_back(partialDerivatives);
 
+                // If gradietn is zero, lock the parameter
+                if (partialDerivatives == 0) {
+                    lockedParameter[entryParameter] = true;
+                }
+
                 // Increment the index counter 
                 indexPosition++;
 
@@ -211,7 +219,6 @@ void CalculateJacobian2(std::vector<double> currentValues, double currentObjecti
         // Append the function derivatives into the jacobian
         jacobian.push_back(functionDerivatives);
 
-
     } else if (order == FIRST_FORWARD) {
         // First order forward difference
         std::vector<double> functionDerivatives;
@@ -223,6 +230,11 @@ void CalculateJacobian2(std::vector<double> currentValues, double currentObjecti
 
                 // Add to the derivative vector
                 functionDerivatives.push_back(partialDerivatives);
+
+                // If gradietn is zero, lock the parameter
+                if (partialDerivatives == 0) {
+                    lockedParameter[entryParameter] = true;
+                }
 
                 // Increment the index counter 
                 indexPosition++;

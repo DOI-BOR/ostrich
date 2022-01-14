@@ -111,6 +111,7 @@ LevenbergAlgorithm::LevenbergAlgorithm() {
     FILE* pFile;
     char* line;
     char tmp[DEF_STR_SZ];
+    char tmp2[DEF_STR_SZ];
     IroncladString inputFilename = GetInFileName();
 
     //read in algorithm parameters
@@ -145,6 +146,18 @@ LevenbergAlgorithm::LevenbergAlgorithm() {
             } else if (strstr(line, "MinimumLambdas") != NULL) {
                 //maximum number of iterations
                 sscanf(line, "%s %d", tmp, &m_LambdasMinimum);
+
+            } else if (strstr(line, "DerivativeType") != NULL) {
+                // Type of derivative to be used
+                sscanf(line, "%s %s", tmp, tmp2);
+
+                if (strcmp(tmp2, "FirstForward") == 0) { 
+                    m_DerivativeType = FIRST_FORWARD;
+                } else if (strcmp(tmp2, "FirstBackward") == 0) { 
+                    m_DerivativeType = FIRST_BACKWARD;
+                } else if (strcmp(tmp2, "FirstCental") == 0) { 
+                    m_DerivativeType = FIRST_CENTRAL; 
+                }
 
             } else {
                 sprintf(tmp, "Unknown token: %s", line);
@@ -274,7 +287,7 @@ void LevenbergAlgorithm::Optimize(void) {
         }
 
         // Initialize the sample
-        CalculateJacobianParameters(currentValues, lowerValues, upperValues, m_StepSize, m_StepToleranceMaximum, samples, lockedParameters);
+        CalculateJacobianParameters(currentValues, lowerValues, upperValues, m_StepSize, m_StepToleranceMaximum, m_DerivativeType, samples, lockedParameters);
 
         // Set the initial condition as the first solve and as the current values
         samples.push_back(currentValues);
@@ -288,9 +301,11 @@ void LevenbergAlgorithm::Optimize(void) {
 
     // Enter the solution loop
     std::vector<double> objectivesJacobian;
+    bool continueIterations = true;
 
-    while ((m_Iteration < m_NumIterationMaximum && m_StepSize >= m_StepToleranceMaximum) || m_ObjectiveTolerance <= m_ObjectiveToleranceMaximum) {
+    while (continueIterations) {
 
+        // Solve for the Jacobian
         if (jacobianSolve) {
             // Initialize the objectives for the solve
             objectivesJacobian = std::vector<double>(samples.size(), INFINITY);
@@ -307,7 +322,22 @@ void LevenbergAlgorithm::Optimize(void) {
             }
 
             // Evaluate for the Jacobian matrix
-            CalculateJacobian2(m_BestAlternative, m_BestObjective, objectivesJacobian, samples, lockedParameters, jacobian);
+            CalculateJacobian2(m_BestAlternative, m_BestObjective, objectivesJacobian, samples, m_DerivativeType, lockedParameters, jacobian);
+
+            // Handle any adjustements needed to the jacobian samples
+            if (m_DerivativeType == FIRST_CENTRAL) {
+                // Keep the upper location as the gradient location
+                std::vector<double> objectivesJacobianReduced;
+                std::vector<std::vector<double>> samplesLocationsReduced;
+
+                for (int entry = 1; entry < samples.size(); entry += 2) {
+                    objectivesJacobianReduced.push_back(objectivesJacobian[entry]);
+                    samplesLocationsReduced.push_back(samples[entry]);
+                }
+
+                objectivesJacobian = objectivesJacobianReduced;
+                samples = samplesLocationsReduced;
+            }
 
             // Write the gradient information to file
 
@@ -322,6 +352,7 @@ void LevenbergAlgorithm::Optimize(void) {
 
         GetBestSingleObjective(objectivesJacobian, bestObjectiveGradient, bestObjectiveIndexGradient);
         std::vector<double> bestAlternativeGradient = samples[bestObjectiveIndexGradient];
+
 
         // Go into a line search for the solution while lambdas produce improvement
         int lambdaCounter = 0;
@@ -349,11 +380,16 @@ void LevenbergAlgorithm::Optimize(void) {
                 // Calculate the parameter correction
                 for (int entryParameter = 0; entryParameter < m_pParamGroup->GetNumParams(); entryParameter++) {
                     // Calculate the delta for the parameter
-                    double parameterDelta = (jacobian[0][entryParameter] * (m_BestObjective - objectivesJacobian[entryParameter])) /
-                        (pow(jacobian[0][entryParameter], 2) * (1 + lambdas[entryLambda]));
+                    if (lockedParameters[entryParameter]) {
+                        delta[entryParameter] = m_BestAlternative[entryParameter];
+                    } else {
+                        double parameterDelta = (jacobian[0][entryParameter] * (m_BestObjective - objectivesJacobian[entryParameter])) /
+                            (pow(jacobian[0][entryParameter], 2) * (1 + lambdas[entryLambda]));
 
-                    // Append into the delta vector
-                    delta[entryParameter] += parameterDelta + m_BestAlternative[entryParameter];
+                        // Append into the delta vector
+                        delta[entryParameter] += parameterDelta + m_BestAlternative[entryParameter];
+                    }
+
                 }
 
                 // Enforce lower parameter bounds
@@ -473,8 +509,13 @@ void LevenbergAlgorithm::Optimize(void) {
         // Increment the generation variable
         m_Iteration++;
 
+        // Determine if the solve should continue
+        if (!(m_Iteration < m_NumIterationMaximum && m_StepSize >= m_StepToleranceMaximum)) {
+            continueIterations = false;
+        } 
+
         // Regenerate the jacobian sample matrix
-        if ((m_Iteration < m_NumIterationMaximum && m_StepSize >= m_StepToleranceMaximum) || m_ObjectiveTolerance <= m_ObjectiveToleranceMaximum) {
+        if (continueIterations) {
             // Clear the sample vectors
             samples.clear();
 
@@ -484,11 +525,10 @@ void LevenbergAlgorithm::Optimize(void) {
             objectivesLambda.clear();
 
             // Update the samples for the new jacobian location
-            CalculateJacobianParameters(m_BestAlternative, lowerValues, upperValues, m_StepSize, m_StepToleranceMaximum, samples, lockedParameters);
+            CalculateJacobianParameters(m_BestAlternative, lowerValues, upperValues, m_StepSize, m_StepToleranceMaximum, m_DerivativeType, samples, lockedParameters);
 
             // Toggle the Jacobian solve to true to continue normal solve proceedures
             jacobianSolve = true;
-
         } 
     }
 
@@ -1224,7 +1264,7 @@ void LevenbergAlgorithm::WriteStartingMetrics(void) {
 
     fprintf(pFile, "Algorithm         : Levenberg-Marquardt\n");
     fprintf(pFile, "Max Iterations    : %d\n", m_NumIterationMaximum);
-    fprintf(pFile, "Objective Tolerance : %d\n", m_ObjectiveToleranceMaximum);
+    fprintf(pFile, "Objective Tolerance : %f\n", m_ObjectiveToleranceMaximum);
     fprintf(pFile, "Step Tolerance   : %lf\n", m_StepToleranceMaximum);
 
     // Write the parameter to the file

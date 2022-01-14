@@ -147,17 +147,18 @@ void ParameterGroupWorker::SubIntoFile(FilePipe * pPipe)
 
 
    //Adjustable parameters
-   for(i = 0; i < m_NumParams; i++)
-   {
-      pParam = m_pList[i];
-      strcpy(find, pParam->GetName());
-      pParam->GetValAsStr(replace);
-      pPipe->FindAndReplace(find,replace);
-   } /* end for() */
+   for(i = 0; i < m_NumParams; i++) {
+       if (m_ParamInTemplate[i]) {
+           pParam = m_pList[i];
+           strcpy(find, pParam->GetName());
+           pParam->GetValAsStr(replace);
+           pPipe->FindAndReplace(find, replace);
+       }
+      
+   }
 
    //Excluded parameters
-   for(i = 0; i < m_NumExcl; i++)
-   {
+   for(i = 0; i < m_NumExcl; i++) {
       pParam = m_pExcl[i];
       strcpy(find, pParam->GetName());
       pParam->GetValAsStr(replace);
@@ -374,9 +375,12 @@ void ParameterGroupWorker::CheckTemplateFiles(std::vector<std::vector<std::strin
           }
       }
 
-      if (found == false) {
+      if (found) {
+          m_ParamInTemplate.push_back(true);
+      } else {
           sprintf(msg, "Parameter |%s| not found in any template file", name);
-          LogError(ERR_FILE_IO, msg);
+          m_ParamInTemplate.push_back(false);
+          //LogError(ERR_FILE_IO, msg);
       }
    }
 }
