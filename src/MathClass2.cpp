@@ -155,7 +155,7 @@ void CalculateJacobianParameters(std::vector<double> currentValues, std::vector<
 }
 
 void CalculateJacobian2(std::vector<double> currentValues, double currentObjective, std::vector<double> objectives, std::vector<std::vector<double>> jacobianLocations, int order, 
-                        std::vector<bool> lockedParameter, std::vector<std::vector<double>> &jacobian) {
+                        std::vector<bool> &lockedParameter, std::vector<std::vector<double>> &jacobian) {
     
     int indexPosition = 0;
 
@@ -170,6 +170,11 @@ void CalculateJacobian2(std::vector<double> currentValues, double currentObjecti
 
                 // Add to the derivative vector
                 functionDerivatives.push_back(partialDerivatives);
+
+                // If gradietn is zero, lock the parameter
+                if (partialDerivatives == 0) {
+                    lockedParameter[entryParameter] = true;
+                }
 
                 // Increment the index counter 
                 indexPosition++;
@@ -197,6 +202,11 @@ void CalculateJacobian2(std::vector<double> currentValues, double currentObjecti
                 // Add to the derivative vector
                 functionDerivatives.push_back(partialDerivatives);
 
+                // If gradietn is zero, lock the parameter
+                if (partialDerivatives == 0) {
+                    lockedParameter[entryParameter] = true;
+                }
+
                 // Increment the index counter 
                 indexPosition++;
 
@@ -220,6 +230,11 @@ void CalculateJacobian2(std::vector<double> currentValues, double currentObjecti
 
                 // Add to the derivative vector
                 functionDerivatives.push_back(partialDerivatives);
+
+                // If gradietn is zero, lock the parameter
+                if (partialDerivatives == 0) {
+                    lockedParameter[entryParameter] = true;
+                }
 
                 // Increment the index counter 
                 indexPosition++;

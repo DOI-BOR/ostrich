@@ -16,7 +16,7 @@ void CalculateJacobianParameters(std::vector<double> currentValues, std::vector<
                                  std::vector<bool> &lockedParameter);
 
 void CalculateJacobian2(std::vector<double> currentValues, double currentObjective, std::vector<double> objectives, std::vector<std::vector<double>> jacobianLocations, int order,
-                       std::vector<bool> lockedParameter, std::vector<std::vector<double>>& jacobian);
+                       std::vector<bool> &lockedParameter, std::vector<std::vector<double>>& jacobian);
 
 std::vector<std::vector<double>> Tranpose(std::vector<std::vector<double>> inputMatrix);
 

@@ -380,11 +380,16 @@ void LevenbergAlgorithm::Optimize(void) {
                 // Calculate the parameter correction
                 for (int entryParameter = 0; entryParameter < m_pParamGroup->GetNumParams(); entryParameter++) {
                     // Calculate the delta for the parameter
-                    double parameterDelta = (jacobian[0][entryParameter] * (m_BestObjective - objectivesJacobian[entryParameter])) /
-                        (pow(jacobian[0][entryParameter], 2) * (1 + lambdas[entryLambda]));
+                    if (lockedParameters[entryParameter]) {
+                        delta[entryParameter] = m_BestAlternative[entryParameter];
+                    } else {
+                        double parameterDelta = (jacobian[0][entryParameter] * (m_BestObjective - objectivesJacobian[entryParameter])) /
+                            (pow(jacobian[0][entryParameter], 2) * (1 + lambdas[entryLambda]));
 
-                    // Append into the delta vector
-                    delta[entryParameter] += parameterDelta + m_BestAlternative[entryParameter];
+                        // Append into the delta vector
+                        delta[entryParameter] += parameterDelta + m_BestAlternative[entryParameter];
+                    }
+
                 }
 
                 // Enforce lower parameter bounds
