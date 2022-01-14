@@ -475,6 +475,12 @@ void ParaPADDS::Optimize(void)
 
             WriteInnerEval(num_rcvd, m_maxiter, '.');
 
+            pStatus.curIter = num_rcvd;
+            pStatus.maxIter = m_maxiter;
+            pStatus.pct = (float)100.00*(float)num_rcvd/(float)m_maxiter;
+            pStatus.numRuns = num_rcvd;
+        WriteStatus(&pStatus);
+
             #if(PARA_PADDS_DEBUG == 1)
                printf("Proc %d : Master received the following result from processor %d :\n", m_rank, slaveindex);
                for (int j = 0; j < m_num_dec; j++)
