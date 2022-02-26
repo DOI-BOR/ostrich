@@ -14,7 +14,6 @@ Version History
 #include <string.h>
 
 #include "FileList.h"
-
 #include "Utility.h"
 #include "Exception.h"
 
@@ -63,7 +62,7 @@ Cleanup()
 
 Delete the files in the list.
 ******************************************************************************/
-void FileList::Cleanup(std::filesystem::path dir)
+void FileList::Cleanup(fs::path dir)
 {
 
     // Cleanup the files
@@ -74,13 +73,13 @@ void FileList::Cleanup(std::filesystem::path dir)
         std::string file = pCur->GetName();
 
         // Construct the path to the file
-        std::filesystem::path filepath = dir;
+        fs::path filepath = dir;
         filepath /= file;
 
         // If the file is in the archive directory, delete it
-        if (std::filesystem::exists(filepath)) {
+        if (fs::exists(filepath)) {
             // Delete the file
-            std::filesystem::remove(filepath);
+            fs::remove(filepath);
 
             // Log any removal error
             IroncladString filepathString = &filepath.string()[0];
@@ -90,15 +89,15 @@ void FileList::Cleanup(std::filesystem::path dir)
 
     // Remove any empty directories in the archived run folder
     // Create a list of entries in the archive folder
-    std::vector<std::filesystem::path> archivePaths;
-    for (auto& p : std::filesystem::recursive_directory_iterator(dir)) {
+    std::vector<fs::path> archivePaths;
+    for (auto& p : fs::recursive_directory_iterator(dir)) {
         archivePaths.push_back(p);
     }
 
     // Loop over the files backward, deleting if empty. The reverse loop is necessary to prevent deleting folders that are subsequently checked.
-    for (std::vector<std::filesystem::path>::reverse_iterator rit = archivePaths.rbegin(); rit != archivePaths.rend(); ++rit) {
-        if (std::filesystem::is_empty(*rit)) {
-            std::filesystem::remove(*rit);
+    for (std::vector<fs::path>::reverse_iterator rit = archivePaths.rbegin(); rit != archivePaths.rend(); ++rit) {
+        if (fs::is_empty(*rit)) {
+            fs::remove(*rit);
         }
     }
 }/* end Cleanup() */

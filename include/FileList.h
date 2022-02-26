@@ -15,7 +15,14 @@ Version History
 #define FILE_LIST_H
 
 #include "MyHeaderInc.h"
+#ifdef GCC5X
+#include <boost/filesystem.hpp>
+namespace fs = boost::filesystem;
+#else
 #include <filesystem>
+namespace fs = std::filesystem;
+#endif
+
 #include <string>
 #include <vector>
 
@@ -31,7 +38,7 @@ class FileList
       ~FileList(void){ DBG_PRINT("FileList::DTOR"); Destroy(); }
       void Destroy(void);
       void Insert(IroncladString name);
-      void Cleanup(std::filesystem::path dir);
+      void Cleanup(fs::path dir);
       FileList * GetNext(void){ return m_pNxt;}
       IroncladString GetName(void){ return m_Name;}
 

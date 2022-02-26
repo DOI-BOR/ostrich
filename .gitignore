@@ -34,7 +34,7 @@ make/Ostrich
 make/OstrichMPI
 
 # make logs
-make/my_make*.log
+make/*.log
 
 # MacOS files
 **.DS_Store
@@ -43,3 +43,7 @@ src/ignore_these_changed_files.txt
 src/list_of_changed_files.txt
 include/compare_ostrich_distributions.sh
 include/list_of_changed_files.txt
+
+# vs code files
+.vscode
+

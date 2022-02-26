@@ -214,7 +214,7 @@ void PAES::start(void)
 
       if ((innerEvalCount + 1) == m_printFrequency)
       {
-         fprintf(m_cout, "ITERATION = %d\n", iterations);
+         fprintf(m_cout, "ITERATION = %d\n", (int)iterations);
          fprintf(m_cout, "   Archive Size = : %d \n", m_archiveOfSolutions->getPopulationSize());
          m_currentSolution->printFitness(m_cout);
          fprintf(m_cout, "\n");
@@ -529,7 +529,7 @@ void PAES::start_parallel(int myrank, int nprocs)
 
       pStatus.curIter = m_CurIter = iterations+m_printFrequency;
 
-      fprintf(m_cout, "ITERATION = %d\n", iterations+m_printFrequency);
+      fprintf(m_cout, "ITERATION = %d\n", (int)(iterations+m_printFrequency));
       fprintf(m_cout, "   Archive Size = : %d \n", m_archiveOfSolutions->getPopulationSize());
       m_currentSolution->printFitness(m_cout);
       fprintf(m_cout, "\n");
@@ -994,7 +994,7 @@ void PAES::printStatistics(void)
 {
    fprintf(m_cout, "   RESULTS\n");
    fprintf(m_cout, "-------------\n");
-   fprintf(m_cout, "Time: %f seconds\n", m_endTime - m_startTime);
+   fprintf(m_cout, "Time: %f seconds\n", (double)((double)m_endTime - (double)m_startTime));
    fprintf(m_cout, "Evaluations: %d\n", m_numberOfFitnessEvaluations);
    fprintf(m_cout, "\nEND\n");;
 } /* end PAES::printStatistics() */
