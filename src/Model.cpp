@@ -78,6 +78,7 @@ namespace fs = std::filesystem;
 #include "DecisionModule.h"
 #include "SuperMUSE.h"
 #include "ParameterCorrection.h"
+#include "ParamInitializerABC.h"
 #include "GenConstrainedOpt.h"
 
 #include "IsoParse.h"
@@ -226,6 +227,7 @@ Model::Model(void)
 
    strcpy(m_DirPrefix, ".");
    m_pParameterCorrection = NULL;
+   m_pParamInitializer = NULL;
    m_pDecision = NULL;
    m_ExecCmd = NULL;
    m_SaveCmd = NULL;
@@ -712,7 +714,6 @@ Model::Model(void)
       if(strncmp(tmp2, "yes", 3) == 0) {m_bTryFileCleanup = true;}
    }/* end if() */
 
-
    /*
    --------------------------------------------------------------------
    Read in flag to use SuperMUSE
@@ -917,6 +918,21 @@ Model::Model(void)
       bBoxCox = true;
    }/* end if() */
 
+   /*
+   --------------------------------------------------------------------
+   Read in Parameter Initializer type, if any.
+   --------------------------------------------------------------------
+   */
+   char paramInitializer[DEF_STR_SZ];
+   strcpy(paramInitializer, "");
+   rewind(pInFile);
+   if(CheckToken(pInFile, "ParamInitializer", inFileName) == true)
+   {  
+      line = GetCurDataLine(); 
+      sscanf(line, "%s %s", tmp1, paramInitializer);
+      MyStrLwr(paramInitializer);
+   }/* end if() */
+
    fclose(pInFile);
 
    if(bSMUSE) CleanSuperMUSE();
@@ -1022,6 +1038,7 @@ Model::Model(void)
 
    CheckGlobalSensitivity();
    
+   // check for parameter correction strategy
    pInFile = fopen(inFileName, "r");
    if(pInFile == NULL)
    {
@@ -1031,6 +1048,22 @@ Model::Model(void)
    {
       m_pParameterCorrection = new ParameterCorrection(m_pParamGroup);
    }/* end if() */
+   fclose(pInFile);
+
+   // check for parameter initialization strategy
+   pInFile = fopen(inFileName, "r");
+   if(pInFile == NULL)
+   {
+      FileOpenFailure("Model::CTOR", inFileName);
+   }/* end if() */
+   if(strcmp(paramInitializer, "hamed") == 0)
+   {
+      m_pParamInitializer = new HamedParamInitializer(m_pParamGroup, pInFile);
+   }
+   else if(strcmp(paramInitializer, "kmeans") == 0)
+   {
+      m_pParamInitializer = new KMeansParamInitializer(m_pParamGroup, pInFile);
+   }
    fclose(pInFile);
 
    IncCtorCount();
@@ -1077,6 +1110,14 @@ double ExtractBoxCoxValue(void)
 }/* end ExtractBoxCoxValue() */
 
 /******************************************************************************
+Fetch the parameter initializer.
+******************************************************************************/
+ParamInitializerABC * Model::GetParamInitializerPtr(void)
+{
+   return m_pParamInitializer;
+}/* end GetParamInitializerPtr() */
+
+/******************************************************************************
 Free up memory.
 ******************************************************************************/
 void Model::Destroy(void)
@@ -1084,6 +1125,7 @@ void Model::Destroy(void)
    delete m_pObsGroup;
    delete m_pParamGroup;
    delete m_pParameterCorrection;
+   delete m_pParamInitializer;
    delete m_pObjFunc;
    delete m_FileList;
    delete m_DbaseList;

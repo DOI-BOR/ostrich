@@ -40,6 +40,7 @@ class FileList;
 class DatabaseABC;
 class SurrogateParameterGroup;
 class ParameterCorrection;
+class ParamInitializerABC;
 
 extern "C" {
    double ExtractBoxCoxValue(void);
@@ -60,6 +61,7 @@ class Model : public ModelABC
      ObservationGroup *  GetObsGroupPtr(void);
      ParameterGroup   *  GetParamGroupPtr(void);     
      ObjectiveFunction * GetObjFuncPtr(void);
+     ParamInitializerABC * GetParamInitializerPtr(void);
      double GetObjFuncVal(void) { return m_CurObjFuncVal;}
      void SetObjFuncVal(double curVal) { m_CurObjFuncVal = curVal;}
      int GetCounter(void);
@@ -91,6 +93,7 @@ class Model : public ModelABC
       ParameterGroup    * m_pParamGroup;
       DecisionModule    * m_pDecision;
       ParameterCorrection * m_pParameterCorrection;
+      ParamInitializerABC * m_pParamInitializer;
       TelescopeType m_Telescope; //telescoping bounds strategy
 
       DatabaseABC * m_DbaseList;
@@ -147,6 +150,7 @@ class SurrogateModel : public ModelABC
      ObservationGroup *  GetObsGroupPtr(void);
      ParameterGroup   *  GetParamGroupPtr(void) { return NULL;}
      ObjectiveFunction * GetObjFuncPtr(void);
+     ParamInitializerABC * GetParamInitializerPtr(void) { return NULL;}
      double GetObjFuncVal(void) { return m_CurObjFuncVal;}
      void SetObjFuncVal(double curVal) { m_CurObjFuncVal = curVal;}
      int                 GetCounter(void);

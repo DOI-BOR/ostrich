@@ -42,6 +42,7 @@ Version History
 #include "Model.h"
 #include "ParameterGroup.h"
 #include "ParameterABC.h"
+#include "ParamInitializerABC.h"
 #include "StatsClass.h"
 #include "LatinHypercube.h"
 #include "QuadTree.h"
@@ -910,6 +911,7 @@ Read configuration information from the given filename.
 void ParticleSwarm::InitFromFile(IroncladString pFileName)
 {
    FILE * pFile;
+   ParamInitializerABC * pParamInitializer;
    int i, j, k, num;
    char * pTok;
    char * line;
@@ -926,6 +928,7 @@ void ParticleSwarm::InitFromFile(IroncladString pFileName)
    m_RedRate = 0.10;
    m_LinRedFlag = false;
    m_InitType = RANDOM_INIT;
+   pParamInitializer = m_pModel->GetParamInitializerPtr();
 
    //read in PSO configuration
    pFile = fopen(pFileName, "r");
@@ -998,15 +1001,12 @@ void ParticleSwarm::InitFromFile(IroncladString pFileName)
       } /* end while() */
    }/* end if() */   
 
-   /* initialize some or all swarm members to specied values */
+   /* initialize some or all swarm members to manually specified values */
    rewind(pFile);
    if(CheckToken(pFile, "BeginInitParams", pFileName) == true)
    {
       FindToken(pFile, "EndInitParams", pFileName);
       rewind(pFile);
-
-      //allocate space for the parameter list
-      num = m_pModel->GetParamGroupPtr()->GetNumParams();
 
       //count the number of entries
       FindToken(pFile, "BeginInitParams", pFileName);
@@ -1017,26 +1017,34 @@ void ParticleSwarm::InitFromFile(IroncladString pFileName)
          m_NumInit++;
          line = GetNxtDataLine(pFile, pFileName);
       }/* end while() */
+   }
 
-      //allocate space for entries
-      if(m_NumInit > 0)
-      {
-         NEW_PRINT("double *", m_NumInit);
-         m_pInit = new double * [m_NumInit];
-         MEM_CHECK(m_pInit);
-         for(i = 0; i < m_NumInit; i++)
-         { 
-            NEW_PRINT("double", num);
-            m_pInit[i] = new double[num];
-            MEM_CHECK(m_pInit[i]);
-         }
-      }/* end if() */
+   //allocate space for entries
+   if(pParamInitializer != NULL)
+   {
+      m_NumInit += pParamInitializer->GetNumParameterSets();
+   }
+   num = m_pModel->GetParamGroupPtr()->GetNumParams();
+   if(m_NumInit > 0)
+   {
+      NEW_PRINT("double *", m_NumInit);
+      m_pInit = new double * [m_NumInit];
+      MEM_CHECK(m_pInit);
+      for(i = 0; i < m_NumInit; i++)
+      { 
+         NEW_PRINT("double", num);
+         m_pInit[i] = new double[num];
+         MEM_CHECK(m_pInit[i]);
+      }
+   }/* end if() */
 
+   i = 0;
+   if(CheckToken(pFile, "BeginInitParams", pFileName) == true)
+   {
       //read in entries
       rewind(pFile);
       FindToken(pFile, "BeginInitParams", pFileName);
       line = GetNxtDataLine(pFile, pFileName);
-      i = 0;
       while(strstr(line, "EndInitParams") == NULL)
       {
          pTok = line;
@@ -1052,6 +1060,10 @@ void ParticleSwarm::InitFromFile(IroncladString pFileName)
          line = GetNxtDataLine(pFile, pFileName);
       }/* end while() */
    }/* end if() */
+   if(pParamInitializer != NULL)
+   {
+      pParamInitializer->GetParameterSets(m_pInit, i);
+   }
 
    fclose(pFile);
 } /* end InitFromFile() */
