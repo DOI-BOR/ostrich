@@ -1,0 +1,196 @@
+#Configuration File for Ostrich Program										
+ProgramType	GeneticAlgorithm									
+ModelExecutable	run_sefm.bat									
+ModelSubdir	core_									
+ObjectiveFunction	WSSE									
+										
+# Optional variables										
+PreserveModelOutput	no									
+PreserveBestModel	yes									
+OnObsError	1000000									
+SolveOnPrimary	yes									
+										
+# Specify the files to be transferred to the working directories										
+BeginExtraFiles										
+run_sefm.bat										
+SEFM_wrapper.py										
+functions.py										
+obj_in.txt										
+test.bat										
+EndExtraFiles										
+										
+BeginExtraDirs										
+SEFM										
+observations										
+SEFM3_V320_Trace										
+EndExtraDirs										
+										
+# Specify the file pairs for calibration 										
+BeginFilePairs    										
+CommandLineParmInput_temp.csv 	CommandLineParmInput.csv									
+EndFilePairs										
+										
+#Parameter Specification										
+#parameter	init.	low	high	tx_in  	tx_ost	tx_out	fmt			
+BeginParams										
+$surf_stor1$	3.35449722	1	4	none	none	none	F10.8			
+$surf_stor2$	3.96837613	1	4	none	none	none	F10.8			
+$surf_stor3$	2.39257007	1	4	none	none	none	F10.8			
+$surf_stor4$	3.39647194	1	4	none	none	none	F10.8			
+$surf_stor5$	1.00882557	1	4	none	none	none	F10.8			
+$surf_stor6$	3.29555687	1	4	none	none	none	F10.8			
+$surf_stor7$	3.62457492	1	4	none	none	none	F10.8			
+$surf_stor8$	3.90420244	1	4	none	none	none	F10.8			
+$surf_stor9$	1.53042097	1	4	none	none	none	F10.8			
+$surf_stor10$	1.62520194	1	4	none	none	none	F10.8			
+$surf_stor11$	1.93841938	1	4	none	none	none	F10.8			
+$surf_stor12$	2.34075844	1	4	none	none	none	F10.8			
+$max_infil1$	2.93175056	1	3	none	none	none	F10.8			
+$max_infil2$	2.92085405	1	3	none	none	none	F10.8			
+$max_infil3$	2.06183158	1	3	none	none	none	F10.8			
+$max_infil4$	2.97775477	1	3	none	none	none	F10.8			
+$max_infil5$	2.03631148	1	3	none	none	none	F10.8			
+$max_infil6$	2.94786595	1	3	none	none	none	F10.8			
+$max_infil7$	2.95049046	1	3	none	none	none	F10.8			
+$max_infil8$	2.37212838	1	3	none	none	none	F10.8			
+$max_infil9$	1.58827065	1	3	none	none	none	F10.8			
+$max_infil10$	2.12369756	1	3	none	none	none	F10.8			
+$max_infil11$	2.14379197	1	3	none	none	none	F10.8			
+$max_infil12$	2.30394147	1	3	none	none	none	F10.8			
+$min_infil1$	0.38461929	0.1	0.4	none	none	none	F10.8			
+$min_infil2$	0.1082391	0.1	0.4	none	none	none	F10.8			
+$min_infil3$	0.24771856	0.1	0.4	none	none	none	F10.8			
+$min_infil4$	0.39315671	0.1	0.4	none	none	none	F10.8			
+$min_infil5$	0.38552725	0.1	0.4	none	none	none	F10.8			
+$min_infil6$	0.10193861	0.1	0.4	none	none	none	F10.8			
+$min_infil7$	0.33787618	0.1	0.4	none	none	none	F10.8			
+$min_infil8$	0.1275172	0.1	0.4	none	none	none	F10.8			
+$min_infil9$	0.35076485	0.1	0.4	none	none	none	F10.8			
+$min_infil10$	0.36754234	0.1	0.4	none	none	none	F10.8			
+$min_infil11$	0.39282836	0.1	0.4	none	none	none	F10.8			
+$min_infil12$	0.13673184	0.1	0.4	none	none	none	F10.8			
+$sub_stor1$	2.05815832	2	8	none	none	none	F10.8			
+$sub_stor2$	7.76435172	2	8	none	none	none	F10.8			
+$sub_stor3$	2.05387565	2	8	none	none	none	F10.8			
+$sub_stor4$	2.27744274	2	8	none	none	none	F10.8			
+$sub_stor5$	3.66279586	2	8	none	none	none	F10.8			
+$sub_stor6$	3.83806456	2	8	none	none	none	F10.8			
+$sub_stor7$	2.96571199	2	8	none	none	none	F10.8			
+$sub_stor8$	2.00633313	2	8	none	none	none	F10.8			
+$sub_stor9$	2.05047748	2	8	none	none	none	F10.8			
+$sub_stor10$	2.34626701	2	8	none	none	none	F10.8			
+$sub_stor11$	3.6957604	2	8	none	none	none	F10.8			
+$sub_stor12$	6.01393025	2	8	none	none	none	F10.8			
+$deep_perc1$	0.02003732	0.02	0.1	none	none	none	F10.8			
+$deep_perc2$	0.08300544	0.02	0.1	none	none	none	F10.8			
+$deep_perc3$	0.04062858	0.02	0.1	none	none	none	F10.8			
+$deep_perc4$	0.02377914	0.02	0.1	none	none	none	F10.8			
+$deep_perc5$	0.0209479	0.02	0.1	none	none	none	F10.8			
+$deep_perc6$	0.04624392	0.02	0.1	none	none	none	F10.8			
+$deep_perc7$	0.02879093	0.02	0.1	none	none	none	F10.8			
+$deep_perc8$	0.05145496	0.02	0.1	none	none	none	F10.8			
+$deep_perc9$	0.02329736	0.02	0.1	none	none	none	F10.8			
+$deep_perc10$	0.09028497	0.02	0.1	none	none	none	F10.8			
+$deep_perc11$	0.02036358	0.02	0.1	none	none	none	F10.8			
+$deep_perc12$	0.09722227	0.02	0.1	none	none	none	F10.8			
+$LZFSM1$	1.05644134	0.6	12	none	none	none	F10.8			
+$LZFSM2$	4.80532086	0.6	12	none	none	none	F10.8			
+$LZFSM3$	8.7423229	0.6	12	none	none	none	F10.8			
+$LZFSM4$	7.65077589	0.6	12	none	none	none	F10.8			
+$LZFSM5$	11.1898608	0.6	12	none	none	none	F10.8			
+$LZFSM6$	6.90506444	0.6	12	none	none	none	F10.8			
+$LZFSM7$	7.86397204	0.6	12	none	none	none	F10.8			
+$LZFSM8$	10.7420509	0.6	12	none	none	none	F10.8			
+$LZFSM9$	11.3369951	0.6	12	none	none	none	F10.8			
+$LZFSM10$	11.6209229	0.6	12	none	none	none	F10.8			
+$LZFSM11$	6.89062593	0.6	12	none	none	none	F10.8			
+$LZFSM12$	7.49824831	0.6	12	none	none	none	F10.8			
+$LZSK1$	0.04810051	0.03	0.2	none	none	none	F10.8			
+$LZSK2$	0.0818275	0.03	0.2	none	none	none	F10.8			
+$LZSK3$	0.19622486	0.03	0.2	none	none	none	F10.8			
+$LZSK4$	0.16005491	0.03	0.2	none	none	none	F10.8			
+$LZSK5$	0.17156155	0.03	0.2	none	none	none	F10.8			
+$LZSK6$	0.08904256	0.03	0.2	none	none	none	F10.8			
+$LZSK7$	0.0779236	0.03	0.2	none	none	none	F10.8			
+$LZSK8$	0.18835346	0.03	0.2	none	none	none	F10.8			
+$LZSK9$	0.19423263	0.03	0.2	none	none	none	F10.8			
+$LZSK10$	0.18784938	0.03	0.2	none	none	none	F10.8			
+$LZSK11$	0.07386629	0.03	0.2	none	none	none	F10.8			
+$LZSK12$	0.11522137	0.03	0.2	none	none	none	F10.8			
+$LZFPM1$	7.09773829	1.5	24	none	none	none	F10.8			
+$LZFPM2$	1.91268112	1.5	24	none	none	none	F10.8			
+$LZFPM3$	5.6238972	1.5	24	none	none	none	F10.8			
+$LZFPM4$	7.2962744	1.5	24	none	none	none	F10.8			
+$LZFPM5$	1.52392289	1.5	24	none	none	none	F10.8			
+$LZFPM6$	6.37319155	1.5	24	none	none	none	F10.8			
+$LZFPM7$	17.2534079	1.5	24	none	none	none	F10.8			
+$LZFPM8$	2.08425203	1.5	24	none	none	none	F10.8			
+$LZFPM9$	2.18471217	1.5	24	none	none	none	F10.8			
+$LZFPM10$	4.30369693	1.5	24	none	none	none	F10.8			
+$LZFPM11$	22.9822294	1.5	24	none	none	none	F10.8			
+$LZFPM12$	3.54012052	1.5	24	none	none	none	F10.8			
+$LZPK1$	0.01133603	0.001	0.015	none	none	none	F10.8			
+$LZPK2$	0.01477604	0.001	0.015	none	none	none	F10.8			
+$LZPK3$	0.00913553	0.001	0.015	none	none	none	F10.8			
+$LZPK4$	0.00124832	0.001	0.015	none	none	none	F10.8			
+$LZPK5$	0.01353823	0.001	0.015	none	none	none	F10.8			
+$LZPK6$	0.01190345	0.001	0.015	none	none	none	F10.8			
+$LZPK7$	0.00515035	0.001	0.015	none	none	none	F10.8			
+$LZPK8$	0.00658914	0.001	0.015	none	none	none	F10.8			
+$LZPK9$	0.01179836	0.001	0.015	none	none	none	F10.8			
+$LZPK10$	0.00433495	0.001	0.015	none	none	none	F10.8			
+$LZPK11$	0.0079981	0.001	0.015	none	none	none	F10.8			
+$LZPK12$	0.01019979	0.001	0.015	none	none	none	F10.8			
+$PFREE1$	0.00320107	0.001	0.5	none	none	none	F10.8			
+$PFREE2$	0.01230592	0.001	0.5	none	none	none	F10.8			
+$PFREE3$	0.16656362	0.001	0.5	none	none	none	F10.8			
+$PFREE4$	0.00628057	0.001	0.5	none	none	none	F10.8			
+$PFREE5$	0.20846629	0.001	0.5	none	none	none	F10.8			
+$PFREE6$	0.00751188	0.001	0.5	none	none	none	F10.8			
+$PFREE7$	0.1470443	0.001	0.5	none	none	none	F10.8			
+$PFREE8$	0.02357571	0.001	0.5	none	none	none	F10.8			
+$PFREE9$	0.21462682	0.001	0.5	none	none	none	F10.8			
+$PFREE10$	0.48108938	0.001	0.5	none	none	none	F10.8			
+$PFREE11$	0.00320107	0.001	0.5	none	none	none	F10.8			
+$PFREE12$	0.47850827	0.001	0.5	none	none	none	F10.8			
+$U_PRise1$	374.663301	0.1	440	none	none	none	F10.8			
+$U_PRise2$	122.567777	0.1	440	none	none	none	F10.8			
+$U_PRise3$	255.162599	0.1	440	none	none	none	F10.8					
+$U_PkFlow1$	1421.10086	591	3409	none	none	none	F10.8			
+$U_PkFlow2$	1910.77684	591	3409	none	none	none	F10.8			
+$U_PkFlow3$	1420.67101	591	3409	none	none	none	F10.8						
+$intflw_UZ1$	8.95379324	6	14	none	none	none	F10.8			
+$intflw_UZ2$	9.80768823	6	14	none	none	none	F10.8			
+$intflw_UZ3$	9.58358937	6	14	none	none	none	F10.8						
+$intflw_LZ1$	13.0813415	8	17.5	none	none	none	F10.8			
+$intflw_LZ2$	15.4521002	8	17.5	none	none	none	F10.8			
+$intflw_LZ3$	17.2832224	8	17.5	none	none	none	F10.8						
+$intflw_p1$	0.51455235	0.4	0.6	none	none	none	F10.8			
+$intflw_p2$	0.44256185	0.4	0.6	none	none	none	F10.8			
+$intflw_p3$	0.48489829	0.4	0.6	none	none	none	F10.8					
+EndParams										
+										
+										
+#Observation Configuration 										
+BeginObservations										
+#observation	value	weight	file		keyword	line	column	tok	aug?	group
+2013_PBIAS	0	90	objectives.csv	PBIAS	1	2	',' 	No	g1	
+2013_NSE	1	1000	objectives.csv	NSE	1	3	',' 	No	g1	
+2013_pkerr	0	800	objectives.csv	pkerr	1	4	',' 	No	g1	
+2014_PBIAS	0	45	objectives.csv	PBIAS	2	2	',' 	No	g2	
+2014_NSE	1	250	objectives.csv	NSE	2	3	',' 	No	g2	
+2014_pkerr	0	200	objectives.csv	pkerr	2	4	',' 	No	g2	
+2012_PBIAS	0	45	objectives.csv	PBIAS	3	2	',' 	No	g3	
+2012_NSE	1	250	objectives.csv	NSE	3	3	',' 	No	g3	
+2012_pkerr	0	200	objectives.csv	pkerr	3	4	',' 	No	g3	
+EndObservations										
+										
+BeginGeneticAlg										
+PopulationSize  550										
+CrossoverRate	0.5									
+MutationRate	0.01									
+Survivors	10									
+NumGenerations	900									
+InitPopulationMethod	LHS									
+ConvergenceVal	1.00E-08									
+EndGeneticAlg										
