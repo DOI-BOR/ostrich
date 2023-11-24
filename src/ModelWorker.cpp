@@ -1003,7 +1003,6 @@ void ModelWorker::SetWorkerParameters(ParameterGroup* m_pParamGroup) {
         IroncladString paramName = &name[0];
 
         int sampleValue = param->GetEstimatedValueTransformed();
-        sampleValue = param->ConvertOutVal(sampleValue);
 
         // Create the parameter
         m_pList[positionCounter] = new IntParamWorker(paramName, sampleValue);

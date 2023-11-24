@@ -959,7 +959,6 @@ void Algorithm::ConfigureWorkerParameterGroups(int workerRank, bool bMPI) {
             // Get the information from the parameter
             std::string name = param->GetName();
             int sampleValue = param->GetEstimatedValueTransformed();
-            sampleValue = param->ConvertOutVal(sampleValue);
 
             // Send the values to the worker
             MPI_Send(&name[0], name.length() + 1, MPI_CHAR, workerRank, tag_paramInitName, MPI_COMM_WORLD);
@@ -1103,7 +1102,13 @@ void Algorithm::SendWorkerParameters(int workerRank, int alternativeIndex, std::
         param->SetEstimatedValueTransformed(parametersRegular[entryParameter]);
 
         // Get the converted value
-        parametersTemp.push_back(param->ConvertOutVal(parametersRegular[entryParameter]));
+        if (entryParameter < m_pParamGroup->m_NumRealParams) {
+            // Real value. Transformation is permitted.
+            parametersTemp.push_back(param->ConvertOutVal(parametersRegular[entryParameter]));
+        } else {
+            // Integer value. Transformation is not permitted
+            parametersTemp.push_back(parametersRegular[entryParameter]);
+        }
     }
 
     // Update the tied parameters
@@ -1116,7 +1121,7 @@ void Algorithm::SendWorkerParameters(int workerRank, int alternativeIndex, std::
     }
  
     // Get the total number of parameters
-    int numberOfParamters = m_pParamGroup->m_NumParams + m_pParamGroup->m_NumTied;   
+    int numberOfParamters = m_pParamGroup->m_NumParams + m_pParamGroup->m_NumTied;      
 
     // Send the array to the secondary worker
     //MPI_Send(&parametersTemp[0], numberOfParamters + 1, MPI_DOUBLE, workerRank, tag_data, MPI_COMM_WORLD);

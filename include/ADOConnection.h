@@ -16,6 +16,7 @@ Version History
 #import "msado15.dll"  \
     rename( "EOF", "AdoNSEOF" )
 
+
 #include "MyHeaderInc.h"
 
 /******************************************************************************
