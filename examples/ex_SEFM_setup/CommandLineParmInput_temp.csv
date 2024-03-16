@@ -1,0 +1,39 @@
+﻿SEFM Parameter Input File for Use with Command Line Simulations,,,,,,,,,,,,,,,,,,,,
+Enter parameters below and save as .csv file. ,,,,,,,,,,,,,,,,,,,,
+Parameters in project file are replaced by values Entered Below. Program uses Key words in <> to identify parameter types to substitute,,,,,,,,,,,,,,,,,,,,
+The Soil Name and Basin Name must match the values in the SEFM project file exactly,,,,,,,,,,,,,,,,,,,,
+<Holtan Start>,,,,,,,,,,,,,,,,,,,,
+SoilName,MaxSurfaceInfilRate,MinSurfaceInfilRate,InfiltExponent,DeepPercolationRate,InterceptionStorage,DepressionStorage,SurfaceSoilStorage,SubsurfaceStorage,LZSupplementalStorage,LZPrimaryStorage,LZReservedStorage,ImperviousWater,ImperviousLand,KSuppBaseflow,KPrimaryBaseflow,LeakageUpperLower,DeepRechargeLoss,GWMixAdjustment,ThesholdSOG,InfiltFrozen
+Water,0,0,0,0,0,0,0,0,0,0,7,1,0,0,0,0,0,0,0,0
+Ks1_D2R1,$max_infil1$,$min_infil1$,1.4,$deep_perc1$,0.1,0.1,$surf_stor1$,$sub_stor1$,$LZFSM1$,$LZFPM1$,7,0,0.001,$LZSK1$,$LZPK1$,$PFREE1$,0.15,0,10,0.083
+Ks2_D2R2,$max_infil2$,$min_infil2$,1.4,$deep_perc2$,0.1,0.1,$surf_stor2$,$sub_stor2$,$LZFSM2$,$LZFPM2$,7,0,0.011,$LZSK2$,$LZPK2$,$PFREE2$,0.15,0,10,0.083
+Ks1_D2R3,$max_infil3$,$min_infil3$,1.4,$deep_perc3$,0.1,0.1,$surf_stor3$,$sub_stor3$,$LZFSM3$,$LZFPM3$,7,0,0.009,$LZSK3$,$LZPK3$,$PFREE3$,0.15,0,10,0.083
+Ks3_D2R1,$max_infil4$,$min_infil4$,1.4,$deep_perc4$,0.1,0.1,$surf_stor4$,$sub_stor4$,$LZFSM4$,$LZFPM4$,7,0,0.001,$LZSK4$,$LZPK4$,$PFREE4$,0.15,0,10,0.083
+Ks3_D2R3,$max_infil5$,$min_infil5$,1.4,$deep_perc5$,0.1,0.1,$surf_stor5$,$sub_stor5$,$LZFSM5$,$LZFPM5$,7,0,0.012,$LZSK5$,$LZPK5$,$PFREE5$,0.15,0,10,0.083
+Ks3_D2R2,$max_infil6$,$min_infil6$,1.4,$deep_perc6$,0.1,0.1,$surf_stor6$,$sub_stor6$,$LZFSM6$,$LZFPM6$,7,0,0.01,$LZSK6$,$LZPK6$,$PFREE6$,0.15,0,10,0.083
+Ks4_D2R2,$max_infil7$,$min_infil7$,1.4,$deep_perc7$,0.1,0.1,$surf_stor7$,$sub_stor7$,$LZFSM7$,$LZFPM7$,7,0,0.005,$LZSK7$,$LZPK7$,$PFREE7$,0.15,0,10,0.083
+Ks2_D2R1,$max_infil8$,$min_infil8$,1.4,$deep_perc8$,0.1,0.1,$surf_stor8$,$sub_stor8$,$LZFSM8$,$LZFPM8$,7,0,0.019,$LZSK8$,$LZPK8$,$PFREE8$,0.15,0,10,0.083
+Ks4_D2R3,$max_infil9$,$min_infil9$,1.4,$deep_perc9$,0.1,0.1,$surf_stor9$,$sub_stor9$,$LZFSM9$,$LZFPM9$,7,0,0.005,$LZSK9$,$LZPK9$,$PFREE9$,0.15,0,10,0.083
+Ks4_D2R1,$max_infil10$,$min_infil10$,1.4,$deep_perc10$,0.1,0.1,$surf_stor10$,$sub_stor10$,$LZFSM10$,$LZFPM10$,7,0,0,$LZSK10$,$LZPK10$,$PFREE10$,0.15,0,10,0.083
+Ks1_D2R2,$max_infil11$,$min_infil11$,1.4,$deep_perc11$,0.1,0.1,$surf_stor11$,$sub_stor11$,$LZFSM11$,$LZFPM11$,7,0,0.14,$LZSK11$,$LZPK11$,$PFREE1$,0.15,0,10,0.083
+Ks2_D2R3,$max_infil12$,$min_infil12$,1.4,$deep_perc12$,0.1,0.1,$surf_stor12$,$sub_stor12$,$LZFSM12$,$LZFPM12$,7,0,0.005,$LZSK12$,$LZPK12$,$PFREE12$,0.15,0,10,0.083
+<Holtan End>,,,,,,,,,,,,,,,,,,,,
+<Ugraph Start>,,,,,,,,,,,,,,,,,,,,
+Basin Name,PeriodRise,PeakFlow,PeakFactor,BasinArea,,,,,,,,,,,,,,,,
+UpperBT,$U_PRise1$,$U_PkFlow1$,387,76.098,,,,,,,,,,,,,,,,
+LowerBT,$U_PRise2$,$U_PkFlow2$,387,63.85,,,,,,,,,,,,,,,,
+Fish_Creek,$U_PRise3$,$U_PkFlow3$,387,15.512,,,,,,,,,,,,,,,,
+<Ugraph End>,,,,,,,,,,,,,,,,,,,,
+<Interflow Start>,,,,,,,,,,,,,,,,,,,,
+Basin Name,UpperZoneConst,LowerZoneConst,UpperProportion,,,,,,,,,,,,,,,,,
+UpperBT,$intflw_UZ1$,$intflw_LZ1$,$intflw_p1$,,,,,,,,,,,,,,,,,
+LowerBT,$intflw_UZ2$,$intflw_LZ2$,$intflw_p2$,,,,,,,,,,,,,,,,,
+Fish_Creek,$intflw_UZ3$,$intflw_LZ3$,$intflw_p3$,,,,,,,,,,,,,,,,,
+<Interflow End>,,,,,,,,,,,,,,,,,,,,
+"Data Below is Used if Performing Event Simulation, Ignored if Continuous Simulation",,,,,,,,,,,,,,,,,,,,
+<Event Start>,,,,,,,,,,,,,,,,,,,,
+Storm Number,Start Date,"Watershed Precip, Kappa Duration (in)",1000mb Temp Deg F,Maximum 24-hour Freezing Level (ft),Template File Name,,,,,,,,,,,,,,,
+1,9/7/2013,6.49,100.8334656,14672.31197,\Olympus-StormTemplate-2013Sep_manmod_StageIV.csv,,,,,,,,,,,,,,,
+2,7/25/2014,3.039932781,105.5094048,15084.85685,\Olympus-StormTemplate-2014Jul_manmod_StageIV.csv,,,,,,,,,,,,,,,
+3,7/2/2012,2.509304969,107.5067879,15057.86385,\Olympus-StormTemplate-2012Jul_manmod_StageIV.csv,,,,,,,,,,,,,,,
+<Event End>,,,,,,,,,,,,,,,,,,,,

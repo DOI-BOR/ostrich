@@ -1,0 +1,5 @@
+events = 2013, 2014, 2012
+res = Res Name
+obj_fns = PBIAS, NSE, pkerr # options include NSE, KGE, pkerr, and PBIAS
+round = 1
+proj_folder = SEFM_project_placeholder
