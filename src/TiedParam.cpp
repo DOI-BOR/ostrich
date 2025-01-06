@@ -480,11 +480,11 @@ double TiedParamLinMax::GetEstimatedValueTransformed(void) {
 
     // Compare the the min x1 and replace if necessary
     if (y <= m_max) {
-        y = y - x1;
+        y = y;
     }
     
     if (y > m_max) {
-        y = m_max - x1;
+        y = m_max;
     }
 
     return y;
