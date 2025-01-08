@@ -30,6 +30,7 @@ these groups.
 // Include custom classes
 #include "MyHeaderInc.h"
 #include "MyTypes.h"
+#include "ReadUtility.h"
 #include "WriteUtility2.h"
 #include "ModelWorker.h"
 #include "ObservationGroup.h"
@@ -72,6 +73,7 @@ public:
     // Objective variables
     double m_BestObjective = INFINITY;                                              // Best objective
     std::vector<double> m_BestAlternative;                                          // Best alternative
+    int m_NumSolves = 0;                                                            // Number of times the model has been solved
 
     // Defiine objective functions
     ObjectiveFunction* GetObjFuncPtr(void);
@@ -90,10 +92,17 @@ public:
     int GetNumDigitsOfPrecision(void) { return m_Precision; }                       // Function to get the number of model precision digits
     
     // Expose functions to inheriting subclasses
-    void ConfigureWorkers(void);                                                    // Configure the workders for the solution
+    void ConfigureWorkers(std::vector<int>);                                        // Configure the workders for the solution
     void ManageSingleObjectiveIterations(std::vector<std::vector<double>> parameters, int startingIndex, int numberOfParameters, 
                                          std::vector<double>& objectives);          // Solve using a single objective function
     void TerminateWorkers();                                                        // Terminate all workers
+
+    // Warm restart functions
+    void WarmStart(void);                                                                   // Function to warm start from a previous solution
+    void FindPreviousBest(std::vector<std::vector<std::vector<double>>>);                   // Sets previous best solution from log files
+    void AdjustPrimaryCounts(std::vector<std::vector<std::vector<double>>> previousSolves); // Sets previous number of solves from log files
+    std::vector<int> AdjustSecondaryCounts(std::vector<std::vector<std::vector<double>>> previousSolves);     // Returns a vector for the solves per worker
+    void UpdateCache(std::vector<std::vector<std::vector<double>>> previousSolves);         // Updates solve cache information to prevent additional solves
 
 private:
     // Working directory information
@@ -112,7 +121,6 @@ private:
 
     // Solution information
     int m_Precision = 6;                                                            // Precision that should be used unless otherwise specified
-    int m_NumSolves = 0;                                                            // Number of times the model has been solved
     ModelWorker m_primaryWorker;                                                    // ModelWorker slot if using solve on primary
     
     // Sensitivity information
@@ -140,7 +148,6 @@ private:
     std::vector<std::vector<double>> CreateSample(int sampleSize);                  // Function to create a sample for subsquent iterations
     void Optimize(void);                                                            // Function to call the algorithm in optimization mode
     void Calibrate(void);                                                           // Function to call the algorithm in LS fitting mode                                              
-    void WarmStart(void);                                                           // Function to warm start from a previous solution
     void AddDatabase(DatabaseABC* pDbase);                                          // Function to output to a database
     void ManagePreserveBest(double& solutionObjective, double alternativeObjective, MPI_Status mpiStatus); // Function to preserve model solves
     std::vector<double> AddTiedParametersToAlternative(std::vector<double> parameters);                    // Appends tied parameters onto alternative vector
@@ -153,6 +160,7 @@ private:
     void ConfigureWorkerFilePairs(int workerRank, bool bMPI);
     void ConfigureWorkerObservations(int workerRank, bool bMPI);
     void ConfigureWorkerParameterGroups(int workerRank, bool mMPI);
+    void ConfigureSolveCounts(int workerRank, bool bMPI, int solves);
 
     void SendWorkerContinue(int workerRank, bool workerContinue);
     void SendWorkerPreserveBest(int workerRank, bool preserveModel);

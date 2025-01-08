@@ -245,10 +245,28 @@ Optimize()
 
 Perform calibration using either Levenberg-Marquardt or GML-MS.
 ******************************************************************************/
-void LevenbergAlgorithm::Optimize(void) {
+void LevenbergAlgorithm::Optimize(void) { 
+
+    // Get MPI information
+    int numberOfMpiProcesses;
+    MPI_Comm_size(MPI_COMM_WORLD, &numberOfMpiProcesses);
+
+    // Perform initial warm start recovery, if needed
+    std::vector<int> solveCounts;
+
+    if (m_bWarmStart) {
+        std::cout << "Warm start has not been configured for the Levenberg Algorithm. Exiting the analysis..." << std::endl;
+        throw std::invalid_argument("Warm start has not been configured for the Levenberg Algorithm");
+
+    } else {
+        // Fill the solve counter with zeros
+        for (int entryWorker = 0; entryWorker < numberOfMpiProcesses; entryWorker++) {
+            solveCounts.push_back(0);
+        }
+    }
 
     // Initialize the workers
-    ConfigureWorkers();
+    ConfigureWorkers(solveCounts);
 
     // Define the initial population to solve
     std::vector<std::vector<double>> samples;
