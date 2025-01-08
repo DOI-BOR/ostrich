@@ -10,7 +10,7 @@
 
 
 
-std::vector<std::vector<std::vector<double>>> ReadWorkerFiles(int numberOfWorkers, bool solveOnPrimary, std::filesystem::path m_workerDirectory);
-std::vector<std::vector<double>> ReadOutputFile(std::filesystem::path m_workerDirectory);
+std::vector<std::vector<std::vector<double>>> ReadWorkerFiles(int numberOfWorkers, bool solveOnPrimary);
+std::vector<std::vector<double>> ReadOutputFile();
 
 #endif 

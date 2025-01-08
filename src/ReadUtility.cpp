@@ -7,13 +7,18 @@ std::vector<double> ParseLineToDoubles(std::string line) {
 	std::vector<double> parsedValues;
 
 	// Create the offset value for the line
-	std::string::size_type offset_line;
+	std::string::size_type offset_line = 0;
+
+	// Remove trailling whitespaces
+	while (line.back() == ' ') {
+		line.pop_back();
+	}
 
 	// Parse the values from the line
 	while (offset_line < line.length()) {
 
 		// Create the offset value for the substring
-		std::string::size_type offset_substring;
+		std::string::size_type offset_substring = 0;
 
 		// Read a line from the file
 		double value = std::stod(line.substr(offset_line), &offset_substring);
@@ -32,7 +37,7 @@ std::vector<double> ParseLineToDoubles(std::string line) {
 }
 
 
-std::vector<std::vector<std::vector<double>>> ReadWorkerFiles(int numberOfWorkers, bool solveOnPrimary, std::filesystem::path m_workerDirectory) {
+std::vector<std::vector<std::vector<double>>> ReadWorkerFiles(int numberOfWorkers, bool solveOnPrimary) {
 
 	// Set the starting worker number
 	int startingWorker = 0;
@@ -53,9 +58,7 @@ std::vector<std::vector<std::vector<double>>> ReadWorkerFiles(int numberOfWorker
 	for (int entryWorker = startingWorker; entryWorker < numberOfWorkers; entryWorker++) {
 		// Create the name of the file
 		// TODO: This should be combined into a function from ModelWorker::Write if it works
-		std::filesystem::path filePath = m_workerDirectory;
-		filePath /= "..";
-		filePath /= "..";
+		std::filesystem::path filePath = std::filesystem::current_path();
 		filePath /= "OstModel" + std::to_string(entryWorker) + ".txt";
 		filePath = filePath.lexically_normal();
 
@@ -70,9 +73,7 @@ std::vector<std::vector<std::vector<double>>> ReadWorkerFiles(int numberOfWorker
 		int lineCounter = 0;
 		std::string line;
 		while (std::getline(workerFile, line)) {
-			if (lineCounter > 0) {
-				// Remove all of the empty entries from the line
-				
+			if (lineCounter > 0) {				
 				// Append the line into the vector for the file
 				workerSolves.push_back(ParseLineToDoubles(line));
 
@@ -97,14 +98,12 @@ std::vector<std::vector<std::vector<double>>> ReadWorkerFiles(int numberOfWorker
 }
 
 
-std::vector<std::vector<double>> ReadOutputFile(std::filesystem::path m_workerDirectory) {
+std::vector<std::vector<double>> ReadOutputFile() {
 
 	// Create the name of the file
 	// TODO: This should be combined into a function from ModelWorker::Write if it works
-	std::filesystem::path filePath = m_workerDirectory;
-	filePath /= "..";
-	filePath /= "..";
-	filePath /= "OstModelOutput0.txt";
+	std::filesystem::path filePath = std::filesystem::current_path();
+	filePath /= "OstOutput0.txt";
 	filePath = filePath.lexically_normal();
 
 	// Create the holder for the iteration information
@@ -121,32 +120,24 @@ std::vector<std::vector<double>> ReadOutputFile(std::filesystem::path m_workerDi
 	bool parseLine = false;
 	while (std::getline(workerFile, line)) {
 		// Check for when the iteration block begins
-		if (line.substr(3) == "Run") {
+		if (line.substr(0, 3) == "Run") {
 			parseLine = true;
 			continue;
 		}
 
 		if (parseLine && line.length() > 2) {
-			// Create a vector to hold the converted values
-			std::vector<double> parsedValues;
-
-			// Create the offset value for the line
-			std::string::size_type offset_line;
-
 			// Parse the values from the line
-			while (offset_line < line.length()) {
-				// Append the parse line ito the 
-				iterationValues.push_back(ParseLineToDoubles(line));
+			iterationValues.push_back(ParseLineToDoubles(line));
 
-			}
-
-		}
-		else {
+		} else if (parseLine) {
 			// Disable the parse and continue to the next steps
 			parseLine = false;
 			break;
 
 		}
+
+		// Increment the line counter 
+		lineCounter++;
 	}
 
 	// Return the iteration values to the calling function

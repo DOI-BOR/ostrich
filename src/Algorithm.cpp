@@ -1525,8 +1525,16 @@ std::vector<int> Algorithm::AdjustSecondaryCounts(std::vector<std::vector<std::v
     // Define the solve counter
     std::vector<int> solveCounter;
 
+    // Handle solve on primary
+    int startingIndex = 0;
+
+    if (!m_bSolveOnPrimary) {
+        solveCounter.push_back(0);
+        startingIndex++;
+    }
+
     // Loop and count the nubmer of solves
-    for (int entryWorker = 0; entryWorker < previousSolves.size(); entryWorker++) {
+    for (int entryWorker = startingIndex; entryWorker < previousSolves.size(); entryWorker++) {
         solveCounter.push_back(previousSolves[entryWorker].size());
     }
 

@@ -831,10 +831,10 @@ void GeneticAlgorithm::Optimize(void) {
 
     if (m_bWarmStart) {
         // Read model file for previous iteration count
-        iterationValues = ReadOutputFile(std::filesystem::current_path());
+        iterationValues = ReadOutputFile();
 
         // Read worker files for total number of solves
-        workerValues = ReadWorkerFiles(numberOfMpiProcesses, m_bSolveOnPrimary, std::filesystem::current_path());
+        workerValues = ReadWorkerFiles(numberOfMpiProcesses, m_bSolveOnPrimary);
 
         // Read model file for previous best
         FindPreviousBest(workerValues);
@@ -843,7 +843,7 @@ void GeneticAlgorithm::Optimize(void) {
         AdjustPrimaryCounts(workerValues);
 
         // Adjust the worker counts
-        std::vector<int> solveCounts = AdjustSecondaryCounts(workerValues);
+        solveCounts = AdjustSecondaryCounts(workerValues);
 
         // Update cache to prevent multiple solutions
         UpdateCache(workerValues);
@@ -866,36 +866,92 @@ void GeneticAlgorithm::Optimize(void) {
     
     // Construct the initial sample
     if (m_bWarmStart) {
-        // Load a previous analysis that was interrupted
-        std::cout << "Warm start has not been configured for the Genetic Algorithm. Exiting the analysis..." << std::endl;
-        throw std::invalid_argument("Warm start has not been configured for the Genetic Algorithm");
+        // Update the generation counter
+        m_Generation = iterationValues.size();
 
         // Calculate the iteration and recover population
         int completedSolves = m_NumSolves % m_NumPopulation;
 
         int extractCounter = 0;
-        for (int entryWorker = 0; entryWorker < workerValues.size(); entryWorker++) {
-            while (extractCounter < completedSolves) {
+        while (extractCounter < completedSolves) {
+            for (int entryWorker = 0; entryWorker < workerValues.size(); entryWorker++) {
                 if (workerValues[entryWorker].size() > 0) {
                     // Grab the last value from the worker
-                    samples.push_back(workerValues[entryWorker].back());
+                    std::vector<double> temp = workerValues[entryWorker].back();
+                    std::vector<double> tempParameters(temp.begin() + 2, temp.end());
+
+                    samples.push_back(tempParameters);
                     workerValues[entryWorker].pop_back();
                     
                     // Increment the extract counter
                     extractCounter++;
 
+                    // Break if a sufficient number have been extracted
+                    if (extractCounter == completedSolves) {
+                        break;
+                    }
+
                 }
             }
         }
 
-        // Generate remaining parameter sets
-        std::vector<std::vector<double>> remainingSamples;
-        remainingSamples = CreateInitialSample(m_NumPopulation - completedSolves);
+        // Attempt to regenerate the rest of the remaining solve set from the previous iteration
+        int solvesAvailable = m_NumSolves - extractCounter;
 
-        for (int entrySample = 0; entrySample < remainingSamples.size(); entrySample++) {
-            samples.push_back(remainingSamples[entrySample]);
+        if (solvesAvailable > m_NumPopulation) {
+            // Get an approximation of the previous iteration
+            std::vector<std::vector<double>> previousIteration;
+            std::vector<double> previousObjectives;
+            extractCounter = 0;
+
+            while (extractCounter < m_NumPopulation) {
+                for (int entryWorker = 0; entryWorker < workerValues.size(); entryWorker++) {
+                    if (workerValues[entryWorker].size() > 0) {
+                        // Grab the last value from the worker
+                        std::vector<double> temp = workerValues[entryWorker].back();
+                        std::vector<double> tempParameters(temp.begin() + 2, temp.end());
+
+                        previousIteration.push_back(tempParameters);
+                        previousObjectives.push_back(temp[1]);
+                        workerValues[entryWorker].pop_back();
+
+                        // Increment the extract counter
+                        extractCounter++;
+
+                        // Break if a sufficient number have been extracted
+                        if (extractCounter == completedSolves) {
+                            break;
+                        }
+
+                    }
+                }
+            }
+
+            // Update the scratch array
+            std::vector<double> previousObjectivesScratch = std::vector<double>(m_NumPopulation - samples.size(), INFINITY);
+            std::vector<std::vector<double>> previousIterationScratch = \
+                std::vector<std::vector<double>>(m_NumPopulation, std::vector<double>(m_pParamGroup->GetNumParams(), 0));
+
+            // Perform GA operations based on the previous iteration
+            CreateSample(previousObjectives, previousObjectivesScratch, previousIteration, previousIterationScratch);
+
+            // Copy the new samples into the sample array
+            for (int entrySample = 0; entrySample < m_NumPopulation - completedSolves; entrySample++) {
+                samples.push_back(previousIterationScratch.back());
+                previousIterationScratch.pop_back();
+            }
+
         }
+        else {
+            // Generate remaining parameter sets at random
+            std::vector<std::vector<double>> remainingSamples;
+            remainingSamples = CreateInitialSample(m_NumPopulation - completedSolves);
 
+            for (int entrySample = 0; entrySample < remainingSamples.size(); entrySample++) {
+                samples.push_back(remainingSamples[entrySample]);
+            }
+
+        }
 
     } else {
         // Start a clean analysis
