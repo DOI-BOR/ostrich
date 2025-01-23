@@ -28,6 +28,7 @@ successive genration of solutions is an improvement  (on average) over previous 
 #include "StatUtility.h"
 #include "LatinHypercube.h"
 #include "ParameterGroup.h"
+#include "ReadUtility.h"
 #include <ParameterABC.h>
 //#include "StatsClass.h"
 #include "Exception.h"
@@ -43,7 +44,7 @@ class GeneticAlgorithm : public Algorithm {
         void Destroy(void);
 
         // Define sampling functions used by the GA algorithm
-        void WarmStart(void);                                                   // Function to start from a previous solution
+        //void WarmStart(void);                                                   // Function to start from a previous solution
         std::vector<std::vector<double>> CreateInitialSample(int sampleSize);   // Function to create an initial sample at the start of the analysis
         void CreateSample(std::vector<double>& objectives, std::vector<double>& objectivesScratch, std::vector<std::vector<double>>& samples, 
                         std::vector<std::vector<double>>& samplesScratch);      // Function to create ongoing samples for each iteration

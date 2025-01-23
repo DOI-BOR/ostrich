@@ -85,6 +85,10 @@ void ModelWorker::SetupMPI() {
 
     // Get the parameters for the analysis
     ReceiveWorkerParameters();
+
+    // Get number of existing solves 
+    ReveiveWorkerSolves();
+
 }
 
 /**************************************************************************************************************************************************************
@@ -451,6 +455,19 @@ void ModelWorker::ReceiveWorkerParameters(void) {
     */
     paramGroup->CheckMnemonics();
 
+}
+
+/**************************************************************************************************************************************************************
+ReceiveWorkerSolves
+
+Receives the worker number of solves previously completed
+**************************************************************************************************************************************************************/
+void  ModelWorker::ReveiveWorkerSolves(void) {
+
+    // Get the number of entries that will be coming
+    solveCounter = ReceiveInteger(tag_counts);
+
+    
 }
 
 /**************************************************************************************************************************************************************
@@ -1089,6 +1106,18 @@ void ModelWorker::SetStandardParameters(std::vector<double> inputParameters) {
 
     // Set the parameters into the the parameter group
     paramGroup->WriteParams(&inputParameters[0]);
+
+};
+
+/**************************************************************************************************************************************************************
+SetSolveCounter
+
+Sets the number of solves for the worker previously conducted
+**************************************************************************************************************************************************************/
+void ModelWorker::SetSolveCounter(int solves) {
+
+    // Set the number of previous solves
+    solveCounter = solves;
 
 };
 
