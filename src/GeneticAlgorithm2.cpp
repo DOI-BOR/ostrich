@@ -853,7 +853,6 @@ void GeneticAlgorithm::Optimize(void) {
         // Fill the solve counter with zeros
         for (int entryWorker = 0; entryWorker < numberOfMpiProcesses; entryWorker++) {
             solveCounts.push_back(0);
-            //std::cout << "Initiating worker count" << 0;
         }
         
     }
