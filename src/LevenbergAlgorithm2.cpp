@@ -328,15 +328,6 @@ void LevenbergAlgorithm::Optimize(void) {
             // Initialize the objectives for the solve
             objectivesJacobian = std::vector<double>(samples.size(), INFINITY);
 
-            // @@ debug. Check for nans in the sample matrix
-            for (int i_entry_alternative = 0; i_entry_alternative < samples.size(); i_entry_alternative++) {
-                for (int i_entry_parameter = 0; i_entry_parameter < samples[i_entry_alternative].size(); i_entry_parameter++) {
-                    if (std::isnan(samples[i_entry_alternative][i_entry_parameter])) {
-                        std::cout << "I found a nan!" << std::endl;
-                    }
-                }
-            }
-
             // Solve the samples
             ManageSingleObjectiveIterations(samples, 0, m_pParamGroup->GetNumParams(), objectivesJacobian);
 
@@ -434,15 +425,6 @@ void LevenbergAlgorithm::Optimize(void) {
 
                 // Push into the sample vector for evalation
                 samples.push_back(delta);
-            }
-
-            // @@ debug. Check for nans in the sample matrix
-            for (int i_entry_alternative = 0; i_entry_alternative < samples.size(); i_entry_alternative++) {
-                for (int i_entry_parameter = 0; i_entry_parameter < samples[i_entry_alternative].size(); i_entry_parameter++) {
-                    if (std::isnan(samples[i_entry_alternative][i_entry_parameter])) {
-                        std::cout << "I found a nan!" << std::endl;
-                    }
-                }
             }
 
             // Evaluate the line search across the deltas
