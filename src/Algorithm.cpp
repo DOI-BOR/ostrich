@@ -1249,15 +1249,21 @@ void Algorithm::ManageSingleObjectiveIterations(std::vector<std::vector<double>>
     // If caching is enabled, check the solutions against the list of values to be created
     std::vector<int> indicesToSolve;
     for (int entryAlternative = startingIndex; entryAlternative < parameters.size(); entryAlternative++) {
-        if (m_bCaching) {
+        
+        if (parameters[entryAlternative].size() == 0) {
+            // The parameter set has been flagged as invalid for this analysis and shouldn't be computed. This is typically done for vector alignment purposes
+            // Set the resulting objective to infinity
+            returnArray[entryAlternative] = INFINITY;
+
+        } else if (m_bCaching) {
             // Caching is enabled. Check that the member is not in the cache
             std::vector<std::vector<double>> ::iterator itr = std::find(m_CacheMembers.begin(), m_CacheMembers.end(), parameters[entryAlternative]);
 
             if (itr == m_CacheMembers.end()) {
                 // Alternative is not present in the cache. Add it to be solved.
                 indicesToSolve.push_back(entryAlternative);
-            }
-            else {
+
+            } else {
                 // Log the cache hit
                 m_NumCacheHits++;
 

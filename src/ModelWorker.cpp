@@ -1236,6 +1236,7 @@ void ModelWorker::MoveModel(std::filesystem::path workerDirectoryPath, std::file
 
     // Iterate over the directory contents
     for (std::filesystem::path path : iterator) {
+        std::cout << path << std::endl;
         // Confirm that the path is to a file
         if (!std::filesystem::is_directory(path)) {
             // Check that the file is not an input file
