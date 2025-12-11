@@ -96,6 +96,11 @@ void CalculateJacobianParameters(std::vector<double> currentValues, std::vector<
 
             } else {
                 // Lock the parameter
+                // Create an empty vector to signify that the values aren't valid
+                std::vector<double> placeholder = {};
+                
+                // Add values to the vectors
+                jacobianLocations.push_back(placeholder);
                 lockedParameter.push_back(true);
             }
         }
@@ -123,6 +128,11 @@ void CalculateJacobianParameters(std::vector<double> currentValues, std::vector<
 
             } else {
                 // Indicate that the parameter is locked
+                // Create an empty vector to signify that the values aren't valid
+                std::vector<double> placeholder = {};
+
+                // Add values to the vectors
+                jacobianLocations.push_back(placeholder);
                 lockedParameter.push_back(true);
             }
         }
@@ -146,6 +156,11 @@ void CalculateJacobianParameters(std::vector<double> currentValues, std::vector<
 
             } else {
                 // Lock the parameter
+                // Create an empty vector to signify that the values aren't valid
+                std::vector<double> placeholder = {};
+
+                // Add values to the vectors
+                jacobianLocations.push_back(placeholder);
                 lockedParameter.push_back(true);
             }
         }
@@ -176,18 +191,17 @@ void CalculateJacobian2(std::vector<double> currentValues, double currentObjecti
                     lockedParameter[entryParameter] = true;
                 }
 
-                // Increment the index counter 
-                indexPosition++;
-
             } else {
                 // Parameter is locked. Add a zero into the derivative vector as a placeholder
                 functionDerivatives.push_back(0);
             }
+
+            // Increment the index counter 
+            indexPosition++;
         }
 
         // Append the function derivatives into the jacobian
         jacobian.push_back(functionDerivatives);
-
 
     } else if (order == FIRST_CENTRAL) {
         // First order central difference
@@ -207,13 +221,13 @@ void CalculateJacobian2(std::vector<double> currentValues, double currentObjecti
                     lockedParameter[entryParameter] = true;
                 }
 
-                // Increment the index counter 
-                indexPosition++;
-
             } else {
                 // Parameter is locked. Add a zero into the derivative vector as a placeholder
                 functionDerivatives.push_back(0);
             }
+
+            // Increment the index counter 
+            indexPosition++;
         }
 
         // Append the function derivatives into the jacobian
@@ -236,13 +250,13 @@ void CalculateJacobian2(std::vector<double> currentValues, double currentObjecti
                     lockedParameter[entryParameter] = true;
                 }
 
-                // Increment the index counter 
-                indexPosition++;
-
             } else {
                 // Parameter is locked. Add a zero into the derivative vector as a placeholder
                 functionDerivatives.push_back(0);
             }
+
+            // Increment the index counter 
+            indexPosition++;
         }
 
         // Append the function derivatives into the jacobian

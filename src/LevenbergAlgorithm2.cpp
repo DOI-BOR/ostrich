@@ -401,13 +401,12 @@ void LevenbergAlgorithm::Optimize(void) {
                     if (lockedParameters[entryParameter]) {
                         delta[entryParameter] = m_BestAlternative[entryParameter];
                     } else {
-                        double parameterDelta = (jacobian[0][entryParameter] * (m_BestObjective - objectivesJacobian[entryParameter])) /
-                            (pow(jacobian[0][entryParameter], 2) * (1 + lambdas[entryLambda]));
+                        double parameterDelta = (jacobian[m_Iteration][entryParameter] * (m_BestObjective - objectivesJacobian[entryParameter])) /
+                            (pow(jacobian[m_Iteration][entryParameter], 2) * (1 + lambdas[entryLambda]));
 
                         // Append into the delta vector
                         delta[entryParameter] += parameterDelta + m_BestAlternative[entryParameter];
                     }
-
                 }
 
                 // Enforce lower parameter bounds
@@ -506,13 +505,6 @@ void LevenbergAlgorithm::Optimize(void) {
             m_BestObjective = bestObjectiveIteration;
             m_BestAlternative = bestAlterativeIteration;
         }
-        
-        // Adjust the step size if necessary
-        if (m_ObjectiveTolerance <= m_ObjectiveToleranceMaximum && m_StepSize >= m_StepToleranceMaximum) {
-            // Reduce the step size
-            m_StepSize /= m_StepSizeScaleFactor;
-        } 
-
 
         // Log the iteration
         // Set the values into the pointer groups
@@ -531,6 +523,12 @@ void LevenbergAlgorithm::Optimize(void) {
         if (!(m_Iteration < m_NumIterationMaximum && m_StepSize >= m_StepToleranceMaximum)) {
             continueIterations = false;
         } 
+
+        // Adjust the step size if necessary
+        if (m_ObjectiveTolerance <= m_ObjectiveToleranceMaximum && m_StepSize >= m_StepToleranceMaximum) {
+            // Reduce the step size
+            m_StepSize /= m_StepSizeScaleFactor;
+        }
 
         // Regenerate the jacobian sample matrix
         if (continueIterations) {
