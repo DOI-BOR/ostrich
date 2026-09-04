@@ -1401,9 +1401,10 @@ void Algorithm::ManageSingleObjectiveIterations(std::vector<std::vector<double>>
                 // Solution failed. Fail by keeping the infinite value in the array
             }
 
-            // Increment the counters
+            // Increment all the counters
             sendCounter++;
             receiveCounter++;
+			m_NumSolves++;
 
         }
         
