@@ -170,7 +170,45 @@ EndGeneticAlg
 						<li><b>ConvergenceVal:</b> This is the convergence value for the algorithm. If the relative difference between the current minimum and the median of the
 						latest generation is less than or equal to this value, the algorithm will halt. The default value is 1.00E-4.</li>
 					</ul>
-					
+
+					<h1>Warm Start</h1>
+					<p align="justify">
+						The genetic algorithm supports an optional “warm start” capability that allows a previous, and possibly incomplete or interrupted, GA search to be resumed rather than
+						restarted from the beginning. Warm starting is enabled by adding the OstrichWarmStart keyword to the top level of the OSTRICH input file (i.e. outside of, and in addition to,
+						the BeginGeneticAlg/EndGeneticAlg group), as shown in <a href="#fig2">Figure 2</a>.
+					</p>
+					<!-- This has strange alignment for the code to render correctly on the page.-->
+					<table class="layouttable">
+						<tr>
+							<th>
+<pre><code>OstrichWarmStart [yes/no]
+</code></pre>
+</th>
+<th>
+<pre><code>OstrichWarmStart yes
+</code></pre>
+</th>
+						</tr>
+					</table>
+					<p align="center" id="fig2"><b>Figure 2: General Format (left) and Example (right) of the Warm Start Keyword</b></p>
+					<p align="justify">
+						When warm starting is active, OSTRICH will not delete the OstOutput0.txt file or the per-processor OstModel<i>N</i>.txt files (where <i>N</i> is the processor id) left over
+						from a previous run. These files record every model evaluation performed by the previous run and must remain in the run directory for a warm start to succeed. Before launching
+						the search, OSTRICH pre-processes these files to:
+					</p>
+					<ul align="justify">
+						<li>Determine how many generations were completed by the previous run, based on the contents of OstOutput0.txt.</li>
+						<li>Recover previously evaluated parameter sets and objective function values from each processor's OstModel<i>N</i>.txt file, and identify the best solution found so far.</li>
+						<li>Reconstruct the population for the generation that was in progress when the previous run ended, reusing already-evaluated parameter sets instead of re-evaluating them. Any
+						remaining members needed to complete the population are generated using the standard genetic algorithm operators, or at random if too few prior evaluations are available to do so.</li>
+						<li>Repopulate the model evaluation cache with the recovered evaluations so that previously solved parameter sets are not needlessly re-run.</li>
+					</ul>
+					<p align="justify">
+						The search then resumes from the recovered generation count and continues until the NumGenerations or ConvergenceVal criteria (described above) are satisfied. Since the
+						recovered state is matched up against the current run's configuration and processor count, a warm started run should use the same PopulationSize and the same number of
+						processors as the run being resumed.
+					</p>
+
 					<h1>References</h1>
 					<p align="justify">
 						Chan Hilton, A. B.,Culver, T. B. 2000. Constraint handling for genetic algorithms in optimal remediation design. Journal of Water Resources Planning 
