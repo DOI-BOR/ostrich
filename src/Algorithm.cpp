@@ -1012,11 +1012,29 @@ void Algorithm::ConfigureWorkerParameterGroups(int workerRank, bool bMPI) {
 }
 
 /**************************************************************************************************************************************************************
+MPI Communication - ConfigureSolveCounts()
+
+Sends the number of previous solves from from the primary to the secondary worker
+**************************************************************************************************************************************************************/
+void Algorithm::ConfigureSolveCounts(int workerRank, bool bMPI, int solves) {
+
+    if (bMPI) {
+        // Send the number of previous solves
+        MPI_Send(&solves, 1, MPI_INT, workerRank, tag_counts, MPI_COMM_WORLD);
+    
+    } else {
+        // Set values into the local primary worker
+        m_primaryWorker.SetSolveCounter(solves);
+    }
+
+}
+
+/**************************************************************************************************************************************************************
 MPI Communication - ConfigureWorkers()
 
 Sends all necessary information from the primary to the secondary workers
 **************************************************************************************************************************************************************/
-void Algorithm::ConfigureWorkers() {
+void Algorithm::ConfigureWorkers(std::vector<int> solveCounts) {
 
     // Get the number of workers in the MPI space
     int numberOfMpiProcesses;
@@ -1046,6 +1064,9 @@ void Algorithm::ConfigureWorkers() {
         // Get the parameters for the analysis
         ConfigureWorkerParameterGroups(entryWorker, true);
 
+        // Configure solve counts
+        ConfigureSolveCounts(entryWorker, true, solveCounts[entryWorker]);
+
     }
 
     // Setup the primary worker if using
@@ -1073,6 +1094,9 @@ void Algorithm::ConfigureWorkers() {
 
         // Get the parameters for the analysis
         ConfigureWorkerParameterGroups(0, false);
+
+        // Configure solve counts
+        ConfigureSolveCounts(0, false, solveCounts[0]);
         
         // Configure the worker directory
         m_primaryWorker.SetupWorker();
@@ -1225,15 +1249,21 @@ void Algorithm::ManageSingleObjectiveIterations(std::vector<std::vector<double>>
     // If caching is enabled, check the solutions against the list of values to be created
     std::vector<int> indicesToSolve;
     for (int entryAlternative = startingIndex; entryAlternative < parameters.size(); entryAlternative++) {
-        if (m_bCaching) {
+        
+        if (parameters[entryAlternative].size() == 0) {
+            // The parameter set has been flagged as invalid for this analysis and shouldn't be computed. This is typically done for vector alignment purposes
+            // Set the resulting objective to infinity
+            returnArray[entryAlternative] = INFINITY;
+
+        } else if (m_bCaching) {
             // Caching is enabled. Check that the member is not in the cache
             std::vector<std::vector<double>> ::iterator itr = std::find(m_CacheMembers.begin(), m_CacheMembers.end(), parameters[entryAlternative]);
 
             if (itr == m_CacheMembers.end()) {
                 // Alternative is not present in the cache. Add it to be solved.
                 indicesToSolve.push_back(entryAlternative);
-            }
-            else {
+
+            } else {
                 // Log the cache hit
                 m_NumCacheHits++;
 
@@ -1371,9 +1401,10 @@ void Algorithm::ManageSingleObjectiveIterations(std::vector<std::vector<double>>
                 // Solution failed. Fail by keeping the infinite value in the array
             }
 
-            // Increment the counters
+            // Increment all the counters
             sendCounter++;
             receiveCounter++;
+			m_NumSolves++;
 
         }
         
@@ -1451,6 +1482,104 @@ void Algorithm::GetBestSingleObjective(std::vector<double> objectives, double& b
     bestObjective = *std::min_element(objectives.begin(), objectives.end());
 
 }
+
+
+void Algorithm::FindPreviousBest(std::vector<std::vector<std::vector<double>>> previousSolves) {
+
+    // Define placeholders for evaluation
+    double bestObjectiveRestart = INFINITY;
+    std::vector<double> bestParametersRestart;
+
+    // Loop and solve
+    for (int entryWorker = 0; entryWorker < previousSolves.size(); entryWorker++) {
+        for (int entrySolve = 0; entrySolve < previousSolves[entryWorker].size(); entrySolve++) {
+            // Format from the files are solve number, objective, parameters
+            if (previousSolves[entryWorker][entrySolve][1] < bestObjectiveRestart) {
+                // Update the objective
+                bestObjectiveRestart = previousSolves[entryWorker][entrySolve][1];
+
+                // Update the parameters 
+                bestParametersRestart.clear();
+
+                for (int entryParameter = 2; entryParameter < previousSolves[entryWorker][entrySolve].size(); entryParameter++) {
+                    bestParametersRestart.push_back(previousSolves[entryWorker][entrySolve][entryParameter]);
+                }
+            }
+        }
+    }
+
+    // Set values into the algorithm class
+    m_BestObjective = bestObjectiveRestart;
+    m_BestAlternative = bestParametersRestart;
+}
+
+void Algorithm::AdjustPrimaryCounts(std::vector<std::vector<std::vector<double>>> previousSolves) {
+
+    // Define the solve counter
+    int solveCounter = 0;
+
+    // Loop and count the nubmer of solves
+    for (int entryWorker = 0; entryWorker < previousSolves.size(); entryWorker++) {
+        solveCounter += previousSolves[entryWorker].size();
+    }
+
+    // Set into the parent algorith class
+    m_NumSolves = solveCounter;
+}
+
+std::vector<int> Algorithm::AdjustSecondaryCounts(std::vector<std::vector<std::vector<double>>> previousSolves) {
+
+    // Define the solve counter
+    std::vector<int> solveCounter;
+
+    // Handle solve on primary
+    int startingIndex = 0;
+
+    if (!m_bSolveOnPrimary) {
+        solveCounter.push_back(0);
+        startingIndex++;
+    }
+
+    // Loop and count the nubmer of solves
+    for (int entryWorker = startingIndex; entryWorker < previousSolves.size(); entryWorker++) {
+        solveCounter.push_back(previousSolves[entryWorker].size());
+    }
+
+    // Return to the calling function
+    return solveCounter;
+
+}
+
+void Algorithm::UpdateCache(std::vector<std::vector<std::vector<double>>> previousSolves) {
+
+    // Define the data holders
+    std::vector<double> objectivesRestart;
+    std::vector<std::vector<double>> parametersRestart;
+
+    // Loop and solve
+    for (int entryWorker = 0; entryWorker < previousSolves.size(); entryWorker++) {
+        for (int entrySolve = 0; entrySolve < previousSolves[entryWorker].size(); entrySolve++) {
+            // Format from the files are solve number, objective, parameters
+            objectivesRestart.push_back(previousSolves[entryWorker][entrySolve][1]);
+
+            // Update the parameters 
+            std::vector<double> temp;
+
+            for (int entryParameter = 2; entryParameter < previousSolves[entryWorker][entrySolve].size(); entryParameter++) {
+                temp.push_back(previousSolves[entryWorker][entrySolve][entryParameter]);
+            }
+
+            parametersRestart.push_back(temp);
+            
+        }
+    }
+
+    // Set values into the cache data
+    m_CacheObjectives = objectivesRestart;
+    m_CacheMembers = parametersRestart;
+
+}
+
 
 /**************************************************************************************************************************************************************
 CheckGlobalSensitivity()

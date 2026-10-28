@@ -30,6 +30,7 @@ Version History
 #include <math.h>
 #include <string.h>
 #include <stdlib.h>
+#include <vector>
 
 // Include custom classes
 #include "Algorithm.h"

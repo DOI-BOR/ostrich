@@ -85,6 +85,10 @@ void ModelWorker::SetupMPI() {
 
     // Get the parameters for the analysis
     ReceiveWorkerParameters();
+
+    // Get number of existing solves 
+    ReveiveWorkerSolves();
+
 }
 
 /**************************************************************************************************************************************************************
@@ -451,6 +455,19 @@ void ModelWorker::ReceiveWorkerParameters(void) {
     */
     paramGroup->CheckMnemonics();
 
+}
+
+/**************************************************************************************************************************************************************
+ReceiveWorkerSolves
+
+Receives the worker number of solves previously completed
+**************************************************************************************************************************************************************/
+void  ModelWorker::ReveiveWorkerSolves(void) {
+
+    // Get the number of entries that will be coming
+    solveCounter = ReceiveInteger(tag_counts);
+
+    
 }
 
 /**************************************************************************************************************************************************************
@@ -1092,6 +1109,18 @@ void ModelWorker::SetStandardParameters(std::vector<double> inputParameters) {
 
 };
 
+/**************************************************************************************************************************************************************
+SetSolveCounter
+
+Sets the number of solves for the worker previously conducted
+**************************************************************************************************************************************************************/
+void ModelWorker::SetSolveCounter(int solves) {
+
+    // Set the number of previous solves
+    solveCounter = solves;
+
+};
+
 
 /**************************************************************************************************************************************************************
 PreserveBestModel()
@@ -1207,6 +1236,7 @@ void ModelWorker::MoveModel(std::filesystem::path workerDirectoryPath, std::file
 
     // Iterate over the directory contents
     for (std::filesystem::path path : iterator) {
+        std::cout << path << std::endl;
         // Confirm that the path is to a file
         if (!std::filesystem::is_directory(path)) {
             // Check that the file is not an input file

@@ -1,26 +1,9 @@
-/******************************************************************************
-File      : WriteUtility.cpp
-Author    : L. Shawn Matott
-Copyright : 2004, L. Shawn Matott
-
-This file provides a unifying interface for the various algorithms to write output
-both to file and to stdout.
-
-Version History
-03-08-04    lsm   created
-07-08-04    lsm   added objective function output, tied parameter output and
-                  added date and time of build to version string
-08-11-04    lsm   upped version, added date and time of build, added PATO and
-                  algorithm metrics support
-01-18-05    lsm   upped version, added support for GCOP
-01-01-07    lsm   upped version, added support for ModelABC
-06-22-07    lsm   added dual-Langmuir isotherm, upped version to 1.3
-******************************************************************************/
 #include <mpi.h>
 #include <iostream>
 #include <fstream>
 #include <string>
 #include <cstdio>
+#include <cstring>
 
 #include "ParameterABC.h"
 #include "PumpAndTreat.h"

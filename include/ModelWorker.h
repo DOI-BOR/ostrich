@@ -64,6 +64,7 @@ public:
 	void SetWorkerObservations(ObservationGroup* m_pObsGroup);
 	void SetWorkerParameters(ParameterGroup* m_pParamGroup);
 	void SetStandardParameters(std::vector<double> inputParameters);
+	void SetSolveCounter(int solves);
 
 
 private:
@@ -116,6 +117,7 @@ private:
 	void ReceiveWorkerFilePairs(void);
 	void ReceiveWorkerObservations(void);
 	void ReceiveWorkerParameters(void);
+	void ReveiveWorkerSolves(void);
 
 	int RequestParameters(void);
 	bool RequestContinue(void);
