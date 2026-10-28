@@ -818,6 +818,8 @@ EndCombinatorialParams
 									<li><b>type:</b> The type of functional relationship ,ftied(), between the tied parameter and the list of named parameters (i.e. pname1 … pnamenp). Valid values for type are:</li>
 										<ul style="padding-left:40px; margin-bottom:0px ! important;">
 											<li><b>linear:</b> Selects a linear relationship for ftied(). If this choice is selected, the value of np must be either 1 or 2.</li>
+											<li><b>linearmax:</b> Selects a capped linear relationship between two parameters for ftied(), where the tied value is bounded above by a specified maximum
+											and is computed relative to the first named parameter. The value of np must be 2.</li>
 											<li><b>exp:</b> Selects an exponential relationship for ftied(). If this choice is selected, the value of np must be 1.</li>
 											<li><b>log:</b> Selects a log relationship for ftied(). If selected, the value of np must be 1.</li>
 											<li><b>dist:</b> The tied parameter is the distance between two (x,y) coordinates, where these coordinates are parameters of the optimization/calibration. If selected, the value of np must be 
@@ -849,6 +851,17 @@ EndCombinatorialParams
 									Where Xtied is the tied-parameter value, \(c_0\), \(c_1\), \(c_2\), and \(c_3\) are coefficients, \(X_1\) and \(X_2\) are the non-tied parameter values, and type_data should be replaced with the syntax
 									[\(c_3\) \(c_2\) \(c_1\) \(c_0\) fmt].
 								</p>
+										<p align="justify">
+											If type = ”linearmax”: The functional relationship has the form:
+										</p>
+										<p align="center">
+											$$y = (c_3 X_1 X_2) + (c_2 X_2) + (c_1 X_1) + c_0 $$
+											$$X_{tied} = \begin{cases} y - X_1 & y \le max \\ max - X_1 & y > max \end{cases}$$
+										</p>
+										<p align="justify">
+											Where Xtied is the tied-parameter value, \(c_0\), \(c_1\), \(c_2\), and \(c_3\) are coefficients, \(X_1\) and \(X_2\) are the non-tied parameter values (named, in order, as pname1 and pname2), \(max\) is an upper bound on the intermediate value y, and type_data should be replaced with the syntax
+											[\(c_3\) \(c_2\) \(c_1\) \(c_0\) \(max\) fmt]. Note that the tied-parameter value is always computed relative to \(X_1\) (i.e. y is capped at max and then reduced by \(X_1\)).
+										</p>
 								<p align="justify">
 										If type = ”exp”: The functional relationship has the form:
 								</p>
@@ -914,6 +927,8 @@ EndTiedParams
 TLIN 1 XVAL linear 2.00 0.00 free
 # 2-parameter linear (TLN2 = 2*XVAL + YVAL)
 TLN2 2 XVAL YVAL linear 0.00 2.00 1.00 0.00 free
+# capped linear, relative to first parameter (TLMX = min(YVAL, 5.00) - XVAL)
+TLMX 2 XVAL YVAL linearmax 0.00 1.00 0.00 0.00 5.00 free
 # exponent, base e (TEXP = exp(-XVAL))
 TEXP 1 XVAL exp exp 1.00 -1.00 0.00 free
 # exponent, base 10 (TX2P = 10^(-XVAL))
@@ -1271,6 +1286,8 @@ EndResponseVars
 									<li><b>type:</b> The type of functional relationship ,ftied(), between the tied response variable and the list of non-tied variables (i.e. pname1 … pnamenp). Valid values for type are:</li>
 									<ul style="padding-left:40px; margin-bottom:0px ! important;">
 										<li><b>linear:</b> Selects a linear relationship for ftied(). If this choice is selected, the value of np must be either 1 or 2.</li>
+											<li><b>linearmax:</b> Selects a capped linear relationship between two parameters for ftied(), where the tied value is bounded above by a specified maximum
+											and is computed relative to the first named parameter. The value of np must be 2.</li>
 										<li><b>wsum:</b> The tied response variable is the weighted sum of the listed non-tied variables.</li>
 										<li><b>type_data:</b> Depending on the choice of type, the syntax of this field varies, as described below.</li>
 									</ul>

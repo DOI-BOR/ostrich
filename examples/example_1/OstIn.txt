@@ -55,16 +55,15 @@ obs25		68.92	1	headerr.dat	computed	26	3
 EndObservations
 
 #Configuration for Levenberg-Marquardt algorithm
-BeginLevMar
-InitialLambda    10.0
-LambdaScaleFactor    1.1
-MoveLimit    0.1
-AlgorithmConvergenceValue    0.0001
-LambdaPhiRatio    0.3
-LambdaRelReduction    0.01
-MaxLambdas    10
-MaxIterations    20
-EndLevMar
+BeginLevMarAlg
+DerivativeType    FirstForward
+StepSize    0.1
+StepScale    2.0
+StepTolerance    0.01
+MinimumLambdas    10
+MaximumIterations    20
+ConvergenceTolerance    0.0001
+EndLevMarAlg
 
 BeginMathAndStats
 DiffType    forward

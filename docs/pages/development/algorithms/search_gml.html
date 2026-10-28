@@ -125,36 +125,38 @@
 							</p>
 							<!-- This has strange alignment for the code to render correctly on the page.-->
 
-<pre><code>BeginLevMar
-InitialLambda              [init_lambda]
-LambdaScaleFactor          [lambda_sf]
-MoveLimit                  [move_limit]
-AlgorithmConvergenceValue  [conv_val]
-LambdaPhiRatio             [phi_ratio]
-LambdaRelReduction         [rel_reduce]
-MaxLambdas                 [max_lambda]
-MaxIterations              [max_iters]
-EndLevMar
+<pre><code>BeginLevMarAlg
+DerivativeType             [deriv_type]
+StepSize                   [step_size]
+StepScale                  [step_scale]
+StepTolerance              [step_tol]
+MinimumLambdas             [min_lambdas]
+MaximumIterations          [max_iters]
+ConvergenceTolerance       [conv_tol]
+EndLevMarAlg
 </code></pre>
 						<p align="center" id="fig1"><b>Figure 1: General Format of the Gauss-Marquardt-Levenberg Group</b></p>
-						
+
 						<p align="justify">
-							Where BeginLevMar and EndLevMar are parsing tags that wrap the following set of algorithm configuration variables:
+							Where BeginLevMarAlg and EndLevMarAlg are parsing tags that wrap the following set of algorithm configuration variables:
 						</p>
 						<ul align="justify">
-							<li><b>InitialLambda:</b> The initial Marquardt λ. The λ variable controls the algorithm’s transition from using a Steepest-Descent approach to using a Taylor 
-							Series approximation. The default is 10.00.</li>
-							<li><b>LambdaScaleFactor:</b> The Marquardt λ scale factor – this is the factor by which λ is multiplied or divided during λ adjustment. The default is 1.10.</li>
-							<li><b>MoveLimit:</b> Parameter move limits – the maximum adjustment of a parameter (relative to the range of the parameter) that is allowed in a single iteration. 
-							The default is 0.10, or 10%.</li>
-							<li><b>AlgorithmConvergenceValue:</b> The algorithm convergence value – regression will stop when the relative reduction in the objective function (i.e. phi, Φ) over 
-							two iterations is less than this value. The default value is 1.00E-4.</li>
-							<li><b>LambdaPhiRatio:</b> This is the reduction criteria for deciding on optimal adjustments of the λ term. Adjustments for the given iteration are complete when the 
-							relative reduction in Φ is greater than this value. The default value is 0.30.</li>
-							<li><b>LambdaRelReduction:</b> This is the reduction criteria for abandoning λ adjustment. Adjustments for the given iteration are halted when the relative reduction 
-							in Φ is less than this value. The default value is 0.01.</li>
-							<li><b>MaxLambdas:</b> The maximum number of λ adjustments per iteration. The default value is 10.</li>
-							<li><b>MaxIterations:</b> The maximum iterations in the overall method. The default value is 30.</li>
+							<li><b>DerivativeType:</b> The finite-difference scheme used to estimate the Jacobian. Supported values are “FirstForward”, “FirstBackward”, and “FirstCental”
+							(central difference; note that this value must be spelled “FirstCental”, not “FirstCentral”, to be recognized). The default is “FirstForward”.</li>
+							<li><b>StepSize:</b> The finite-difference step used when perturbing each parameter to estimate the Jacobian, expressed as a fraction of the parameter’s
+							current value. The perturbed value is clamped to the parameter’s lower/upper bound, so a very large step size simply evaluates the Jacobian at the bound.
+							This value is also scaled down (by StepScale) as the solution converges. There is no practical built-in default (the coded default is
+							effectively infinite) so this value should be specified by the user.</li>
+							<li><b>StepScale:</b> The factor by which StepSize is divided once the convergence criteria for an iteration (see ConvergenceTolerance) have been met.
+							The default is 2.</li>
+							<li><b>StepTolerance:</b> A parameter is excluded from the Jacobian/line-search for an iteration if perturbing it (per StepSize) would change it by less than
+							this fraction of its range. The algorithm also stops once StepSize falls below this tolerance. The default is 0.</li>
+							<li><b>MinimumLambdas:</b> The minimum number of step-size multipliers (lambdas) tried during the line-search portion of each iteration. The actual number of
+							lambdas used is the larger of this value and the number of available parallel compute slots. The default is 1.</li>
+							<li><b>MaximumIterations:</b> The maximum number of Jacobian/line-search iterations performed by the algorithm. The default is 0, meaning this value must be
+							specified by the user in order for the algorithm to run.</li>
+							<li><b>ConvergenceTolerance:</b> The algorithm convergence value – the step size is reduced when the relative reduction in the objective function (i.e. phi, Φ)
+							over an iteration is less than or equal to this value. The default is 0.</li>
 						</ul>
 						
 						<h1>References</h1>
