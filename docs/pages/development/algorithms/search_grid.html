@@ -117,7 +117,7 @@
 										<p align="left">Initial Publication:</p>
 										<time class="time" datetime="2015-11-01">April 11, 2021</time>
 										<p align="left">Modified:</p>
-										<time class="time" datetime="2015-11-01">April 11, 2021</time>
+										<time class="time" datetime="2026-10-28">October 28, 2026</time>
 									</div>
 								</header>
 								p align="justify">
@@ -150,7 +150,9 @@ EndGridAlg
 								<ul align="justify">
 									<li><p><b>Dimensions:</b> This variable describes a full-factorial sampling grid over which the exhaustive search will be applied. The sequence <d1 d2 … dn> 
 									should contain a space-separated list of “dimension” values for each parameter. The order of the values should correspond to the order in which parameters 
-									are listed in the Parameters group. The values represent the number of equally spaced samples that will be evaluated for each parameter. 
+									are listed in the Parameters group. The values represent the number of equally spaced samples that will be evaluated for each parameter, including
+									both the lower and upper bounds. Samples are spaced evenly in the transformed space of each parameter (i.e. after any tx_ost transformation). Each
+									dimension must be at least 2; smaller values are reset to 2 and a warning is logged. If Dimensions is not specified, every parameter defaults to 2 samples.
 									For example, consider if there were two parameters of interest: p1, with limits of -10 and +10, and p2, with limits of 0 and 100. A Dimensions entry of 
 									“Dimensions 5 3” would result in the evaluation of the [p1, p2] parameter combinations shown in <a href="tab1">Table 1.</a></p>
 									
@@ -194,8 +196,21 @@ EndGridAlg
 											</tr>
 										</table>
 									</li>
-									<li><b>EvalsPerIter:</b> This variable controls the frequency of output within the OSTRICH run record. The current best solution 
-									will be reported after every EvalsPerIter model evaluations. </li>
+									<li><b>EvalsPerIter:</b> The number of grid points evaluated in each iteration. Each iteration's grid points are distributed across the available
+									workers, and the current best solution and the median objective of the iteration are reported in the OSTRICH run record after each iteration. If this
+									value is not specified, it defaults to 10 × (number of parameters) × (number of processors). Values larger than the total grid size are reduced to the
+									grid size. </li>
+								</ul>
+
+								<p align="justify">
+									The following behaviors apply to the grid algorithm in the development version of OSTRICH:
+								</p>
+								<ul align="justify">
+									<li><b>Output:</b> The objective function of every grid point is recorded in the OstModelN.txt file of the processor that evaluated it. A separate
+									OstGrid file is no longer written.</li>
+									<li><b>Warm start:</b> WarmStart is not yet supported for the grid algorithm. If WarmStart is set to yes, the analysis will stop with an error.</li>
+									<li><b>Unrecognized entries:</b> Any line within the BeginGridAlg/EndGridAlg group other than Dimensions or EvalsPerIter is reported as an error in
+									the OstErrors file and otherwise ignored.</li>
 								</ul>
 							</article>
 

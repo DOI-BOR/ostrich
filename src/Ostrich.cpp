@@ -13,7 +13,7 @@
 #include "SteepDescAlgorithm.h"
 #include "FletchReevesAlgorithm.h"
 #include "LevenbergAlgorithm2.h"
-#include "GridAlgorithm.h"
+#include "GridAlgorithm2.h"
 #include "GeneticAlgorithm2.h"
 //#include "ParticleSwarm.h"
 //#include "DDSAlgorithm.h"/*JRC*/
@@ -80,11 +80,10 @@ int main(int argc, StringType argv[])
    //      BGA_Program(argc, argv);
    //      break;
    //   }/* end case(BGA_PROGRAM) */
-   //   case(GRID_PROGRAM) : 
-   //   {
-   //      GRID_Program(argc, argv);
-   //      break;
-   //   }/* end case(GRID_PROGRAM) */
+      case(GRID_PROGRAM) : {
+         GRID_Program(argc, argv);
+         break;
+      }/* end case(GRID_PROGRAM) */
    //   case(SA_PROGRAM) : 
    //   {
    //      SA_Program(argc, argv);
