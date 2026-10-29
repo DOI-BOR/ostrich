@@ -117,7 +117,7 @@
 									<p align="left">Initial Publication:</p>
 									<time class="time" datetime="2015-11-01">April 11, 2021</time>
 									<p align="left">Modified:</p>
-									<time class="time" datetime="2015-11-01">April 11, 2021</time>
+									<time class="time" datetime="2026-10-28">October 28, 2026</time>
 								</div>
 							</header>
 							<p align="justify">
@@ -150,7 +150,7 @@ SocialParam          2.00
 InertiaWeight        1.20
 InertiaReductionRate 0.10
 InitPopulationMethod Random
-ConvergenceVal       1.00E-4
+ConvergenceVal       1.00E-3
 EndParticleSwarm
 </code></pre>
 								</th>
@@ -164,7 +164,7 @@ EndParticleSwarm
 						<ul align="justify">
 							<li><b>SwarmSize:</b> The size of the particle swarm. The default value is 20.</li>
 							<li><b>NumGenerations:</b> The number of generations in the PSO. The default value is 50.</li>
-							<li><b>ConstrictionFactor:</b> The value of χ¬ in the PSO algorithm. Setting¬ less than 1.00 will restrict the searchable design space after each iteration 
+							<li><b>ConstrictionFactor:</b> The value of χ in the PSO algorithm. Setting χ less than 1.00 will restrict the searchable design space after each iteration 
 							and accelerate convergence, but can lead to entrapment in local minima. The default value is 1.00.</li>
 							<li><b>CognitiveParam:</b> The weight given to the local knowledge of each particle. High values (relative to the SocialParam) will cause particles to bias 
 							their search to the area surrounding each particles local best. The default value is 2.00.</li>
@@ -179,10 +179,23 @@ EndParticleSwarm
 							(i.e. at the last generation) of zero. The default value is 0.10.</li>
 							<li><b>InitPopulationMethod:</b> This variable controls how the algorithm configures the initial swarm of candidate solutions. Supported values are: “random”, 
 							“LHS” (Latin Hypercube Sampling), and “QuadTree”. The default value is “random”.</li>
-							<li><b>ConvergenceVal:</b> This is the convergence value for the algorithm. If the relative difference between the current minimum and the median of the latest 
-							generation is less than or equal to this value, the algorithm will halt. The default value is 1.00E-4.</li>
+							<li><b>ConvergenceVal:</b> This is the convergence value for the algorithm. If the relative difference between the current minimum and the median of the latest
+							generation is less than this value, the algorithm will halt. The default value is 1.00E-3.</li>
 						</ul>
-						
+
+						<p align="justify">
+							The following behaviors apply to the PSO algorithm in the development version of OSTRICH:
+						</p>
+						<ul align="justify">
+							<li><b>Initial swarm:</b> The first particle is always placed at the initial parameter values from the parameter group. The remaining particles are
+							generated using the InitPopulationMethod. All particles start with zero velocity.</li>
+							<li><b>Parameter bounds:</b> If a particle's move would take any parameter outside its bounds, the velocity of every parameter of that particle is reduced
+							by the same fraction so that the particle stays within bounds while keeping its direction of movement. The number of upper and lower bound violations
+							is reported in the algorithm metrics at the end of the run.</li>
+							<li><b>Warm start:</b> WarmStart is not yet supported for the PSO algorithm. If WarmStart is set to yes, the analysis will stop with an error.</li>
+							<li><b>Least-squares calibration:</b> The PSO algorithm currently runs in optimization mode only.</li>
+						</ul>
+
 						<h1>References</h1>
 						<p align="justify">
 							Beielstein, T., Parsopoulos, K. E.,Vrahatis, M. N. 2002. Tuning  PSO parameters through sensitivity analysis. Technical Report, Reihe Computational Intelligence 

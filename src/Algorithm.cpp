@@ -1429,6 +1429,7 @@ void Algorithm::ManageSingleObjectiveIterations(std::vector<std::vector<double>>
             // Store the alternative into the cache, if enabled
             if (m_bCaching) {
                 m_CacheMembers.push_back(parameters[(int)data[0]]);
+                m_CacheObjectives.push_back(data[1]);
             }
 
             // Check if the alternative should be preserved

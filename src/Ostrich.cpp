@@ -15,7 +15,7 @@
 #include "LevenbergAlgorithm2.h"
 #include "GridAlgorithm.h"
 #include "GeneticAlgorithm2.h"
-//#include "ParticleSwarm.h"
+#include "ParticleSwarm.h"
 //#include "DDSAlgorithm.h"/*JRC*/
 //#include "PDDSAlgorithm.h"
 //#include "DiscreteDDSAlgorithm.h"
@@ -100,11 +100,10 @@ int main(int argc, StringType argv[])
    //      VSA_Program(argc, argv);
    //      break;
    //   }/* end case(VCSA_PROGRAM) */
-   //   case(PSO_PROGRAM) : 
-   //   {
-   //      PSO_Program(argc, argv);
-   //      break;
-   //   }/* end case(PSO_PROGRAM) */
+      case(PSO_PROGRAM) : {
+         PSO_Program(argc, argv);
+         break;
+      }/* end case(PSO_PROGRAM) */
    //   case(PSO_LEV_PROGRAM) : 
    //   {
    //      PSO_LEVMAR_Program(argc, argv);
