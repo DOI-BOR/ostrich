@@ -6,7 +6,7 @@
 -->
 <html>
 	<head>
-		<title>OSTRICH - Algorithms - Binary and Real Genetic Algorithms</title>
+		<title>OSTRICH - Algorithms - Genetic Algorithm</title>
 		<meta charset="utf-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
 		<link rel="stylesheet" href="../../../assets/css/main.css" />
@@ -110,7 +110,7 @@
 						<article class="post">
 							<header>
 								<div class="title">
-									<h2><a href="#">Algorithms - Binary and Real Genetic Algorithms</a></h2>
+									<h2><a href="#">Algorithms - Genetic Algorithm</a></h2>
 									<p>The OSTRICH genetic optimization algorithms</p>
 								</div>
 								<div class="meta">
@@ -129,9 +129,9 @@
 								<tr>
 									<th>
 <pre><code>BeginGeneticAlg
-ParallelMethod       [pmethod]
 PopulationSize       [pop_size]
 MutationRate         [mut_rate]
+CrossoverRate        [xover_rate]
 Survivors            [nelites]
 NumGenerations       [numgens]
 InitPopulationMethod [imethod]
@@ -141,9 +141,9 @@ EndGeneticAlg
 </th>
 <th>
 <pre><code>BeginGeneticAlg
-ParallelMethod       synchronous
 PopulationSize       50
 MutationRate         0.05
+CrossoverRate        0.90
 Survivors            1
 NumGenerations       10
 InitPopulationMethod random
@@ -153,24 +153,62 @@ EndGeneticAlg
 							</th>
 						</tr>
 					</table>
-					<p align="center" id="fig1"><b>Figure 1: General Format (left) and Example (right) of the Binary and Real-coded Genetic Algorithm Groups</b></p>
-					
+					<p align="center" id="fig1"><b>Figure 1: General Format (left) and Example (right) of the Genetic Algorithm Group</b></p>
+
 					<p align="justify">
 						Where BeginGeneticAlg and EndGeneticAlg are parsing tags that wrap a set of algorithm configuration variables. These variables are described below:
 					</p>
 					<ul align="justify">
-						<li><b>ParallelMethod:</b> This variable controls how the algorithm is to be run if parallel computing is used. Supported values are “synchronous” and 
-						“asynchronous”. The default value is “synchronous”.</li>
-						<li><b>InitPopulationMethod:</b> This variable controls how the algorithm configures the initial population of candidate solutions. Supported values are: 
+						<li><b>InitPopulationMethod:</b> This variable controls how the algorithm configures the initial population of candidate solutions. Supported values are:
 						“random”, “LHS” (Latin Hypercube Sampling), and “QuadTree”. The default value is “random”.</li>
 						<li><b>PopulationSize:</b> The population size. The default value is 50.</li>
 						<li><b>MutationRate:</b> The mutation rate for child members. The default value is 0.05 (i.e. 5%).</li>
+						<li><b>CrossoverRate:</b> The probability that two randomly chosen population members will be crossed over (combined at a random parameter position) when
+						generating the next generation. The default value is 0.90 (i.e. 90%).</li>
 						<li><b>Survivors:</b> The number of elites who pass unchanged to next generation. The default value is 1.</li>
 						<li><b>NumGenerations:</b> The number of generations in the search algorithm. The default value is 10.</li>
-						<li><b>ConvergenceVal:</b> This is the convergence value for the algorithm. If the relative difference between the current minimum and the median of the 
+						<li><b>ConvergenceVal:</b> This is the convergence value for the algorithm. If the relative difference between the current minimum and the median of the
 						latest generation is less than or equal to this value, the algorithm will halt. The default value is 1.00E-4.</li>
 					</ul>
-					
+
+					<h1>Warm Start</h1>
+					<p align="justify">
+						The genetic algorithm supports an optional “warm start” capability that allows a previous, and possibly incomplete or interrupted, GA search to be resumed rather than
+						restarted from the beginning. Warm starting is enabled by adding the OstrichWarmStart keyword to the top level of the OSTRICH input file (i.e. outside of, and in addition to,
+						the BeginGeneticAlg/EndGeneticAlg group), as shown in <a href="#fig2">Figure 2</a>.
+					</p>
+					<!-- This has strange alignment for the code to render correctly on the page.-->
+					<table class="layouttable">
+						<tr>
+							<th>
+<pre><code>OstrichWarmStart [yes/no]
+</code></pre>
+</th>
+<th>
+<pre><code>OstrichWarmStart yes
+</code></pre>
+</th>
+						</tr>
+					</table>
+					<p align="center" id="fig2"><b>Figure 2: General Format (left) and Example (right) of the Warm Start Keyword</b></p>
+					<p align="justify">
+						When warm starting is active, OSTRICH will not delete the OstOutput0.txt file or the per-processor OstModel<i>N</i>.txt files (where <i>N</i> is the processor id) left over
+						from a previous run. These files record every model evaluation performed by the previous run and must remain in the run directory for a warm start to succeed. Before launching
+						the search, OSTRICH pre-processes these files to:
+					</p>
+					<ul align="justify">
+						<li>Determine how many generations were completed by the previous run, based on the contents of OstOutput0.txt.</li>
+						<li>Recover previously evaluated parameter sets and objective function values from each processor's OstModel<i>N</i>.txt file, and identify the best solution found so far.</li>
+						<li>Reconstruct the population for the generation that was in progress when the previous run ended, reusing already-evaluated parameter sets instead of re-evaluating them. Any
+						remaining members needed to complete the population are generated using the standard genetic algorithm operators, or at random if too few prior evaluations are available to do so.</li>
+						<li>Repopulate the model evaluation cache with the recovered evaluations so that previously solved parameter sets are not needlessly re-run.</li>
+					</ul>
+					<p align="justify">
+						The search then resumes from the recovered generation count and continues until the NumGenerations or ConvergenceVal criteria (described above) are satisfied. Since the
+						recovered state is matched up against the current run's configuration and processor count, a warm started run should use the same PopulationSize and the same number of
+						processors as the run being resumed.
+					</p>
+
 					<h1>References</h1>
 					<p align="justify">
 						Chan Hilton, A. B.,Culver, T. B. 2000. Constraint handling for genetic algorithms in optimal remediation design. Journal of Water Resources Planning 
