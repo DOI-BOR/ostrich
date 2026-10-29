@@ -32,7 +32,7 @@ ICC_MPI:	$(SRC_FILES_CPP) $(SRC_FILES_C)
 	rm -f *.o
 
 GCC_MPI:	$(SRC_FILES_CPP) $(SRC_FILES_C)
-	mpic++ -I$(INCLUDE_DIR) $(SRC_FILES_CPP) -std=c++17 -lstdc++fs -o OstrichMPI
+	mpic++ -I$(INCLUDE_DIR) $(SRC_FILES_CPP) -std=c++17 -o OstrichMPI
 	rm -f *.o
 
 ICC:	$(SRC_FILES_CPP) $(SRC_FILES_C)
@@ -40,8 +40,7 @@ ICC:	$(SRC_FILES_CPP) $(SRC_FILES_C)
 	rm -f *.o
 
 GCC:	$(SRC_FILES_CPP) $(SRC_FILES_C)
-	g++ -I$(INCLUDE_DIR) -I$(MPI_MEM_INCLUDE) $(SRC_FILES_CPP) $(MEM_FILES_C) -std=c++17 -lstdc++fs -o Ostrich
-
+	g++ -I$(INCLUDE_DIR) -I$(MPI_MEM_INCLUDE) $(SRC_FILES_CPP) $(MEM_FILES_C) -std=c++17 -o Ostrich
 	rm -f *.o
 
 
