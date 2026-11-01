@@ -132,11 +132,11 @@ int main(int argc, StringType argv[])
    //      PWL_Program(argc, argv);
    //      break;
    //   }/* end case(POWL_PROGRAM) */
-   //   case(STEEP_PROGRAM) : 
-   //   {
-   //      STPDSC_Program(argc, argv);
-   //      break;
-   //   }/* end case(STEEP_PROGRAM) */
+      case(STEEP_PROGRAM) : 
+      {
+        STPDSC_Program(argc, argv);
+        break;
+      }/* end case(STEEP_PROGRAM) */
    //   case(FLRV_PROGRAM) : 
    //   {
    //      FLRV_Program(argc, argv);
