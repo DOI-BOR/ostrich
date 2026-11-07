@@ -2,11 +2,11 @@
 #include <stdio.h>
 #include <string.h>
 
-#include "SAAlgorithm.h"
-#include "VandSA.h"
+#include "SAAlgorithm2.h"
+#include "VandSA2.h"
 //#include "APPSO.h"
 #include "SCEUA.h"
-#include "ComboSA.h"
+#include "ComboSA2.h"
 #include "BisectionAlgorithm.h"
 #include "PowellAlgorithm.h"
 #include "SamplingAlgorithm.h"
@@ -84,21 +84,18 @@ int main(int argc, StringType argv[])
          GRID_Program(argc, argv);
          break;
       }/* end case(GRID_PROGRAM) */
-   //   case(SA_PROGRAM) : 
-   //   {
-   //      SA_Program(argc, argv);
-   //      break;
-   //   }/* end case(SA_PROGRAM) */
-   //   case(CSA_PROGRAM) : //combinatorial simulated annealing
-   //   {
-   //      CSA_Program(argc, argv);
-   //      break;
-   //   }/* end case(CSA_PROGRAM) */
-   //   case(VSA_PROGRAM) : //vanderbilt-louie simulated annealing
-   //   {
-   //      VSA_Program(argc, argv);
-   //      break;
-   //   }/* end case(VCSA_PROGRAM) */
+      case(SA_PROGRAM) : {
+         SA_Program(argc, argv);
+         break;
+      }/* end case(SA_PROGRAM) */
+      case(CSA_PROGRAM) : { //combinatorial simulated annealing
+         CSA_Program(argc, argv);
+         break;
+      }/* end case(CSA_PROGRAM) */
+      case(VSA_PROGRAM) : { //vanderbilt-louie simulated annealing
+         VSA_Program(argc, argv);
+         break;
+      }/* end case(VSA_PROGRAM) */
       case(PSO_PROGRAM) : {
          PSO_Program(argc, argv);
          break;
