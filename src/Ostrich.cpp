@@ -16,9 +16,9 @@
 #include "GridAlgorithm2.h"
 #include "GeneticAlgorithm2.h"
 #include "ParticleSwarm.h"
-//#include "DDSAlgorithm.h"/*JRC*/
-//#include "PDDSAlgorithm.h"
-//#include "DiscreteDDSAlgorithm.h"
+#include "DDSAlgorithm2.h"/*JRC*/
+#include "PDDSAlgorithm2.h"
+#include "DiscreteDDSAlgorithm2.h"
 #include "StatUtility.h"
 #include "QuadTree.h"
 #include "GLUE.h"
@@ -27,7 +27,7 @@
 //#include "PADDS.h"
 #include "ParaPADDS.h"
 #include "BEERS.h"
-//#include "DDSAU.h"
+#include "DDSAU2.h"
 
 #include "Exception.h"
 #include "Utility.h"
@@ -185,26 +185,22 @@ int main(int argc, StringType argv[])
    //      //STATS_TestStdNormDist();
    //      break;
    //   }/* end case(UTIL_PROGRAM) */
-   //   case(DDS_PROGRAM) :/*JRC*/
-   //   {
-   //      DDS_Program(argc,argv);
-			//break;
-   //   }
-   //   case(DDSAU_PROGRAM) :
-   //   {
-   //      DDSAU_Program(argc,argv);
-			//break;
-   //   }
-   //   case(PDDS_PROGRAM) :
-   //   {
-   //      PDDS_Program(argc,argv);
-			//break;
-   //   }
-   //   case(DDDS_PROGRAM) :
-   //   {
-   //      DiscreteDDS_Program(argc,argv);
-			//break;
-   //   }
+      case(DDS_PROGRAM) : { /*JRC*/
+         DDS_Program(argc, argv);
+         break;
+      }/* end case(DDS_PROGRAM) */
+      case(DDSAU_PROGRAM) : {
+         DDSAU_Program(argc, argv);
+         break;
+      }/* end case(DDSAU_PROGRAM) */
+      case(PDDS_PROGRAM) : {
+         PDDS_Program(argc, argv);
+         break;
+      }/* end case(PDDS_PROGRAM) */
+      case(DDDS_PROGRAM) : {
+         DiscreteDDS_Program(argc, argv);
+         break;
+      }/* end case(DDDS_PROGRAM) */
    //   case(GLUE_PROGRAM) :
    //   {
    //      GLUE_Program(argc,argv);
