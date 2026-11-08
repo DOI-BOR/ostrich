@@ -6,7 +6,7 @@
 -->
 <html>
 	<head>
-		<title>OSTRICH - Algorithms - Asynchronous Parallel PADDS</title>
+		<title>OSTRICH - Algorithms - Parallel PADDS</title>
 		<meta charset="utf-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
 		<link rel="stylesheet" href="../../../assets/css/main.css" />
@@ -110,14 +110,14 @@
 							<article class="post">
 								<header>
 									<div class="title">
-										<h2><a href="#">Algorithms - Asynchronous Parallel PADDS</a></h2>
-										<p>he OSTRICH Asynchronous Parallel Pareto Archived DDS multi-objective optimization algorithm</p>
+										<h2><a href="#">Algorithms - Parallel PADDS</a></h2>
+										<p>The OSTRICH Parallel Pareto Archived DDS multi-objective optimization algorithm</p>
 									</div>
 									<div class="meta">
 										<p align="left">Initial Publication:</p>
 										<time class="time" datetime="2015-11-01">April 11, 2021</time>
 										<p align="left">Modified:</p>
-										<time class="time" datetime="2015-11-01">April 11, 2021</time>
+										<time class="time" datetime="2026-11-08">November 8, 2026</time>
 									</div>
 								</header>
 								<p align="justify">
@@ -182,6 +182,28 @@ EndParallelPADDSAlg
 									<li>BeginParaPADDS and EndParaPADDS</li>
 									<li>BeginPADDSAlg and EndPADDSAlg</li>
 									<li>BeginPADDS and EndPADDS</li>
+								</ul>
+								<p align="justify">
+									The following behaviors apply to the parallel PADDS algorithm in the development version of OSTRICH:
+								</p>
+								<ul align="justify">
+									<li><b>Batch evaluation:</b> Candidates are generated in batches, one for each worker (plus one if SolveOnPrimary is enabled), from the current
+									archive. Each batch is solved concurrently, and the candidates are then added to the archive in the order they were generated. Each candidate is
+									compared against the solution it was generated from. A batch completes when its slowest model run completes.</li>
+									<li><b>Initialization:</b> The search begins with max(0.5% of MaxIterations, batch size) uniformly random solutions, limited so that MaxIterations
+									is not exceeded. Every decision variable is perturbed for search evaluations up to twice the batch size. Initial parameter sets (BeginInitParams)
+									are not used.</li>
+									<li><b>Objectives:</b> The objectives are the weighted sum of squared errors (WSSE) of each observation group, so the ObjectiveFunction must be
+									WSSE and each objective requires its own observation group. Other objective functions (e.g. GCOP) are not yet supported.</li>
+									<li><b>Duplicates and integer parameters:</b> A candidate whose objectives match those of a non-dominated solution is discarded as a duplicate.
+									Integer parameters are rounded before evaluation, and the rounded values are archived and reported.</li>
+									<li><b>Output:</b> Each time a new non-dominated solution is found, the non-dominated solutions are written to the run record in OstOutput0.txt
+									and to OstNonDomSolutions0.txt. The perturbation probability of each search evaluation is written to OstPADDSPn.txt, and the objectives of the
+									final non-dominated solutions are written to c_results.txt. The final non-dominated and dominated solutions and the algorithm metrics are written at
+									the end of the analysis.</li>
+									<li><b>Warm start:</b> The WarmStart option is not available for parallel PADDS. A warning is logged and a new analysis is performed.</li>
+									<li><b>Not yet supported:</b> The PreserveBestModel option is not available for multi-objective algorithms. A warning is logged and the option
+									is disabled.</li>
 								</ul>
 							</article>
 

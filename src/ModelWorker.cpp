@@ -86,8 +86,11 @@ void ModelWorker::SetupMPI() {
     // Get the parameters for the analysis
     ReceiveWorkerParameters();
 
-    // Get number of existing solves 
+    // Get number of existing solves
     ReveiveWorkerSolves();
+
+    // Get the objective type (single or multi-objective)
+    ReceiveWorkerObjectiveType();
 
 }
 
@@ -467,7 +470,19 @@ void  ModelWorker::ReveiveWorkerSolves(void) {
     // Get the number of entries that will be coming
     solveCounter = ReceiveInteger(tag_counts);
 
-    
+
+}
+
+/**************************************************************************************************************************************************************
+ReceiveWorkerObjectiveType
+
+Receives the objective type (single or multi) and the number of objectives from the primary worker
+**************************************************************************************************************************************************************/
+void  ModelWorker::ReceiveWorkerObjectiveType(void) {
+
+    int type = ReceiveInteger(tag_objective);
+    int count = ReceiveInteger(tag_objective);
+    SetObjectiveType(type, count);
 }
 
 /**************************************************************************************************************************************************************
@@ -752,8 +767,23 @@ void  ModelWorker::CommenceMPIWork() {
                 }
 
             } else {
-                // Calculate the objective function
-                // TODO: Add multiobject evaluation
+                // Multi-objective solve. Call the solve function.
+                std::vector<double> objectives;
+                try {
+                    objectives = ExecuteMulti();
+                } catch (...) {
+                    objectives = std::vector<double>(numberOfObjectives, INFINITY);
+                }
+
+                // Stack the alternative and the objectives into a single array to transmit
+                std::vector<double> returnArray;
+                returnArray.push_back((double)alternativeIndex);
+                returnArray.insert(returnArray.end(), objectives.begin(), objectives.end());
+
+                // Send to the primary worker
+                MPI_Ssend(returnArray.data(), (int)returnArray.size(), MPI_DOUBLE, 0, tag_data, MPI_COMM_WORLD);
+
+                // Preserving the best model is not available for multi-objective solves. The primary worker disables it.
             }
 
             // Archive the model if it is enabled. Disable saving to the best directory.
@@ -1121,6 +1151,17 @@ void ModelWorker::SetSolveCounter(int solves) {
 
 };
 
+/**************************************************************************************************************************************************************
+SetObjectiveType
+
+Sets the objective type (single or multi) and the number of objectives returned by each solve
+**************************************************************************************************************************************************************/
+void ModelWorker::SetObjectiveType(int type, int objectives) {
+
+    objectiveType = type;
+    numberOfObjectives = (objectives < 1) ? 1 : objectives;
+};
+
 
 /**************************************************************************************************************************************************************
 PreserveBestModel()
@@ -1303,111 +1344,39 @@ double ModelWorker::ExecuteSingle(void) {
 }
 
 /**************************************************************************************************************************************************************
-Execute()
+ExecuteMulti()
 
-Executes the model returns a vector of objective function values.
+Executes the model and returns a vector of objective function values: the WSSE of each observation group.
 **************************************************************************************************************************************************************/
-/*void ModelWorker::ExecuteMulti(double* pF, int nObj) {
-    IroncladString dirName = GetExeDirName();
-    FilePair* pCur;
-    FilePipe* pPipe;
-    int rank;
+std::vector<double> ModelWorker::ExecuteMulti(void) {
 
-    //initialize costs
-    for (int i = 0; i < nObj; i++)
-    {
-        pF[i] = NEARLY_HUGE;
-    }
+    // Substitute the parameters, solve the model and extract the observations. The working directory is the model directory on return.
+    std::filesystem::path parentPath = RunModel();
 
-    //exit early if the user has requested program termination
-    if (IsQuit() == true)
-    {
-        return;
-    }
+    // Compute the objectives (one per observation group)
+    // TODO: add other objective types
+    WSSE objFunc = WSSE(observationGroup, false, 0);
+    std::vector<double> objectives(numberOfObjectives, INFINITY);
+    objFunc.CalcMultiObjFunc(objectives.data(), numberOfObjectives);
 
-    MPI_Comm_rank(MPI_COMM_WORLD, &rank);
+    // Output results
+    m_CurMultiObj = objectives;
+    Write(objectives[0]);
 
-    //inc. number of times model has been executed
-    m_NumSolves++;
+    // Change back to the parent path for the next iteration
+    std::filesystem::current_path(parentPath);
 
-    //make substitution of parameters into model input file
-    pCur = m_FileList;
-    while (pCur != NULL)
-    {
-        pPipe = pCur->GetPipe();
-        m_pParamGroup->SubIntoFile(pPipe);
-        pCur = pCur->GetNext();
-    }
-
-    //cd to model subdirectory, if needed
-    if (dirName[0] != '.') { MY_CHDIR(dirName); }
-
-    //make substitution of parameters into model input databases
-    if (m_DbaseList != NULL)
-    {
-        m_pParamGroup->SubIntoDbase(m_DbaseList);
-    } 
-
-    //invoke system command to execute the model   
-    system(m_ExecCmd);
-
-    //extract computed reponses from model output database(s)
-    if (m_DbaseList != NULL)
-    {
-        DatabaseABC* pCur;
-
-        //first clean up ASCII files
-        for (pCur = m_DbaseList; pCur != NULL; pCur = pCur->GetNext())
-        {
-            pCur->DeleteASCIIFile();
-        }
-
-        //convert the responses to ASCII file
-        for (pCur = m_DbaseList; pCur != NULL; pCur = pCur->GetNext())
-        {
-            pCur->ReadResponse();
-        }
-    }
-
-    //extract computed observations from model output file(s)
-    if (m_pObsGroup != NULL) { m_pObsGroup->ExtractVals(); }
-
-    //compute obj. func.
-    m_pObjFunc->CalcMultiObjFunc(pF, nObj);
-
-    //categorize the obj. func.
-    if (dirName[0] != '.') { MY_CHDIR(".."); }
-    IroncladString pCatStr = GetObjFuncCategory(pF, nObj);
-    if (dirName[0] != '.') { MY_CHDIR(dirName); }
-
-    //preserve model output, if desired
-    PreserveModel(rank, GetTrialNumber(), m_NumSolves, pCatStr);
-
-    //cd out of model subdirectory, if needed
-    if (dirName[0] != '.') { MY_CHDIR(".."); }
-
-    //ouput results (first objective, others should be tagged as augmented responses)
-    double val = pF[0];
-    m_CurObjFuncVal = val;
-
-    //store copy of latest result, needed for printing purposes
-    if (m_CurMultiObjF == NULL) m_CurMultiObjF = new double[nObj];
-    for (int i = 0; i < nObj; i++)
-    {
-        m_CurMultiObjF[i] = pF[i];
-    }
-
-    Write(val);
-} */
+    // Return to the calling function
+    return objectives;
+}
 
 /**************************************************************************************************************************************************************
-StdExecute()
+RunModel()
 
-Executes the standard model and returns the objective function value.
+Substitutes the parameters into the model input files, solves the model and extracts the computed observations. On return, the current working directory
+is the model directory; the previous working directory is returned so that the caller can restore it.
 **************************************************************************************************************************************************************/
-double ModelWorker::StdExecute(double viol) {
-    //IroncladString dirName = &workerDirectory[0];
-
+std::filesystem::path ModelWorker::RunModel(void) {
     bool isGoodTopo;
 
     //inc. number of times model has been executed
@@ -1488,6 +1457,21 @@ double ModelWorker::StdExecute(double viol) {
 
     //extract computed observations from model output file(s)
     observationGroup->ExtractVals(); 
+
+    // Return the previous working directory
+    return parentPath;
+}
+
+/**************************************************************************************************************************************************************
+StdExecute()
+
+Executes the standard model and returns the objective function value.
+**************************************************************************************************************************************************************/
+double ModelWorker::StdExecute(double viol) {
+    //IroncladString dirName = &workerDirectory[0];
+
+    // Substitute the parameters, solve the model and extract the observations. The working directory is the model directory on return.
+    std::filesystem::path parentPath = RunModel();
 
     //compute obj. func.
     // TODO: add other objective types
@@ -1580,7 +1564,11 @@ void ModelWorker::Write(double objFuncVal) {
             fprintf(pFile, "Run   obj.function   ");
         }
         else {
+            // One objective column per observation group
             fprintf(pFile, "Run   ");
+            for (int entryObjective = 0; entryObjective < numberOfObjectives; entryObjective++) {
+                fprintf(pFile, "obj.%-10s  ", observationGroup->GetGroup(entryObjective));
+            }
         }
 
         paramGroup->Write(pFile, WRITE_BNR);
@@ -1592,6 +1580,12 @@ void ModelWorker::Write(double objFuncVal) {
     if (objectiveType == single) {
         WritePreciseNumber2(pFile, objFuncVal);
         fprintf(pFile, "  ");
+    }
+    else {
+        for (size_t entryObjective = 0; entryObjective < m_CurMultiObj.size(); entryObjective++) {
+            WritePreciseNumber2(pFile, m_CurMultiObj[entryObjective]);
+            fprintf(pFile, "  ");
+        }
     }
 
     //if (observationGroup != NULL) observationGroup->Write(pFile, WRITE_SCI, m_CurMultiObjF);

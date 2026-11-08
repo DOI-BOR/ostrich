@@ -1030,6 +1030,40 @@ void Algorithm::ConfigureSolveCounts(int workerRank, bool bMPI, int solves) {
 }
 
 /**************************************************************************************************************************************************************
+MPI Communication - ConfigureObjectiveType()
+
+Sends the objective type (single or multi) and the number of objectives from the primary to the secondary worker
+**************************************************************************************************************************************************************/
+void Algorithm::ConfigureObjectiveType(int workerRank, bool bMPI) {
+
+    if (bMPI) {
+        MPI_Send(&m_ObjectiveType, 1, MPI_INT, workerRank, tag_objective, MPI_COMM_WORLD);
+        MPI_Send(&m_NumObjectives, 1, MPI_INT, workerRank, tag_objective, MPI_COMM_WORLD);
+
+    } else {
+        m_primaryWorker.SetObjectiveType(m_ObjectiveType, m_NumObjectives);
+    }
+}
+
+/**************************************************************************************************************************************************************
+SetMultiObjective()
+
+Configures a multi-objective solution, in which each solve returns one objective per observation group (WSSE). This must be called before ConfigureWorkers().
+Preserving the best model is not available for multi-objective solutions and is disabled.
+**************************************************************************************************************************************************************/
+void Algorithm::SetMultiObjective(int numberOfObjectives) {
+
+    m_ObjectiveType = multi;
+    m_NumObjectives = (numberOfObjectives < 1) ? 1 : numberOfObjectives;
+
+    if (m_bPreserveModelBest) {
+        m_bPreserveModelBest = false;
+        LogError(ERR_FILE_IO, "PreserveBestModel is not available for multi-objective algorithms and has been disabled.");
+        std::cout << "PreserveBestModel is not available for multi-objective algorithms and has been disabled." << std::endl;
+    }
+}
+
+/**************************************************************************************************************************************************************
 MPI Communication - ConfigureWorkers()
 
 Sends all necessary information from the primary to the secondary workers
@@ -1067,6 +1101,9 @@ void Algorithm::ConfigureWorkers(std::vector<int> solveCounts) {
         // Configure solve counts
         ConfigureSolveCounts(entryWorker, true, solveCounts[entryWorker]);
 
+        // Configure the objective type
+        ConfigureObjectiveType(entryWorker, true);
+
     }
 
     // Setup the primary worker if using
@@ -1097,7 +1134,10 @@ void Algorithm::ConfigureWorkers(std::vector<int> solveCounts) {
 
         // Configure solve counts
         ConfigureSolveCounts(0, false, solveCounts[0]);
-        
+
+        // Configure the objective type
+        ConfigureObjectiveType(0, false);
+
         // Configure the worker directory
         m_primaryWorker.SetupWorker();
     }
@@ -1442,6 +1482,159 @@ void Algorithm::ManageSingleObjectiveIterations(std::vector<std::vector<double>>
             m_NumSolves++;
         }
     }    
+}
+
+/**************************************************************************************************************************************************************
+StoreMultiObjectiveResult()
+
+Stores the objectives of a solved alternative and adds the alternative to the cache, if enabled
+**************************************************************************************************************************************************************/
+void Algorithm::StoreMultiObjectiveResult(std::vector<std::vector<double>>& parameters, std::vector<std::vector<double>>& objectives,
+                                          int alternativeIndex, std::vector<double> result) {
+
+    objectives[alternativeIndex] = result;
+
+    if (m_bCaching) {
+        m_CacheMembers.push_back(parameters[alternativeIndex]);
+        m_CacheMultiObjectives.push_back(result);
+    }
+}
+
+/**************************************************************************************************************************************************************
+MPI Communication - ManageMultiObjectiveIterations()
+
+Manages the solution of a set of parameter alternatives when using multiple objective functions. Each entry of the objectives vector receives the vector
+of objectives (one per observation group) of the corresponding alternative. SetMultiObjective() must be called before the workers are configured.
+**************************************************************************************************************************************************************/
+void Algorithm::ManageMultiObjectiveIterations(std::vector<std::vector<double>> parameters, int startingIndex,
+                                               std::vector<std::vector<double>>& objectives) {
+
+    // Size of the message returned by a worker: the alternative index followed by the objectives
+    int messageSize = m_NumObjectives + 1;
+    std::vector<double> failed(m_NumObjectives, INFINITY);
+
+    // Make sure the result vector is large enough
+    if (objectives.size() < parameters.size()) {
+        objectives.resize(parameters.size(), failed);
+    }
+
+    // If caching is enabled, check the solutions against the list of values to be created
+    std::vector<int> indicesToSolve;
+    for (int entryAlternative = startingIndex; entryAlternative < parameters.size(); entryAlternative++) {
+
+        if (parameters[entryAlternative].size() == 0) {
+            // The parameter set has been flagged as invalid for this analysis and shouldn't be computed
+            objectives[entryAlternative] = failed;
+
+        } else if (m_bCaching) {
+            // Caching is enabled. Check that the member is not in the cache
+            std::vector<std::vector<double>> ::iterator itr = std::find(m_CacheMembers.begin(), m_CacheMembers.end(), parameters[entryAlternative]);
+
+            if (itr == m_CacheMembers.end()) {
+                indicesToSolve.push_back(entryAlternative);
+            } else {
+                m_NumCacheHits++;
+                objectives[entryAlternative] = m_CacheMultiObjectives[std::distance(m_CacheMembers.begin(), itr)];
+            }
+
+        } else {
+            indicesToSolve.push_back(entryAlternative);
+        }
+    }
+
+    // Setup the request space
+    MPI_Message mpiMessage;
+    MPI_Status mpiStatus;
+
+    int requestFlag = 1;
+    int sendFlag = 1;
+
+    // Set the counter variables
+    int sendCounter = 0;
+    int receiveCounter = 0;
+    std::vector<double> data(messageSize);
+
+    // Loop and send work to the secondary workers as they become available
+    while (sendCounter < indicesToSolve.size()) {
+        int workerRank, workerValue;
+
+        // Receive until no more receives are available
+        while (requestFlag) {
+            MPI_Improbe(MPI_ANY_SOURCE, tag_data, MPI_COMM_WORLD, &requestFlag, &mpiMessage, &mpiStatus);
+
+            if (requestFlag) {
+                try {
+                    // Get the alternative index and objectives from the secondary worker
+                    MPI_Mrecv(data.data(), messageSize, MPI_DOUBLE, &mpiMessage, &mpiStatus);
+                    StoreMultiObjectiveResult(parameters, objectives, (int)data[0], std::vector<double>(data.begin() + 1, data.end()));
+
+                } catch (...) {
+                    // Read from the secondary worker failed. Fail by keeping the infinite values in the array
+                }
+
+                receiveCounter++;
+                m_NumSolves++;
+            }
+        }
+
+        // Send until no more workers are available
+        while (sendFlag) {
+            MPI_Improbe(MPI_ANY_SOURCE, tag_continue, MPI_COMM_WORLD, &sendFlag, &mpiMessage, &mpiStatus);
+
+            if (sendFlag) {
+                // Worker is available to accept work. Receive the continue flag from the worker.
+                MPI_Mrecv(&workerValue, 1, MPI_INT, &mpiMessage, &mpiStatus);
+                workerRank = mpiStatus.MPI_SOURCE;
+
+                // Transmit a continue flag and the parameters to the idle secondary worker
+                SendWorkerContinue(workerRank, true);
+                std::vector<double> parametersWithTied = AddTiedParametersToAlternative(parameters[indicesToSolve[sendCounter]]);
+                SendWorkerParameters(workerRank, indicesToSolve[sendCounter], parametersWithTied);
+
+                sendCounter++;
+                if (sendCounter == indicesToSolve.size()) {
+                    break;
+                }
+            }
+        }
+
+        // Solve on the primary worker if enabled
+        if (m_bSolveOnPrimary && sendCounter < indicesToSolve.size()) {
+            std::vector<double> parametersWithTied = AddTiedParametersToAlternative(parameters[indicesToSolve[sendCounter]]);
+            m_primaryWorker.SetStandardParameters(parametersWithTied);
+
+            try {
+                StoreMultiObjectiveResult(parameters, objectives, indicesToSolve[sendCounter], m_primaryWorker.ExecuteMulti());
+
+                if (m_bPreserveModelOutput) {
+                    m_primaryWorker.PreserveArchiveModel();
+                }
+            }
+            catch (...) {
+                // Solution failed. Fail by keeping the infinite values in the array
+            }
+
+            sendCounter++;
+            receiveCounter++;
+            m_NumSolves++;
+        }
+
+        // Reset the flags for the next loop
+        requestFlag = 1;
+        sendFlag = 1;
+    }
+
+    // All alternatives have been sent. Receive all of the solutions
+    while (receiveCounter < indicesToSolve.size()) {
+        MPI_Improbe(MPI_ANY_SOURCE, tag_data, MPI_COMM_WORLD, &requestFlag, &mpiMessage, &mpiStatus);
+        if (requestFlag) {
+            MPI_Mrecv(data.data(), messageSize, MPI_DOUBLE, &mpiMessage, &mpiStatus);
+            StoreMultiObjectiveResult(parameters, objectives, (int)data[0], std::vector<double>(data.begin() + 1, data.end()));
+
+            receiveCounter++;
+            m_NumSolves++;
+        }
+    }
 }
 
 std::vector<double> Algorithm::AddTiedParametersToAlternative(std::vector<double> parameters) {
