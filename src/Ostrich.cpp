@@ -7,7 +7,7 @@
 //#include "APPSO.h"
 #include "SCEUA.h"
 #include "ComboSA.h"
-#include "BisectionAlgorithm.h"
+#include "BisectionAlgorithm2.h"
 #include "PowellAlgorithm.h"
 #include "SamplingAlgorithm.h"
 #include "SteepDescAlgorithm.h"
@@ -141,11 +141,11 @@ int main(int argc, StringType argv[])
    //      FLRV_Program(argc, argv);
    //      break;
    //   }/* end case(FLRV_PROGRAM) */
-   //   case(BIS_PROGRAM) : 
-   //   {
-   //      BIS_Program(argc, argv);
-   //      break;
-   //   }/* end case(BIS_PROGRAM) */
+      case(BIS_PROGRAM) : 
+      {
+         BIS_Program(argc, argv);
+         break;
+      }/* end case(BIS_PROGRAM) */
    //   case(SMP_PROGRAM) : 
    //   {
    //      SMP_Program(argc, argv);
