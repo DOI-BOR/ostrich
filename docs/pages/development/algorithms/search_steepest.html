@@ -117,7 +117,7 @@
 										<p align="left">Initial Publication:</p>
 										<time class="time" datetime="2015-11-01">April 11, 2021</time>
 										<p align="left">Modified:</p>
-										<time class="time" datetime="2015-11-01">April 11, 2021</time>
+										<time class="time" datetime="2026-11-01">November 1, 2026</time>
 									</div>
 								</header>
 								<p align="justify">
@@ -130,6 +130,7 @@
 <pre><code>BeginSteepDescAlg
 ConvergenceVal    [conv_val]
 MaxIterations     [max_iter]
+NumSearchPoints   [num_points]
 EndSteepDescAlg
 </code></pre>
 </th>
@@ -137,6 +138,7 @@ EndSteepDescAlg
 <pre><code>BeginSteepDescAlg
 ConvergenceVal    1.00E-6
 MaxIterations     20
+NumSearchPoints   5
 EndSteepDescAlg
 </code></pre>
 								</th>
@@ -148,11 +150,41 @@ EndSteepDescAlg
 							Where BeginSteepDescAlg and EndSteepDescAlg are parsing tags that wrap a set of algorithm configuration variables.
 						</p>
 						<ul align="justify">
-							<li><b>ConvergenceVal:</b> This is the algorithm convergence value – searches will halt when the relative reduction over three successive iterations is less that 
-							this value. The default value is 1E-6.</li>
+							<li><b>ConvergenceVal:</b> This is the algorithm convergence value – searches will halt when the relative reduction in the objective function is less than
+							this value in each of three successive iterations. The default value is 1E-6.</li>
 							<li><b>MaxIterations:</b> The maximum iterations in the overall method. The default value is 20.</li>
+							<li><b>NumSearchPoints:</b> The number of candidate step sizes evaluated in parallel in each round of the line search. If this value is not specified, or is
+							less than or equal to zero, it defaults to the number of workers available to solve the model (i.e. the number of processors, less one unless SolveOnPrimary
+							is set to yes). The first round of each line search always uses at least 3 step sizes.</li>
 						</ul>
-						
+
+						<p align="justify">
+							The following behaviors apply to the Steepest-Descent algorithm in the development version of OSTRICH:
+						</p>
+						<ul align="justify">
+							<li><b>Gradient:</b> At the start of each iteration, the gradient is estimated using forward finite differences, with each parameter perturbed by 0.1% of
+							its current value (in the transformed space of the parameter, i.e. after any tx_ost transformation). All of the perturbed parameter sets are solved in parallel.
+							The finite difference settings in the Mathematics and Statistics group (e.g. DiffType, DiffIncType, and DiffRelIncrement) are not used by this algorithm.
+							Because the perturbation does not shrink as the search progresses, the accuracy of the gradient, and therefore of the final solution, is limited once the
+							search is closer to the optimum than the size of the perturbation.</li>
+							<li><b>Locked parameters:</b> A parameter whose perturbation is zero (for example, a parameter located at its upper bound, or with a current value of zero)
+							is held at its current value for that iteration and is excluded from the search direction.</li>
+							<li><b>Line search:</b> The search direction is the negative of the gradient, scaled so that its largest component has a magnitude of one. Rather than the
+							serial line search described in the Line Search group (Begin1dSearch), which is not used by this algorithm, a batch of NumSearchPoints step sizes spaced
+							by powers of two is evaluated in parallel. If the best step size lies at the edge of the batch, a new batch is evaluated further in that direction, for up
+							to 8 rounds. The first iteration starts from a step size of 5% of the average parameter range. Each subsequent iteration starts from the best step size of
+							the previous iteration, or one quarter of the previous step size if the previous iteration did not improve the objective function.</li>
+							<li><b>Caching:</b> The line search can revisit step sizes that were already evaluated. Setting OstrichCaching to yes is recommended so that these
+							parameter sets are taken from the cache instead of being solved again.</li>
+							<li><b>Parameter bounds:</b> If a candidate step would take a parameter outside its bounds, the parameter is instead placed halfway between its current
+							value and the violated bound. The number of upper and lower bound violations is reported in the algorithm metrics at the end of the run.</li>
+							<li><b>Warm start:</b> WarmStart is not yet supported for the Steepest-Descent algorithm. If WarmStart is set to yes, the analysis will stop with an error.</li>
+							<li><b>Least-squares calibration:</b> The Steepest-Descent algorithm currently runs in optimization mode only. Regression statistics are not computed
+							when the WSSE objective function is used.</li>
+							<li><b>Unrecognized entries:</b> Any line within the BeginSteepDescAlg/EndSteepDescAlg group other than ConvergenceVal, MaxIterations, or NumSearchPoints
+							is reported as an error in the OstErrors file and otherwise ignored.</li>
+						</ul>
+
 						<h1>References</h1>
 						<p align="justify">
 							Bertsekas, D. P. 2014. Constrained optimization and Lagrange multiplier methods. Academic press.
