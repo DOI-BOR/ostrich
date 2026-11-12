@@ -117,7 +117,7 @@
 									<p align="left">Initial Publication:</p>
 									<time class="time" datetime="2015-11-01">April 11, 2021</time>
 									<p align="left">Modified:</p>
-									<time class="time" datetime="2015-11-01">April 11, 2021</time>
+									<time class="time" datetime="2026-11-02">November 2, 2026</time>
 								</div>
 							</header>
 							<p align="justify">
@@ -174,6 +174,26 @@ EndSimulatedAlg
 							<li><b>TransitionMethod:</b> This variable selects the method used to compute randomized parameter perturbations during the transition phase of the 
 							SA algorithm. Set this variable to “Vanderbilt” to sample according to the procedure outlined by Vanderbilt and Louie (1984). Use a value of “Gauss” to 
 							select a Gaussian (i.e. normal) distribution. The default value is “Gauss”.</li>
+						</ul>
+
+						<p align="justify">
+							The following behaviors apply to the Vanderbilt-Louie simulated annealing algorithm in the development version of OSTRICH:
+						</p>
+						<ul align="justify">
+							<li><b>Parallel evaluation:</b> The algorithm runs in parallel. The starting point is evaluated together with one perturbed copy (within ±5% of each
+							parameter range) for every additional processor, and the best of these becomes the starting solution. The melting trials are evaluated together. Within
+							each outer iteration, transitions are generated in batches (one per available worker) from the current location, distributed across the workers, and then
+							accepted or rejected in order. With a single worker, the sequence of transitions matches the serial algorithm.</li>
+							<li><b>Step distribution:</b> When TransitionMethod is set to “Vanderbilt”, the step distribution is updated after each outer iteration from the
+							parameter sets visited during that iteration.</li>
+							<li><b>Output:</b> The best solution and the convergence value are reported in the OSTRICH run record after the melting operation and after each outer
+							iteration. The objective function of every evaluation is recorded in the OstModelN.txt file of the processor that evaluated it.</li>
+							<li><b>Warm start:</b> If WarmStart is set to yes, the analysis restarts from the best solution found in the OstModelN.txt files, and the evaluations
+							of the previous run are included in the evaluation count. If Caching is set to yes, previously evaluated parameter sets are not solved again. The
+							temperature schedule cannot be recovered, so a new melting operation is performed, and the outer iteration count restarts at zero. The new results are
+							appended to the OSTRICH run record.</li>
+							<li><b>Calibration statistics:</b> Calibration statistics are not yet computed when the objective function is WSSE.</li>
+							<li><b>Telescoping bounds:</b> The TelescopingStrategy option is not yet supported and is ignored.</li>
 						</ul>
 						
 						<h1>References</h1>
