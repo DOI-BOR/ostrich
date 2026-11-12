@@ -10,61 +10,99 @@ Version History
 08-17-04    lsm   RAM fragmentation fixes, metrics collection and reporting
                   Added support for user-requested program termination
 01-01-07    lsm   Algorithm now uses abstract model base class (ModelABC).
+XX-XX-XX    lsm   Reworked to use the common Algorithm class and the new
+                  parallel (MPI) evaluation structure. The 1-D line search
+                  is now performed by evaluating a batch of candidate step
+                  sizes in parallel each round (similar in spirit to the
+                  parallel lambda-trial search used by LevenbergAlgorithm),
+                  rather than the old serial Golden-Section/Brent search.
 ******************************************************************************/
 #ifndef STEEP_DESC_ALGORITHM_H
 #define STEEP_DESC_ALGORITHM_H
 
-// parent class
-#include "AlgorithmABC.h"
+#include "MyHeaderInc.h"
 
-// forward decs
-class ModelABC;
-class StatsClass;
-class OptSearchClass;
-class OptMathClass;
+// Include C classes
+#include <mpi.h>
+#include <math.h>
+#include <string.h>
+#include <stdlib.h>
+#include <vector>
+
+// Include custom classes
+#include "Algorithm.h"
+#include "ParameterGroup.h"
+#include "ParameterABC.h"
+#include "ObservationGroup.h"
+#include "Observation.h"
+#include "MathClass2.h"
+#include "Exception.h"
+#include "Utility.h"
+#include "WriteUtility2.h"
 
 /******************************************************************************
 class SteepDescAlgorithm
 
 The Steepest Descent algorithm is a first-order optimization algorithm, which 
-utilizes the negative of the gradient to determine the optimial search 
-direction. 
+utilizes the negative of the gradient to determine the optimal search 
+direction. Each iteration computes the gradient (via parallel finite-
+difference evaluations) and then performs a parallel batch line search along 
+the resulting descent direction to determine the step size.
 ******************************************************************************/
-class SteepDescAlgorithm : public AlgorithmABC
+class SteepDescAlgorithm : public Algorithm
 {
    public:
-      SteepDescAlgorithm(ModelABC * pModel);
+      SteepDescAlgorithm(void);
       ~SteepDescAlgorithm(void){ DBG_PRINT("SteepDescAlgorithm::DTOR"); Destroy(); }
       void Destroy(void);
+
+      void WarmStart(void);
+
+      // Solution functions
       void Optimize(void);
       void Calibrate(void);
-      void WriteMetrics(FILE * pFile);
-      void WarmStart(void);
-      int  GetCurrentIteration(void) { return m_CurIter; }
+
+      // Output functions
+      void WriteStartingMetrics(void);
+      void WriteEndingMetrics(void);
 
    private:
-      //max. # of iterations, where one 1D search is counted as an iteration
-      int m_MaxIter; 
+      // Helper routines for the parallel batch line search
+      std::vector<double> CreateInitialStepMultipliers(void);
+      std::vector<double> CreateAdditionalStepMultipliers(double bestMultiplier, int direction);
+      std::vector<std::vector<double>> CreateLineSearchSamples(std::vector<double> const & basePoint, std::vector<double> const & searchDir,
+                                                                std::vector<double> const & lowerValues, std::vector<double> const & upperValues,
+                                                                std::vector<double> const & multipliers);
 
-      /* if difference between obj. function from the previous iteration 
-      is less than the convergence value, the algorithm exits.*/
-      double m_ConvVal; 
+      //Configuration variables (read from the BeginSteepDescAlg block)
+      double m_ConvVal = 1E-6;      //convergence value: searches halt when the relative reduction over
+                                     //three successive iterations is less than this value
+      int m_MaxIter = 20;           //maximum number of iterations in the overall method
+      int m_NumSearchPoints = 0;    //number of candidate step sizes to try in parallel per line-search
+                                     //round (0 = size to the number of available MPI workers)
 
-      int m_NumParams; //numer of parameters/design vars
+      //finite-difference settings used to compute the gradient (kept as internal
+      //defaults, consistent with the legacy OptMathClass behavior)
+      double m_StepSize = 0.001;         //relative finite-difference step used to compute the gradient
+      double m_StepToleranceMaximum = 0; //parameters whose perturbed range falls below this are locked
+      int m_DerivativeType = FIRST_FORWARD;
 
-      double * m_pSearchDir; //search direction
+      //adaptive scale (in normalized search-direction units) used to seed each iteration's
+      //parallel batch line search; initialized on first use, then adapted iteration-to-iteration
+      double m_CurStepScale = -1.00;
 
-      ModelABC * m_pModel;
-      StatsClass * m_pStats; //calibration statistics
-      OptMathClass * m_pMath;
-      OptSearchClass * m_pSearchAlg; //1-dimensional search algorithm
+      //Solution tracking variables
+      int m_Iteration = 0;
+      int m_CurIter = 0;
 
       //metrics
-      int m_AlgCount;
-      int m_CurIter;
-      int m_NumUprViols;
-      int m_NumLwrViols;
-}; /* end class PowellAlgorithm */
+      int m_AlgCount = 0;
+      int m_NumUprViols = 0;
+      int m_NumLwrViols = 0;
+
+      //relative-reduction history used for the 3-iteration convergence check
+      std::vector<double> m_dObjFuncHistory;
+}; /* end class SteepDescAlgorithm */
 
 extern "C" {
 void STPDSC_Program(int argc, StringType argv[]);

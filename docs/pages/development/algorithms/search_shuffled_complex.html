@@ -117,7 +117,7 @@
 									<p align="left">Initial Publication:</p>
 									<time class="time" datetime="2015-11-01">April 11, 2021</time>
 									<p align="left">Modified:</p>
-									<time class="time" datetime="2015-11-01">April 11, 2021</time>
+									<time class="time" datetime="2026-11-02">November 2, 2026</time>
 								</div>
 							</header>
 							<p align="justify">
@@ -137,7 +137,7 @@ NumComplexes            [NGS]
 NumPointsPerComplex     [NPG]
 NumPointsPerSubComplex  [NPS]
 NumEvolutionSteps       [NSPL]
-MinNumberOfCOmplexes    [MINGS]
+MinNumOfComplexes       [MINGS]
 UseInitialPoint         [INIFLG]
 EndSCEUA
 </code></pre>
@@ -152,7 +152,7 @@ NumComplexes            3
 NumPointsPerComplex     19
 NumPointsPerSubComplex  10
 NumEvolutionSteps       19
-MinNumberOfCOmplexes    3
+MinNumOfComplexes       3
 UseInitialPoint         no
 EndSCEUA
 </code></pre>
@@ -167,10 +167,12 @@ EndSCEUA
 							the FORTRAN implementation are provided in brackets (‘[’ and ‘]’) in the general format of Figure 1.
 						</p>
 						<ul align="justify">
+							<li><b>Budget</b> (MAXN): Maximum number of model evaluations allowed before the optimization is terminated. Values less than 100 are reset to
+							100 and a warning is logged. The default value is 10000.</li>
 							<li><b>LoopStagnationCriteria</b> (KSTOP): Number of shuffling loops in which the optimization criterion must improve by the specified 
-							percentage or else optimization will be restarted.</li>
+							percentage or else optimization will be terminated. The default value is 5.</li>
 							<li><b>PctChangeCriteria</b> (PCENTO): Percentage by which the optimization criterion value must change in the specified number of shuffling 
-							loops or else optimization is restarted. Use decimal equivalent: Percentage/100. Recommended value: 0.01.</li>
+							loops or else optimization is terminated. Use decimal equivalent: Percentage/100. Recommended value: 0.01.</li>
 							<li><b>PopConvCriteria</b> (PEPS): The optimization will be restarted if the shuffling and/or evolution process results in a population that 
 							is entirely within PEPS×100 percent of the feasible space. The default value is 0.001.</li>
 							<li><b>NumComplexes</b> (NGS): Number of complexes used for optimization search.  Minimum value is 1. Recommended value is between 2 and 20 
@@ -182,12 +184,32 @@ EndSCEUA
 							The default value is: NPS = np + 1.</li>
 							<li><b>NumEvolutionSteps</b> (NSPL): The number of evolution steps taken by each complex before next shuffling.  The default value is: NSPL = 
 							2 × np +1.</li>
-							<li><b>MinNumberOfComplexes</b> (MINGS): Minimum number of complexes required for optimization search, if the number of complexes is allowed 
+							<li><b>MinNumOfComplexes</b> (MINGS): Minimum number of complexes required for optimization search, if the number of complexes is allowed 
 							to reduce as the optimization search proceeds.  The default value is: MINGS = sqrt(np).</li>
 							<li><b>UseInitialPoint</b> (INIFLG): Flag on whether to include an initial point in the starting population.  Enter “yes” if the initial point 
 							is to be included.  The default value is “no”.</li>
 						</ul>
-						
+
+						<p align="justify">
+							The following behaviors apply to the SCE algorithm in the development version of OSTRICH:
+						</p>
+						<ul align="justify">
+							<li><b>Parallel evaluation:</b> The initial population (and the population generated after a restart) is distributed across the available workers.
+							The evolution steps within each complex are evaluated one at a time because each step depends on the result of the previous step, so additional
+							processors provide limited speedup once the shuffling loops begin.</li>
+							<li><b>Output:</b> The sce.out summary file is still written in the format of the original FORTRAN implementation. The OSTRICH run record reports the
+							best objective of the population and the percentage of the Budget that has been used after each shuffling loop.</li>
+							<li><b>Initial point:</b> The initial parameter values are always evaluated first and reported as run 0 in the OSTRICH run record. If UseInitialPoint
+							is “no”, the initial point still replaces the first randomly generated member of the population when it has a better objective.</li>
+							<li><b>Budget:</b> The Budget is checked between evolution steps, and the evaluation of the initial point is not counted against it, so the total
+							number of model evaluations can slightly exceed the Budget.</li>
+							<li><b>Unrecognized entries:</b> Any line within the BeginSCEUA/EndSCEUA group other than the variables listed above is reported as an error in the
+							OstErrors file and otherwise ignored.</li>
+							<li><b>Telescoping bounds:</b> The TelescopingStrategy setting is not yet supported in the development version and is not applied by the SCE algorithm.</li>
+							<li><b>Warm start:</b> WarmStart is not yet supported for the SCE algorithm. If WarmStart is set to yes, the analysis will stop with an error.</li>
+							<li><b>Least-squares calibration:</b> The SCE algorithm currently runs in optimization mode only.</li>
+						</ul>
+
 						<h1>References</h1>
 						<p align="justify">
 							Deb, K. 2001. Multi-objective optimization using evolutionary algorithms. John Wiley & Sons, Chichester, UK.

@@ -6,7 +6,7 @@
 -->
 <html>
 	<head>
-		<title>OSTRICH - Algorithms - Asynchronous Parallel Dynamically Dimensioned Search</title>
+		<title>OSTRICH - Algorithms - Parallel Dynamically Dimensioned Search</title>
 		<meta charset="utf-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
 		<link rel="stylesheet" href="../../../assets/css/main.css" />
@@ -110,18 +110,18 @@
 							<article class="post">
 								<header>
 									<div class="title">
-										<h2><a href="#">Algorithms - Asynchronous Parallel Dynamically Dimensioned Search (DDS)</a></h2>
-										<p>The OSTRICH asynchronous parallel dynamically dimensioned search optimization algorithm</p>
+										<h2><a href="#">Algorithms - Parallel Dynamically Dimensioned Search (DDS)</a></h2>
+										<p>The OSTRICH parallel dynamically dimensioned search optimization algorithm</p>
 									</div>
 									<div class="meta">
 										<p align="left">Initial Publication:</p>
 										<time class="time" datetime="2015-11-01">April 11, 2021</time>
 										<p align="left">Modified:</p>
-										<time class="time" datetime="2015-11-01">April 11, 2021</time>
+										<time class="time" datetime="2026-11-07">November 7, 2026</time>
 									</div>
 								</header>
 								<p align="justify">
-									The following optional group will configure the asynchronous parallel implementation of the DDS algorithm and will be processed if [ProgramType] is set to “ParallelDDS”.
+									The following optional group will configure the parallel implementation of the DDS algorithm and will be processed if [ProgramType] is set to “ParallelDDS”.
 								</p>
 								<!-- This has strange alignment for the code to render correctly on the page.-->
 								<table class="layouttable">
@@ -181,6 +181,31 @@ EndParallelDDSAlg
 									<li><b>UseOpt:</b> Users wanting to apply the original DDS algorithm can ignore specifying this option. This option is used by OSTRICH and DDS developers to compare the DDS algorithm implemented in different programming languages. It is an experimental developer option that controls the calculation of parameter adjustments within the parallel DDS algorithm. Three values are acceptable: “no-rand-num”, “try-int-solution”, and “standard”. The default and recommended value is “standard”. The “Alpha” and “Beta” values will be used by the algorithm if “no-rand-num” is selected. Otherwise, these variables are ignored (i.e. if either “try-int-solution” or “standard” are selected).</li>
 									<li><b>AlphaValue, BetaValue:</b> These parameters control the parallel DDS perturbation scheme if the UseOpt variable is set to “no-rand-num”. Otherwise, these variables are ignored. Both variables have a default value of 0.5.</li>
 									<li><b>EnableDebugging:</b> The parallel DDS algorithm will report additional development-level debugging information if this variable is included. The default behavior of the algorithm is to not report debugging information.</li>
+								</ul>
+								<p align="justify">
+									If UseInitialParamValues is included, one or more starting parameter sets may be listed in an optional BeginInitParams/EndInitParams group, with one
+									line per parameter set and one value per parameter. If the group is not present, the initial values of the parameter group are used. The following
+									behaviors apply to the parallel DDS algorithm in the development version of OSTRICH:
+								</p>
+								<ul align="justify">
+									<li><b>Batch evaluation:</b> Candidates are generated in batches of one candidate per worker (including the primary worker if SolveOnPrimary is
+									enabled). Each batch is generated from the current best solution and solved in parallel, and the results are processed in the order the
+									candidates were generated. This replaces the asynchronous scheme of earlier versions, in which a new candidate was sent to each worker as soon
+									as it finished, so the search no longer depends on the order in which workers complete. Workers may sit idle at the end of a batch if model run
+									times vary.</li>
+									<li><b>Initialization:</b> At least one evaluation per worker is used to initialize the search. With random initialization, the best of
+									max(5, 0.5% of MaxIterations, number of workers) uniformly random parameter sets is used. With user-supplied or warm start initialization, any
+									remaining initialization evaluations are filled with random parameter sets. Every decision variable is perturbed for evaluations up to
+									twice the number of workers, after which the probability of perturbing each decision variable decreases logarithmically over the remaining
+									budget.</li>
+									<li><b>Warm start:</b> If WarmStart is set to yes, the search begins from the best solution recorded in the OstModelN.txt files of the previous
+									run. If Caching is also enabled, parameter sets evaluated by the previous run are not solved again.</li>
+									<li><b>Output:</b> The run record lists each improvement to the best solution along with the number of trials remaining, followed by a final
+									record at the end of the budget. Each improvement is also appended to dds_status.out, the probability of perturbing each decision variable is
+									recorded in OstDDSPn.txt, and the objective function of every model evaluation is recorded in the OstModelN.txt file of the processor that
+									evaluated it.</li>
+									<li><b>Not yet supported:</b> Telescoping bounds (TelescopingStrategy) and special parameters (pre-emption) are not applied, and regression
+									statistics are not computed at the end of the analysis when the WSSE objective function is used.</li>
 								</ul>
 								<h1>References</h1>
 								<p align="justify">

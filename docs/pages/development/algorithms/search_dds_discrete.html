@@ -117,7 +117,7 @@
 										<p align="left">Initial Publication:</p>
 										<time class="time" datetime="2015-11-01">April 11, 2021</time>
 										<p align="left">Modified:</p>
-										<time class="time" datetime="2015-11-01">April 11, 2021</time>
+										<time class="time" datetime="2026-11-07">November 7, 2026</time>
 									</div>
 								</header>
 								<p align="justify">
@@ -163,6 +163,26 @@ EndDiscreteDDSAlg
 									<li><b>UseRandomParamValues:</b> If this line is included the algorithm will be initiated from a randomly generated location. This 
 									variable is mutually exclusive with the “UseInitialParamValues” variable – only one should be included.  If neither are included the 
 									algorithm will default to “UseRandomParamValues”.</li>
+								</ul>
+								<p align="justify">
+									The discrete DDS algorithm is intended for discrete-valued decision variables, such as those listed in the BeginIntegerParams group. Each
+									perturbation is forced to change the value of a decision variable by at least one unit. With random initialization, the search begins with the
+									best of max(5, 0.5% of MaxIterations) uniformly random parameter sets. The following behaviors apply to the discrete DDS algorithm in the
+									development version of OSTRICH:
+								</p>
+								<ul align="justify">
+									<li><b>Integer parameters:</b> Candidate values are rounded to the nearest integer before they are solved, so the values that are solved,
+									recorded, and perturbed are the same. The check for a discrete change is made on the rounded values.</li>
+									<li><b>Parallel evaluation:</b> The random initialization samples are solved concurrently across the available workers. The main search loop is
+									inherently sequential, since each candidate is generated from the current best solution, so its evaluations are solved one at a time.</li>
+									<li><b>Warm start:</b> If WarmStart is set to yes, the search begins from the best solution recorded in the OstModelN.txt files of the previous
+									run. If Caching is also enabled, parameter sets evaluated by the previous run are not solved again.</li>
+									<li><b>Output:</b> The run record lists each improvement to the best solution along with the number of trials remaining, followed by a final
+									record at the end of the budget. The objective function of every model evaluation is recorded in the OstModelN.txt file of the processor that
+									evaluated it, the probability of perturbing each decision variable is recorded in OstDDSPn.txt, and the number of perturbations that were
+									shifted to force a discrete change is reported in the algorithm metrics.</li>
+									<li><b>Not yet supported:</b> Special parameters (pre-emption) are not applied, and regression statistics are not computed at the end of the
+									analysis when the WSSE objective function is used.</li>
 								</ul>
 								<h1>References</h1>
 								<p align="justify">
