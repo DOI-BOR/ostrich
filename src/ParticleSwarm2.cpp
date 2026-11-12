@@ -7,7 +7,8 @@ best solution (cognitive behavior) along with the current best solution of all p
 **************************************************************************************************************************************************************/
 
 // Include the class header
-#include "ParticleSwarm.h"
+#include "ParticleSwarm2.h"
+#include "LevenbergAlgorithm2.h"
 
 
 /**************************************************************************************************************************************************************
@@ -625,3 +626,82 @@ void PSO_Program(int argC, StringType argV[]) {
    }
 }
 
+
+/**************************************************************************************************************************************************************
+PreservePhaseFile()
+
+Renames an output file written during the PSO phase of the hybrid algorithm so that it is not overwritten by the Levenberg-Marquardt phase.
+**************************************************************************************************************************************************************/
+static void PreservePhaseFile(const char* fileStem, int rank) {
+
+    char sourceName[DEF_STR_SZ];
+    char targetName[DEF_STR_SZ];
+    sprintf(sourceName, "%s%d.txt", fileStem, rank);
+    sprintf(targetName, "%sPSO%d.txt", fileStem, rank);
+
+    remove(targetName);
+    rename(sourceName, targetName);
+}
+
+/**************************************************************************************************************************************************************
+PSO_LEVMAR_Program()
+
+Calibrate the model using the PSO-Levenberg-Marquardt hybrid. The PSO algorithm is used to locate the region of the best solution, which is then used as the
+starting point of the Levenberg-Marquardt algorithm.
+**************************************************************************************************************************************************************/
+void PSO_LEVMAR_Program(int argC, StringType argV[]) {
+
+   // Get the rank of the process
+   int rank;
+   MPI_Comm_rank(MPI_COMM_WORLD, &rank);
+
+   // Determine behavior based on the rank
+   if (rank == 0) {
+       // This is the primary worker. Setup the particle swarm algorithm and solve the first phase
+       ParticleSwarm *PSO = new ParticleSwarm();
+       PSO->Optimize();
+
+       // Each secondary worker signals that it is ready for work before being told to terminate, and that final ready signal is not received by
+       // TerminateWorkers(). Clear it here so that it is not mistaken for a ready worker during the Levenberg-Marquardt phase.
+       int numberOfMpiProcesses;
+       MPI_Comm_size(MPI_COMM_WORLD, &numberOfMpiProcesses);
+       for (int entryWorker = 1; entryWorker < numberOfMpiProcesses; entryWorker++) {
+           int workerValue;
+           MPI_Recv(&workerValue, 1, MPI_INT, entryWorker, tag_continue, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
+       }
+
+       // Preserve the PSO output before it is overwritten by the Levenberg-Marquardt phase
+       PreservePhaseFile("OstOutput", rank);
+       PreservePhaseFile("OstModel", rank);
+
+       // Preserve the PSO model archive. The worker solve counters restart in the Levenberg-Marquardt phase, so its archived runs would otherwise
+       // collide with the PSO runs. All workers have finished archiving once their final ready signal has been received above.
+       if (std::filesystem::exists("archive")) {
+           std::filesystem::remove_all("archivePSO");
+           std::filesystem::rename("archive", "archivePSO");
+       }
+
+       // Create the Levenberg-Marquardt algorithm and start it from the best PSO solution
+       LevenbergAlgorithm *LM = new LevenbergAlgorithm();
+
+       ParameterGroup* pParamGroup = LM->GetParamGroupPtr();
+       for (int entryParam = 0; entryParam < pParamGroup->GetNumParams(); entryParam++) {
+           pParamGroup->GetParamPtr(entryParam)->SetEstimatedValueTransformed(PSO->m_BestAlternative[entryParam]);
+       }
+
+       // Solve the second phase. This reconfigures the secondary workers that were terminated at the end of the PSO phase
+       LM->Optimize();
+
+   } else {
+       // This is a secondary worker. Serve the PSO phase until terminated by the primary worker
+       ModelWorker workerPSO = ModelWorker(true);
+       workerPSO.WorkMPI();
+
+       // Preserve the PSO output before it is overwritten by the Levenberg-Marquardt phase
+       PreservePhaseFile("OstModel", rank);
+
+       // Reconfigure from the primary worker and serve the Levenberg-Marquardt phase
+       ModelWorker workerLM = ModelWorker(true);
+       workerLM.WorkMPI();
+   }
+}

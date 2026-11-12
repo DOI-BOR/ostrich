@@ -5,369 +5,531 @@ Copyright : 2003, L. Shawn Matott
 
 An implementation of the Steepest Descent optimization algorithm.
 
+The Steepest Descent algorithm is a first-order optimization algorithm which
+utilizes the negative of the gradient to determine the search direction. This
+implementation has been reworked to utilize the common Algorithm base class
+and the new parallel (MPI) evaluation structure that is also used by
+GeneticAlgorithm and LevenbergAlgorithm.
+
+Each iteration proceeds in two parallel batch phases:
+  1. Gradient phase: the gradient is estimated via finite differences, with
+     all of the perturbed parameter sets solved in a single parallel batch
+     (reusing the same CalculateJacobianParameters()/CalculateJacobian2()
+     helpers used by LevenbergAlgorithm).
+  2. Line search phase: rather than the legacy serial Golden-Section/Brent
+     search (which evaluates one trial point at a time and therefore cannot
+     make use of more than one MPI worker), a batch of candidate step sizes
+     is evaluated in parallel each round. If the best candidate lies at the
+     edge of the tried range, the batch is regenerated further in that
+     direction (a pattern directly analogous to the parallel lambda-trial
+     search used by LevenbergAlgorithm); otherwise the interior optimum is
+     accepted and the outer iteration completes.
+
 Version History
 08-26-03    lsm   created 
-03-05-04    lsm   now reposrts obj. func. str.
-07-08-04    lsm   WriteSetup() is now the first action of the algorithm
 08-17-04    lsm   RAM fragmentation fixes, metrics collection and reporting
                   Added support for user-requested program termination
-03-21-05    lsm   Added code to track algorithm status (used in grid computing)
-01-01-07    lsm   Algorithm now uses abstract model base class (ModelABC), added
-                  model init. and bookkepping calls. Some statistics can now 
-                  be calculated in parallel. 
+01-01-07    lsm   Algorithm now uses abstract model base class (ModelABC).
+XX-XX-XX    lsm   Reworked to use the common Algorithm class and the new
+                  parallel (MPI) evaluation structure.
 ******************************************************************************/
-#include <mpi.h>
-#include <math.h>
-#include <time.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
 
+// Include the class header
 #include "SteepDescAlgorithm.h"
-#include "Model.h"
-#include "ModelBackup.h"
-#include "ParameterGroup.h"
-#include "ParameterABC.h"
-#include "OptSearchClass.h"
-#include "OptMathClass.h"
-#include "StatsClass.h"
 
-#include "Utility.h"
-#include "WriteUtility.h"
-#include "Exception.h"
+/******************************************************************************
+CTOR()
 
+Initializes parameters to reasonable defaults, then overrides them with the
+contents of the BeginSteepDescAlg/EndSteepDescAlg configuration block, if
+present.
+******************************************************************************/
+SteepDescAlgorithm::SteepDescAlgorithm(void) {
+
+    FILE* pFile;
+    char* line;
+    char tmp[DEF_STR_SZ];
+    IroncladString inputFilename = GetInFileName();
+
+    //read in algorithm parameters
+    pFile = fopen(inputFilename, "r");
+    if (pFile != NULL) {
+        if (CheckToken(pFile, "BeginSteepDescAlg", inputFilename) == true) {
+            FindToken(pFile, "EndSteepDescAlg", inputFilename);
+            rewind(pFile);
+
+            FindToken(pFile, "BeginSteepDescAlg", inputFilename);
+            line = GetNxtDataLine(pFile, inputFilename);
+            while (strstr(line, "EndSteepDescAlg") == NULL) {
+                if (strstr(line, "ConvergenceVal") != NULL) {
+                    // Convergence value: searches halt when the relative reduction over
+                    // three successive iterations is less than this value
+                    sscanf(line, "%s %lf", tmp, &m_ConvVal);
+
+                } else if (strstr(line, "MaxIterations") != NULL) {
+                    // Maximum number of iterations in the overall method
+                    sscanf(line, "%s %d", tmp, &m_MaxIter);
+
+                } else if (strstr(line, "NumSearchPoints") != NULL) {
+                    // Number of candidate step sizes to evaluate in parallel per line-search round.
+                    // If unspecified (or <= 0), the number of available MPI workers is used instead.
+                    sscanf(line, "%s %d", tmp, &m_NumSearchPoints);
+
+                } else {
+                    sprintf(tmp, "Unknown token: %s", line);
+                    LogError(ERR_FILE_IO, tmp);
+                }
+
+                line = GetNxtDataLine(pFile, inputFilename);
+            }
+        } else {
+            LogError(ERR_FILE_IO, "Using default algorithm setup.");
+        }
+
+        fclose(pFile);
+    } else {
+        LogError(ERR_FILE_IO, "Using default algorithm setup.");
+    }
+
+    IncCtorCount();
+}/* end CTOR */
+
+/******************************************************************************
+Destroy()
+
+Frees up memory used by the algorithm.
+******************************************************************************/
+void SteepDescAlgorithm::Destroy(void) {
+    IncDtorCount();
+}/* end Destroy() */
 
 /******************************************************************************
 WarmStart()
 
 Read the best solution from a previous run.
 ******************************************************************************/
-void SteepDescAlgorithm::WarmStart(void)
-{
-   int np = m_pModel->GetParamGroupPtr()->GetNumParams();
-   double * pbest = new double[np+1];
-   int newcount = SimpleWarmStart(np, pbest);
-   m_pModel->GetParamGroupPtr()->WriteParams(pbest);
-   ((Model *)m_pModel)->SetCounter(newcount);
-   delete [] pbest;
+void SteepDescAlgorithm::WarmStart(void) {
+    // todo: warm start has not yet been implemented for algorithms that use the new
+    // parallel batch line-search structure (see LevenbergAlgorithm::WarmStart, which
+    // has the same limitation on this branch).
 }/* end WarmStart() */
 
 /******************************************************************************
-CTOR
+CreateInitialStepMultipliers()
 
-Initializes parameters, reading user-specified input, if available.
+Builds the initial batch of candidate step-size multipliers to try along the
+current search direction. Multipliers are a symmetric, geometric (base-2)
+spread around the current step scale (m_CurStepScale), e.g. for 5 points:
+   { scale/4, scale/2, scale, scale*2, scale*4 }
+
+The batch size defaults to the number of available MPI workers (so that a
+full round of trials completes in a single parallel pass), but can be
+overridden via the NumSearchPoints configuration token.
 ******************************************************************************/
-SteepDescAlgorithm::SteepDescAlgorithm(ModelABC * pModel)
-{
-   FILE * inFile;
-   char * line;
-   char tmp[DEF_STR_SZ];
-   ParameterGroup * pGroup;
+std::vector<double> SteepDescAlgorithm::CreateInitialStepMultipliers(void) {
 
-   RegisterAlgPtr(this);
-   IroncladString pFileName = GetInFileName();
-   m_pStats = NULL;
+    int numPoints = m_NumSearchPoints;
+    if (numPoints <= 0) {
+        MPI_Comm_size(MPI_COMM_WORLD, &numPoints);
+        if (!m_bSolveOnPrimary) { numPoints--; }
+    }
+    if (numPoints < 3) { numPoints = 3; } //need at least 3 points to distinguish an edge from an interior minimum
 
-   //init. everything to reasonable defaults
-   m_MaxIter = 20;
-   m_ConvVal = 1E-6; 
-   m_AlgCount    = 0;
-   m_CurIter     = 0;
-   m_NumUprViols = 0;
-   m_NumLwrViols = 0;
+    std::vector<double> multipliers;
+    int half = numPoints / 2;
+    for (int entry = 0; entry < numPoints; entry++) {
+        int exponent = entry - half;
+        multipliers.push_back(m_CurStepScale * pow(2.0, (double)exponent));
+    }
 
-   
-   m_pModel = pModel;
-   pGroup = m_pModel->GetParamGroupPtr();
-   m_NumParams = pGroup->GetNumParams();
+    return multipliers;
+}/* end CreateInitialStepMultipliers() */
 
-   NEW_PRINT("double", m_NumParams);
-   m_pSearchDir = new double[m_NumParams];   
-
-   NEW_PRINT("OptSearchClass", 1);
-   m_pSearchAlg = new OptSearchClass(pModel);   
-
-   NEW_PRINT("OptMathClass", 1);
-   m_pMath = new OptMathClass(pModel);
-   MEM_CHECK(m_pMath);
-
-   inFile = fopen(pFileName, "r");  
-   if(inFile == NULL) 
-   {
-      FileOpenFailure("SteepDescAlgorithm::CTOR", pFileName);
-   }/* end if() */ 
-
-   if(CheckToken(inFile, "BeginSteepDescAlg", pFileName) == true)
-   {
-      FindToken(inFile, "EndSteepDescAlg", pFileName);
-      rewind(inFile);
-
-      FindToken(inFile, "BeginSteepDescAlg", pFileName);
-      line = GetNxtDataLine(inFile, pFileName);
-      
-      while(strstr(line, "EndSteepDescAlg") == NULL)
-      {
-         if(strstr(line, "ConvergenceVal") != NULL)
-         {
-            sscanf(line, "%s %lf", tmp, &m_ConvVal);
-         }
-         else if(strstr(line, "MaxIterations") != NULL)
-         {
-            sscanf(line, "%s %d", tmp, &m_MaxIter);
-         }
-
-         line = GetNxtDataLine(inFile, pFileName);
-      }/* end while() */
-   } /* end if() */
-   else
-   {
-      LogError(ERR_FILE_IO, "Using default algorithm setup.");
-   }/* end else() */
-
-   fclose(inFile);
-
-   IncCtorCount();
-}/* end default CTOR */
-      
 /******************************************************************************
-Destroy()
+CreateAdditionalStepMultipliers()
 
-Frees up memory used by the algorithm.
+Builds a follow-up batch of candidate step-size multipliers that extends
+beyond the edge of the previous batch, in the given direction (+1 to grow the
+step further, -1 to shrink it). This mirrors the parallel expansion pattern
+used by LevenbergAlgorithm::CreateAdditionalLambdas().
 ******************************************************************************/
-void SteepDescAlgorithm::Destroy(void)
-{
-   delete [] m_pSearchDir;
+std::vector<double> SteepDescAlgorithm::CreateAdditionalStepMultipliers(double edgeMultiplier, int direction) {
 
-   delete m_pSearchAlg;
-   delete m_pMath;
-   delete m_pStats;
+    int numPoints = m_NumSearchPoints;
+    if (numPoints <= 0) {
+        MPI_Comm_size(MPI_COMM_WORLD, &numPoints);
+        if (!m_bSolveOnPrimary) { numPoints--; }
+    }
+    if (numPoints < 1) { numPoints = 1; }
 
-   IncDtorCount();
-}/* end Destroy() */
+    std::vector<double> multipliers;
+    for (int entry = 1; entry <= numPoints; entry++) {
+        multipliers.push_back(edgeMultiplier * pow(2.0, direction * (double)entry));
+    }
+
+    return multipliers;
+}/* end CreateAdditionalStepMultipliers() */
+
+/******************************************************************************
+CreateLineSearchSamples()
+
+Given a base point and a (normalized) search direction, constructs one
+candidate parameter set per step-size multiplier: base + multiplier*dir.
+Candidates that would fall outside of the parameter bounds are pulled back to
+the midpoint between the base value and the violated bound (matching the
+boundary-handling behavior of the legacy implementation), and the
+corresponding violation counter is incremented.
+******************************************************************************/
+std::vector<std::vector<double>> SteepDescAlgorithm::CreateLineSearchSamples(std::vector<double> const & basePoint, std::vector<double> const & searchDir,
+                                                                              std::vector<double> const & lowerValues, std::vector<double> const & upperValues,
+                                                                              std::vector<double> const & multipliers) {
+    std::vector<std::vector<double>> samples;
+
+    for (int entryMultiplier = 0; entryMultiplier < multipliers.size(); entryMultiplier++) {
+        std::vector<double> candidate = basePoint;
+
+        for (int entryParameter = 0; entryParameter < basePoint.size(); entryParameter++) {
+            double tst = basePoint[entryParameter] + (multipliers[entryMultiplier] * searchDir[entryParameter]);
+
+            if (tst > upperValues[entryParameter]) {
+                tst = (basePoint[entryParameter] + upperValues[entryParameter]) / 2.00;
+                m_NumUprViols++;
+            }
+            if (tst < lowerValues[entryParameter]) {
+                tst = (basePoint[entryParameter] + lowerValues[entryParameter]) / 2.00;
+                m_NumLwrViols++;
+            }
+
+            candidate[entryParameter] = tst;
+        }
+
+        samples.push_back(candidate);
+    }
+
+    return samples;
+}/* end CreateLineSearchSamples() */
 
 /******************************************************************************
 Optimize()
 
 Optimize the objective function using the Steepest Descent algorithm.
 ******************************************************************************/
-void SteepDescAlgorithm::Optimize(void)
-{   
-   StatusStruct pStatus;
-   double curVal, oldVal, dObjFunc, step, tmp, max, upr, lwr, tst;
-   int i, j;
-   ParameterGroup * pGroup;
-   ParameterABC * pParam;
-   Unchangeable1DArray pGrad;
+void SteepDescAlgorithm::Optimize(void) {
 
-   /* optimal parameter vector, can be updated by CalcGradient() */
-   double * pmin;
-   int n = m_NumParams;
-   NEW_PRINT("double", n);
-   pmin = new double[n];
-   double fmin;
+    // Get MPI information
+    int numberOfMpiProcesses;
+    MPI_Comm_size(MPI_COMM_WORLD, &numberOfMpiProcesses);
 
-   //write setup to file
-   WriteSetup(m_pModel, "Steepest Descent");
+    // Perform initial warm start recovery, if needed
+    std::vector<int> solveCounts;
 
-   //handle warm start
-   if(m_pModel->CheckWarmStart() == true)
-   {
-      WarmStart();
-   }
-   pGroup = m_pModel->GetParamGroupPtr();
-   curVal = m_pModel->Execute();
-   m_AlgCount++;
-   dObjFunc = curVal;
+    if (m_bWarmStart) {
+        std::cout << "Warm start has not been configured for the Steepest Descent Algorithm. Exiting the analysis..." << std::endl;
+        throw std::invalid_argument("Warm start has not been configured for the Steepest Descent Algorithm");
 
-   //write banner and initial result
-   WriteBanner(m_pModel, "iter  obj. function  ", "dObjFunc");
-   WriteRecord(m_pModel, 0, curVal, dObjFunc);
-   pStatus.curIter = 0;
-   pStatus.maxIter = m_MaxIter;
-   pStatus.pct = 0.00;
-   pStatus.numRuns = m_pModel->GetCounter();
-   WriteStatus(&pStatus);
+    } else {
+        // Fill the solve counter with zeros
+        for (int entryWorker = 0; entryWorker < numberOfMpiProcesses; entryWorker++) {
+            solveCounts.push_back(0);
+        }
+    }
 
-   //perform steepest descent iteration
-   for(i = 0; i < m_MaxIter; i++)
-   {
-      if(IsQuit() == true){ break;}
+    // Initialize the workers
+    ConfigureWorkers(solveCounts);
 
-      oldVal = curVal;
-      pStatus.curIter = m_CurIter = i+1;
+    // Write setup and starting metrics
+    WriteSetup2("SteepestDescent", m_ExecCmd, m_pObjFunc->GetObjFuncStr(), m_pParamGroup->GetNumParams(), m_pParamGroup->GetNumTiedParams());
+    WriteStartingMetrics();
 
-      //perform 1-D search using -gradient for search direction
-     fmin = curVal;
-     pGrad = m_pMath->CalcGradient(&fmin, pmin);
-     //found a better min during gradient calculation?
-     if(fmin < curVal)
-     {
-        for(j = 0; j < m_NumParams; j++)
-        {
-           pGroup->GetParamPtr(j)->SetEstimatedValueTransformed(pmin[j]);
-	    }
-	    curVal = fmin;
-	    m_pModel->SetObjFuncVal(fmin);
-        oldVal = curVal;
-     }
+    // Get the initial parameter values and bounds out of the parameter group
+    std::vector<double> lowerValues, upperValues;
+    std::vector<double> currentValues;
 
-      for(j = 0; j < m_NumParams; j++){ m_pSearchDir[j] = -1.00 * pGrad[j];}
+    for (int entry = 0; entry < m_pParamGroup->GetNumParams(); entry++) {
+        ParameterABC* temp = m_pParamGroup->GetParamPtr(entry);
 
-      /*------------------------------------------------------
-      normalize search direction so that largest value is 1.00
-      -------------------------------------------------------*/
-      //first find max value (in absolute terms)
-      max = 0.00;
-      for(j = 0; j < m_NumParams; j++)
-      { 
-         tmp = fabs(m_pSearchDir[j]);
-         if(tmp > max) { max = tmp;}
-      }/* end for() */
-      //now divide through by max, if max != 0
-      if(fabs(max) > NEARLY_ZERO)
-         for(j = 0; j < m_NumParams; j++) { m_pSearchDir[j] /= max; }
+        currentValues.push_back(temp->GetEstimatedValueTransformed());
+        upperValues.push_back(temp->GetUpperBoundTransformed());
+        lowerValues.push_back(temp->GetLowerBoundTransformed());
+    }
 
-      //determine optimal step size and adjust search dir
-      fmin = curVal;
-      step = m_pSearchAlg->CalcStepSize(m_pSearchDir, &fmin, pmin);
+    // Evaluate the initial (starting) point
+    std::vector<std::vector<double>> initialSample = { currentValues };
+    std::vector<double> initialObjective(1, INFINITY);
+    ManageSingleObjectiveIterations(initialSample, 0, m_pParamGroup->GetNumParams(), initialObjective);
 
-      for(j = 0; j < m_NumParams; j++){ m_pSearchDir[j] *= step;}
-      
-      //make optimal move
-      for(j = 0; j < m_NumParams; j++)
-      {
-         pParam = pGroup->GetParamPtr(j);
-         tmp = pParam->GetEstimatedValueTransformed();
-         upr = pParam->GetUpperBoundTransformed();
-         lwr = pParam->GetLowerBoundTransformed();
+    m_BestObjective = initialObjective[0];
+    m_BestAlternative = currentValues;
 
-         tst = tmp + m_pSearchDir[j];
-         if(tst > upr){ tst = (tmp + upr)/2.00; m_NumUprViols++;}
-         if(tst < lwr){ tst = (tmp + lwr)/2.00; m_NumLwrViols++;}
-         pParam->SetEstimatedValueTransformed(tst);
-      }/* end for() */
-      curVal = m_pModel->Execute();
-      m_AlgCount++;
+    // Write the starting (iteration 0) record
+    WriteRecord2(0, m_BestObjective, 0.0, m_pObsGroup, m_pObjFunc, m_pParamGroup);
 
-	  if(fmin < curVal) //found better minimum when computing step size
-      {
-         for(j = 0; j < m_NumParams; j++)
-         {
-            pGroup->GetParamPtr(j)->SetEstimatedValueTransformed(pmin[j]);
-		 }
-		 m_pModel->SetObjFuncVal(fmin);
-	     curVal = fmin;
-	  }/* end if() */
+    // Iteration bookkeeping
+    m_Iteration = 0;
+    m_dObjFuncHistory.clear();
+    bool continueIterations = true;
 
-      dObjFunc = fabs((oldVal - curVal)/(oldVal+NEARLY_ZERO));
+    while (continueIterations) {
 
-      //write iteration result
-      WriteRecord(m_pModel, (i+1), curVal, dObjFunc);
-      pStatus.pct = ((float)100.00*(float)(i+1))/(float)m_MaxIter;
-      pStatus.numRuns = m_pModel->GetCounter();
-      WriteStatus(&pStatus);
+        m_Iteration++;
+        m_CurIter = m_Iteration;
 
-      //converged?
-      if(dObjFunc < m_ConvVal)
-      {
-         pStatus.pct = 100.00;
-         break;
-      }/* end if() */     
+        // ---------------------------------------------------------------
+        // Gradient phase: estimate the gradient using a single parallel
+        // batch of finite-difference evaluations.
+        // ---------------------------------------------------------------
+        std::vector<std::vector<double>> jacobianSamples;
+        std::vector<bool> lockedParameters;
+        CalculateJacobianParameters(m_BestAlternative, lowerValues, upperValues, m_StepSize, m_StepToleranceMaximum, m_DerivativeType, jacobianSamples, lockedParameters);
 
-      //perform intermediate bookkeeping
-      m_pModel->Bookkeep(false); 
-   } /* end while() */
+        std::vector<double> jacobianObjectives(jacobianSamples.size(), INFINITY);
+        ManageSingleObjectiveIterations(jacobianSamples, 0, m_pParamGroup->GetNumParams(), jacobianObjectives);
 
-   //perform final bookkeeping
-   m_pModel->Bookkeep(true);
+        std::vector<std::vector<double>> jacobian;
+        CalculateJacobian2(m_BestAlternative, m_BestObjective, jacobianObjectives, jacobianSamples, m_DerivativeType, lockedParameters, jacobian);
 
-   //write optimal result
-   WriteOptimal(m_pModel, curVal);
-   pStatus.numRuns = m_pModel->GetCounter();
-   WriteStatus(&pStatus);
+        std::vector<double> gradient = jacobian.back();
 
-   //write algorithm metrics
-   WriteAlgMetrics(this);
+        // Determine the largest-magnitude gradient component
+        double maxAbsGrad = 0.00;
+        for (int entry = 0; entry < gradient.size(); entry++) {
+            double mag = fabs(gradient[entry]);
+            if (mag > maxAbsGrad) { maxAbsGrad = mag; }
+        }
 
-   delete [] pmin;
+        double bestLineObjective = m_BestObjective;
+        std::vector<double> bestLineAlternative = m_BestAlternative;
+
+        if (maxAbsGrad > NEARLY_ZERO) {
+            // -------------------------------------------------------------
+            // Build the normalized descent direction (negative gradient,
+            // scaled so that the largest-magnitude component is 1.00)
+            // -------------------------------------------------------------
+            std::vector<double> searchDir(gradient.size());
+            for (int entry = 0; entry < gradient.size(); entry++) {
+                searchDir[entry] = (-1.00 * gradient[entry]) / maxAbsGrad;
+            }
+
+            // Initialize the line-search step scale, if not already set
+            if (m_CurStepScale <= 0.00) {
+                double sumRange = 0.00;
+                int rangeCount = 0;
+                for (int entry = 0; entry < lockedParameters.size(); entry++) {
+                    if (!lockedParameters[entry]) {
+                        sumRange += (upperValues[entry] - lowerValues[entry]);
+                        rangeCount++;
+                    }
+                }
+                m_CurStepScale = (rangeCount > 0) ? (0.05 * (sumRange / rangeCount)) : 0.05;
+            }
+
+            // -------------------------------------------------------------
+            // Line search phase: evaluate a batch of candidate step sizes
+            // in parallel, extending the batch toward the edge that
+            // improves upon the current best, until an interior optimum is
+            // found (or no improving direction can be found).
+            // -------------------------------------------------------------
+            double bestMultiplierUsed = m_CurStepScale;
+            std::vector<double> multipliers = CreateInitialStepMultipliers();
+
+            const int maxLineSearchRounds = 8;
+            int lineSearchRound = 0;
+            bool lineSearchDone = false;
+
+            while (!lineSearchDone) {
+                std::vector<std::vector<double>> lineSamples = CreateLineSearchSamples(m_BestAlternative, searchDir, lowerValues, upperValues, multipliers);
+
+                std::vector<double> lineObjectives(lineSamples.size(), INFINITY);
+                ManageSingleObjectiveIterations(lineSamples, 0, m_pParamGroup->GetNumParams(), lineObjectives);
+
+                double roundBestObjective;
+                int roundBestIndex;
+                GetBestSingleObjective(lineObjectives, roundBestObjective, roundBestIndex);
+
+                if (roundBestObjective < bestLineObjective) {
+                    bestLineObjective = roundBestObjective;
+                    bestLineAlternative = lineSamples[roundBestIndex];
+                    bestMultiplierUsed = multipliers[roundBestIndex];
+                }
+
+                lineSearchRound++;
+
+                if (multipliers.size() > 1 && lineSearchRound < maxLineSearchRounds) {
+                    int minIdx = std::min_element(multipliers.begin(), multipliers.end()) - multipliers.begin();
+                    int maxIdx = std::max_element(multipliers.begin(), multipliers.end()) - multipliers.begin();
+
+                    if (roundBestObjective >= m_BestObjective) {
+                        // No improvement found this round.
+                        if (roundBestIndex == minIdx) {
+                            // The least-bad trial is at the smallest step tried; try smaller steps once more.
+                            multipliers = CreateAdditionalStepMultipliers(multipliers[minIdx], -1);
+                        } else {
+                            // No improving direction found at this scale; stop searching.
+                            lineSearchDone = true;
+                        }
+                    } else if (roundBestIndex == maxIdx) {
+                        // Still improving at the largest step tried; extend further.
+                        multipliers = CreateAdditionalStepMultipliers(multipliers[maxIdx], 1);
+                    } else if (roundBestIndex == minIdx) {
+                        // Improvement found only at the smallest step tried; try smaller steps.
+                        multipliers = CreateAdditionalStepMultipliers(multipliers[minIdx], -1);
+                    } else {
+                        // Improvement found at an interior point; accept.
+                        lineSearchDone = true;
+                    }
+                } else {
+                    lineSearchDone = true;
+                }
+            }
+
+            // Adapt the step scale for the next iteration's line search
+            if (bestLineObjective < m_BestObjective) {
+                m_CurStepScale = bestMultiplierUsed;
+            } else {
+                m_CurStepScale = m_CurStepScale / 4.00;
+            }
+        }/* end if(gradient is non-zero) */
+
+        // Compute the relative reduction for this iteration
+        double dObjFunc = fabs((m_BestObjective - bestLineObjective) / (m_BestObjective + NEARLY_ZERO));
+
+        // Update the best solution, if improved
+        if (bestLineObjective < m_BestObjective) {
+            m_BestObjective = bestLineObjective;
+            m_BestAlternative = bestLineAlternative;
+        }
+
+        // Set the best values into the parameter group (for reporting/output)
+        for (int entryParam = 0; entryParam < m_pParamGroup->GetNumParams(); entryParam++) {
+            ParameterABC* temp = m_pParamGroup->GetParamPtr(entryParam);
+            temp->SetEstimatedValueTransformed(m_BestAlternative[entryParam]);
+        }
+
+        // Write the iteration result to the log file
+        WriteRecord2(m_Iteration, m_BestObjective, dObjFunc, m_pObsGroup, m_pObjFunc, m_pParamGroup);
+
+        // Track relative-reduction history: convergence requires the reduction over the
+        // last three successive iterations to fall below the configured ConvergenceVal.
+        m_dObjFuncHistory.push_back(dObjFunc);
+        if (m_dObjFuncHistory.size() > 3) {
+            m_dObjFuncHistory.erase(m_dObjFuncHistory.begin());
+        }
+
+        bool converged = false;
+        if (m_dObjFuncHistory.size() == 3) {
+            double maxRecentChange = *std::max_element(m_dObjFuncHistory.begin(), m_dObjFuncHistory.end());
+            if (maxRecentChange < m_ConvVal) { converged = true; }
+        }
+
+        if (converged || (m_Iteration >= m_MaxIter) || (maxAbsGrad <= NEARLY_ZERO)) {
+            continueIterations = false;
+        }
+    }/* end while(continueIterations) */
+
+    // Terminate the secondary workers and let them clean up.
+    TerminateWorkers();
+
+    //write algorithm metrics
+    WriteEndingMetrics();
 }/* end Optimize() */
 
 /******************************************************************************
 Calibrate()
 
 Calibrate the model using the Steepest Descent algorithm.
+
+Note: post-hoc regression statistics (variance/covariance, via StatsClass)
+have not yet been ported to work with the new Algorithm base class - the same
+limitation currently applies to GeneticAlgorithm::Calibrate() and
+LevenbergAlgorithm::Calibrate() on this branch. For now, Calibrate() simply
+performs the optimization.
 ******************************************************************************/
-void SteepDescAlgorithm::Calibrate(void)
-{ 
-   FILE * pFile;
-   char fileName[DEF_STR_SZ];
-   int id;
-
-   NEW_PRINT("StatsClass", 1);
-   m_pStats = new StatsClass(m_pModel);
-   MEM_CHECK(m_pStats);
-   RegisterStatsPtr(m_pStats);
-     
-   Optimize();
-
-   MPI_Comm_rank(MPI_COMM_WORLD, &id);
-
-   if(id == 0)
-   {
-      //compute statistics (variance and covariance)   
-      m_pStats->CalcStats();
-
-      sprintf(fileName, "OstOutput%d.txt", id);
-
-      pFile = fopen(fileName, "a");   
-      m_pStats->WriteStats(pFile);
-      fclose(pFile);
-
-      m_pStats->WriteStats(stdout);
-   }
-} /* end Calibrate() */
+void SteepDescAlgorithm::Calibrate(void) {
+    Optimize();
+}/* end Calibrate() */
 
 /******************************************************************************
-WriteMetrics()
+WriteStartingMetrics()
 
-Write out algorithm metrics and setup.
+Write out algorithm setup information prior to running the analysis.
 ******************************************************************************/
-void SteepDescAlgorithm::WriteMetrics(FILE * pFile)
-{
-   fprintf(pFile, "\nAlgorithm Metrics\n");
-   fprintf(pFile, "Algorithm        : Steepest-Descent\n");
-   fprintf(pFile, "Max Iterations   : %d\n", m_MaxIter);
-   fprintf(pFile, "Convergence Val  : %lf\n", m_ConvVal);
-   fprintf(pFile, "Iterations       : %d\n", m_CurIter);
-   fprintf(pFile, "Algorithm Evals  : %d\n", m_AlgCount);
-   //fprintf(pFile, "Total Evals      : %d\n", m_pModel->GetCounter());
-   fprintf(pFile, "Upper Violations : %d\n", m_NumUprViols);
-   fprintf(pFile, "Lower Violations : %d\n", m_NumLwrViols);
+void SteepDescAlgorithm::WriteStartingMetrics(void) {
 
-   m_pModel->WriteMetrics(pFile);
-   m_pMath->WriteMetrics(pFile);
-   m_pSearchAlg->WriteMetrics(pFile);
-}/* end WriteMetrics() */
+    char fileName[DEF_STR_SZ];
+    FILE* pFile;
+    sprintf(fileName, "OstOutput%d.txt", 0);
+    pFile = fopen(fileName, "a");
+
+    fprintf(pFile, "Algorithm         : Steepest-Descent\n");
+    fprintf(pFile, "Max Iterations    : %d\n", m_MaxIter);
+    fprintf(pFile, "Convergence Val   : %E\n", m_ConvVal);
+    fprintf(pFile, "Search Points     : %s\n", (m_NumSearchPoints > 0) ? std::to_string(m_NumSearchPoints).c_str() : "auto (# of MPI workers)");
+
+    // Write the parameter banner to the file
+    fprintf(pFile, "Run   ");
+    fprintf(pFile, "%-12s  ", "Objective");
+    m_pParamGroup->Write(pFile, WRITE_BNR);
+    fprintf(pFile, "Convergence\n");
+
+    fclose(pFile);
+}/* end WriteStartingMetrics() */
+
+/******************************************************************************
+WriteEndingMetrics()
+
+Write out setup and metrics for the algorithm.
+******************************************************************************/
+void SteepDescAlgorithm::WriteEndingMetrics(void) {
+
+    char fileName[DEF_STR_SZ];
+    FILE* pFile;
+    sprintf(fileName, "OstOutput%d.txt", 0);
+    pFile = fopen(fileName, "a");
+
+    // Write the result information
+    WriteOptimalToFileWithGroup2(pFile, m_pParamGroup, m_BestObjective);
+
+    // Write the algorithm information
+    fprintf(pFile, "\nAlgorithm Metrics\n");
+    fprintf(pFile, "Algorithm        : Steepest-Descent\n");
+    fprintf(pFile, "Max Iterations   : %d\n", m_MaxIter);
+    fprintf(pFile, "Convergence Val  : %E\n", m_ConvVal);
+    fprintf(pFile, "Iterations       : %d\n", m_CurIter);
+    fprintf(pFile, "Total Evals      : %d\n", m_NumSolves);
+    fprintf(pFile, "Upper Violations : %d\n", m_NumUprViols);
+    fprintf(pFile, "Lower Violations : %d\n", m_NumLwrViols);
+
+    fclose(pFile);
+}/* end WriteEndingMetrics() */
 
 /******************************************************************************
 STPDSC_Program()
 
-Calibrate or optimize using the steepest descent algorithm.
+Create a model and solve using the steepest descent algorithm.
 ******************************************************************************/
-void STPDSC_Program(int argc, StringType argv[])
-{  
-   NEW_PRINT("Model", 1);
-   ModelABC * model = new Model;
+void STPDSC_Program(int argc, StringType argv[]) {
 
-   NEW_PRINT("SteepDescAlgorithm", 1);
-   SteepDescAlgorithm * SteepDesc = new SteepDescAlgorithm(model);
-   MEM_CHECK(SteepDesc);
+    // Get the rank of the process
+    int rank;
+    MPI_Comm_rank(MPI_COMM_WORLD, &rank);
 
-   if(model->GetObjFuncId() == OBJ_FUNC_WSSE){ SteepDesc->Calibrate(); }
-   else { SteepDesc->Optimize(); }
+    // Determine the behavior based on rank
+    if (rank == 0) {
+        // This is the primary worker. Setup the algorithm and call the processing routine.
+        SteepDescAlgorithm* SteepDesc = new SteepDescAlgorithm();
 
-   delete SteepDesc;
-   delete model;
+        // Begin the primary worker operations. This transfers information to the secondary
+        // workers and manages the solution process.
+        SteepDesc->Optimize();
+
+    } else {
+        // This is a secondary worker. Create the secondary worker and call the work routine.
+        ModelWorker worker = ModelWorker(true);
+
+        // Start the work on the processor.
+        worker.WorkMPI();
+
+        // Tear-down is triggered by the primary worker. Perform any additional cleanup actions.
+    }
+
 } /* end STPDSC_Program() */
-
-
