@@ -7,8 +7,8 @@
 //#include "APPSO.h"
 #include "SCEUA2.h"
 #include "ComboSA.h"
+#include "PowellAlgorithm2.h"
 #include "BisectionAlgorithm2.h"
-#include "PowellAlgorithm.h"
 #include "SamplingAlgorithm2.h"
 #include "SteepDescAlgorithm.h"
 #include "FletchReevesAlgorithm2.h"
@@ -129,11 +129,11 @@ int main(int argc, StringType argv[])
    //      GMLMS_Program(argc, argv);
    //      break;
    //   }/* end case(GMLMS_PROGRAM) */
-   //   case(POWL_PROGRAM) : 
-   //   {
-   //      PWL_Program(argc, argv);
-   //      break;
-   //   }/* end case(POWL_PROGRAM) */
+      case(POWL_PROGRAM) : 
+      {
+         PWL_Program(argc, argv);
+         break;
+      }/* end case(POWL_PROGRAM) */
       case(STEEP_PROGRAM) : 
       {
         STPDSC_Program(argc, argv);
