@@ -5,7 +5,7 @@
 #include "SAAlgorithm.h"
 #include "VandSA.h"
 //#include "APPSO.h"
-#include "SCEUA.h"
+#include "SCEUA2.h"
 #include "ComboSA.h"
 #include "BisectionAlgorithm2.h"
 #include "PowellAlgorithm.h"
@@ -112,11 +112,10 @@ int main(int argc, StringType argv[])
    //      APPSO_Program(argc, argv);
    //      break;
    //   }/* end case(APPSO_PROGRAM) */
-   //   case(SCEUA_PROGRAM) : 
-   //   {
-   //      SCEUA_Program(argc, argv);
-   //      break;
-   //   }/* end case(SCEUA_PROGRAM) */
+      case(SCEUA_PROGRAM) : {
+         SCEUA_Program(argc, argv);
+         break;
+      }/* end case(SCEUA_PROGRAM) */
 		case(LEV_PROGRAM) : {
          LEV_Program(argc, argv);
          break;
