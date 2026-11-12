@@ -179,6 +179,11 @@ void CalculateJacobian2(std::vector<double> currentValues, double currentObjecti
         std::vector<double> functionDerivatives;
 
         for (int entryParameter = 0; entryParameter < lockedParameter.size(); entryParameter++) {
+            // If the perturbation step is zero (e.g. parameter at its lower bound), lock the parameter to prevent division by zero
+            if (!lockedParameter[entryParameter] && (currentValues[entryParameter] - jacobianLocations[indexPosition][entryParameter]) == 0) {
+                lockedParameter[entryParameter] = true;
+            }
+
             if (!lockedParameter[entryParameter]) {
                 // Get the partial derivative of the parameter. Order is swapped to implicitly introduce the negative direction.
                 double partialDerivatives = (objectives[indexPosition] - currentObjective) / (currentValues[entryParameter] - jacobianLocations[indexPosition][entryParameter]);
@@ -208,6 +213,11 @@ void CalculateJacobian2(std::vector<double> currentValues, double currentObjecti
         std::vector<double> functionDerivatives;
 
         for (int entryParameter = 0; entryParameter < lockedParameter.size(); entryParameter++) {
+            // If the perturbation step is zero (e.g. lower and upper bounds are equal), lock the parameter to prevent division by zero
+            if (!lockedParameter[entryParameter] && (jacobianLocations[indexPosition * 2 + 1][entryParameter] - jacobianLocations[indexPosition * 2][entryParameter]) == 0) {
+                lockedParameter[entryParameter] = true;
+            }
+
             if (!lockedParameter[entryParameter]) {
                 // Get the partial derivative of the parameter
                 double partialDerivatives = (objectives[indexPosition * 2 + 1] - objectives[indexPosition * 2] ) / 
@@ -238,6 +248,11 @@ void CalculateJacobian2(std::vector<double> currentValues, double currentObjecti
         std::vector<double> functionDerivatives;
 
         for (int entryParameter = 0; entryParameter < lockedParameter.size(); entryParameter++) {
+            // If the perturbation step is zero (e.g. parameter at its upper bound), lock the parameter to prevent division by zero
+            if (!lockedParameter[entryParameter] && (jacobianLocations[indexPosition][entryParameter] - currentValues[entryParameter]) == 0) {
+                lockedParameter[entryParameter] = true;
+            }
+
             if (!lockedParameter[entryParameter]) {
                 // Get the partial derivative of the parameter
                 double partialDerivatives = (objectives[indexPosition] - currentObjective) / (jacobianLocations[indexPosition][entryParameter] - currentValues[entryParameter]);

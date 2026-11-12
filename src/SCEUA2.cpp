@@ -1,5 +1,5 @@
 /******************************************************************************
-File      : SCEUA.cpp
+File      : SCEUA2.cpp
 Author    : L. Shawn Matott - Converted from Origincal SCEUA Fortran code
 Copyright : 2009, L. Shawn Matott
 
@@ -123,68 +123,52 @@ UPPER      double * Upper bounds of the parameters to be optimized.
 Version History
 10-31-09    lsm   Created
 ******************************************************************************/
-#include <math.h>
-#include <string.h>
 
-#include "SCEUA.h"
-#include "Model.h"
-#include "ParameterGroup.h"
-#include "ParameterABC.h"
-#include "StatsClass.h"
+// Include the class header
+#include "SCEUA2.h"
 
-#include "Utility.h"
-#include "WriteUtility.h"
-#include "Exception.h"
-
-/******************************************************************************
-WarmStart()
-
-Read the best solution from a previous run.
-******************************************************************************/
-void SCEUA::WarmStart(void)
-{
-   int np = m_pModel->GetParamGroupPtr()->GetNumParams();
-   double * pbest = new double[np+1];
-   int newcount = SimpleWarmStart(np, pbest);
-   m_pModel->GetParamGroupPtr()->WriteParams(pbest);
-   ((Model *)m_pModel)->SetCounter(newcount);
-   delete [] pbest;
-}/* end WarmStart() */
-
-/******************************************************************************
+/**************************************************************************************************************************************************************
 CTOR
 
-Registers the algorithm pointer and creates instances of member variables.
-******************************************************************************/
-SCEUA::SCEUA(ModelABC * pModel)
-{
-   RegisterAlgPtr(this);
-   m_pModel = pModel;
-   m_pParams = NULL;
-   m_pUpper = NULL;
-   m_pLower = NULL;
-   m_bUseInitPt = false;
-   m_fSaved = NEARLY_HUGE;
+Initializes the algorithm. Default values are assigned to the SCEUA control variables and the user input file is checked for overriding values.
+**************************************************************************************************************************************************************/
+SCEUA::SCEUA() {
 
-   IncCtorCount();
-}/* end CTOR() */
+    InitFromFile(GetInFileName());
 
-/******************************************************************************
+    IncCtorCount();
+}
+
+/**************************************************************************************************************************************************************
 Destroy()
-******************************************************************************/
-void SCEUA::Destroy(void)
-{ 
-   delete [] m_pParams;
-   delete [] m_pLower;
-   delete [] m_pUpper;
-}/* end Destroy() */
 
-/******************************************************************************
+Free up memory used by the SCEUA algorithm and it's member variables
+**************************************************************************************************************************************************************/
+void SCEUA::Destroy(void) {
+
+    delete [] m_pParams;
+    delete [] m_pLower;
+    delete [] m_pUpper;
+
+    IncDtorCount();
+}
+
+/**************************************************************************************************************************************************************
+WarmStart()
+
+Read the best solution from a previous run. Not yet supported for the SCEUA algorithm.
+**************************************************************************************************************************************************************/
+void SCEUA::WarmStart(void) {
+    std::cout << "Warm start has not been configured for the SCEUA algorithm. Exiting the analysis..." << std::endl;
+    throw std::invalid_argument("Warm start has not been configured for the SCEUA algorithm");
+}
+
+/**************************************************************************************************************************************************************
 Calibrate()
 
 Solve the Least-Squares minimization problem using SCEUA.
-******************************************************************************/
-void SCEUA::Calibrate(void)
+**************************************************************************************************************************************************************/
+/*void SCEUA::Calibrate(void)
 { 
    int id;
    char fileName[DEF_STR_SZ];
@@ -210,37 +194,104 @@ void SCEUA::Calibrate(void)
 
    //write statistics of best parameter set to output file
    m_pStats->WriteStats(stdout);
-} /* end Calibrate() */
+}*/
 
-/******************************************************************************
+/**************************************************************************************************************************************************************
 Optimize()
 
 Minimize the objective function using SCEUA.
-******************************************************************************/
-void SCEUA::Optimize(void)
-{
-   ParameterGroup * pGroup = m_pModel->GetParamGroupPtr();
+**************************************************************************************************************************************************************/
+void SCEUA::Optimize(void) {
 
-   InitFromFile(GetInFileName());
+    // Get MPI information
+    int numberOfMpiProcesses;
+    MPI_Comm_size(MPI_COMM_WORLD, &numberOfMpiProcesses);
 
-   WriteSetup(m_pModel, "Shuffled Complex Evolution - University of Arizona");
-   m_CurIter = 0;
-   //write banner
-   WriteBanner(m_pModel, "gen   best value     ", "Pct. Complete");
-  
-   scemain(); //main SCE implemenation, converted from FORTRAN
+    // Warm start is not yet supported for the SCEUA algorithm
+    if (m_bWarmStart) {
+        WarmStart();
+    }
 
-   //place model at optimal prameter set
-   pGroup->WriteParams(m_pParams);
-   m_pModel->Execute();
+    // Fill the solve counter with zeros (no warm start support, yet)
+    std::vector<int> solveCounts = std::vector<int>(numberOfMpiProcesses, 0);
 
-   WriteOptimal(m_pModel, m_Best);
-   m_pStatus.pct = 100.00;
-   m_pStatus.numRuns = m_pModel->GetCounter();
-   WriteStatus(&m_pStatus);
-   //write algorithm metrics
-   WriteAlgMetrics(this);
+    // Initialize the workers
+    ConfigureWorkers(solveCounts);
+
+    // Write the information to the primary log file
+    WriteSetup2("SCEUA", m_ExecCmd, m_pObjFunc->GetObjFuncStr(), m_pParamGroup->GetNumParams(), m_pParamGroup->GetNumTiedParams());
+    WriteStartingMetrics();
+
+    m_CurIter = 0;
+
+    // Main SCE implemenation, converted from FORTRAN
+    scemain();
+
+    // Set the best values into the parameter group so they are reflected in the log/model state
+    for (int entryParameter = 0; entryParameter < (int)m_BestAlternative.size(); entryParameter++) {
+        ParameterABC* temp = m_pParamGroup->GetParamPtr(entryParameter);
+        temp->SetEstimatedValueTransformed(m_BestAlternative[entryParameter]);
+    }
+
+    // Terminate the secondary workers and let them clean up
+    TerminateWorkers();
+
+    // Write algorithm metrics
+    m_PctComplete = 100.00;
+    WriteEndingMetrics();
+
 } /* end Optimize() */
+
+/**************************************************************************************************************************************************************
+ApplyParameterCorrections()
+
+Writes a point into the parameter group, applies any parameter corrections, and stores the corrected values back into the point.
+**************************************************************************************************************************************************************/
+void SCEUA::ApplyParameterCorrections(double * x) {
+
+    m_pParamGroup->WriteParams(x);
+    PerformParameterCorrections();
+    for (int entryParameter = 0; entryParameter < m_pParamGroup->GetNumParams(); entryParameter++) {
+        x[entryParameter] = m_pParamGroup->GetParamPtr(entryParameter)->GetEstimatedValueTransformed();
+    }
+}
+
+/**************************************************************************************************************************************************************
+EvaluateAlternatives()
+
+Solves a set of points using the shared work-farming functionality provided by the Algorithm base class, and updates the running best solution.
+**************************************************************************************************************************************************************/
+void SCEUA::EvaluateAlternatives(std::vector<std::vector<double>> alternatives, std::vector<double>& objectives) {
+
+    int numberOfParameters = m_pParamGroup->GetNumParams();
+
+    objectives = std::vector<double>(alternatives.size(), INFINITY);
+    ManageSingleObjectiveIterations(alternatives, 0, numberOfParameters, objectives);
+
+    // Update the running best, if improved
+    double bestObjective;
+    int bestIndex;
+    GetBestSingleObjective(objectives, bestObjective, bestIndex);
+    if (bestObjective < m_BestObjective) {
+        m_BestObjective = bestObjective;
+        m_BestAlternative = alternatives[bestIndex];
+    }
+}
+
+/**************************************************************************************************************************************************************
+EvaluateAlternative()
+
+Solves a single point and updates the running best solution.
+**************************************************************************************************************************************************************/
+double SCEUA::EvaluateAlternative(double * x, int nopt) {
+
+    std::vector<std::vector<double>> alternatives(1, std::vector<double>(x, x + nopt));
+    std::vector<double> objectives;
+
+    EvaluateAlternatives(alternatives, objectives);
+
+    return objectives[0];
+}
 
 /******************************************************************************
 scemain()
@@ -262,7 +313,7 @@ void SCEUA::scemain(void)
    int nopt, kstop, iseed, ngs, npg, nps, nspl, mings, iprint, maxn;
    int iniflg;
    double pcento;
-   nopt = m_np = m_pModel->GetParamGroupPtr()->GetNumParams();
+   nopt = m_np = m_pParamGroup->GetNumParams();
    scein(a,bl,bu,nopt,&maxn,&kstop,&pcento,&iseed,
          &ngs,&npg,&nps,&nspl,&mings,&iniflg,&iprint);
 
@@ -319,7 +370,7 @@ void SCEUA::scein
    for(int i = 0; i < nopt; i++)
    {
      xname[i] = new char[50];   
-     strncpy(xname[i], m_pModel->GetParamGroupPtr()->GetParamPtr(i)->GetName(), 9);
+     strncpy(xname[i], m_pParamGroup->GetParamPtr(i)->GetName(), 9);
    }
 
    if(m_OutputMode != 2) printf("ENTER THE SCEIN SUBROUTINE --- \n");
@@ -639,7 +690,13 @@ void SCEUA::sceua
    double ** x, * xx, * bestx, * worstx, * xf;
    double ** s, * sf, ** cx, * cf;
    double * xnstd, * bound, criter[20], * unit;
-   int * lcs;   
+   int * lcs;
+
+   //POINTS SENT TO THE WORKERS TOGETHER, AND THEIR FUNCTION VALUES
+   std::vector<std::vector<double>> batch;
+   std::vector<double> batchObjectives;
+   bool bEvalFirst;
+   int ifirst;
 
    //allocate memory
    lcs = new int[nps];
@@ -651,7 +708,9 @@ void SCEUA::sceua
    int i;
    for(i = 0; i < ngs*npg; i++)
    {
-      x[i] = new double[nopt];
+      //points that are never solved (budget exhausted) keep an infinite function value
+      x[i] = new double[nopt]();
+      xf[i] = INFINITY;
    }
    for(i = 0; i < npg; i++)
    {
@@ -675,7 +734,7 @@ void SCEUA::sceua
    for(i = 0; i < nopt; i++)
    {
      xname[i] = new char[50];   
-     strncpy(xname[i], m_pModel->GetParamGroupPtr()->GetParamPtr(i)->GetName(), 9);
+     strncpy(xname[i], m_pParamGroup->GetParamPtr(i)->GetName(), 9);
    }
 
    if(m_OutputMode != 2) printf("ENTER THE SCEUA SUBROUTINE --- \n");
@@ -717,38 +776,20 @@ void SCEUA::sceua
 
    //COMPUTE THE FUNCTION VALUE OF THE INITIAL POINT   
    double fa;
-   //handle warm start
-   if(m_pModel->CheckWarmStart() == true)
-   {
-      WarmStart();
-      m_pModel->GetParamGroupPtr()->ReadParams(a);
-   }
    // handle parameter extraction
-   if(m_pModel->GetParamGroupPtr()->CheckExtraction() == true)
+   if(m_pParamGroup->CheckExtraction() == true)
    {
-      m_pModel->GetParamGroupPtr()->ReadParams(a);
+      m_pParamGroup->ReadParams(a);
    }
-   m_pModel->GetParamGroupPtr()->WriteParams(a);
-   fa = m_pModel->Execute();
-   if (fa < m_fSaved)
-   {
-      m_fSaved = fa;
-      m_pModel->SaveBest(0);
-   }
+   m_pParamGroup->WriteParams(a);
+   fa = EvaluateAlternative(a, nopt);
 
    //write initial config.
-   int nleft = m_Budget - m_pModel->GetCounter();
-
-   double eb = (double)(m_pModel->GetCounter())/(double)m_Budget; //elapsed budget
-   
-   m_pStatus.curIter = 0;
-   m_pStatus.maxIter = m_Budget;
-   m_pStatus.pct = (float)100.00*((float)1.00-(float)nleft/(float)m_Budget);
-   m_pStatus.numRuns = m_pModel->GetCounter();
-   m_pModel->GetParamGroupPtr()->WriteParams(m_pParams);
-   WriteRecord(m_pModel, 0, fa, m_pStatus.pct);
+   int nleft;
+   m_PctComplete = 100.00*(double)m_NumSolves/(double)m_Budget;
+   m_pParamGroup->WriteParams(m_pParams);
+   WriteRecord2(0, fa, m_PctComplete, m_pObsGroup, m_pObjFunc, m_pParamGroup);
    m_CurIter++;
-   WriteStatus(&m_pStatus);
 
    //PRINT THE INITIAL POINT AND ITS CRITERION VALUE
    fprintf(pOut, "\
@@ -766,49 +807,26 @@ void SCEUA::sceua
    fprintf(pOut, "\n\n\n");
    
    // GENERATE AN INITIAL SET OF npt1 POINTS IN THE PARAMETER SPACE
+   WriteInnerEval2(WRITE_SCE, npt, '.');
+   WriteInnerEval2(1, npt, '.');
    if (iniflg == 1)
    {
       for(j = 0; j < nopt; j++)
          x[0][j] = a[j];
       xf[0] = fa;
-      WriteInnerEval(WRITE_SCE, npt, '.');
-      WriteInnerEval(1, npt, '.');
+      bEvalFirst = false;
    }/* end if() */
    // ELSE, GENERATE A POINT RANDOMLY AND SET IT EQUAL TO x(1,.)
+   // THE POINT IS SOLVED TOGETHER WITH THE REST OF THE INITIAL POPULATION
    else
    {
       getpnt(nopt,1,&iseed1,xx,bl,bu,unit,bl);
-      eb = (double)(m_pModel->GetCounter())/(double)m_Budget;
+      ApplyParameterCorrections(xx);
       for(j = 0; j < nopt; j++)
       {
-         xx[j] = TelescopicCorrection(bl[j], bu[j], bestx[j], eb, xx[j]);
          x[0][j] = xx[j];
       }
-      WriteInnerEval(WRITE_SCE, npt, '.');
-      WriteInnerEval(1, npt, '.');
-      m_pModel->GetParamGroupPtr()->WriteParams(xx);
-      m_pModel->PerformParameterCorrections();
-      for(j = 0; j < nopt; j++)
-      {
-         xx[j] = m_pModel->GetParamGroupPtr()->GetParamPtr(j)->GetEstimatedValueTransformed();
-         x[0][j] = xx[j];
-      }
-      xf[0] = m_pModel->Execute();
-      if (xf[0] < m_fSaved)
-      {
-         m_fSaved = xf[0];
-         m_pModel->SaveBest(0);
-      }
-   }
-
-   //use initial point if it's better than the randomly generated one
-   if(fa < xf[0])
-   {
-      fprintf(pOut, "THE INITIAL POINT IS BETTER THAN THE RANDOM STARTING POINT. USING IT INSTEAD.");
-
-      for(j = 0; j < nopt; j++)
-         x[0][j] = a[j];
-      xf[0] = fa;
+      bEvalFirst = true;
    }
 
    int icall;
@@ -816,31 +834,26 @@ void SCEUA::sceua
    if (icall >= maxn) goto label_9000;
 
    //GENERATE npt1-1 RANDOM POINTS DISTRIBUTED UNIFORMLY IN THE PARAMETER
-   //SPACE, AND COMPUTE THE CORRESPONDING FUNCTION VALUES
+   //SPACE, AND COMPUTE THE CORRESPONDING FUNCTION VALUES. THE POINTS ARE
+   //INDEPENDENT, SO THEY ARE SOLVED TOGETHER ACROSS THE WORKERS
 label_restart:
+   batch.clear();
+   ifirst = 1;
+   if (bEvalFirst)
+   {
+      batch.push_back(std::vector<double>(x[0], x[0] + nopt));
+      ifirst = 0;
+   }
    for(i = 1; i < npt1; i++)
    {
       getpnt(nopt,1,&iseed1,xx,bl,bu,unit,bl);
-      eb = (double)(m_pModel->GetCounter())/(double)m_Budget;
+      ApplyParameterCorrections(xx);
       for(j = 0; j < nopt; j++)
       {
-         xx[j] = TelescopicCorrection(bl[j], bu[j], bestx[j], eb, xx[j]);
          x[i][j] = xx[j];
       }
-      WriteInnerEval(i+1, npt, '.');
-      m_pModel->GetParamGroupPtr()->WriteParams(xx);
-      m_pModel->PerformParameterCorrections();
-      for(j = 0; j < nopt; j++)
-      {
-         xx[j] = m_pModel->GetParamGroupPtr()->GetParamPtr(j)->GetEstimatedValueTransformed();
-         x[i][j] = xx[j];
-      }
-      xf[i] = m_pModel->Execute();
-      if (xf[i] < m_fSaved)
-      {
-         m_fSaved = xf[i];
-         m_pModel->SaveBest(0); 
-      }
+      WriteInnerEval2(i+1, npt, '.');
+      batch.push_back(std::vector<double>(xx, xx + nopt));
 
       icall = icall + 1;
       if (icall >= maxn)
@@ -848,7 +861,28 @@ label_restart:
          break;
       }
    }/* end for() */
-   WriteInnerEval(WRITE_ENDED, npt, '.');
+
+   EvaluateAlternatives(batch, batchObjectives);
+   for(i = 0; i < (int)batch.size(); i++)
+   {
+      xf[ifirst + i] = batchObjectives[i];
+   }
+
+   if (bEvalFirst)
+   {
+      bEvalFirst = false;
+
+      //use initial point if it's better than the randomly generated one
+      if(fa < xf[0])
+      {
+         fprintf(pOut, "THE INITIAL POINT IS BETTER THAN THE RANDOM STARTING POINT. USING IT INSTEAD.");
+
+         for(j = 0; j < nopt; j++)
+            x[0][j] = a[j];
+         xf[0] = fa;
+      }
+   }
+   WriteInnerEval2(WRITE_ENDED, npt, '.');
 
    // ARRANGE THE POINTS IN ORDER OF INCREASING FUNCTION VALUE
    sort(npt1,nopt,x,xf);
@@ -904,10 +938,9 @@ label_restart:
    // BEGIN THE MAIN LOOP ----------------
  label_1000:
 
-   nleft = m_Budget - m_pModel->GetCounter();
-   m_pStatus.curIter = nloop+1;
+   nleft = m_Budget - m_NumSolves;
    if(IsQuit() == true){ goto label_9999;}
-   if(nleft <= 0){ m_pStatus.pct = 100.00;  goto label_9000;}
+   if(nleft <= 0){ m_PctComplete = 100.00;  goto label_9000;}
 
    nloop = nloop + 1;
 
@@ -929,7 +962,7 @@ label_restart:
       } //end for()
       // BEGIN INNER LOOP - RANDOM SELECTION OF SUB-COMPLEXES ---------------
       int tmp = 0;
-      WriteInnerEval(WRITE_SCE, m_NumEvoSteps, '.');
+      WriteInnerEval2(WRITE_SCE, m_NumEvoSteps, '.');
 
       for(loop = 0; loop < nspl; loop++) 
       {
@@ -1002,7 +1035,7 @@ label_85:
          // END OF INNER LOOP ------------
       } /* end for() */
 
-      WriteInnerEval(WRITE_ENDED, m_NumEvoSteps, '.');
+      WriteInnerEval2(WRITE_ENDED, m_NumEvoSteps, '.');
       icall += tmp;
 
       // REPLACE THE NEW COMPLEX INTO ORIGINAL ARRAY x(.,.)
@@ -1035,12 +1068,10 @@ label_85:
    parstt(npt1,nopt,x,xnstd,bound,&gnrng,&ipcnvg);
 
    // PRINT THE RESULTS FOR CURRENT POPULATION
-   m_pModel->GetParamGroupPtr()->WriteParams(m_pParams);
-   nleft = m_Budget - m_pModel->GetCounter();
-   m_pStatus.pct = (float)100.00*((float)1.00-(float)nleft/(float)m_Budget);
-   m_pStatus.numRuns = m_pModel->GetCounter();
-   WriteStatus(&m_pStatus);
-   WriteRecord(m_pModel, nloop, m_Best, m_pStatus.pct);
+   m_pParamGroup->WriteParams(m_pParams);
+   nleft = m_Budget - m_NumSolves;
+   m_PctComplete = 100.00*(1.00-(double)nleft/(double)m_Budget);
+   WriteRecord2(nloop, m_Best, m_PctComplete, m_pObsGroup, m_pObjFunc, m_pParamGroup);
    m_CurIter++;
 
    if((nloop%5) == 0)
@@ -1279,18 +1310,9 @@ void SCEUA::cce
 
    //COMPUTE THE FUNCTION VALUE AT snew
    double fnew;
-   WriteInnerEval(*icall+1, m_NumEvoSteps, '.');
-   double eb = (double)(m_pModel->GetCounter())/(double)m_Budget;
-   for(j = 0; j < m; j++) snew[j] = TelescopicCorrection(bl[j], bu[j], sb[j], eb, snew[j]);
-   m_pModel->GetParamGroupPtr()->WriteParams(snew);
-   m_pModel->PerformParameterCorrections();
-   for(j = 0; j < m; j++) snew[j] = m_pModel->GetParamGroupPtr()->GetParamPtr(j)->GetEstimatedValueTransformed();
-   fnew = m_pModel->Execute(); 
-   if (fnew < m_fSaved)
-   {
-      m_fSaved = fnew;
-      m_pModel->SaveBest(0);
-   }
+   WriteInnerEval2(*icall+1, m_NumEvoSteps, '.');
+   ApplyParameterCorrections(snew);
+   fnew = EvaluateAlternative(snew, m);
 
    *icall = *icall + 1;
 
@@ -1306,18 +1328,9 @@ void SCEUA::cce
    } //end do
 
    //COMPUTE THE FUNCTION VALUE OF THE CONTRACTED POINT
-   eb = (double)(m_pModel->GetCounter())/(double)m_Budget;
-   for(j = 0; j < m; j++) snew[j] = TelescopicCorrection(bl[j], bu[j], sb[j], eb, snew[j]);
-   WriteInnerEval(*icall+1, m_NumEvoSteps, '.');
-   m_pModel->GetParamGroupPtr()->WriteParams(snew);
-   m_pModel->PerformParameterCorrections();
-   for(j = 0; j < m; j++) snew[j] = m_pModel->GetParamGroupPtr()->GetParamPtr(j)->GetEstimatedValueTransformed();
-   fnew = m_pModel->Execute();
-   if (fnew < m_fSaved)
-   {
-      m_fSaved = fnew;
-      m_pModel->SaveBest(0);
-   }
+   WriteInnerEval2(*icall+1, m_NumEvoSteps, '.');
+   ApplyParameterCorrections(snew);
+   fnew = EvaluateAlternative(snew, m);
 
    *icall = *icall + 1;
 
@@ -1334,18 +1347,9 @@ void SCEUA::cce
    getpnt(nopt,2,iseed,snew,bl,bu,xnstd,sb);
 
    //COMPUTE THE FUNCTION VALUE AT THE RANDOM POINT
-   eb = (double)(m_pModel->GetCounter())/(double)m_Budget;
-   for(j = 0; j < m; j++) snew[j] = TelescopicCorrection(bl[j], bu[j], sb[j], eb, snew[j]);
-   WriteInnerEval(*icall+1, m_NumEvoSteps, '.');
-   m_pModel->GetParamGroupPtr()->WriteParams(snew);
-   m_pModel->PerformParameterCorrections();
-   for(j = 0; j < m; j++) snew[j] = m_pModel->GetParamGroupPtr()->GetParamPtr(j)->GetEstimatedValueTransformed();
-   fnew = m_pModel->Execute();
-   if (fnew < m_fSaved)
-   {
-      m_fSaved = fnew;
-      m_pModel->SaveBest(0);
-   }
+   WriteInnerEval2(*icall+1, m_NumEvoSteps, '.');
+   ApplyParameterCorrections(snew);
+   fnew = EvaluateAlternative(snew, m);
 
    *icall = *icall + 1;
 
@@ -1395,7 +1399,7 @@ void SCEUA::getpnt
    int j;
    double myrand;
 
-   int icount = m_pModel->GetCounter();
+   int icount = m_NumSolves;
 label_1:
    for(j = 0; j < nopt; j++) //1   do j=1, nopt
    {
@@ -1678,7 +1682,7 @@ void SCEUA::InitFromFile(IroncladString pFileName)
    char tmp[DEF_STR_SZ], tmp2[DEF_STR_SZ];
 
    //assign defaults
-   m_np = m_pModel->GetParamGroupPtr()->GetNumParams();
+   m_np = m_pParamGroup->GetNumParams();
    m_Budget = 10000; //MAXN
    m_Kstop = 5; //KSTOP
    m_Pcento = 0.01; //PCENTO
@@ -1695,7 +1699,7 @@ void SCEUA::InitFromFile(IroncladString pFileName)
    m_bUseInitPt = false; //INIFLG
 
    //allocate initial parameter configuration
-   ParameterGroup * pGroup = m_pModel->GetParamGroupPtr();
+   ParameterGroup * pGroup = m_pParamGroup;
    m_np = pGroup->GetNumParams();
    NEW_PRINT("double", m_np);
    m_pParams = new double[m_np];
@@ -1816,44 +1820,101 @@ void SCEUA::InitFromFile(IroncladString pFileName)
    fclose(pOut);
 } /* end InitFromFile() */
 
-/******************************************************************************
-WriteMetrics()
+/**************************************************************************************************************************************************************
+WriteStartingMetrics()
 
-Write out algorithm metrics and setup.
-******************************************************************************/
-void SCEUA::WriteMetrics(FILE * pFile) 
-{
-   fprintf(pFile, "\nAlgorithm Metrics\n");
-   fprintf(pFile, "Algorithm                : Shuffled Complex Evolution (SCE)\n");
-   fprintf(pFile, "Budget                   : %d\n", m_Budget);
-   fprintf(pFile, "Loop Stagnation Criteria : %d\n", m_Kstop); 
-   fprintf(pFile, "Pct Change Criteria      : %lf\n", m_Pcento); 
-   fprintf(pFile, "Number of Complexes      : %d\n", m_NumComplexes); 
-   fprintf(pFile, "Points Per Complex       : %d\n", m_PtsPerComplex); 
-   fprintf(pFile, "Points Per Sub-Complex   : %d\n", m_PtsPerSubComplex); 
-   fprintf(pFile, "Num. of Evolution Steps  : %d\n", m_NumEvoSteps); 
-   fprintf(pFile, "Min. Num. of Complexes   : %d\n", m_MinComplexes); 
-  
-   m_pModel->WriteMetrics(pFile);
-}/* end WriteMetrics() */
+Write out setup and metrics for the algorithm.
+**************************************************************************************************************************************************************/
+void SCEUA::WriteStartingMetrics(void) {
 
-/******************************************************************************
+    // Open the log file
+    char fileName[DEF_STR_SZ];
+    FILE* pFile;
+    sprintf(fileName, "OstOutput%d.txt", 0);
+    pFile = fopen(fileName, "a");
+
+    // Log the algorithm setup information
+    fprintf(pFile, "Budget                   : %d\n", m_Budget);
+    fprintf(pFile, "Loop Stagnation Criteria : %d\n", m_Kstop);
+    fprintf(pFile, "Pct Change Criteria      : %lf\n", m_Pcento);
+    fprintf(pFile, "Number of Complexes      : %d\n", m_NumComplexes);
+    fprintf(pFile, "Points Per Complex       : %d\n", m_PtsPerComplex);
+    fprintf(pFile, "Points Per Sub-Complex   : %d\n", m_PtsPerSubComplex);
+    fprintf(pFile, "Num. of Evolution Steps  : %d\n", m_NumEvoSteps);
+    fprintf(pFile, "Min. Num. of Complexes   : %d\n", m_MinComplexes);
+
+    // Write the parameter header to the file
+    fprintf(pFile, "Run   ");
+    fprintf(pFile, "%-12s  ", "Objective");
+    m_pParamGroup->Write(pFile, WRITE_BNR);
+    fprintf(pFile, "Pct. Complete\n");
+
+    // Close the log file
+    fclose(pFile);
+}
+
+/**************************************************************************************************************************************************************
+WriteEndingMetrics()
+
+Write out setup and metrics for the algorithm.
+**************************************************************************************************************************************************************/
+void SCEUA::WriteEndingMetrics(void) {
+
+    // Open the log file
+    char fileName[DEF_STR_SZ];
+    FILE* pFile;
+    sprintf(fileName, "OstOutput%d.txt", 0);
+    pFile = fopen(fileName, "a");
+
+    // Write the result information
+    WriteOptimalToFileWithGroup2(pFile, m_pParamGroup, m_BestObjective);
+
+    // Write the algorithm information
+    fprintf(pFile, "\nAlgorithm Metrics\n");
+    fprintf(pFile, "Algorithm                : Shuffled Complex Evolution (SCE)\n");
+    fprintf(pFile, "Budget                   : %d\n", m_Budget);
+    fprintf(pFile, "Loop Stagnation Criteria : %d\n", m_Kstop);
+    fprintf(pFile, "Pct Change Criteria      : %lf\n", m_Pcento);
+    fprintf(pFile, "Number of Complexes      : %d\n", m_NumComplexes);
+    fprintf(pFile, "Points Per Complex       : %d\n", m_PtsPerComplex);
+    fprintf(pFile, "Points Per Sub-Complex   : %d\n", m_PtsPerSubComplex);
+    fprintf(pFile, "Num. of Evolution Steps  : %d\n", m_NumEvoSteps);
+    fprintf(pFile, "Min. Num. of Complexes   : %d\n", m_MinComplexes);
+    fprintf(pFile, "Total Evals              : %d\n", m_NumSolves);
+
+    // Close the log file
+    fclose(pFile);
+}
+
+/**************************************************************************************************************************************************************
 SCEUA_Program()
 
-Calibrate or optimize the model using SCE.
-******************************************************************************/
-void SCEUA_Program(int argC, StringType argV[])
-{
-   NEW_PRINT("Model", 1);
-   ModelABC * model = new Model();
+Optimize the model using SCE.
+**************************************************************************************************************************************************************/
+void SCEUA_Program(int argC, StringType argV[]) {
 
-   NEW_PRINT("SCEUA", 1);
-   SCEUA * SCE = new SCEUA(model);
-   MEM_CHECK(SCE);
+   // Get the rank of the process
+   int rank;
+   MPI_Comm_rank(MPI_COMM_WORLD, &rank);
 
-   if(model->GetObjFuncId() == OBJ_FUNC_WSSE) { SCE->Calibrate(); }
-   else { SCE->Optimize(); }
+   // Determine behavior based on the rank
+   if (rank == 0) {
+       // This is the primary worker. Setup the algorithm and call the processing routine
+       // Create the SCEUA algorithm
+       SCEUA *SCE = new SCEUA();
 
-   delete SCE;
-   delete model;
+       // Begin the primary worker operations. This transfers information to the secondary workers
+       // and manages the solution process
+       SCE->Optimize();
+
+   } else {
+       // This is a secondary worker. Create the secondary worker and call the work routine
+       // Create and setup the secondary worker, telling it to configure from MPI
+       ModelWorker worker = ModelWorker(true);
+
+       // Start the work in the processor
+       worker.WorkMPI();
+
+       // Tear-down is triggered by the primary worker. Perform any additional cleanup actions
+   }
 } /* end SCEUA_Program() */
