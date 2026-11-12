@@ -9,7 +9,7 @@
 #include "ComboSA.h"
 #include "BisectionAlgorithm2.h"
 #include "PowellAlgorithm.h"
-#include "SamplingAlgorithm.h"
+#include "SamplingAlgorithm2.h"
 #include "SteepDescAlgorithm.h"
 #include "FletchReevesAlgorithm.h"
 #include "LevenbergAlgorithm2.h"
@@ -144,16 +144,15 @@ int main(int argc, StringType argv[])
    //      FLRV_Program(argc, argv);
    //      break;
    //   }/* end case(FLRV_PROGRAM) */
+      case(SMP_PROGRAM) : {
+         SMP_Program(argc, argv);
+         break;
+      }/* end case(SMP_PROGRAM) */
       case(BIS_PROGRAM) : 
       {
          BIS_Program(argc, argv);
          break;
       }/* end case(BIS_PROGRAM) */
-   //   case(SMP_PROGRAM) : 
-   //   {
-   //      SMP_Program(argc, argv);
-   //      break;
-   //   }/* end case(SMP_PROGRAM) */
    //   case(STATS_PROGRAM) : 
    //   {
    //      STATS_Program(argc, argv);
