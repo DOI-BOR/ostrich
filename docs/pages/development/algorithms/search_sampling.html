@@ -117,7 +117,7 @@
 									<p align="left">Initial Publication:</p>
 									<time class="time" datetime="2015-11-01">April 11, 2021</time>
 									<p align="left">Modified:</p>
-									<time class="time" datetime="2015-11-01">April 11, 2021</time>
+									<time class="time" datetime="2026-11-02">November 2, 2026</time>
 								</div>
 							</header>
 							<p align="justify">
@@ -146,7 +146,26 @@ EndSamplingAlg
 							Where BeginSamplingAlg and EndSamplingAlg are parsing tags that wrap the following set of algorithm configuration variables:
 						</p>
 						<ul align="justify">
-							<li><b>MaxEvaluations:</b> The computational budget. The default value is 100.</li>
+							<li><b>MaxEvaluations:</b> The computational budget. The default value is 100, and values less than 1 are reset to 1. The budget is divided into
+							sqrt(MaxEvaluations) iterations (rounded down) with MaxEvaluations / iterations samples per iteration (rounded down). Any remaining evaluations are added to
+							the initial Latin Hypercube sample. For example, a budget of 50 evaluations results in 7 iterations of 7 samples, with 1 extra initial sample.</li>
+						</ul>
+
+						<p align="justify">
+							The following behaviors apply to the sampling algorithm in the development version of OSTRICH:
+						</p>
+						<ul align="justify">
+							<li><b>Parallel evaluation:</b> The algorithm runs in parallel. The initial Latin Hypercube sample and the samples of each subsequent iteration are created
+							together and distributed across the available workers. Once an iteration has been evaluated, its results are used in order to update the best solution and
+							the search directions. Consecutive samples within an iteration use opposite search directions, reproducing the sequence of the serial algorithm for an
+							iteration in which the best solution does not improve.</li>
+							<li><b>Output:</b> The best solution and the relative change (in percent) of the best objective are reported in the OSTRICH run record after each iteration.
+							The objective function of every sample is recorded in the OstModelN.txt file of the processor that evaluated it.</li>
+							<li><b>Warm start:</b> If WarmStart is set to yes, the analysis resumes at the iteration after the last one in the OSTRICH run record, starting from the best
+							solution found in the OstModelN.txt files. If Caching is set to yes, previously evaluated parameter sets are not solved again. The search directions cannot be
+							recovered and are reset to their initial values.</li>
+							<li><b>Initial parameter sets:</b> User-defined parameter sets supplied in a BeginInitParams/EndInitParams group are not yet supported and are ignored.</li>
+							<li><b>Calibration statistics:</b> Calibration statistics are not yet computed when the objective function is WSSE.</li>
 						</ul>
 						
 						<h1>References</h1>

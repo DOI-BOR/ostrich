@@ -1,5 +1,5 @@
 /******************************************************************************
-File      : SCEUA.h
+File      : SCEUA2.h
 Author    : L. Shawn Matott - Converted from Origincal SCEUA Fortran code
 Copyright : 2009, L. Shawn Matott
 
@@ -123,82 +123,102 @@ Version History
 #ifndef SCEUA_H
 #define SCEUA_H
 
-// parent class
-#include "AlgorithmABC.h"
+// Include C classes
+#include <mpi.h>
+#include <math.h>
+#include <string.h>
+#include <stdlib.h>
 
-// forward declarations
-class ModelABC;
-class StatsClass;
+// Include C++ classes
+#include <vector>
+#include <iostream>
 
-/******************************************************************************
-class SCEUA
+// Include custom classes
+#include "MyHeaderInc.h"
+#include "Algorithm.h"
+#include "ParameterGroup.h"
+#include "ParameterABC.h"
+#include "Exception.h"
+#include "Utility.h"
 
-******************************************************************************/
-class SCEUA : public AlgorithmABC
-{
+
+class SCEUA : public Algorithm {
    public:
-      SCEUA(ModelABC * pModel);
-      ~SCEUA(void) { DBG_PRINT("SCEUA::DTOR"); Destroy(); }
-      void Destroy(void);
+        // Define constructors and destructors
+        SCEUA();
+        ~SCEUA(void){ DBG_PRINT("SCEUA::DTOR"); Destroy(); }
+        void Destroy(void);
 
-      void Optimize(void);
-      void Calibrate(void);
-      void WriteMetrics(FILE * pFile);
-      void WarmStart(void);
-      int  GetCurrentIteration(void) { return m_CurIter; }
+        // Warm restart is not yet supported for the SCEUA algorithm
+        void WarmStart(void);
 
-   private :
-	   void InitFromFile(IroncladString pFileName);
-      void scemain(void);
-      void scein(double * a, double * bl, double * bu, int nopt, int *maxn,
-                 int *kstop, double *pcento, int *iseed, int *ngs, int *npg,
-                 int *nps, int *nspl, int *mings, int *iniflg, int *iprint);
-      void sceua(double * a, double * bl, double * bu, int nopt, int maxn,
-                 int kstop, double pcento, int iseed, int ngs, int npg,
-                 int nps, int nspl, int mings, int iniflg, int iprint);
-      void cce(int nopt, int nps, double ** s, double * sf, double * bl,
-               double * bu, double * xnstd, int * icall, double maxn,
-               int * iseed);
-      void getpnt(int nopt, int idist, int * iseed, double * x, double * bl,
-                  double * bu, double * std, double * xi);
-      void sort(int n, int m, double ** rb, double * ra);
-      void parstt(int npt, int nopt, double ** x, double * xnstd,
-                  double * bound, double * gnrng, int * ipcnvg);
-      void sort(int n, int * ra);
-      void comp(int n, int npt, int ngs1, int ngs2, int npg, 
-                double ** a, double * af, double ** b, double * bf);
-      void chkcst(int nopt, double * snew, double * bl, 
-                  double * bu, int * ibound);
+        // Solution functions
+        void Optimize(void);                                                // Function to optimize a solution using SCEUA
+        void Calibrate(void);                                               // Function to solve least squares fitting using SCEUA
+        int  GetCurrentIteration(void) { return m_CurIter; }
 
-      StatusStruct m_pStatus;
-      double m_Best;
-      int m_Budget; //MAXN
-      int m_Kstop; //KSTOP
-      double m_Pcento; //PCENTO
-      double m_Peps; //peps
-      double m_fSaved;
-      int m_NumComplexes; //NGS
-      int m_Seed; //ISEED
-      int m_UserConfig; //IDEFLT
-      int m_PtsPerComplex; //NPG
-      int m_PtsPerSubComplex; //NPS
-      int m_NumEvoSteps; //NSPL
-      int m_MinComplexes; //MINGS
-      int m_UseInitPt; //INIFLG
-      int m_OutputMode; //IPRINT
-      int m_np; //number of parameters
-      int m_CurIter;
-      double * m_pParams; //PARAMS
-      double * m_pLower; //LOWER
-      double * m_pUpper; //UPPER
-      bool m_bUseInitPt;
-      ModelABC * m_pModel;
-      StatsClass * m_pStats;
+        // Output functions
+        void WriteStartingMetrics(void);                                    // Function to write the starting SCEUA metrics
+        void WriteEndingMetrics(void);                                      // Function to write the ending SCEUA metrics
+
+   private:
+        // Functions converted from the original FORTRAN implementation
+        void InitFromFile(IroncladString pFileName);
+        void scemain(void);
+        void scein(double * a, double * bl, double * bu, int nopt, int *maxn,
+                   int *kstop, double *pcento, int *iseed, int *ngs, int *npg,
+                   int *nps, int *nspl, int *mings, int *iniflg, int *iprint);
+        void sceua(double * a, double * bl, double * bu, int nopt, int maxn,
+                   int kstop, double pcento, int iseed, int ngs, int npg,
+                   int nps, int nspl, int mings, int iniflg, int iprint);
+        void cce(int nopt, int nps, double ** s, double * sf, double * bl,
+                 double * bu, double * xnstd, int * icall, double maxn,
+                 int * iseed);
+        void getpnt(int nopt, int idist, int * iseed, double * x, double * bl,
+                    double * bu, double * std, double * xi);
+        void sort(int n, int m, double ** rb, double * ra);
+        void parstt(int npt, int nopt, double ** x, double * xnstd,
+                    double * bound, double * gnrng, int * ipcnvg);
+        void sort(int n, int * ra);
+        void comp(int n, int npt, int ngs1, int ngs2, int npg,
+                  double ** a, double * af, double ** b, double * bf);
+        void chkcst(int nopt, double * snew, double * bl,
+                    double * bu, int * ibound);
+
+        // Model evaluation functions
+        void ApplyParameterCorrections(double * x);                         // Applies parameter corrections to a point and stores the corrected values back into it
+        void EvaluateAlternatives(std::vector<std::vector<double>> alternatives,
+                                  std::vector<double>& objectives);         // Solves a set of points across the workers and updates the running best
+        double EvaluateAlternative(double * x, int nopt);                   // Solves a single point and updates the running best
+
+        // Configuration variables
+        double m_Best = INFINITY;                                           // Best objective of the current population
+        int m_Budget; //MAXN
+        int m_Kstop; //KSTOP
+        double m_Pcento; //PCENTO
+        double m_Peps; //peps
+        int m_NumComplexes; //NGS
+        int m_Seed; //ISEED
+        int m_UserConfig; //IDEFLT
+        int m_PtsPerComplex; //NPG
+        int m_PtsPerSubComplex; //NPS
+        int m_NumEvoSteps; //NSPL
+        int m_MinComplexes; //MINGS
+        int m_UseInitPt; //INIFLG
+        int m_OutputMode; //IPRINT
+        int m_np; //number of parameters
+        double * m_pParams = NULL; //PARAMS
+        double * m_pLower = NULL; //LOWER
+        double * m_pUpper = NULL; //UPPER
+        bool m_bUseInitPt = false;
+
+        // Solution tracking variables
+        int m_CurIter = 0;                                                  // Counter for the number of records written to the log file
+        double m_PctComplete = 0.00;                                        // Percentage of the budget that has been used
 }; /* end class SCEUA */
 
 extern "C" {
-void SCEUA_Program(int argc, StringType argv[]);
+void SCEUA_Program(int argC, StringType argV[]);
 }
 
 #endif /* SCEUA_H */
-

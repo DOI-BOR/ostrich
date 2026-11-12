@@ -117,7 +117,7 @@
 										<p align="left">Initial Publication:</p>
 										<time class="time" datetime="2015-11-01">April 11, 2021</time>
 										<p align="left">Modified:</p>
-										<time class="time" datetime="2015-11-01">April 11, 2021</time>
+										<time class="time" datetime="2026-11-07">November 7, 2026</time>
 									</div>
 								</header>
 								<p align="justify">
@@ -148,9 +148,23 @@ EndPowellAlg
 						Where BeginPowellAlg and EndPowellAlg are parsing tags that wrap the following set of algorithm configuration variables:
 					</p>
 					<ul align="justify">
-						<li><b>ConvergenceVal:</b> This is the algorithm convergence value – searches will halt when the relative reduction over three successive iterations is less that 
-						this value. The default value is 1E-6.</li>
-						<li><b>MaxIterations:</b> The maximum iterations in the overall method. The default value is 20.</li>
+						<li><b>ConvergenceVal:</b> This is the algorithm convergence value – searches will halt when the absolute change in the objective function between iterations
+						is less than or equal to this value for three successive iterations. The default value is 1E-6.</li>
+						<li><b>MaxIterations:</b> The maximum iterations in the overall method. Each iteration performs a line search along every search direction followed by a
+						line search along the constructed conjugate direction. The default value is 20.</li>
+					</ul>
+
+					<p align="justify">
+						The line searches are configured using the optional <a href="line_search.html">One-Dimensional Search</a> group (Begin1dSearch/End1dSearch). The following
+						behaviors apply to Powell's algorithm in the development version of OSTRICH:
+					</p>
+					<ul align="justify">
+						<li><b>Parallel evaluation:</b> The algorithm is inherently sequential. Model evaluations are distributed to the available workers, but only independent
+						evaluations are solved concurrently: the two initial points used to bracket each line search minimum, and the two initial interior points of the Golden
+						Section refinement. All other evaluations are solved one at a time, so using more than two workers will not reduce the run time.</li>
+						<li><b>Output:</b> The objective function of every model evaluation is recorded in the OstModelN.txt file of the processor that evaluated it. The run
+						record reports the current solution and the change in the objective function (dObjFunc) after each iteration.</li>
+						<li><b>Calibration statistics:</b> When the WSSE objective function is used, regression statistics are not yet computed at the end of the analysis.</li>
 					</ul>
 					
 					<h1>References</h1>
