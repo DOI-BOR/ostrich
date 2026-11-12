@@ -117,7 +117,7 @@
 									<p align="left">Initial Publication:</p>
 									<time class="time" datetime="2015-11-01">April 11, 2021</time>
 									<p align="left">Modified:</p>
-									<time class="time" datetime="2015-11-01">April 11, 2021</time>
+									<time class="time" datetime="2026-11-07">November 7, 2026</time>
 								</div>
 							</header>
 							<p align="justify">
@@ -150,10 +150,34 @@ EndFletchReevesAlg
 							Where BeginFletchReevesAlg and EndFletchReevesAlg are parsing tags that wrap the following set of algorithm configuration variables:
 						</p>
 						<ul align="justify">
-							<li><b>ConvergenceVal, MaxStalls:</b> These variables control the convergence termination criterion for the algorithm. The algorithm will 
-							stop when the relative reduction in the objective function over max_stalls iterations is less than conv_val. The default value for 
-							conv_val is 1.00E-6 and the default value for max_stalls is 3.</li>
-							<li><b>MaxIterations:</b>The maximum number of iterations of the algorithm. The default value is 20.</li>
+							<li><b>ConvergenceVal, MaxStalls:</b> These variables control the convergence termination criterion for the algorithm. The algorithm will
+							stop when the absolute change in the objective function between iterations is less than or equal to conv_val for max_stalls successive
+							iterations. The algorithm also stops if the gradient vanishes. The default value for conv_val is 1.00E-6 and the default value for
+							max_stalls is 3.</li>
+							<li><b>MaxIterations:</b> The maximum number of iterations of the algorithm. Each iteration performs a line search along the current conjugate
+							direction, followed by a gradient calculation at the new location. The default value is 20.</li>
+						</ul>
+
+						<p align="justify">
+							Although the algorithm is named Fletcher-Reeves, the conjugate direction is updated using the Polak-Ribiere formula. If the updated direction
+							is not a descent direction, the search reverts to the steepest-descent direction (reported as S-D Restarts in the algorithm metrics).
+						</p>
+						<p align="justify">
+							The gradient is computed with forward finite differences, configured using the optional BeginMathAndStats group (DiffIncType, DiffRelIncrement,
+							DiffIncrement and DiffMinIncrement). The default increment is range-relative with a value of 0.001. The line searches are configured using the
+							optional <a href="line_search.html">One-Dimensional Search</a> group (Begin1dSearch/End1dSearch). The following behaviors apply to the
+							Fletcher-Reeves algorithm in the development version of OSTRICH:
+						</p>
+						<ul align="justify">
+							<li><b>Parallel evaluation:</b> The finite-difference perturbations of all parameters are solved concurrently, so a gradient calculation uses up to
+							one worker per parameter. Within each line search, only the two initial bracketing points and the two initial interior points of the Golden
+							Section refinement are solved concurrently; all other line search evaluations are solved one at a time.</li>
+							<li><b>Finite differences:</b> Only forward differences are supported. A forward step that would exceed a parameter's upper bound is taken in the
+							backward direction instead. The DiffType entry is accepted but ignored, and an Optimal DiffIncType is replaced by range-relative increments (an
+							error is logged).</li>
+							<li><b>Output:</b> The objective function of every model evaluation is recorded in the OstModelN.txt file of the processor that evaluated it. The run
+							record reports the current solution and the change in the objective function (dObjFunc) after each iteration.</li>
+							<li><b>Calibration statistics:</b> When the WSSE objective function is used, regression statistics are not yet computed at the end of the analysis.</li>
 						</ul>
 					</article>
 					

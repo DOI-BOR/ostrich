@@ -11,7 +11,7 @@
 #include "PowellAlgorithm.h"
 #include "SamplingAlgorithm2.h"
 #include "SteepDescAlgorithm.h"
-#include "FletchReevesAlgorithm.h"
+#include "FletchReevesAlgorithm2.h"
 #include "LevenbergAlgorithm2.h"
 #include "GridAlgorithm2.h"
 #include "GeneticAlgorithm2.h"
@@ -139,11 +139,11 @@ int main(int argc, StringType argv[])
         STPDSC_Program(argc, argv);
         break;
       }/* end case(STEEP_PROGRAM) */
-   //   case(FLRV_PROGRAM) : 
-   //   {
-   //      FLRV_Program(argc, argv);
-   //      break;
-   //   }/* end case(FLRV_PROGRAM) */
+      case(FLRV_PROGRAM) : 
+      {
+         FLRV_Program(argc, argv);
+         break;
+      }/* end case(FLRV_PROGRAM) */
       case(SMP_PROGRAM) : {
          SMP_Program(argc, argv);
          break;
