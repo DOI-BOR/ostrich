@@ -23,11 +23,10 @@
 #include "GLUE2.h"
 #include "RejectionSampler.h"
 #include "SMOOTH.h"
-//#include "PADDS.h"
-#include "ParaPADDS.h"
+#include "PADDS2.h"
+#include "ParaPADDS2.h"
 #include "DDSAU2.h"
 #include "BEERS2.h"
-
 #include "Exception.h"
 #include "Utility.h"
 #include "IsoParse.h"
@@ -83,6 +82,14 @@ int main(int argc, StringType argv[])
          GRID_Program(argc, argv);
          break;
       }/* end case(GRID_PROGRAM) */
+      case(PADDS_PROGRAM) : {
+         PADDS_Program(argc, argv);
+         break;
+      }/* end case(PADDS_PROGRAM) */
+      case(PARA_PADDS_PROGRAM) : {
+         PARA_PADDS_Program(argc, argv);
+         break;
+      }/* end case(PARA_PADDS_PROGRAM) */
       case(SA_PROGRAM) : {
          SA_Program(argc, argv);
          break;
@@ -218,16 +225,6 @@ int main(int argc, StringType argv[])
    //      SMOOTH_Program(argc, argv);
    //      break;
    //   }/* end case(SMOOTH_PROGRAM) */
-   //   case(PADDS_PROGRAM) : 
-   //   {
-   //      PADDS_Program(argc, argv);
-   //      break;
-   //   }/* end case(PADDS_PROGRAM) */
-   //   case(PARA_PADDS_PROGRAM) : 
-   //   {
-   //      PARA_PADDS_Program(argc, argv);
-   //      break;
-   //   }/* end case(PARA_PADDS_PROGRAM) */
       case(BEERS_PROGRAM) : {
          BEERS_Program(argc, argv);
          break;

@@ -43,7 +43,7 @@ public:
 	ModelWorker(bool bMPI);
 	void Destroy(void);
 	double ExecuteSingle(void);
-	//void ExecuteMulti(double* pF, int nObj);		// Todo: reimplement this
+	std::vector<double> ExecuteMulti(void);			// Solve the model and return the WSSE of each observation group
 	//double DisklessExecute(void);					// Todo: reimplement this
 	void PreserveBestModel(bool preserveBest);
 	void PreserveArchiveModel();
@@ -65,6 +65,7 @@ public:
 	void SetWorkerParameters(ParameterGroup* m_pParamGroup);
 	void SetStandardParameters(std::vector<double> inputParameters);
 	void SetSolveCounter(int solves);
+	void SetObjectiveType(int type, int numberOfObjectives);
 
 
 private:
@@ -88,10 +89,13 @@ private:
 	bool disklessModel = false;
 	bool internalModel = false;
 	int objectiveType = single;
+	int numberOfObjectives = 1;
+	std::vector<double> m_CurMultiObj;						// Objectives of the latest multi-objective solve, used for logging
 	std::string solveCommand;
 
 	// Solution functions
 	void ReadObservations(void);
+	std::filesystem::path RunModel(void);					// Substitute the parameters, solve the model and extract the observations
 
 	// MPI workflow functions
 	void SetupMPI(void);
@@ -118,6 +122,7 @@ private:
 	void ReceiveWorkerObservations(void);
 	void ReceiveWorkerParameters(void);
 	void ReveiveWorkerSolves(void);
+	void ReceiveWorkerObjectiveType(void);
 
 	int RequestParameters(void);
 	bool RequestContinue(void);

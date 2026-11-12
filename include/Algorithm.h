@@ -93,8 +93,12 @@ public:
     
     // Expose functions to inheriting subclasses
     void ConfigureWorkers(std::vector<int>);                                        // Configure the workders for the solution
-    void ManageSingleObjectiveIterations(std::vector<std::vector<double>> parameters, int startingIndex, int numberOfParameters, 
+    void ManageSingleObjectiveIterations(std::vector<std::vector<double>> parameters, int startingIndex, int numberOfParameters,
                                          std::vector<double>& objectives);          // Solve using a single objective function
+    void ManageMultiObjectiveIterations(std::vector<std::vector<double>> parameters, int startingIndex,
+                                        std::vector<std::vector<double>>& objectives); // Solve using multiple objective functions
+    void SetMultiObjective(int numberOfObjectives);                                 // Configure a multi-objective solution. Call before ConfigureWorkers().
+    int GetNumberOfObjectives(void) { return m_NumObjectives; }                     // Gets the number of objectives returned by each solve
     void TerminateWorkers();                                                        // Terminate all workers
 
     // Warm restart functions
@@ -118,6 +122,11 @@ private:
     int m_NumCacheHits = 0;                                                         // Counter for the number of cache hits
     std::vector<std::vector<double>> m_CacheMembers;                                // Vector to keep track of the previously calculated alternatives
     std::vector<double> m_CacheObjectives;                                          // Objectives associated with each chace member
+    std::vector<std::vector<double>> m_CacheMultiObjectives;                        // Objectives associated with each cache member (multi-objective)
+
+    // Objective type information
+    int m_ObjectiveType = single;                                                   // Objective type sent to the workers (single or multi)
+    int m_NumObjectives = 1;                                                        // Number of objectives returned by each solve
 
     // Solution information
     int m_Precision = 6;                                                            // Precision that should be used unless otherwise specified
@@ -161,6 +170,9 @@ private:
     void ConfigureWorkerObservations(int workerRank, bool bMPI);
     void ConfigureWorkerParameterGroups(int workerRank, bool mMPI);
     void ConfigureSolveCounts(int workerRank, bool bMPI, int solves);
+    void ConfigureObjectiveType(int workerRank, bool bMPI);
+    void StoreMultiObjectiveResult(std::vector<std::vector<double>>& parameters, std::vector<std::vector<double>>& objectives,
+                                   int alternativeIndex, std::vector<double> result); // Stores a multi-objective result and updates the cache
 
     void SendWorkerContinue(int workerRank, bool workerContinue);
     void SendWorkerPreserveBest(int workerRank, bool preserveModel);

@@ -117,7 +117,7 @@
 										<p align="left">Initial Publication:</p>
 										<time class="time" datetime="2015-11-01">April 11, 2021</time>
 										<p align="left">Modified:</p>
-										<time class="time" datetime="2015-11-01">April 11, 2021</time>
+										<time class="time" datetime="2026-11-08">November 8, 2026</time>
 									</div>
 								</header>
 								<p align="justify">
@@ -174,6 +174,29 @@ EndPADDSAlg
 											Asadzadeh and Tolson (2013).
 										</p>
 									</li>
+								</ul>
+								<p align="justify">
+									Initial parameter sets may be supplied using the optional BeginInitParams group, with one parameter set per line. These parameter sets are evaluated
+									before the random initial solutions and count towards MaxIterations.
+								</p>
+								<p align="justify">
+									The following behaviors apply to the PADDS algorithm in the development version of OSTRICH:
+								</p>
+								<ul align="justify">
+									<li><b>Objectives:</b> The objectives are the weighted sum of squared errors (WSSE) of each observation group, so the ObjectiveFunction must be
+									WSSE and each objective requires its own observation group. Other objective functions (e.g. GCOP) are not yet supported.</li>
+									<li><b>Initialization:</b> The user-specified initial parameter sets are followed by max(5, 0.5% of MaxIterations) uniformly random solutions,
+									limited so that MaxIterations is not exceeded. The initial solutions are evaluated concurrently by the available workers.</li>
+									<li><b>Search:</b> Each subsequent candidate depends on the result of the previous candidate, so candidates are evaluated one at a time. A candidate
+									whose objectives match those of a non-dominated solution is discarded as a duplicate.</li>
+									<li><b>Integer parameters:</b> Integer parameters are rounded before evaluation, and the rounded values are archived and reported.</li>
+									<li><b>Output:</b> Each time a new non-dominated solution is found, the non-dominated solutions are written to the run record in OstOutput0.txt
+									and to OstNonDomSolutions0.txt. The perturbation probability of each DDS step is written to OstPADDSPn.txt. The final non-dominated and dominated
+									solutions and the algorithm metrics (including the number of discarded duplicates) are written at the end of the analysis. The objectives of every
+									model evaluation are recorded in the OstModelN.txt file of the processor that evaluated it.</li>
+									<li><b>Warm start:</b> The WarmStart option is not available for PADDS. A warning is logged and a new analysis is performed.</li>
+									<li><b>Not yet supported:</b> The PreserveBestModel option is not available for multi-objective algorithms. A warning is logged and the option
+									is disabled.</li>
 								</ul>
 								<h1>References</h1>
 								<p align="justify">
