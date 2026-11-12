@@ -117,7 +117,7 @@
 										<p align="left">Initial Publication:</p>
 										<time class="time" datetime="2015-11-01">April 11, 2021</time>
 										<p align="left">Modified:</p>
-										<time class="time" datetime="2015-11-01">April 11, 2021</time>
+										<time class="time" datetime="2026-11-08">November 8, 2026</time>
 									</div>
 								</header>
 								<p align="justify">
@@ -153,16 +153,30 @@ EndGLUE
 						Where BeginGLUE and EndGLUE are parsing tags that wrap a set of algorithm configuration variables. These variables are described below:
 					</p>
 					<ul align="justify">
-						<li><b>SamplesPerIter:</b> This variable controls the frequency of output within the OSTRICH run record. 
-						The current best solution will be reported after every SamplesPerIter model evaluations. The current number of behavioral solutions that 
-						have been discovered will also be reported. The default value is 10.</li>
+						<li><b>SamplesPerIter:</b> The number of random samples generated and evaluated in each iteration. The samples of an iteration are evaluated
+						concurrently by the available workers. This variable also controls the frequency of output within the OSTRICH run record: the current best
+						solution and the current number of behavioral solutions that have been discovered will be reported after every iteration. The default value is 10.</li>
 						<li><b>NumBehavioral:</b> The desired number of behavioral solutions. The GLUE algorithm will halt if the desired number of behavioral 
 						solutions has been found or if the computational budget (i.e. MaxSamples) has been exhausted. The default value is 10.</li>
-						<li><b>MaxSamples:</b> The maximum number of model evaluations allowed before the GLUE search is terminated. The default value is 100. 
+						<li><b>MaxSamples:</b> The maximum number of model evaluations allowed before the GLUE search is terminated. Samples are evaluated in complete
+						iterations, so the number of evaluations is rounded up to the next multiple of SamplesPerIter. The default value is 100. 
 						However, studies have shown that GLUE can require 100,000 or more evaluations to discover a sufficiently representative number of behavioral 
 						samples.</li>
 						<li><b>Threshold:</b> The threshold for separating behavioral and non-behavioral parameter sets. Parameter sets with corresponding 
 						objective function values less than the threshold will be considered behavioral. The default value is 1000.</li>
+					</ul>
+					<p align="justify">
+						The following behaviors apply to the GLUE algorithm in the development version of OSTRICH:
+					</p>
+					<ul align="justify">
+						<li><b>Sampling:</b> Each parameter is sampled uniformly between its lower and upper bounds (in the transformed space). Integer parameters
+						are rounded before evaluation, and the rounded values are reported.</li>
+						<li><b>Retained samples:</b> The best NumBehavioral samples are retained, whether or not they are behavioral. The search ends when every
+						retained sample is behavioral, or when MaxSamples has been reached.</li>
+						<li><b>Output:</b> The run record in OstOutput0.txt lists the best solution and the number of behavioral solutions found after each iteration.
+						The optimal parameter set, the algorithm metrics and the retained samples (best first) are written at the end of the analysis. The objective
+						function of every model evaluation is recorded in the OstModelN.txt file of the processor that evaluated it.</li>
+						<li><b>Warm start:</b> The WarmStart option is not available for GLUE. A warning is logged and a new analysis is performed.</li>
 					</ul>
 					
 					<h1>References</h1>

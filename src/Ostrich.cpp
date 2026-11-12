@@ -21,7 +21,7 @@
 //#include "DiscreteDDSAlgorithm.h"
 #include "StatUtility.h"
 #include "QuadTree.h"
-#include "GLUE.h"
+#include "GLUE2.h"
 #include "RejectionSampler.h"
 #include "SMOOTH.h"
 //#include "PADDS.h"
@@ -84,6 +84,10 @@ int main(int argc, StringType argv[])
          GRID_Program(argc, argv);
          break;
       }/* end case(GRID_PROGRAM) */
+      case(GLUE_PROGRAM) : {
+         GLUE_Program(argc, argv);
+         break;
+      }/* end case(GLUE_PROGRAM) */
    //   case(SA_PROGRAM) : 
    //   {
    //      SA_Program(argc, argv);
@@ -201,11 +205,6 @@ int main(int argc, StringType argv[])
    //   case(DDDS_PROGRAM) :
    //   {
    //      DiscreteDDS_Program(argc,argv);
-			//break;
-   //   }
-   //   case(GLUE_PROGRAM) :
-   //   {
-   //      GLUE_Program(argc,argv);
 			//break;
    //   }
    //   case(RJSMP_PROGRAM) :
