@@ -117,7 +117,7 @@
 										<p align="left">Initial Publication:</p>
 										<time class="time" datetime="2015-11-01">April 11, 2021</time>
 										<p align="left">Modified:</p>
-										<time class="time" datetime="2015-11-01">April 11, 2021</time>
+										<time class="time" datetime="2026-11-07">November 7, 2026</time>
 									</div>
 								</header>
 								<p align="justify">
@@ -166,26 +166,39 @@ End_DDSAU_Alg
 						The allowable range is 0 to 1. As the value increases, the sampling becomes more and more spread out from the current best value of the decision variable. The 
 						default and recommended value is 0.2.</li>
 						<li><b>NumSearches:</b> The number of independent DDS searches to perform as part of the overall DDS-AU uncertainty approximation algorithm. The default value is 25. 
-						Each search will be run using either the <a href="search_dds.html">DDS algorithm</a> or the <a href="search_dds_async.html">asynchronous parallel DDS algorithm</a> 
-						depending on the value assigned to the ParallelSearches variable. Results for each search will be stored in output files named OstModel[N]_DDS[M].txt and 
-						OstOutput[N]_DDS[M].txt, where [N] is the processor number and [M] is the DDS search number. A DDS-AU summary file named OstOutputDDSAU.txt will be created when all 
+						Each search is a randomly initialized <a href="search_dds.html">DDS search</a>. Results for each search will be stored in output files named
+						OstModel0_DDS[M].txt (every evaluation of the search) and OstOutput0_DDS[M].txt (each improvement to the best solution of the search), where [M] is the DDS
+						search number. A DDS-AU summary file named OstOutputDDSAU.txt will be created when all
 						DDS searches are complete. This file will contain results of the various optimization trials as well as a summary of the behavioral parameter sets that were discovered.</li>
 						<li><b>MinItersPerSearch, MaxItersPerSearch:</b> The minimum and maximum computational budget for each independent DDS search. If the same budget is desired for each 
 						search, assign the desired value to both MinItersPerSearch and MaxItersPerSearch. If different values are assigned to these variables, the DDS-AU algorithm will 
 						randomly generate a different budget for each search. The randomly generated budget will fall within the range specified by MinItersPerSearch and MaxItersPerSearch. 
 						The default value for MinItersPerSearch is 30. The default value for MaxItersPerSearch is 70.</li>
-						<li><b>ParallelSearches:</b> Each independent search will be run using the asynchronous parallel DDS algorithm if this variable is set to “yes”. Otherwise, each 
-						independent search will be run using a serial implementation of the DDS algorithm. The default value is “no”.</li>
-						<li><b>Threshold:</b> The behavioral threshold for approximating uncertainty. Parameter sets with corresponding objective function values less than the threshold will 
-						be considered behavioral. The default value is 1000.</li>
+						<li><b>ParallelSearches:</b> The independent searches will be advanced together if this variable is set to “yes”, with one candidate from every active
+						search solved concurrently at each step. Otherwise, the independent searches will be performed one after another, and only the random initialization
+						samples of each search are solved concurrently. Each search follows the DDS algorithm in either case. The default value is “no”.</li>
+						<li><b>Threshold:</b> The behavioral threshold for approximating uncertainty. Parameter sets with corresponding objective function values at or below the
+						threshold will be considered behavioral. The default value is 1000.</li>
 						<li><b>Randomize:</b> The DDS-AU algorithm will randomly select a behavioral parameter set from each independent trial if this variable is set to “yes”. Otherwise, 
 						the DDS-AU algorithm will select the best behavioral parameter set from each independent trial. Random selection can help prevent clustering problems in the 
 						approximation of uncertainty. The default value is “no”.</li>
 						<li><b>ReviseAU:</b> Set this variable to “yes” to re-run a DDS-AU analysis without re-running previously completed independent DDS searches. This allows for DDS-AU to 
 						consider a different threshold value or randomization setting without repeating the required independent DDS searches. Results from previous searches will be read from 
-						corresponding “OstModel[N]_DDS[M].txt” output files. A given independent search will be re-run if corresponding output files are missing or unreadable. All existing 
-						“OstModel[N]_DDS[M].txt” and “OstOutput[N]_DDS[M].txt” files found in the OSTRICH launch directory will be deleted as part of DDS-AU initialization if this variable is 
+						corresponding “OstModel0_DDS[M].txt” output files. A given independent search will be re-run if corresponding output files are missing or unreadable. All existing
+						“OstModel[N]_DDS[M].txt” and “OstOutput[N]_DDS[M].txt” files found in the OSTRICH launch directory will be deleted as part of DDS-AU initialization if this variable is
 						set to “no”. The default value for this variable is “no”.</li>
+					</ul>
+					<p align="justify">
+						The following behaviors apply to the DDS-AU algorithm in the development version of OSTRICH:
+					</p>
+					<ul align="justify">
+						<li><b>Search initialization:</b> Each search begins with the best of max(5, 0.5% of the search budget) uniformly random parameter sets (a single
+						random set is used if this would consume the entire budget of the search), and the remaining budget is used by the DDS search.</li>
+						<li><b>Output:</b> The run record in OstOutput0.txt lists the solution selected from each search along with the budget of the search, followed by
+						the best solution found by any search. The objective function of every model evaluation is also recorded in the OstModelN.txt file of the processor
+						that evaluated it.</li>
+						<li><b>Warm start:</b> The WarmStart option is not used by DDS-AU. The ReviseAU option should be used to re-use the results of previous searches.</li>
+						<li><b>Not yet supported:</b> Telescoping bounds (TelescopingStrategy) are not applied.</li>
 					</ul>
 					
 					<h1>References</h1>
