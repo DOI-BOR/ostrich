@@ -26,7 +26,7 @@
 #include "SMOOTH.h"
 //#include "PADDS.h"
 #include "ParaPADDS.h"
-#include "BEERS.h"
+#include "BEERS2.h"
 //#include "DDSAU.h"
 
 #include "Exception.h"
@@ -233,11 +233,10 @@ int main(int argc, StringType argv[])
    //      PARA_PADDS_Program(argc, argv);
    //      break;
    //   }/* end case(PARA_PADDS_PROGRAM) */
-   //   case(BEERS_PROGRAM) : 
-   //   {
-   //      BEERS_Program(argc, argv);
-   //      break;
-   //   }/* end case(BEERS_PROGRAM) */
+      case(BEERS_PROGRAM) : {
+         BEERS_Program(argc, argv);
+         break;
+      }/* end case(BEERS_PROGRAM) */
    //   case(QUIT_PROGRAM) : 
    //   default:
    //   {            

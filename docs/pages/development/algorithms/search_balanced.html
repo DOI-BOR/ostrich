@@ -117,7 +117,7 @@
 										<p align="left">Initial Publication:</p>
 										<time class="time" datetime="2015-11-01">April 11, 2021</time>
 										<p align="left">Modified:</p>
-										<time class="time" datetime="2015-11-01">April 11, 2021</time>
+										<time class="time" datetime="2026-11-08">November 8, 2026</time>
 									</div>
 								</header>
 								<p align="justify">
@@ -146,7 +146,17 @@ EndBEERS
 									Where BeginBEERS and EndBEERS are parsing tags that wrap the following set of algorithm configuration variables:
 								</p>
 								<ul align="justify">
-									<li><b>NumSamples:</b> the number of samples evaluated by the algorithm (i.e. computational budget).</li>
+									<li><b>NumSamples:</b> the number of samples evaluated by the algorithm (i.e. computational budget). Values less than 1 are replaced with 1.</li>
+								</ul>
+								<p align="justify">
+									The following behaviors apply to the BEERS algorithm:
+								</p>
+								<ul align="justify">
+									<li>Each candidate depends on the objective of every previously evaluated sample, so samples are evaluated one at a time. When OSTRICH is run with multiple MPI processes, only one model evaluation is in progress at any time.</li>
+									<li>The first sample is selected randomly within the parameter bounds; the initial parameter values are not used.</li>
+									<li>Integer parameters are rounded before evaluation, and the rounded values are used in the archive.</li>
+									<li>The archive of every evaluated sample is written to OstArchive.txt, including the final sample.</li>
+									<li>Warm start (WarmStart) and the extraction of initial parameter values from model output ("extract") are not available. If requested, a warning is logged and a new analysis with a random first sample is performed.</li>
 								</ul>
 							</article>
 
