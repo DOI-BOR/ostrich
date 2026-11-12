@@ -317,7 +317,7 @@ double IntParam::SetEstimatedValueTransformed(double estVal)
    int tmp;
    char msg[80];
 
-   tmp = (int)(estVal + 0.5); //round up real value
+   tmp = (int)floor(estVal + 0.5); //round to the nearest integer (truncation would round negative values toward zero)
 
    if(tmp < m_lowerBoundTransformed) 
    {            

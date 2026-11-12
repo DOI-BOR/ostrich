@@ -117,7 +117,7 @@
 									<p align="left">Initial Publication:</p>
 									<time class="time" datetime="2015-11-01">April 11, 2021</time>
 									<p align="left">Modified:</p>
-									<time class="time" datetime="2015-11-01">April 11, 2021</time>
+									<time class="time" datetime="2026-11-01">November 1, 2026</time>
 								</div>
 							</header>
 							<p align="justify">
@@ -148,10 +148,33 @@ EndBisectionAlg
 							Where BeginBisectionAlg and EndBisectionAlg are parsing tags that wrap the following set of algorithm configuration variables:
 						</p>
 						<ul align="justify">
-							<li><b>MaxOuterIterations:</b> The maximum number of outer iterations of the algorithm. One outer iteration corresponds to application of the bisection 
-							method to a randomly chosen initial parameter set. The default value is 50.</li>
-							<li><b>MaxInnerIterations:</b> The maximum number of inner iterations of the algorithm. Each inner iteration reduces the searchable parameter range by 50%. 
-							Default value is 20.</li>
+							<li><b>MaxOuterIterations:</b> The number of outer iterations of the algorithm. One outer iteration corresponds to application of the bisection
+							method to every parameter, one parameter at a time. The first outer iteration starts from the initial parameter values, and each subsequent outer iteration
+							starts from a randomly chosen parameter set. The value must be greater than zero. The default value is 50.</li>
+							<li><b>MaxInnerIterations:</b> The number of inner iterations applied to each parameter. Each inner iteration reduces the searchable parameter range by 50%.
+							The value must be greater than zero. The default value is 20.</li>
+							<li><b>ConvergenceVal:</b> This value is accepted for compatibility with previous versions of OSTRICH and is reported in the algorithm metrics, but it is not
+							currently used to stop the search early. The default value is 1.00E-6.</li>
+						</ul>
+
+						<p align="justify">
+							The following behaviors apply to the bisection algorithm in the development version of OSTRICH:
+						</p>
+						<ul align="justify">
+							<li><b>Search procedure:</b> Each parameter is searched while all other parameters are held at their current values. The parameter's range is first divided
+							into four quadrants by evaluating the lower bound, upper bound, quarter-point, mid-point, and three-quarter-point. Each inner iteration keeps the half of
+							the range around the best point and evaluates two new quarter points, plus a new mid-point when the best point is at the edge of the range. A parameter's
+							new value is kept only if it improves on the best objective found so far; otherwise its previous value is retained.</li>
+							<li><b>Parallel evaluation:</b> The points evaluated at each step of the search are independent of one another and are distributed across the available
+							workers. Five points are evaluated at the start of each parameter's search and two or three points at each inner iteration, so the run time will not be
+							reduced further by using more than five workers.</li>
+							<li><b>Number of evaluations:</b> The search requires at least 1 + MaxOuterIterations × (number of parameters) × (5 + 2 × MaxInnerIterations) model
+							evaluations.</li>
+							<li><b>Output:</b> The OSTRICH run record reports the best solution found after each outer iteration. Because later outer iterations start from random
+							parameter sets, the reported solution is always the best one found so far rather than the starting point of the current outer iteration. The objective
+							function of every evaluation is recorded in the OstModel<i>N</i>.txt file of the processor that evaluated it.</li>
+							<li><b>Warm start:</b> WarmStart is not yet supported for the bisection algorithm. If WarmStart is set to yes, the analysis will stop with an error.</li>
+							<li><b>Least-squares calibration:</b> The bisection algorithm currently runs in optimization mode only.</li>
 						</ul>
 						
 						<h1>References</h1>

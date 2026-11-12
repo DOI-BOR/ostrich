@@ -117,7 +117,7 @@
 									<p align="left">Initial Publication:</p>
 									<time class="time" datetime="2015-11-01">April 11, 2021</time>
 									<p align="left">Modified:</p>
-									<time class="time" datetime="2015-11-01">April 11, 2021</time>
+									<time class="time" datetime="2026-11-02">November 2, 2026</time>
 								</div>
 							</header>
 							<p align="justify">
@@ -171,11 +171,31 @@ EndSimulatedAlg
 							<li><b>FinalTemperature:</b> This variable can be used to set a specific value for the final temperature in the SA algorithm. The temperature scale factor will 
 							be adjusted to achieve the desired temperature. Alternatively, OSTRICH supports two options for dynamically pre-computing the final temperature. These 
 							dynamic options are based on the methods of Vanderbilt and Louie (1984) and Ben-Ameur (2004), respectively. Set the FinalTemperature to “computed-vanderbilt” 
-							to select the Vanderbilt-Louie approach. Set the FinalTemperature to “compute-ben-ameur” to select the Ben-Ameur approach. If a final temperature option 
+							to select the Vanderbilt-Louie approach. Set the FinalTemperature to “computed-ben-ameur” to select the Ben-Ameur approach. A value of “computed” also selects the Vanderbilt-Louie approach. If a final temperature option 
 							or value is not specified, the final temperature will be determined from the initial temperature, temperature scale factor, and number of outer iterations.</li>
 							<li><b>TransitionMethod:</b> This variable selects the method used to compute randomized parameter perturbations during the transition phase of the SA algorithm. 
 							Set this variable to “Uniform” to sample from a uniform distribution, or use a value of “Gauss” to select a Gaussian (i.e. normal) distribution. The default 
 							value is “Gauss”.</li>
+						</ul>
+
+						<p align="justify">
+							The following behaviors apply to the continuous variable simulated annealing algorithm in the development version of OSTRICH:
+						</p>
+						<ul align="justify">
+							<li><b>Parallel evaluation:</b> The algorithm runs in parallel. The starting point is evaluated together with one perturbed copy (within ±5% of each
+							parameter range) for every additional processor, and the best of these becomes the starting solution. The melting trials are evaluated together, and any
+							trial with an objective too large to process is discarded and replaced. Within each outer iteration, transitions are generated in batches (one per available
+							worker) from the current location, distributed across the workers, and then accepted or rejected in order. With a single worker, the sequence of transitions
+							matches the serial algorithm.</li>
+							<li><b>Initial temperature:</b> The initial temperature is computed from the mean energy change of the melting trials plus two standard deviations.</li>
+							<li><b>Output:</b> The best solution and the convergence value are reported in the OSTRICH run record after the melting operation and after each outer
+							iteration. The objective function of every evaluation is recorded in the OstModelN.txt file of the processor that evaluated it.</li>
+							<li><b>Warm start:</b> If WarmStart is set to yes, the analysis restarts from the best solution found in the OstModelN.txt files, and the evaluations
+							of the previous run are included in the evaluation count. If Caching is set to yes, previously evaluated parameter sets are not solved again. The
+							temperature schedule cannot be recovered, so a new melting operation is performed, and the outer iteration count restarts at zero. The new results are
+							appended to the OSTRICH run record.</li>
+							<li><b>Calibration statistics:</b> Calibration statistics are not yet computed when the objective function is WSSE.</li>
+							<li><b>Telescoping bounds:</b> The TelescopingStrategy option is not yet supported and is ignored.</li>
 						</ul>
 						
 						<h1>References</h1>

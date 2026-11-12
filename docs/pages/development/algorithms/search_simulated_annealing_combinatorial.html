@@ -117,7 +117,7 @@
 										<p align="left">Initial Publication:</p>
 										<time class="time" datetime="2015-11-01">April 11, 2021</time>
 										<p align="left">Modified:</p>
-										<time class="time" datetime="2015-11-01">April 11, 2021</time>
+										<time class="time" datetime="2026-11-02">November 2, 2026</time>
 									</div>
 								</header>
 								<p align="justify">
@@ -166,6 +166,22 @@ EndSimulatedAlg
 									transitional move. The default value is 10.</li>
 									<li><b>ConvergenceVal</b>: This is the convergence value for the algorithm. If the relative difference between the current minimum and the median of the 
 									latest series of equilibration moves is less than or equal to this value, the algorithm will halt. The default value is 0.001.</li>
+								</ul>
+
+								<p align="justify">
+									The following behaviors apply to the discrete simulated annealing algorithm in the development version of OSTRICH:
+								</p>
+								<ul align="justify">
+									<li><b>Parallel evaluation:</b> The algorithm now runs in parallel. The melting trials are evaluated together. Within each outer iteration,
+									transitions are generated in batches (one per available worker) from the current location, distributed across the workers, and then accepted or
+									rejected in order. With a single worker, the sequence of transitions matches the serial algorithm.</li>
+									<li><b>Output:</b> The best solution and the convergence value are reported in the OSTRICH run record after the melting operation and after each outer
+									iteration. The objective function of every evaluation is recorded in the OstModelN.txt file of the processor that evaluated it.</li>
+									<li><b>Warm start:</b> If WarmStart is set to yes, the analysis restarts from the best solution found in the OstModelN.txt files, and the evaluations
+									of the previous run are included in the evaluation count. If Caching is set to yes, previously evaluated parameter sets are not solved again. The
+									temperature schedule cannot be recovered, so a new melting operation is performed, and the outer iteration count restarts at zero. The new results are
+									appended to the OSTRICH run record.</li>
+									<li><b>Calibration statistics:</b> Calibration statistics are not yet computed when the objective function is WSSE.</li>
 								</ul>
 							</article>
 
