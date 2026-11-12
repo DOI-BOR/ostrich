@@ -117,13 +117,23 @@
 										<p align="left">Initial Publication:</p>
 										<time class="time" datetime="2015-11-01">April 11, 2021</time>
 										<p align="left">Modified:</p>
-										<time class="time" datetime="2015-11-01">April 11, 2021</time>
+										<time class="time" datetime="2026-11-01">November 1, 2026</time>
 									</div>
 								</header>
 								<p align="justify">
 									This hybrid algorithm will be selected if ProgramType is set to “PSO-GML” and will trigger an initial PSO optimization followed by a GML regression. 
-									To configure this algorithm, the user should include both the <a href="search_pso.html">PSO algorithm</a> group and the <a href="search_gml.html">Gauss-Marquardt-Levenberg</a> group. 
+									To configure this algorithm, the user should include both the <a href="search_pso.html">PSO algorithm</a> group and the <a href="search_gml.html">Gauss-Marquardt-Levenberg</a> group.
 								</p>
+
+								<p align="justify">
+									The following behaviors apply to the hybrid algorithm in the development version of OSTRICH:
+								</p>
+								<ul align="justify">
+									<li><b>Starting point:</b> The Levenberg-Marquardt phase starts from the best parameter set found by the PSO phase rather than from the initial
+									parameter values in the Parameters group.</li>
+									<li><b>Output:</b> The OstOutput0.txt and OstModelN.txt files of the PSO phase are renamed to OstOutputPSO0.txt and OstModelPSON.txt before the
+									Levenberg-Marquardt phase begins. The OstOutput0.txt and OstModelN.txt files contain the results of the Levenberg-Marquardt phase.</li>
+									<li><b>Warm start:</b> WarmStart is not yet supported for the hybrid algorithm. If WarmStart is set to yes, the analysis will stop with an error.</li>
 								</ul>
 							</article>
 

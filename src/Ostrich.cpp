@@ -5,28 +5,28 @@
 #include "SAAlgorithm.h"
 #include "VandSA.h"
 //#include "APPSO.h"
-#include "SCEUA.h"
+#include "SCEUA2.h"
 #include "ComboSA.h"
-#include "BisectionAlgorithm.h"
+#include "BisectionAlgorithm2.h"
 #include "PowellAlgorithm.h"
-#include "SamplingAlgorithm.h"
+#include "SamplingAlgorithm2.h"
 #include "SteepDescAlgorithm.h"
 #include "FletchReevesAlgorithm2.h"
 #include "LevenbergAlgorithm2.h"
 #include "GridAlgorithm2.h"
 #include "GeneticAlgorithm2.h"
-#include "ParticleSwarm.h"
+#include "ParticleSwarm2.h"
 //#include "DDSAlgorithm.h"/*JRC*/
 //#include "PDDSAlgorithm.h"
 //#include "DiscreteDDSAlgorithm.h"
 #include "StatUtility.h"
 #include "QuadTree.h"
-#include "GLUE.h"
+#include "GLUE2.h"
 #include "RejectionSampler.h"
 #include "SMOOTH.h"
 //#include "PADDS.h"
 #include "ParaPADDS.h"
-#include "BEERS.h"
+#include "BEERS2.h"
 //#include "DDSAU.h"
 
 #include "Exception.h"
@@ -84,6 +84,10 @@ int main(int argc, StringType argv[])
          GRID_Program(argc, argv);
          break;
       }/* end case(GRID_PROGRAM) */
+      case(GLUE_PROGRAM) : {
+         GLUE_Program(argc, argv);
+         break;
+      }/* end case(GLUE_PROGRAM) */
    //   case(SA_PROGRAM) : 
    //   {
    //      SA_Program(argc, argv);
@@ -103,21 +107,19 @@ int main(int argc, StringType argv[])
          PSO_Program(argc, argv);
          break;
       }/* end case(PSO_PROGRAM) */
-   //   case(PSO_LEV_PROGRAM) : 
-   //   {
-   //      PSO_LEVMAR_Program(argc, argv);
-   //      break;
-   //   }/* end case(PSO_LEV_PROGRAM) */
+      case(PSO_LEV_PROGRAM) : {
+         PSO_LEVMAR_Program(argc, argv);
+         break;
+      }/* end case(PSO_LEV_PROGRAM) */
    //   case(APPSO_PROGRAM) : 
    //   {
    //      APPSO_Program(argc, argv);
    //      break;
    //   }/* end case(APPSO_PROGRAM) */
-   //   case(SCEUA_PROGRAM) : 
-   //   {
-   //      SCEUA_Program(argc, argv);
-   //      break;
-   //   }/* end case(SCEUA_PROGRAM) */
+      case(SCEUA_PROGRAM) : {
+         SCEUA_Program(argc, argv);
+         break;
+      }/* end case(SCEUA_PROGRAM) */
 		case(LEV_PROGRAM) : {
          LEV_Program(argc, argv);
          break;
@@ -132,25 +134,25 @@ int main(int argc, StringType argv[])
    //      PWL_Program(argc, argv);
    //      break;
    //   }/* end case(POWL_PROGRAM) */
-   //   case(STEEP_PROGRAM) : 
-   //   {
-   //      STPDSC_Program(argc, argv);
-   //      break;
-   //   }/* end case(STEEP_PROGRAM) */
-      case(FLRV_PROGRAM) : {
+      case(STEEP_PROGRAM) : 
+      {
+        STPDSC_Program(argc, argv);
+        break;
+      }/* end case(STEEP_PROGRAM) */
+      case(FLRV_PROGRAM) : 
+      {
          FLRV_Program(argc, argv);
          break;
       }/* end case(FLRV_PROGRAM) */
-   //   case(BIS_PROGRAM) : 
-   //   {
-   //      BIS_Program(argc, argv);
-   //      break;
-   //   }/* end case(BIS_PROGRAM) */
-   //   case(SMP_PROGRAM) : 
-   //   {
-   //      SMP_Program(argc, argv);
-   //      break;
-   //   }/* end case(SMP_PROGRAM) */
+      case(SMP_PROGRAM) : {
+         SMP_Program(argc, argv);
+         break;
+      }/* end case(SMP_PROGRAM) */
+      case(BIS_PROGRAM) : 
+      {
+         BIS_Program(argc, argv);
+         break;
+      }/* end case(BIS_PROGRAM) */
    //   case(STATS_PROGRAM) : 
    //   {
    //      STATS_Program(argc, argv);
@@ -204,11 +206,6 @@ int main(int argc, StringType argv[])
    //      DiscreteDDS_Program(argc,argv);
 			//break;
    //   }
-   //   case(GLUE_PROGRAM) :
-   //   {
-   //      GLUE_Program(argc,argv);
-			//break;
-   //   }
    //   case(RJSMP_PROGRAM) :
    //   {
    //      RJSMP_Program(argc,argv);
@@ -234,11 +231,10 @@ int main(int argc, StringType argv[])
    //      PARA_PADDS_Program(argc, argv);
    //      break;
    //   }/* end case(PARA_PADDS_PROGRAM) */
-   //   case(BEERS_PROGRAM) : 
-   //   {
-   //      BEERS_Program(argc, argv);
-   //      break;
-   //   }/* end case(BEERS_PROGRAM) */
+      case(BEERS_PROGRAM) : {
+         BEERS_Program(argc, argv);
+         break;
+      }/* end case(BEERS_PROGRAM) */
    //   case(QUIT_PROGRAM) : 
    //   default:
    //   {            

@@ -95,6 +95,7 @@ class ParticleSwarm : public Algorithm {
 
 extern "C" {
 void PSO_Program(int argC, StringType argV[]);
+void PSO_LEVMAR_Program(int argC, StringType argV[]);
 }
 
 #endif 
